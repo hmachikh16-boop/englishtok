@@ -65,7 +65,9 @@ class SpeechService {
   private audioCtx: AudioContext | null = null;
   private currentAudio: HTMLAudioElement | null = null;
   private currentAudioUrl: string | null = null;
+  private currentUtterance: SpeechSynthesisUtterance | null = null;
   private currentSource: string | null = null;
+  private preferBrowserSpeech = false;
   private inferenceWorker: Worker | null = null;
   private pendingGenerations = new Map<number, PendingGeneration>();
   private generationQueue: Promise<void> = Promise.resolve();
@@ -153,11 +155,23 @@ class SpeechService {
     this.requestId += 1;
     this.currentSource = null;
     this.clearPlayback();
+    if (this.currentUtterance) {
+      this.currentUtterance.onstart = null;
+      this.currentUtterance.onend = null;
+      this.currentUtterance.onerror = null;
+      this.currentUtterance = null;
+      if (typeof window !== 'undefined' && window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+      }
+    }
     this.setStatus('idle');
   };
 
   private clearPlayback() {
     if (this.currentAudio) {
+      this.currentAudio.onplaying = null;
+      this.currentAudio.onended = null;
+      this.currentAudio.onerror = null;
       this.currentAudio.pause();
       this.currentAudio.removeAttribute('src');
       this.currentAudio.load();
@@ -189,9 +203,16 @@ class SpeechService {
         }
       }
     };
+
     worker.onerror = (event) => {
       event.preventDefault();
-      this.failPendingGenerations(new Error(event.message || 'Kokoro worker failed.'));
+      const error = event.error instanceof Error
+        ? event.error
+        : new Error(
+            event.message ||
+              `Kokoro worker failed at ${event.filename || 'unknown source'}:${event.lineno}:${event.colno}.`
+          );
+      this.failPendingGenerations(error);
     };
     worker.onmessageerror = () => {
       this.failPendingGenerations(new Error('Kokoro worker returned an unreadable response.'));
@@ -199,6 +220,100 @@ class SpeechService {
 
     this.inferenceWorker = worker;
     return worker;
+  }
+
+  private playBrowserSpeech({
+    requestId,
+    source,
+    text,
+    rate,
+    pitch,
+    gender,
+    accent,
+    onStart,
+    onEnd,
+    onError,
+    reason,
+  }: {
+    requestId: number;
+    source: string;
+    text: string;
+    rate: number;
+    pitch: number;
+    gender: 'male' | 'female';
+    accent: string;
+    onStart?: () => void;
+    onEnd?: () => void;
+    onError?: (error: unknown) => void;
+    reason: unknown;
+  }) {
+    if (requestId !== this.requestId) return;
+
+    this.preferBrowserSpeech = true;
+    if (
+      typeof window === 'undefined' ||
+      !window.speechSynthesis ||
+      typeof SpeechSynthesisUtterance === 'undefined'
+    ) {
+      this.finishWithError(
+        'تعذر تشغيل الصوت المحلي على هذا الجهاز. تحقق من دعم النطق في المتصفح أو جرّب متصفحًا آخر.',
+        onError
+      );
+      return;
+    }
+
+    console.warn('[speechService] Kokoro playback failed; using the device speech voice.', reason);
+    this.clearPlayback();
+
+    const synthesis = window.speechSynthesis;
+    const utterance = new SpeechSynthesisUtterance(text);
+    const language = accent === 'en-GB' ? 'en-GB' : 'en-US';
+    const voices = synthesis
+      .getVoices()
+      .filter((voice) => voice.lang.toLowerCase().startsWith(language.toLowerCase()));
+    const genderPattern = gender === 'female'
+      ? /female|woman|samantha|zira|jenny|aria/i
+      : /male|man|david|mark|george/i;
+    utterance.voice = voices.find((voice) => genderPattern.test(voice.name)) ?? voices[0] ?? null;
+    utterance.lang = language;
+    utterance.rate = Math.max(0.5, Math.min(1.2, rate));
+    utterance.pitch = Math.max(0.5, Math.min(2, pitch));
+    this.currentSource = source;
+    this.currentUtterance = utterance;
+    this.setStatus('loading');
+
+    utterance.onstart = () => {
+      if (requestId !== this.requestId) return;
+      this.setStatus('playing');
+      onStart?.();
+    };
+    utterance.onend = () => {
+      if (requestId !== this.requestId) return;
+      this.currentUtterance = null;
+      this.currentSource = null;
+      this.requestId += 1;
+      this.setStatus('idle');
+      onEnd?.();
+    };
+    utterance.onerror = (event) => {
+      if (requestId !== this.requestId) return;
+      this.currentUtterance = null;
+      this.finishWithError(
+        `تعذر تشغيل صوت Kokoro أو صوت الجهاز (${event.error}). تحقق من إعدادات الصوت وحاول مجددًا.`,
+        onError
+      );
+    };
+
+    try {
+      synthesis.speak(utterance);
+    } catch (error) {
+      this.currentUtterance = null;
+      this.finishWithError(
+        'تعذر بدء النطق على هذا الجهاز. تحقق من إعدادات الصوت وحاول مجددًا.',
+        onError
+      );
+      console.error('[speechService] Device speech fallback failed:', error);
+    }
   }
 
   private failPendingGenerations(error: Error) {
@@ -427,6 +542,8 @@ class SpeechService {
     accent = 'en-US',
     audioAssetUrl,
   }: SpeechOptions) {
+    if (this.preferBrowserSpeech) return;
+
     const cleanText = this.normalizeSpeechText(text);
     if (!cleanText) return;
 
@@ -478,11 +595,37 @@ class SpeechService {
       return;
     }
 
+    if (this.preferBrowserSpeech) {
+      this.playBrowserSpeech({
+        requestId: this.requestId,
+        source,
+        text: cleanText,
+        rate,
+        pitch,
+        gender,
+        accent,
+        onStart,
+        onEnd,
+        onError,
+        reason: new Error('Kokoro failed earlier in this session.'),
+      });
+      return;
+    }
+
     if (typeof WebAssembly === 'undefined' || typeof Audio === 'undefined') {
-      this.reportSpeechUnavailable(
-        'جهازك أو متصفحك لا يدعم تشغيل Kokoro المحلي. جرّب متصفحًا حديثًا وجهازًا بذاكرة كافية.',
-        onError
-      );
+      this.playBrowserSpeech({
+        requestId: this.requestId,
+        source,
+        text: cleanText,
+        rate,
+        pitch,
+        gender,
+        accent,
+        onStart,
+        onEnd,
+        onError,
+        reason: new Error('This browser does not support local Kokoro audio.'),
+      });
       return;
     }
 
@@ -492,10 +635,19 @@ class SpeechService {
       typeof navigator.deviceMemory === 'number' &&
       navigator.deviceMemory < 2
     ) {
-      this.reportSpeechUnavailable(
-        'قد لا تتوفر ذاكرة كافية لتشغيل نموذج Kokoro على هذا الجهاز. جرّب جهازًا أحدث بذاكرة 2 غيغابايت أو أكثر.',
-        onError
-      );
+      this.playBrowserSpeech({
+        requestId: this.requestId,
+        source,
+        text: cleanText,
+        rate,
+        pitch,
+        gender,
+        accent,
+        onStart,
+        onEnd,
+        onError,
+        reason: new Error('This device has less than 2 GB of memory available for Kokoro.'),
+      });
       return;
     }
 
@@ -537,21 +689,37 @@ class SpeechService {
         };
         audio.onerror = () => {
           if (requestId !== this.requestId) return;
-          this.finishWithError(
-            'تعذر تشغيل الصوت الناتج من Kokoro. تحقق من إعدادات الصوت وحاول مجددًا.',
-            onError
-          );
+          this.playBrowserSpeech({
+            requestId,
+            source,
+            text: cleanText,
+            rate: speed,
+            pitch,
+            gender,
+            accent,
+            onStart,
+            onEnd,
+            onError,
+            reason: new Error('The generated audio file could not be played.'),
+          });
         };
         await audio.play();
       })
       .catch((error: unknown) => {
         if (requestId !== this.requestId) return;
-        const message =
-          typeof navigator !== 'undefined' && !navigator.onLine
-            ? 'تعذر تحميل نموذج Kokoro دون اتصال. تنزيل النموذج يحتاج الإنترنت أول مرة؛ أعد المحاولة بعد الاتصال، ثم يمكن استخدام الملفات المحفوظة إذا بقيت في ذاكرة المتصفح.'
-            : 'تعذر تحميل نموذج Kokoro أو توليد الصوت. تحقق من اتصال الإنترنت ومساحة التخزين وتوافق جهازك، ثم حاول مجددًا.';
-        console.error('[speechService] Kokoro failed:', error);
-        this.finishWithError(message, onError);
+        this.playBrowserSpeech({
+          requestId,
+          source,
+          text: cleanText,
+          rate: speed,
+          pitch,
+          gender,
+          accent,
+          onStart,
+          onEnd,
+          onError,
+          reason: error,
+        });
       });
   }
 
