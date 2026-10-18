@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Search, Sparkles, Play, BookOpen, Clock, Heart, Lock, CheckCircle2, Trophy, Star, ArrowDown, Footprints } from 'lucide-react';
 import { Lesson, CategoryKey, UserProfile } from '../../types';
 import { CATEGORIES } from '../../data/lessons';
@@ -36,6 +36,7 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
   onSelectLesson,
   isPhoneFrameView,
 }) => {
+  const routeRef = useRef<HTMLDivElement>(null);
   const [selectedCategory, setSelectedCategory] = useState<CategoryKey | 'all'>('all');
   const [selectedLevel, setSelectedLevel] = useState<number | 'all'>('all');
   const [searchQuery, setSearchQuery] = useState('');
@@ -45,6 +46,10 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
   const path = getLearningPathState(lessons, userProfile);
   const selectedPhase = EDUCATIONAL_PHASES.find((phase) => phase.id === selectedPhaseId);
   const selectedSchoolYear = findSchoolYearRoute(selectedSchoolYearId);
+  useEffect(() => {
+    if (!selectedSchoolYearId) return;
+    routeRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, [selectedSchoolYearId]);
   const primaryYearRoutes = EDUCATIONAL_PHASES.find((phase) => phase.id === 'primary')?.years ?? [];
   const completedLessonIds = new Set(userProfile.completedLessonIds);
   const getPrimaryYearProgress = (yearId: string) => {
@@ -218,25 +223,27 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
               })}
             </div>
           ) : (
-            <div className="school-year-list">
+            <div className="school-year-list" aria-label="اسحب لاختيار السنة الدراسية">
               <div className="mb-2 flex items-center gap-2 text-xs font-black text-emerald-800"><selectedPhase.icon className="h-4 w-4" />{selectedPhase.titleAr}</div>
-              {selectedPhase.years.map((year) => {
-                const yearIsSelected = selectedSchoolYearId === year.id;
-                const primaryProgress = year.grade ? getPrimaryYearProgress(year.id) : null;
-                const unlocked = primaryProgress?.priorYearsComplete ?? year.stages.some((stage) => path.levels.find((level) => level.stage === stage)?.isUnlocked);
-                const progressLabel = primaryProgress
-                  ? `${primaryProgress.completed}/${primaryProgress.yearLessons.length} درسًا · ${unlocked ? 'متاح' : 'أكمل السنة السابقة أولًا'}`
-                  : unlocked ? 'متاح للمراجعة والتعلّم' : 'يُفتح بعد التقدم في المسار';
-                return <button key={year.id} type="button" disabled={!unlocked} onClick={() => setSelectedSchoolYearId(year.id)} className={`school-year-option ${yearIsSelected ? 'is-selected' : ''}`}>
-                  <span>{year.labelAr}</span><small>{progressLabel}</small>
-                </button>;
-              })}
+              <div className="school-year-options">
+                {selectedPhase.years.map((year) => {
+                  const yearIsSelected = selectedSchoolYearId === year.id;
+                  const primaryProgress = year.grade ? getPrimaryYearProgress(year.id) : null;
+                  const unlocked = primaryProgress?.priorYearsComplete ?? year.stages.some((stage) => path.levels.find((level) => level.stage === stage)?.isUnlocked);
+                  const progressLabel = primaryProgress
+                    ? `${primaryProgress.completed}/${primaryProgress.yearLessons.length} درسًا · ${unlocked ? 'متاح' : 'أكمل السنة السابقة أولًا'}`
+                    : unlocked ? 'متاح للمراجعة والتعلّم' : 'يُفتح بعد التقدم في المسار';
+                  return <button key={year.id} type="button" disabled={!unlocked} onClick={() => setSelectedSchoolYearId(year.id)} className={`school-year-option ${yearIsSelected ? 'is-selected' : ''}`}>
+                    <span>{year.labelAr}</span><small>{progressLabel}</small>
+                  </button>;
+                })}
+              </div>
               <p className="mt-2 text-[10px] leading-5 text-slate-500">{SCHOOL_YEAR_ALIGNMENT_NOTE}</p>
             </div>
           )}
         </section>
         {selectedSchoolYear && <div className="mt-4 flex items-center justify-between gap-2 rounded-xl bg-emerald-50 px-3 py-2 text-[11px] font-bold text-emerald-800"><span>{selectedSchoolYear.labelAr}</span><button type="button" onClick={() => setSelectedSchoolYearId(null)} className="underline">عرض المسار كاملًا</button></div>}
-        <div className="continuous-route relative mt-6" aria-label="مسار التعلم الكامل">
+        <div ref={routeRef} className="continuous-route relative mt-6" aria-label="مسار التعلم الكامل">
           <svg className="continuous-route-ribbon" viewBox={`0 0 100 ${routeHeight}`} preserveAspectRatio="none" aria-hidden="true">
             <path d={routePath} />
           </svg>
