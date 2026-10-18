@@ -6,6 +6,7 @@ import { CURRICULUM_CONFIG } from '../../data/curriculum';
 import { speechService } from '../../services/speechService';
 import { getLearningPathState } from '../../services/learningPath';
 import { LevelFinalExam } from '../quiz/LevelFinalExam';
+import { PremiumIcon } from '../icons/PremiumIcon';
 
 interface CategoriesTabProps {
   lessons: Lesson[];
@@ -80,14 +81,17 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
             <h2 className="mt-1 text-xl font-black text-white">تعلّم خطوة بخطوة</h2>
             <p className="mt-1 text-xs text-slate-400">50 درسًا في خمس مراحل، بمشاهد كرتونية متحركة من رسومات التطبيق (وليست مقاطع فيديو حقيقية).</p>
           </div>
-          <button
-            type="button"
-            onClick={() => onSelectLesson(path.nextLessonId)}
-            className="flex items-center gap-2 rounded-xl bg-sky-400 px-3 py-2.5 text-xs font-black text-slate-950 shadow-lg shadow-sky-500/15"
-          >
-            <Play className="h-4 w-4 fill-current" />
-            متابعة التعلم
-          </button>
+          <div className="flex items-center gap-3">
+            <PremiumIcon name="lesson" size={48} className="hidden sm:inline-flex" />
+            <button
+              type="button"
+              onClick={() => onSelectLesson(path.nextLessonId)}
+              className="flex items-center gap-2 rounded-xl bg-sky-400 px-3 py-2.5 text-xs font-black text-slate-950 shadow-lg shadow-sky-500/15"
+            >
+              <Play className="h-4 w-4 fill-current" />
+              متابعة التعلم
+            </button>
+          </div>
         </div>
         <div className="mt-4">
           <div className="mb-1.5 flex justify-between text-[11px] text-slate-300">

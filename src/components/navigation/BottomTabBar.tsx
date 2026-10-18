@@ -1,7 +1,8 @@
 import React from 'react';
-import { PlaySquare, Compass, BookOpen, Trophy, Settings, Flame } from 'lucide-react';
+import { Flame } from 'lucide-react';
 import { ActiveTab } from '../../types';
 import { speechService } from '../../services/speechService';
+import { PremiumIcon, type PremiumIconName } from '../icons/PremiumIcon';
 
 interface BottomTabBarProps {
   activeTab: ActiveTab;
@@ -20,31 +21,31 @@ export const BottomTabBar: React.FC<BottomTabBarProps> = ({
     {
       id: 'feed' as ActiveTab,
       labelAr: 'الرئيسية',
-      icon: PlaySquare,
+      icon: 'lesson' as PremiumIconName,
       badge: null,
     },
     {
       id: 'categories' as ActiveTab,
       labelAr: 'التصنيفات',
-      icon: Compass,
+      icon: 'categories' as PremiumIconName,
       badge: null,
     },
     {
       id: 'vocab' as ActiveTab,
       labelAr: 'الكلمات',
-      icon: BookOpen,
+      icon: 'vocabulary' as PremiumIconName,
       badge: savedWordsCount > 0 ? savedWordsCount : null,
     },
     {
       id: 'progress' as ActiveTab,
       labelAr: 'التقدم',
-      icon: Trophy,
+      icon: 'progress' as PremiumIconName,
       badge: userStreak > 0 ? userStreak : null,
     },
     {
       id: 'settings' as ActiveTab,
       labelAr: 'الإعدادات',
-      icon: Settings,
+      icon: 'settings' as PremiumIconName,
       badge: null,
     },
   ];
@@ -62,8 +63,6 @@ export const BottomTabBar: React.FC<BottomTabBarProps> = ({
       <div className="max-w-2xl mx-auto grid grid-cols-5 items-center h-16 px-2 sm:px-4">
         {tabs.map((tab) => {
           const isActive = activeTab === tab.id;
-          const Icon = tab.icon;
-
           return (
             <button
               key={tab.id}
@@ -72,11 +71,11 @@ export const BottomTabBar: React.FC<BottomTabBarProps> = ({
               aria-label={tab.labelAr}
             >
               <div className="relative">
-                <Icon
-                  className={`w-5 h-5 transition-colors ${
-                    isActive
-                      ? 'text-sky-400 stroke-[2.5]'
-                      : 'text-slate-400 group-hover:text-slate-200'
+                <PremiumIcon
+                  name={tab.icon}
+                  size={30}
+                  className={`transition-transform ${
+                    isActive ? 'scale-110 ring-2 ring-sky-300/40' : 'opacity-80 group-hover:scale-105 group-hover:opacity-100'
                   }`}
                 />
 

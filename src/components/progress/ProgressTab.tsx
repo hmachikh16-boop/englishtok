@@ -13,11 +13,11 @@ import {
   Crown,
   CheckCircle2,
   Lock,
-  type LucideIcon,
 } from 'lucide-react';
 import { UserProfile, Lesson } from '../../types';
 import { getUserRank } from '../../services/storageService';
 import { getLearningPathState } from '../../services/learningPath';
+import { PremiumIcon, type PremiumIconName } from '../icons/PremiumIcon';
 
 interface ProgressTabProps {
   userProfile: UserProfile;
@@ -30,7 +30,7 @@ interface Badge {
   id: string;
   titleAr: string;
   descriptionAr: string;
-  icon: LucideIcon;
+  icon: PremiumIconName;
   isUnlocked: boolean;
   progressText: string;
 }
@@ -68,7 +68,7 @@ export const ProgressTab: React.FC<ProgressTabProps> = ({
       id: 'b1',
       titleAr: 'أولى الخطوات',
       descriptionAr: 'شاهد أول فيديو تعليمي',
-      icon: PlayCircle,
+      icon: 'lesson',
       isUnlocked: totalWatched >= 1,
       progressText: `${Math.min(1, totalWatched)}/1`,
     },
@@ -76,7 +76,7 @@ export const ProgressTab: React.FC<ProgressTabProps> = ({
       id: 'b2',
       titleAr: 'شعلة الاستمرار',
       descriptionAr: 'سجّل التعلم في 3 أيام مختلفة؛ الانقطاع لا يمحو إنجازك',
-      icon: Flame,
+      icon: 'streak',
       isUnlocked: userProfile.streakDays >= 3,
       progressText: `${Math.min(3, userProfile.streakDays)}/3 أيام`,
     },
@@ -84,7 +84,7 @@ export const ProgressTab: React.FC<ProgressTabProps> = ({
       id: 'b3',
       titleAr: 'جامع المفردات',
       descriptionAr: 'احفظ 5 كلمات في بنك الكلمات',
-      icon: BookOpen,
+      icon: 'vocabulary',
       isUnlocked: totalSavedWords >= 5,
       progressText: `${Math.min(5, totalSavedWords)}/5 كلمات`,
     },
@@ -92,7 +92,7 @@ export const ProgressTab: React.FC<ProgressTabProps> = ({
       id: 'b4',
       titleAr: 'فارس الاختبارات',
       descriptionAr: 'أكمل اختبارين بنجاح',
-      icon: Target,
+      icon: 'target',
       isUnlocked: quizzesTaken >= 2,
       progressText: `${Math.min(2, quizzesTaken)}/2 اختبار`,
     },
@@ -100,7 +100,7 @@ export const ProgressTab: React.FC<ProgressTabProps> = ({
       id: 'b5',
       titleAr: 'خبير المقاهي',
       descriptionAr: 'أتقن درس طلب القهوة',
-      icon: Coffee,
+      icon: 'coffee',
       isUnlocked: userProfile.completedLessonIds.includes('lesson-cafe-01'),
       progressText: userProfile.completedLessonIds.includes('lesson-cafe-01') ? 'تم الإنجاز' : 'قيد التعلم',
     },
@@ -108,7 +108,7 @@ export const ProgressTab: React.FC<ProgressTabProps> = ({
       id: 'b6',
       titleAr: 'متحدث طليق',
       descriptionAr: 'اجمع 500 نقطة خبرة XP',
-      icon: Crown,
+      icon: 'crown',
       isUnlocked: userProfile.xp >= 500,
       progressText: `${Math.min(500, userProfile.xp)}/500 XP`,
     },
@@ -116,7 +116,7 @@ export const ProgressTab: React.FC<ProgressTabProps> = ({
       id: 'b7',
       titleAr: 'رحلة الخمسين',
       descriptionAr: 'أكمل جميع دروس المسار التعليمي',
-      icon: Award,
+      icon: 'award',
       isUnlocked: path.completedCount >= lessons.length,
       progressText: `${path.completedCount}/${lessons.length} درسًا`,
     },
@@ -131,9 +131,7 @@ export const ProgressTab: React.FC<ProgressTabProps> = ({
 
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
-            <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-amber-500 to-yellow-400 text-slate-950 flex items-center justify-center font-black text-2xl shadow-lg shadow-amber-500/20">
-              <Trophy className="w-7 h-7" />
-            </div>
+            <PremiumIcon name="trophy" size={56} />
             <div>
               <span className="text-[11px] font-bold text-sky-400 tracking-wider">
                 رتبة التعلّم الحالية
@@ -313,8 +311,6 @@ export const ProgressTab: React.FC<ProgressTabProps> = ({
 
         <div className="grid grid-cols-2 gap-3">
           {badges.map((badge) => {
-            const BadgeIcon = badge.icon;
-
             return (
               <div
                 key={badge.id}
@@ -324,15 +320,11 @@ export const ProgressTab: React.FC<ProgressTabProps> = ({
                     : 'bg-slate-900/40 border-slate-800 opacity-60'
                 }`}
               >
-              <div
-                className={`w-11 h-11 rounded-2xl flex items-center justify-center text-xl shrink-0 ${
-                  badge.isUnlocked
-                    ? 'bg-amber-500/20 text-amber-400'
-                    : 'bg-slate-800 text-slate-600 grayscale'
-                }`}
-              >
-                <BadgeIcon className="w-5 h-5" />
-              </div>
+              <PremiumIcon
+                name={badge.icon}
+                size={44}
+                className={badge.isUnlocked ? '' : 'grayscale opacity-50'}
+              />
 
                 <div className="overflow-hidden">
                   <h4 className="text-xs font-bold text-white truncate">
