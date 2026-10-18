@@ -95,6 +95,38 @@ export const saveProfile = (profile: UserProfile): void => {
 
 export const isValidProgressCode = (value: string): boolean => /^[A-Z]{3}\d{3}$/i.test(value.trim());
 
+export const validateProgressBackupProfile = (value: unknown): UserProfile | null => sanitizeProfile(value);
+
+export const saveCloudProgressBackup = async (backup: ProgressBackup): Promise<void> => {
+  const response = await fetch('/api/progress', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ code: backup.code, profile: backup.profile }),
+  });
+  if (response.status === 409) throw new Error('هذا الرمز مستخدم بالفعل. أنشئ رمزًا جديدًا ثم حاول مجددًا.');
+  if (response.status === 503) throw new Error('التخزين السحابي غير مهيأ بعد لهذا الموقع.');
+  if (!response.ok) throw new Error('تعذر حفظ النسخة على الخادم. تحقق من الاتصال ثم أعد المحاولة.');
+};
+
+export const getCloudProgressBackup = async (codeInput: string): Promise<ProgressBackup | null> => {
+  const code = codeInput.trim().toUpperCase();
+  if (!isValidProgressCode(code)) return null;
+  const response = await fetch(`/api/progress?code=${encodeURIComponent(code)}`, { cache: 'no-store' });
+  if (response.status === 404) return null;
+  if (response.status === 503) throw new Error('التخزين السحابي غير مهيأ بعد لهذا الموقع.');
+  if (!response.ok) throw new Error('تعذر البحث عن النسخة السحابية. تحقق من الاتصال ثم أعد المحاولة.');
+  const raw: unknown = await response.json();
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) throw new Error('استجابة النسخة السحابية غير صالحة.');
+  const record = raw as Record<string, unknown>;
+  const profile = sanitizeProfile(record.profile);
+  if (record.format !== PROGRESS_BACKUP_FORMAT || record.schemaVersion !== PROGRESS_BACKUP_SCHEMA_VERSION || record.code !== code || typeof record.createdAt !== 'string' || !profile) {
+    throw new Error('بيانات النسخة السحابية لا تطابق إصدار EnglishTok.');
+  }
+  const backup: ProgressBackup = { format: PROGRESS_BACKUP_FORMAT, schemaVersion: PROGRESS_BACKUP_SCHEMA_VERSION, code, createdAt: record.createdAt, profile };
+  writeProgressBackup(backup);
+  return backup;
+};
+
 const makeProgressCode = (): string => {
   const bytes = new Uint8Array(6);
   if (!globalThis.crypto?.getRandomValues) {

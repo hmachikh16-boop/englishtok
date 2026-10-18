@@ -4,12 +4,21 @@ import { resolve } from 'node:path';
 import process from 'node:process';
 import express from 'express';
 import { createServer as createViteServer } from 'vite';
+import progressHandler from './api/progress';
 
 const app = express();
 const httpServer = createServer(app);
 const isProduction =
   process.argv.includes('--production') || process.env.NODE_ENV === 'production';
 const distDirectory = resolve(process.cwd(), 'dist');
+
+app.use(express.json({ limit: '64kb' }));
+app.all('/api/progress', (request, response) => {
+  void progressHandler(
+    request as unknown as Parameters<typeof progressHandler>[0],
+    response as unknown as Parameters<typeof progressHandler>[1],
+  );
+});
 
 async function startServer() {
   if (isProduction) {

@@ -30,8 +30,10 @@ import { checkForAppUpdate, type AppUpdateManifest } from '../../services/appUpd
 import {
   createProgressBackup,
   getLocalProgressBackup,
+  getCloudProgressBackup,
   isValidProgressCode,
   parseProgressBackupFile,
+  saveCloudProgressBackup,
   type ProgressBackup,
 } from '../../services/storageService';
 
@@ -63,12 +65,11 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
   const [backupFile, setBackupFile] = useState<File | null>(null);
   const [backupMessage, setBackupMessage] = useState<string | null>(null);
 
-  const handleCreateProgressBackup = () => {
+  const handleCreateProgressBackup = async () => {
     try {
       const backup = createProgressBackup(userProfile);
       setCreatedBackup(backup);
       setProgressCode(backup.code);
-      setBackupMessage('تم حفظ التقدم وإنشاء ملف النسخة الاحتياطية. احتفظ بالملف والرمز معًا.');
       const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
       const anchor = document.createElement('a');
@@ -76,6 +77,12 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
       anchor.download = `englishtok-progress-${backup.code}.json`;
       anchor.click();
       window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+      try {
+        await saveCloudProgressBackup(backup);
+        setBackupMessage('تم حفظ التقدم في التخزين السحابي ويمكن استعادته على جهاز آخر بالرمز وحده خلال 90 يومًا. احتفظ بالملف أيضًا كنسخة إضافية.');
+      } catch (error) {
+        setBackupMessage(`تم إنشاء نسخة محلية وتنزيل ملفها، لكن لم تُرفع للسحابة؛ لن يعمل الرمز وحده على جهاز آخر. ${error instanceof Error ? error.message : ''}`);
+      }
     } catch (error) {
       setBackupMessage(error instanceof Error ? error.message : 'تعذر إنشاء النسخة الاحتياطية.');
     }
@@ -100,12 +107,21 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
     }
 
     try {
-      let backup = getLocalProgressBackup(normalizedCode);
+      let backup: ProgressBackup | null = null;
+      let cloudError: unknown = null;
+      try {
+        backup = await getCloudProgressBackup(normalizedCode);
+      } catch (error) {
+        cloudError = error;
+      }
+      if (!backup) backup = getLocalProgressBackup(normalizedCode);
       if (!backup && backupFile) {
         backup = parseProgressBackupFile(await backupFile.text(), normalizedCode);
       }
       if (!backup) {
-        setBackupMessage('لم نعثر على نسخة بهذا الرمز على هذا الجهاز. اختر ملف النسخة الاحتياطية المرتبط بالرمز.');
+        setBackupMessage(cloudError
+          ? `${cloudError instanceof Error ? cloudError.message : 'تعذر الاتصال بالتخزين السحابي.'} يمكنك اختيار ملف النسخة الاحتياطية بدلًا من ذلك.`
+          : 'لم نعثر على نسخة بهذا الرمز. تأكد من إعداد التخزين السحابي للموقع أو اختر ملف النسخة الاحتياطية المرتبط بالرمز.');
         return;
       }
 
@@ -388,7 +404,7 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
               حفظ واستعادة التقدم
             </h3>
             <p className="mt-2 text-xs leading-relaxed text-slate-300">
-              أنشئ رمزًا قصيرًا وملفًا يحتوي على نسخة من تقدمك. الرمز معرّف للنسخة وليس كلمة مرور؛ لا ينقل البيانات إلى جهاز آخر وحده. احتفظ بملف JSON وارفقه عند الاستعادة. لا تُرفع بياناتك إلى خادم.
+              ينشئ الرمز نسخة من تقدمك. عند إعداد التخزين السحابي للموقع يمكنك إدخاله وحده على جهاز آخر؛ وإلا يلزم نقل ملف JSON يدويًا. الرمز معرّف قصير وليس كلمة مرور أو وسيلة حماية.
             </p>
             <button type="button" onClick={handleCreateProgressBackup} className="mt-3 inline-flex min-h-10 items-center justify-center gap-2 rounded-xl bg-sky-400 px-4 py-2 text-xs font-black text-slate-950 transition hover:bg-sky-300 active:scale-[.98]">
               <Download className="h-4 w-4" />

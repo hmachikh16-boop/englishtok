@@ -47,6 +47,12 @@ Lesson data remains authored in `src/data/lessons.ts` and `src/data/curriculum.t
 
 Changes to the lesson data trigger the `Publish lesson content` workflow. It updates the rolling `content-latest` GitHub Release without creating an APK release. Apps fetch and validate that JSON on launch (and when the user requests a refresh), cache it separately from learner data, and keep the learner's progress/favorites in the existing local profile storage. If the repository has not published a content release or the network is unavailable, the app uses its bundled/cached lessons.
 
+## Cross-device progress backup
+
+The six-character progress code is a lookup key, not an account or a secret. To let a learner enter only that code on another device, the deployment needs shared Redis storage. Create an Upstash Redis database and configure the server-only `KV_REST_API_URL` and `KV_REST_API_TOKEN` environment variables in the deployment (the same names are supported by Vercel KV integrations). Vercel deploys `api/progress.ts` as the `/api/progress` function; local `npm run dev` serves the same endpoint. The function validates the profile, rate-limits requests by client IP in Redis, rejects duplicate codes, and expires snapshots after 90 days. No Redis credentials are sent to the browser.
+
+Without those environment variables, backups remain on the current device and the downloadable JSON file remains the manual transfer option; the app reports that cloud storage is unavailable instead of implying that a code can restore progress remotely. Progress snapshots contain learning data, not login credentials, and the short code should not be treated as authentication.
+
 ## What must be verified after GitHub setup
 
 The workflows cannot run until the project is pushed and the required repository secrets are configured. After setup, verify one successful Vercel production run, publish and install the first signed APK on Android, then publish a higher version with the same keystore and test Android's update confirmation. Also publish a lesson-only change and confirm it appears after content refresh without installing a new APK.
