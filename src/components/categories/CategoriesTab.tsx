@@ -8,6 +8,7 @@ import { getLearningPathState } from '../../services/learningPath';
 import { LevelFinalExam } from '../quiz/LevelFinalExam';
 import { PremiumIcon } from '../icons/PremiumIcon';
 import { LearningBuddy } from '../learning/LearningBuddy';
+import { EDUCATIONAL_PHASES, findSchoolYearRoute, SCHOOL_YEAR_ALIGNMENT_NOTE } from '../../data/educationalStructure';
 
 const StageChest: React.FC<{ earned: boolean }> = ({ earned }) => (
   <svg viewBox="0 0 48 48" className={`path-chest-art ${earned ? 'is-earned' : ''}`} aria-hidden="true">
@@ -39,14 +40,67 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
   const [selectedLevel, setSelectedLevel] = useState<number | 'all'>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [examStage, setExamStage] = useState<number | null>(null);
+  const [selectedPhaseId, setSelectedPhaseId] = useState<string | null>(null);
+  const [selectedSchoolYearId, setSelectedSchoolYearId] = useState<string | null>(null);
   const path = getLearningPathState(lessons, userProfile);
+  const selectedPhase = EDUCATIONAL_PHASES.find((phase) => phase.id === selectedPhaseId);
+  const selectedSchoolYear = findSchoolYearRoute(selectedSchoolYearId);
+  const primaryYearRoutes = EDUCATIONAL_PHASES.find((phase) => phase.id === 'primary')?.years ?? [];
+  const completedLessonIds = new Set(userProfile.completedLessonIds);
+  const getPrimaryYearProgress = (yearId: string) => {
+    const yearLessons = lessons.filter((lesson) => lesson.schoolYearId === yearId);
+    const completed = yearLessons.filter((lesson) => completedLessonIds.has(lesson.id)).length;
+    const yearIndex = primaryYearRoutes.findIndex((year) => year.id === yearId);
+    const priorYearsComplete = yearIndex <= 0 || primaryYearRoutes.slice(0, yearIndex).every((year) => {
+      const priorLessons = lessons.filter((lesson) => lesson.schoolYearId === year.id);
+      return priorLessons.length === 50 && priorLessons.every((lesson) => completedLessonIds.has(lesson.id));
+    });
+    return { yearLessons, completed, priorYearsComplete };
+  };
+  const getLessonStatus = (lesson: Lesson) => {
+    if (!lesson.schoolYearId) return path.lessonStatusById.get(lesson.id);
+    const { yearLessons, priorYearsComplete } = getPrimaryYearProgress(lesson.schoolYearId);
+    if (completedLessonIds.has(lesson.id)) return 'completed';
+    if (!priorYearsComplete) return 'locked';
+    const lessonIndex = yearLessons.findIndex((entry) => entry.id === lesson.id);
+    return yearLessons.slice(0, lessonIndex).every((entry) => completedLessonIds.has(entry.id)) ? 'current' : 'locked';
+  };
+  const visibleLevels = (() => {
+    if (selectedSchoolYear?.grade) {
+      const { yearLessons, completed, priorYearsComplete } = getPrimaryYearProgress(selectedSchoolYear.id);
+      const baseLevel = path.levels.find((level) => level.stage === selectedSchoolYear.grade);
+      if (!baseLevel) return [];
+      let foundCurrent = false;
+      const entries = yearLessons.map((lesson) => {
+        const isComplete = completedLessonIds.has(lesson.id);
+        const status = isComplete ? 'completed' as const
+          : !priorYearsComplete || foundCurrent ? 'locked' as const
+            : (foundCurrent = true, 'current' as const);
+        return { lesson, status };
+      });
+      return [{
+        ...baseLevel,
+        titleAr: selectedSchoolYear.labelAr,
+        subtitleAr: `${yearLessons.length} درسًا بتدرّج مناسب لهذه السنة`,
+        lessons: entries,
+        completedCount: completed,
+        isUnlocked: priorYearsComplete,
+        canTakeExam: false,
+        examPassed: false,
+      }];
+    }
+    return selectedSchoolYear
+      ? path.levels.filter((level) => selectedSchoolYear.stages.includes(level.stage))
+      : path.levels;
+  })();
+  const isPrimarySchoolYear = Boolean(selectedSchoolYear?.grade);
   const today = new Date().toISOString().slice(0, 10);
   const dailyLessonCount = userProfile.dailyProgress.date === today ? userProfile.dailyProgress.completedLessonIds.length : 0;
   const dailyGoal = Math.max(1, userProfile.dailyGoalLessons);
-  const routeRows = path.levels.flatMap((level) => [
+  const routeRows = visibleLevels.flatMap((level) => [
     { type: 'unit' as const, level },
     ...level.lessons.map((entry, index) => ({ type: 'lesson' as const, level, entry, index })),
-    { type: 'exam' as const, level },
+    ...(!isPrimarySchoolYear ? [{ type: 'exam' as const, level }] : []),
   ]);
   let routeCursor = 0;
   const routeNodes = routeRows.flatMap((row) => {
@@ -58,7 +112,7 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
     routeCursor += 112;
     return [positioned];
   });
-  const routeHeight = path.levels.reduce((height, level) => height + 82 + (level.lessons.length + 1) * 112, 0);
+  const routeHeight = visibleLevels.reduce((height, level) => height + 82 + (level.lessons.length + (isPrimarySchoolYear ? 0 : 1)) * 112, 0);
   const routeShifts = [0, 30, 44, 30, 0, -30, -44, -30, 0, 30];
   const routePath = routeNodes.map((node, nodeIndex) => {
     const x = 50 + (routeShifts[nodeIndex % routeShifts.length] * 100) / 470;
@@ -85,7 +139,8 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
   });
 
   const handleCardClick = (id: string) => {
-    if (path.lessonStatusById.get(id) === 'locked') return;
+    const lesson = lessons.find((entry) => entry.id === id);
+    if (lesson && getLessonStatus(lesson) === 'locked') return;
     speechService.playPop();
     onSelectLesson(id);
   };
@@ -123,7 +178,7 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
           <div className="path-hero-copy">
             <p className="flex items-center gap-2 text-xs font-black text-teal-200"><span className="h-2 w-2 rounded-full bg-lime-300 shadow-[0_0_14px_#bef264]" /> رحلتك في EnglishTok</p>
             <h2 className="mt-2 text-2xl font-black tracking-tight text-white sm:text-3xl">كل يوم، خطوة أقرب للطلاقة</h2>
-            <p className="mt-2 max-w-lg text-xs leading-6 text-slate-300">{path.levels.length} مراحل و{path.totalLessons} درسًا بمواقف واقعية. واصل من حيث توقفت واجمع XP مع كل إنجاز.</p>
+            <p className="mt-2 max-w-lg text-xs leading-6 text-slate-300">{path.levels.length} مراحل و{path.totalLessons} درسًا في المسار العام، إضافة إلى 250 درسًا متدرجًا للسنوات الابتدائية الخمس.</p>
           </div>
           <div className="path-hero-summary flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.06] px-4 py-3">
             <LearningBuddy message="يلا نتعلم!" />
@@ -138,11 +193,46 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
           <div className="min-w-0 flex-1"><div className="flex justify-between gap-2 text-[10px] font-black"><span>هدف اليوم</span><span>{dailyLessonCount}/{dailyGoal} دروس</span></div><div className="daily-goal-track mt-1.5 h-1.5 overflow-hidden rounded-full"><div className="daily-goal-fill h-full rounded-full transition-[width] duration-500" style={{ width: `${Math.min(100, (dailyLessonCount / dailyGoal) * 100)}%` }} /></div></div>
           {dailyLessonCount >= dailyGoal && <span className="daily-goal-done"><CheckCircle2 className="h-4 w-4" /> اكتمل</span>}
         </div>
+        <section className="school-phase-explorer mt-5" aria-labelledby="school-phase-title">
+          <div className="mb-3 flex items-start justify-between gap-3">
+            <div><h3 id="school-phase-title" className="text-sm font-black text-slate-800">التعلّم حسب الطور الدراسي</h3><p className="mt-1 text-[10px] leading-5 text-slate-500">اختر طورًا وسنة لعرض وحدات المحتوى المرتبطة بها.</p></div>
+            {selectedPhase && <button type="button" onClick={() => { setSelectedPhaseId(null); setSelectedSchoolYearId(null); }} className="school-phase-back">كل الأطوار</button>}
+          </div>
+          {!selectedPhase ? (
+            <div className="school-phase-grid">
+              {EDUCATIONAL_PHASES.map((phase) => {
+                const PhaseIcon = phase.icon;
+                return <button key={phase.id} type="button" onClick={() => { setSelectedPhaseId(phase.id); setSelectedSchoolYearId(null); }} className="school-phase-card">
+                  <span className="school-phase-icon"><PhaseIcon className="h-5 w-5" /></span>
+                  <span className="min-w-0 flex-1"><strong>{phase.titleAr}</strong><small>{phase.subtitleAr}</small></span>
+                  <span className="school-phase-count">{phase.years.length} {phase.years.length === 1 ? 'مسار' : 'سنوات'}</span>
+                </button>;
+              })}
+            </div>
+          ) : (
+            <div className="school-year-list">
+              <div className="mb-2 flex items-center gap-2 text-xs font-black text-emerald-800"><selectedPhase.icon className="h-4 w-4" />{selectedPhase.titleAr}</div>
+              {selectedPhase.years.map((year) => {
+                const yearIsSelected = selectedSchoolYearId === year.id;
+                const primaryProgress = year.grade ? getPrimaryYearProgress(year.id) : null;
+                const unlocked = primaryProgress?.priorYearsComplete ?? year.stages.some((stage) => path.levels.find((level) => level.stage === stage)?.isUnlocked);
+                const progressLabel = primaryProgress
+                  ? `${primaryProgress.completed}/${primaryProgress.yearLessons.length} درسًا · ${unlocked ? 'متاح' : 'أكمل السنة السابقة أولًا'}`
+                  : unlocked ? 'متاح للمراجعة والتعلّم' : 'يُفتح بعد التقدم في المسار';
+                return <button key={year.id} type="button" disabled={!unlocked} onClick={() => setSelectedSchoolYearId(year.id)} className={`school-year-option ${yearIsSelected ? 'is-selected' : ''}`}>
+                  <span>{year.labelAr}</span><small>{progressLabel}</small>
+                </button>;
+              })}
+              <p className="mt-2 text-[10px] leading-5 text-slate-500">{SCHOOL_YEAR_ALIGNMENT_NOTE}</p>
+            </div>
+          )}
+        </section>
+        {selectedSchoolYear && <div className="mt-4 flex items-center justify-between gap-2 rounded-xl bg-emerald-50 px-3 py-2 text-[11px] font-bold text-emerald-800"><span>{selectedSchoolYear.labelAr}</span><button type="button" onClick={() => setSelectedSchoolYearId(null)} className="underline">عرض المسار كاملًا</button></div>}
         <div className="continuous-route relative mt-6" aria-label="مسار التعلم الكامل">
           <svg className="continuous-route-ribbon" viewBox={`0 0 100 ${routeHeight}`} preserveAspectRatio="none" aria-hidden="true">
             <path d={routePath} />
           </svg>
-          {path.levels.map((level) => {
+          {visibleLevels.map((level) => {
             const locked = !level.isUnlocked;
             const color = [
               'from-lime-300 to-emerald-300', 'from-emerald-300 to-green-300',
@@ -152,7 +242,7 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
             const examNodeClass = level.examPassed ? 'is-complete' : level.canTakeExam ? 'is-current' : 'is-locked';
             return <div key={level.stage} data-stage={level.stage} className={`path-stage continuous-route-unit ${locked ? 'is-stage-locked' : ''}`}>
               <div className="path-stage-heading flex flex-wrap items-center justify-between gap-2">
-                <div><div className="flex items-center gap-2 text-sm font-black text-white"><span className={`flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br ${color} text-slate-950`}>{locked ? <Lock className="h-4 w-4" /> : level.stage}</span> المرحلة {level.stage} <span className="text-teal-100">· {level.titleAr}</span></div><p className="mt-1 text-[10px] text-slate-400">{level.subtitleAr}</p></div>
+                <div><div className="flex items-center gap-2 text-sm font-black text-white"><span className={`flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br ${color} text-slate-950`}>{locked ? <Lock className="h-4 w-4" /> : level.stage}</span>{isPrimarySchoolYear ? level.titleAr : <>المرحلة {level.stage} <span className="text-teal-100">· {level.titleAr}</span></>}</div><p className="mt-1 text-[10px] text-slate-400">{level.subtitleAr}</p></div>
                 <span className="rounded-full bg-white/[0.06] px-3 py-1 text-[10px] font-bold text-slate-300">{level.completedCount}/{level.lessons.length} درس</span>
               </div>
               <div className="path-nodes continuous-route-nodes" aria-label={`دروس المرحلة ${level.stage}`}>
@@ -174,7 +264,7 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
                     </button>
                   </React.Fragment>;
                 })}
-                <button
+                {!isPrimarySchoolYear && <button
                   type="button"
                   disabled={!level.canTakeExam}
                   onClick={() => setExamStage(level.stage)}
@@ -186,7 +276,7 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
                   <span className="path-node-title">اختبار المرحلة</span>
                   {level.examPassed && <span className="path-node-hint exam-earned-hint"><CheckCircle2 className="h-3 w-3" /> اجتزت الاختبار</span>}
                   {level.canTakeExam && !level.examPassed && <span className="path-node-hint"><Play className="h-3 w-3 fill-current" /> اختبر نفسك</span>}
-                </button>
+                </button>}
               </div>
               <div className="continuous-unit-progress"><span className="continuous-unit-progress-fill" style={{ width: `${level.lessons.length ? (level.completedCount / level.lessons.length) * 100 : 0}%` }} /></div>
             </div>;

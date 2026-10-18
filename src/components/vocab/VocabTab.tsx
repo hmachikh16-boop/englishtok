@@ -242,9 +242,9 @@ export const VocabTab: React.FC<VocabTabProps> = ({
                 <h3 dir="ltr" className="text-2xl font-black text-white font-en tracking-wide">
                   {currentCard.word}
                 </h3>
-                <span dir="ltr" className="text-xs font-mono-num text-sky-300 font-en">
+                {currentCard.phonetic && <span dir="ltr" className="text-xs font-mono-num text-sky-300 font-en">
                   {currentCard.phonetic}
-                </span>
+                </span>}
                 <span className="text-[11px] text-slate-400">
                   {currentCard.partOfSpeech}
                 </span>
@@ -341,10 +341,9 @@ export const VocabTab: React.FC<VocabTabProps> = ({
                           {vocab.word}
                         </h4>
                         <div className="flex items-center gap-1.5 text-[11px] text-slate-400">
-                          <span className="font-mono-num text-sky-300 font-en">
+                          {vocab.phonetic && <><span className="font-mono-num text-sky-300 font-en">
                             {vocab.phonetic}
-                          </span>
-                          <span>·</span>
+                          </span><span>·</span></>}
                           <span className="text-slate-500">{vocab.partOfSpeech}</span>
                         </div>
                         {isUnderReview && <span className="mt-1 inline-block rounded-full bg-rose-500/10 px-2 py-0.5 text-[10px] font-bold text-rose-300">مراجعة من اختبار</span>}

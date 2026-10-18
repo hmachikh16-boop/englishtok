@@ -86,6 +86,7 @@ export interface Lesson {
   category: CategoryKey;
   level: Level;
   curriculumStage?: number;
+  schoolYearId?: string;
   sceneType: SceneType;
   characterA: Character;
   characterB: Character;
@@ -118,12 +119,37 @@ export interface UserProfile {
   reviewWordIds: string[];
   quizScores: Record<string, number>; // lessonId -> score percent
   levelExamResults: Record<string, LevelExamResult>;
+  placementAssessment?: PlacementAssessmentState;
   dailyGoalLessons: number;
   dailyProgress: {
     date: string;
     completedLessonIds: string[];
   };
   settings: UserSettings;
+}
+
+export interface PlacementStageResult {
+  stage: number;
+  correct: number;
+  total: number;
+  passed: boolean;
+}
+
+export interface PlacementAssessmentResult {
+  completedAt: string;
+  correctCount: number;
+  answeredCount: number;
+  scorePercent: number;
+  suggestedStage: number;
+  skillCoverage: string[];
+  stages: PlacementStageResult[];
+}
+
+export interface PlacementAssessmentState {
+  schemaVersion: 1;
+  startedAt: string;
+  answers: Record<string, string>;
+  result?: PlacementAssessmentResult;
 }
 
 export interface LevelExamResult {

@@ -10,6 +10,7 @@ import type {
 import { INITIAL_LESSONS } from './lessons';
 import { getArabicCharacterName } from './characterNames';
 import { ADDITIONAL_LESSON_SPECS } from './additionalCurriculum';
+import { PRIMARY_CURRICULUM_UNITS, type PrimaryCurriculumUnit } from './primaryCurriculum';
 
 type LessonSeed = {
   id: string;
@@ -24,7 +25,31 @@ type LessonSeed = {
   lines: [string, string][];
   words: [string, string, string, string, string][];
   learningNoteAr?: string;
+  schoolYearId?: string;
 };
+
+interface PrimaryLessonSpec {
+  id: string;
+  grade: 1 | 2 | 3 | 4 | 5;
+  schoolYearId: string;
+  unit: PrimaryCurriculumUnit;
+  focus: string;
+  translationAr: string;
+  relatedWords: [string, string][];
+}
+
+const PRIMARY_LESSON_SPECS: PrimaryLessonSpec[] = PRIMARY_CURRICULUM_UNITS.flatMap((unit) => {
+  const unitNumber = PRIMARY_CURRICULUM_UNITS.filter((candidate) => candidate.grade === unit.grade).indexOf(unit) + 1;
+  return unit.words.map(([focus, translationAr], wordIndex) => ({
+    id: `primary-${unit.grade}-${String(unitNumber).padStart(2, '0')}-${String(wordIndex + 1).padStart(2, '0')}`,
+    grade: unit.grade,
+    schoolYearId: `primary-${unit.grade}`,
+    unit,
+    focus,
+    translationAr,
+    relatedWords: [1, 2].map((offset) => unit.words[(wordIndex + offset) % unit.words.length]),
+  }));
+});
 
 const seeds: LessonSeed[] = [
   {
@@ -795,6 +820,56 @@ const speakers = (id: string, people: [string, string], stage: number): [Charact
   ];
 };
 
+const fillFocus = (template: string, focus: string) => template.replaceAll('{focus}', focus);
+const primaryLessons: Lesson[] = PRIMARY_LESSON_SPECS.map((spec) => {
+  const people = speakers(spec.id, ['Lina', 'Omar'], spec.grade);
+  const vocabulary = [
+    [spec.focus, spec.translationAr],
+    ...spec.relatedWords,
+  ].map(([word, translationAr], index): VocabularyWord => {
+    const exampleSentence = fillFocus(spec.unit.responseEn, word);
+    const exampleSentenceAr = fillFocus(spec.unit.responseAr, translationAr);
+    return {
+      id: `${spec.id}-v${index + 1}`,
+      word,
+      phonetic: '',
+      partOfSpeech: 'كلمة أو عبارة',
+      translationAr,
+      exampleSentence,
+      exampleSentenceAr,
+    };
+  });
+  const exampleEn = fillFocus(spec.unit.responseEn, spec.focus);
+  const exampleAr = fillFocus(spec.unit.responseAr, spec.translationAr);
+  const dialogue: DialogueLine[] = [
+    { id: `${spec.id}-s01`, speakerId: people[0].id, textEn: spec.unit.promptEn, textAr: spec.unit.promptAr, durationSec: 3, emotion: 'curious' },
+    { id: `${spec.id}-s02`, speakerId: people[1].id, textEn: exampleEn, textAr: exampleAr, durationSec: Math.max(2.5, exampleEn.split(/\s+/).length * 0.34), emotion: 'explaining', highlightWords: [spec.focus] },
+    { id: `${spec.id}-s03`, speakerId: people[0].id, textEn: 'Can you say it once more?', textAr: 'هل تستطيع قولها مرة أخرى؟', durationSec: 2.8, emotion: 'curious' },
+    { id: `${spec.id}-s04`, speakerId: people[1].id, textEn: exampleEn, textAr: exampleAr, durationSec: Math.max(2.5, exampleEn.split(/\s+/).length * 0.34), emotion: 'happy', highlightWords: [spec.focus] },
+  ];
+  return {
+    id: spec.id,
+    slug: spec.id,
+    title: `${spec.unit.titleEn}: ${spec.focus}`,
+    titleAr: `${spec.unit.titleAr}: ${spec.translationAr}`,
+    descriptionAr: spec.unit.descriptionAr,
+    learningNoteAr: spec.unit.learningNoteAr,
+    category: spec.unit.category,
+    level: spec.grade <= 3 ? 'A1' : 'A2',
+    curriculumStage: spec.grade,
+    schoolYearId: spec.schoolYearId,
+    sceneType: spec.unit.scene,
+    characterA: people[0],
+    characterB: people[1],
+    dialogue,
+    vocabulary,
+    quiz: [],
+    likesCount: 0,
+    sharesCount: 0,
+    savedCount: 0,
+  };
+});
+
 const learningNotes: Record<string, string> = {
   'path-l1-01': 'استمع إلى صوت الحركة في الكلمة كاملة، ولا تعتمد على اسم الحرف وحده؛ فصوت a في apple قصير.',
   'path-l1-02': 'تُستخدم Good morning صباحًا، أما See you later فهي طريقة ودية غير رسمية للوداع.',
@@ -886,6 +961,7 @@ const generatedLessons: Lesson[] = seeds.map((seed) => {
     category: seed.category,
     level: seed.level,
     curriculumStage: seed.stage,
+    schoolYearId: seed.schoolYearId,
     sceneType: seed.scene,
     characterA: people[0],
     characterB: people[1],
@@ -898,7 +974,8 @@ const generatedLessons: Lesson[] = seeds.map((seed) => {
   };
 });
 
-const generatedById = new Map(generatedLessons.map((lesson) => [lesson.id, lesson]));
+const allGeneratedLessons = [...generatedLessons, ...primaryLessons];
+const generatedById = new Map(allGeneratedLessons.map((lesson) => [lesson.id, lesson]));
 const legacyById = new Map(
   INITIAL_LESSONS.map((lesson) => [
     lesson.id,
@@ -907,7 +984,7 @@ const legacyById = new Map(
 );
 const lessonById = new Map([...legacyById, ...generatedById]);
 
-const allVocabulary = [...INITIAL_LESSONS.flatMap((lesson) => lesson.vocabulary), ...generatedLessons.flatMap((lesson) => lesson.vocabulary)];
+const allVocabulary = [...INITIAL_LESSONS.flatMap((lesson) => lesson.vocabulary), ...allGeneratedLessons.flatMap((lesson) => lesson.vocabulary)];
 
 const createLessonQuiz = (lesson: Lesson, seed?: LessonSeed) => {
   const vocabulary = lesson.vocabulary;
@@ -962,7 +1039,7 @@ const createLessonQuiz = (lesson: Lesson, seed?: LessonSeed) => {
   ];
 };
 
-const generatedWithQuizzes = generatedLessons.map((lesson) => ({
+const generatedWithQuizzes = allGeneratedLessons.map((lesson) => ({
   ...lesson,
   quiz: createLessonQuiz(lesson, seeds.find((seed) => seed.id === lesson.id)),
 }));
@@ -981,7 +1058,7 @@ for (const lesson of legacyWithStages) {
 
 export const CURRICULUM_CONFIG = {
   passingScorePercent: 80,
-  expectedLessonCount: 150,
+  expectedLessonCount: 400,
 } as const;
 
 export const CURRICULUM_LEVELS = [
@@ -994,12 +1071,17 @@ export const CURRICULUM_LEVELS = [
   { stage: 7, titleAr: 'الإتقان المتقدم', subtitleAr: 'الفروق الدقيقة والسجل الرسمي والتعبيرات الاصطلاحية', color: 'rose' },
 ] as const;
 
-export const LEARNING_PATH_LESSONS: Lesson[] = Object.values(stageOrder).flatMap((ids) =>
+const coreLearningPathLessons: Lesson[] = Object.values(stageOrder).flatMap((ids) =>
   ids.map((id) => {
     const lesson = completeLessonById.get(id) ?? lessonById.get(id);
     if (!lesson) throw new Error(`Curriculum lesson is missing: ${id}`);
     return lesson;
   })
 );
+
+export const LEARNING_PATH_LESSONS: Lesson[] = [
+  ...coreLearningPathLessons,
+  ...generatedWithQuizzes.filter((lesson) => Boolean(lesson.schoolYearId)),
+];
 
 export const curriculumLessonSeeds = seeds;

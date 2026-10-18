@@ -1,6 +1,6 @@
 import type { Lesson } from '../types';
 
-const CONTENT_CACHE_KEY = 'englishtok_learning_path_content_v1';
+const CONTENT_CACHE_KEY = 'englishtok_learning_path_content_v2';
 const CONTENT_RELEASE_TAG = 'content-latest';
 const GITHUB_REPOSITORY = import.meta.env.VITE_GITHUB_REPOSITORY;
 
@@ -63,10 +63,16 @@ const isLessonList = (value: unknown): value is Lesson[] =>
   new Set(value.map((lesson) => (isRecord(lesson) ? lesson.id : null))).size === value.length;
 
 const parseContent = (value: unknown): Lesson[] | null => {
-  if (!isRecord(value) || value.schemaVersion !== 1 || !isLessonList(value.lessons)) {
+  if (!isRecord(value) || value.schemaVersion !== 2) {
     return null;
   }
-  return value.lessons;
+  const lessons = value.lessons;
+  if (!isLessonList(lessons)) return null;
+  const hasCompletePrimaryTracks = [1, 2, 3, 4, 5].every((grade) =>
+    lessons.filter((lesson) => lesson.schoolYearId === `primary-${grade}`).length === 50,
+  );
+  if (!hasCompletePrimaryTracks) return null;
+  return lessons;
 };
 
 export const getCachedLearningPath = (): Lesson[] | null => {
@@ -85,7 +91,7 @@ const saveContent = (lessons: Lesson[]) => {
   try {
     window.localStorage.setItem(
       CONTENT_CACHE_KEY,
-      JSON.stringify({ schemaVersion: 1, lessons }),
+      JSON.stringify({ schemaVersion: 2, lessons }),
     );
   } catch (error) {
     console.warn('Unable to cache the latest EnglishTok lesson content:', error);

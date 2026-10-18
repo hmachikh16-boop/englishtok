@@ -33,15 +33,26 @@ export const getLearningPathState = (
   lessons: Lesson[],
   profile: UserProfile
 ): LearningPathState => {
+  // School-year lessons have their own five-course prerequisite sequence in
+  // the primary-school explorer. Keep them out of the seven existing English
+  // stages so adding a school course cannot invalidate old exam results.
+  const pathLessons = lessons.filter((lesson) => !lesson.schoolYearId);
   const completedIds = new Set(profile.completedLessonIds);
+  const pathLessonIds = new Set(pathLessons.map((lesson) => lesson.id));
+  const pathCompletedCount = [...completedIds].filter((id) => pathLessonIds.has(id)).length;
   const examResults = profile.levelExamResults ?? {};
+  const recommendedStartStage = Math.min(
+    CURRICULUM_LEVELS.length,
+    Math.max(1, profile.placementAssessment?.result?.suggestedStage ?? 1),
+  );
   let previousStagePassed = true;
   const lessonStatusById = new Map<string, LessonPathStatus>();
 
   const levels = CURRICULUM_LEVELS.map((level) => {
-    const stageLessons = lessons.filter((lesson) => lesson.curriculumStage === level.stage);
+    const stageLessons = pathLessons.filter((lesson) => lesson.curriculumStage === level.stage);
     const completedCount = stageLessons.filter((lesson) => completedIds.has(lesson.id)).length;
-    const isUnlocked = level.stage === 1 || previousStagePassed;
+    const isBeforeRecommendedStart = level.stage < recommendedStartStage;
+    const isUnlocked = isBeforeRecommendedStart || level.stage === recommendedStartStage || previousStagePassed;
     const canTakeExam = stageLessons.length > 0 && completedCount === stageLessons.length;
     const examResult = examResults[String(level.stage)];
     const examPassed = examResult?.passed === true;
@@ -61,7 +72,7 @@ export const getLearningPathState = (
       return { lesson, status };
     });
 
-    previousStagePassed = canTakeExam && examPassed;
+    previousStagePassed = isBeforeRecommendedStart || (canTakeExam && examPassed);
     return {
       stage: level.stage,
       titleAr: level.titleAr,
@@ -75,20 +86,24 @@ export const getLearningPathState = (
     };
   });
 
-  const accessibleLessons = lessons.filter((lesson) => {
+  const accessibleLessons = pathLessons.filter((lesson) => {
     const status = lessonStatusById.get(lesson.id);
     return status === 'completed' || status === 'current' || status === 'available';
   });
+  const recommendedLessons = accessibleLessons.filter((lesson) => (lesson.curriculumStage ?? 1) >= recommendedStartStage);
   const nextLesson =
-    accessibleLessons.find((lesson) => !completedIds.has(lesson.id)) ?? accessibleLessons[0] ?? lessons[0];
+    recommendedLessons.find((lesson) => !completedIds.has(lesson.id)) ??
+    recommendedLessons[0] ??
+    accessibleLessons.find((lesson) => !completedIds.has(lesson.id)) ??
+    accessibleLessons[0] ?? lessons[0];
 
   return {
     levels,
     lessonStatusById,
     accessibleLessons,
     nextLessonId: nextLesson.id,
-    completedCount: completedIds.size,
-    totalLessons: lessons.length,
+    completedCount: pathCompletedCount,
+    totalLessons: pathLessons.length,
   };
 };
 
