@@ -507,8 +507,10 @@ button.journey-frame-toggle:hover { border-color: #d9f99d; color: #1e5900; }
   .journey-stats .topbar-language-code { font-size: 8px; }
   .journey-home { padding: 12px; gap: 14px; }
   .path-hero { padding: 14px; border-radius: 24px; }
-  .path-hero > .relative:first-of-type { padding-inline: 0; }
-  .path-hero > .relative:first-of-type > div:first-child { align-items: flex-start; }
+  .path-hero-intro { min-width: 0; width: 100%; align-items: flex-start; gap: 12px; }
+  .path-hero-copy { min-width: 0; width: 100%; }
+  .path-hero-summary { box-sizing: border-box; width: 100%; min-width: 0; flex-wrap: wrap; justify-content: space-between; gap: 8px; padding: 10px; }
+  .path-hero-summary > button { box-sizing: border-box; width: 100%; min-width: 0; min-height: 42px; flex: 1 0 100%; justify-content: center; margin: 0; padding: 9px 12px; white-space: nowrap; }
   .path-hero .path-stage { padding: 0; border-radius: 0; }
   .path-hero .path-stage-heading { margin: 0; min-height: 74px; padding: 11px 12px; border-radius: 17px; }
   .path-node { flex-basis: 106px; }

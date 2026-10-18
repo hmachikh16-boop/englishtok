@@ -119,13 +119,13 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
     <div className={`journey-home w-full h-full max-w-4xl mx-auto overflow-y-auto no-scrollbar p-4 sm:p-6 text-slate-100 flex flex-col gap-5 ${isPhoneFrameView ? 'is-phone-frame' : ''}`}>
       <section className="path-hero relative overflow-hidden rounded-[2rem] border border-teal-200/10 p-5 shadow-2xl sm:p-7" dir="rtl">
         <div className="pointer-events-none absolute -left-16 -top-20 h-64 w-64 rounded-full bg-cyan-300/10 blur-3xl" />
-        <div className="relative flex flex-wrap items-center justify-between gap-4">
-          <div>
+        <div className="path-hero-intro relative flex flex-wrap items-center justify-between gap-4">
+          <div className="path-hero-copy">
             <p className="flex items-center gap-2 text-xs font-black text-teal-200"><span className="h-2 w-2 rounded-full bg-lime-300 shadow-[0_0_14px_#bef264]" /> رحلتك في EnglishTok</p>
             <h2 className="mt-2 text-2xl font-black tracking-tight text-white sm:text-3xl">كل يوم، خطوة أقرب للطلاقة</h2>
             <p className="mt-2 max-w-lg text-xs leading-6 text-slate-300">{path.levels.length} مراحل و{path.totalLessons} درسًا بمواقف واقعية. واصل من حيث توقفت واجمع XP مع كل إنجاز.</p>
           </div>
-          <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.06] px-4 py-3">
+          <div className="path-hero-summary flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.06] px-4 py-3">
             <LearningBuddy message="يلا نتعلم!" />
             <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-lime-300 text-slate-950"><Sparkles className="h-5 w-5" /></div>
             <div><div className="text-lg font-black text-white">{path.completedCount}<span className="text-slate-400">/{path.totalLessons}</span></div><div className="text-[10px] text-slate-300">درس مكتمل</div></div>
