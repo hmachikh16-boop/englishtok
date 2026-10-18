@@ -136,7 +136,7 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
   };
 
   return (
-    <div className="w-full h-full max-w-4xl mx-auto overflow-y-auto no-scrollbar p-4 sm:p-6 text-slate-100 flex flex-col gap-5">
+    <div className="journey-secondary w-full h-full max-w-4xl mx-auto overflow-y-auto no-scrollbar p-4 sm:p-6 text-slate-100 flex flex-col gap-5">
       {/* Tab Header Sub-nav */}
       <div className="flex gap-1.5 p-1 bg-slate-900 rounded-2xl border border-slate-800">
         <button
@@ -226,7 +226,7 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
             <div className="flex items-center justify-between pt-2 border-t border-slate-800/80">
               <div>
                 <span className="text-xs font-semibold text-slate-300 block">سرعة النطق الافتراضية</span>
-                <span className="text-[11px] text-slate-500">يمكنك تبديلها أيضاً أثناء مشاهدة الفيديو</span>
+                <span className="text-[11px] text-slate-500">يمكنك تغييرها في أي وقت من إعدادات الصوت</span>
               </div>
               <div className="flex gap-1.5 p-1 bg-slate-950 rounded-xl border border-slate-800">
                 {[1.0, 0.75, 0.5].map((speed) => (
@@ -249,7 +249,7 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
             <div className="flex items-center justify-between pt-2 border-t border-slate-800/80">
               <div>
                 <span className="text-xs font-semibold text-slate-300 block">المؤثرات الصوتية التفاعلية</span>
-                <span className="text-[11px] text-slate-500">أصوات الإعجاب، والاختبار، والنقاط</span>
+                <span className="text-[11px] text-slate-500">أصوات الإجابات الصحيحة والخاطئة والنقاط</span>
               </div>
               <button
                 onClick={() => updateSetting('soundEffects', !userProfile.settings.soundEffects)}
@@ -276,7 +276,7 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
             <div className="flex items-center justify-between pt-2 border-t border-slate-800/80">
               <div>
                 <span className="text-xs font-semibold text-slate-300 block">عرض الترجمة</span>
-                <span className="text-[11px] text-slate-500">اختر أسلوب عرض النصوص في الفيديوهات</span>
+                <span className="text-[11px] text-slate-500">اختر أسلوب عرض نصوص الحوارات التعليمية</span>
               </div>
               <div className="flex gap-1.5 p-1 bg-slate-950 rounded-xl border border-slate-800">
                 {(['both', 'en', 'none'] as ('both' | 'en' | 'none')[]).map((mode) => (
@@ -531,7 +531,7 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
             <div className="flex items-center gap-2 text-amber-400">
               <Code className="w-5 h-5" />
               <h3 className="text-sm font-bold text-white">
-                بنية إضافة وتعديل الفيديوهات والدروس
+                بنية المحتوى التعليمي والدروس
               </h3>
             </div>
             <p className="text-xs text-slate-300 leading-relaxed">

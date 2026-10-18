@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, Sparkles, Play, BookOpen, Clock, Heart, Lock, CheckCircle2, Trophy } from 'lucide-react';
+import { Search, Sparkles, Play, BookOpen, Clock, Heart, Lock, CheckCircle2, Trophy, Star, ArrowDown, Volume2, MessageCircle, Languages, Pencil, Mic, Headphones, Compass } from 'lucide-react';
 import { Lesson, CategoryKey, UserProfile } from '../../types';
 import { CATEGORIES } from '../../data/lessons';
 import { CURRICULUM_CONFIG } from '../../data/curriculum';
@@ -7,6 +7,9 @@ import { speechService } from '../../services/speechService';
 import { getLearningPathState } from '../../services/learningPath';
 import { LevelFinalExam } from '../quiz/LevelFinalExam';
 import { PremiumIcon } from '../icons/PremiumIcon';
+import { LearningBuddy } from '../learning/LearningBuddy';
+
+const PATH_ICONS = [BookOpen, Volume2, MessageCircle, Languages, Pencil, Mic, Headphones, Compass, Sparkles, BookOpen];
 
 interface CategoriesTabProps {
   lessons: Lesson[];
@@ -26,6 +29,9 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
   const [searchQuery, setSearchQuery] = useState('');
   const [examStage, setExamStage] = useState<number | null>(null);
   const path = getLearningPathState(lessons, userProfile);
+  const today = new Date().toISOString().slice(0, 10);
+  const dailyLessonCount = userProfile.dailyProgress.date === today ? userProfile.dailyProgress.completedLessonIds.length : 0;
+  const dailyGoal = Math.max(1, userProfile.dailyGoalLessons);
 
   const filteredLessons = lessons.filter((lesson) => {
     const matchesCategory = selectedCategory === 'all' || lesson.category === selectedCategory;
@@ -73,61 +79,68 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
   };
 
   return (
-    <div className="w-full h-full max-w-4xl mx-auto overflow-y-auto no-scrollbar p-4 sm:p-6 text-slate-100 flex flex-col gap-5">
-      <section className="rounded-3xl border border-sky-500/20 bg-gradient-to-br from-slate-900 via-slate-900 to-sky-950/70 p-4 shadow-xl sm:p-5">
-        <div className="flex flex-wrap items-start justify-between gap-3">
+    <div className="journey-home w-full h-full max-w-4xl mx-auto overflow-y-auto no-scrollbar p-4 sm:p-6 text-slate-100 flex flex-col gap-5">
+      <section className="path-hero relative overflow-hidden rounded-[2rem] border border-teal-200/10 p-5 shadow-2xl sm:p-7" dir="rtl">
+        <div className="pointer-events-none absolute -left-16 -top-20 h-64 w-64 rounded-full bg-cyan-300/10 blur-3xl" />
+        <div className="relative flex flex-wrap items-center justify-between gap-4">
           <div>
-            <p className="text-[11px] font-bold text-sky-300">مسار EnglishTok التعليمي</p>
-            <h2 className="mt-1 text-xl font-black text-white">تعلّم خطوة بخطوة</h2>
-            <p className="mt-1 text-xs text-slate-400">50 درسًا في خمس مراحل، بمشاهد كرتونية متحركة من رسومات التطبيق (وليست مقاطع فيديو حقيقية).</p>
+            <p className="flex items-center gap-2 text-xs font-black text-teal-200"><span className="h-2 w-2 rounded-full bg-lime-300 shadow-[0_0_14px_#bef264]" /> رحلتك في EnglishTok</p>
+            <h2 className="mt-2 text-2xl font-black tracking-tight text-white sm:text-3xl">كل يوم، خطوة أقرب للطلاقة</h2>
+            <p className="mt-2 max-w-lg text-xs leading-6 text-slate-300">خمس مراحل و50 درسًا بمواقف واقعية. واصل من حيث توقفت واجمع XP مع كل إنجاز.</p>
           </div>
-          <div className="flex items-center gap-3">
-            <PremiumIcon name="lesson" size={48} className="hidden sm:inline-flex" />
-            <button
-              type="button"
-              onClick={() => onSelectLesson(path.nextLessonId)}
-              className="flex items-center gap-2 rounded-xl bg-sky-400 px-3 py-2.5 text-xs font-black text-slate-950 shadow-lg shadow-sky-500/15"
-            >
-              <Play className="h-4 w-4 fill-current" />
-              متابعة التعلم
-            </button>
+          <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.06] px-4 py-3">
+            <LearningBuddy message="يلا نتعلم!" />
+            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-lime-300 text-slate-950"><Sparkles className="h-5 w-5" /></div>
+            <div><div className="text-lg font-black text-white">{path.completedCount}<span className="text-slate-400">/{path.totalLessons}</span></div><div className="text-[10px] text-slate-300">درس مكتمل</div></div>
+            <button type="button" onClick={() => onSelectLesson(path.nextLessonId)} className="mr-1 flex items-center gap-2 rounded-xl bg-lime-300 px-4 py-3 text-xs font-black text-slate-950 shadow-lg shadow-lime-300/20 hover:bg-lime-200 active:scale-95"><Play className="h-4 w-4 fill-current" /> ابدأ الآن</button>
           </div>
         </div>
-        <div className="mt-4">
-          <div className="mb-1.5 flex justify-between text-[11px] text-slate-300">
-            <span>التقدم الكلي</span>
-            <span>{path.completedCount} من {path.totalLessons} درسًا</span>
-          </div>
-          <div className="h-2 overflow-hidden rounded-full bg-slate-800">
-            <div className="h-full rounded-full bg-gradient-to-l from-emerald-400 to-sky-400" style={{ width: `${path.totalLessons ? (path.completedCount / path.totalLessons) * 100 : 0}%` }} />
-          </div>
+        <div className="relative mt-6 h-2 overflow-hidden rounded-full bg-white/10"><div className="h-full rounded-full bg-gradient-to-l from-lime-300 via-teal-300 to-cyan-300 transition-[width] duration-700" style={{ width: `${path.totalLessons ? (path.completedCount / path.totalLessons) * 100 : 0}%` }} /></div>
+        <div className="daily-goal-card relative mt-3 flex items-center gap-3 rounded-2xl px-3 py-2.5">
+          <span className="daily-goal-icon"><Sparkles className="h-4 w-4" /></span>
+          <div className="min-w-0 flex-1"><div className="flex justify-between gap-2 text-[10px] font-black"><span>هدف اليوم</span><span>{dailyLessonCount}/{dailyGoal} دروس</span></div><div className="daily-goal-track mt-1.5 h-1.5 overflow-hidden rounded-full"><div className="daily-goal-fill h-full rounded-full transition-[width] duration-500" style={{ width: `${Math.min(100, (dailyLessonCount / dailyGoal) * 100)}%` }} /></div></div>
+          {dailyLessonCount >= dailyGoal && <span className="daily-goal-done"><CheckCircle2 className="h-4 w-4" /> اكتمل</span>}
         </div>
-        <div className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-5">
+        <div className="relative mt-6 flex flex-col gap-4">
           {path.levels.map((level) => {
-            const levelLocked = !level.isUnlocked;
-            return (
-              <div key={level.stage} className={`rounded-2xl border p-3 ${levelLocked ? 'border-slate-800 bg-slate-950/50 opacity-70' : 'border-slate-700 bg-slate-950/70'}`}>
-                <div className="flex items-center justify-between gap-2">
-                  <span className="text-xs font-black text-white">المرحلة {level.stage} · {level.titleAr}</span>
-                  {levelLocked ? <Lock className="h-4 w-4 text-slate-500" /> : level.examPassed ? <CheckCircle2 className="h-4 w-4 text-emerald-400" /> : <span className="text-[10px] text-sky-300">{level.completedCount}/{level.lessons.length}</span>}
-                </div>
-                <p className="mt-1 min-h-8 text-[10px] leading-relaxed text-slate-400">{level.subtitleAr}</p>
-                <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-slate-800">
-                  <div className="h-full rounded-full bg-emerald-400" style={{ width: `${level.lessons.length ? (level.completedCount / level.lessons.length) * 100 : 0}%` }} />
-                </div>
-                <button
-                  type="button"
-                  disabled={!level.canTakeExam}
-                  onClick={() => setExamStage(level.stage)}
-                  className="mt-2 flex w-full items-center justify-center gap-1 rounded-lg border border-amber-400/20 bg-amber-400/5 py-1.5 text-[10px] font-bold text-amber-200 disabled:cursor-not-allowed disabled:opacity-40"
-                >
-                  <Trophy className="h-3 w-3" />
-                  {level.examPassed ? `الاختبار مجتاز · الأفضل ${level.examResult?.bestScore ?? 0}%` : level.canTakeExam ? `الاختبار النهائي · النجاح ${CURRICULUM_CONFIG.passingScorePercent}%` : `أكمل ${level.lessons.length - level.completedCount} درسًا لفتح الاختبار`}
-                </button>
+            const locked = !level.isUnlocked;
+            const color = ['from-cyan-300 to-teal-300', 'from-lime-300 to-emerald-300', 'from-amber-300 to-orange-300', 'from-violet-300 to-fuchsia-300', 'from-rose-300 to-pink-300'][level.stage - 1];
+            return <div key={level.stage} data-stage={level.stage} className={`path-stage rounded-3xl border p-4 sm:p-5 ${locked ? 'opacity-55' : ''}`}>
+              <div className="path-stage-heading flex flex-wrap items-center justify-between gap-2">
+                <div><div className="flex items-center gap-2 text-sm font-black text-white"><span className={`flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br ${color} text-slate-950`}>{locked ? <Lock className="h-4 w-4" /> : level.stage}</span> المرحلة {level.stage} <span className="text-teal-100">· {level.titleAr}</span></div><p className="mt-1 text-[10px] text-slate-400">{level.subtitleAr}</p></div>
+                <span className="rounded-full bg-white/[0.06] px-3 py-1 text-[10px] font-bold text-slate-300">{level.completedCount}/{level.lessons.length} درس</span>
               </div>
-            );
+              <div className="path-nodes mt-4" aria-label={`دروس المرحلة ${level.stage}`}>
+                <svg className="path-ribbon" viewBox="0 0 100 1000" preserveAspectRatio="none" aria-hidden="true">
+                  <path d="M50 45 C50 95 76 95 76 145 S88 195 88 245 S76 295 76 345 S50 395 50 445 S24 495 24 545 S12 595 12 645 S24 695 24 745 S50 795 50 845 S76 895 76 945" />
+                </svg>
+                {level.lessons.map((entry, index) => {
+                  const { lesson, status } = entry;
+                  const complete = status === 'completed';
+                  const current = status === 'current';
+                  const unavailable = status === 'locked';
+                  const NodeIcon = PATH_ICONS[index % PATH_ICONS.length];
+                  const bestScore = userProfile.quizScores[lesson.id] ?? 0;
+                  const starCount = bestScore >= 90 ? 3 : bestScore >= 70 ? 2 : complete ? 1 : 0;
+                  return <React.Fragment key={lesson.id}>
+                    <button type="button" disabled={unavailable} onClick={() => onSelectLesson(lesson.id)} className={`path-node group ${complete ? 'is-complete' : current ? 'is-current' : unavailable ? 'is-locked' : 'is-open'}`} aria-label={`${lesson.titleAr}، ${complete ? 'مكتمل' : current ? 'الدرس الحالي' : unavailable ? 'مقفل' : 'متاح'}`}>
+                      <span className="path-node-orb">{complete ? <Star className="path-node-icon path-star h-6 w-6 fill-current" /> : unavailable ? <Lock className="path-node-icon h-5 w-5" /> : current ? <Play className="path-node-icon h-6 w-6 fill-current" /> : <NodeIcon className="path-node-icon h-6 w-6" aria-hidden="true" />}<span className="path-node-number">{index + 1}</span></span>
+                      <span className="path-node-title">{lesson.titleAr}</span>
+                      {complete && <span className="path-node-stars" aria-label={`${starCount} نجوم`} dir="ltr">{[0, 1, 2].map((star) => <Star key={star} className={star < starCount ? 'earned' : ''} />)}</span>}
+                      {current && <span className="path-node-hint">ابدأ هنا</span>}
+                    </button>
+                    {index < level.lessons.length - 1 && <span className="path-node-link" aria-hidden="true" />}
+                  </React.Fragment>;
+                })}
+              </div>
+              <div className="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-white/[0.07] pt-3">
+                <div className="h-1.5 min-w-24 flex-1 overflow-hidden rounded-full bg-white/10"><div className={`h-full rounded-full bg-gradient-to-l ${color}`} style={{ width: `${level.lessons.length ? (level.completedCount / level.lessons.length) * 100 : 0}%` }} /></div>
+                <button type="button" disabled={!level.canTakeExam} onClick={() => setExamStage(level.stage)} className="flex items-center gap-1.5 rounded-xl border border-amber-300/20 bg-amber-300/[0.06] px-3 py-2 text-[10px] font-bold text-amber-100 disabled:opacity-40"><Trophy className="h-3.5 w-3.5" />{level.examPassed ? `اجتزت المرحلة · ${level.examResult?.bestScore ?? 0}%` : level.canTakeExam ? `اختبار المرحلة · النجاح ${CURRICULUM_CONFIG.passingScorePercent}%` : `أكمل ${level.lessons.length - level.completedCount} درسًا للاختبار`}</button>
+              </div>
+            </div>;
           })}
         </div>
+        <div className="mt-4 flex items-center justify-center gap-2 text-[10px] text-slate-400"><ArrowDown className="h-3.5 w-3.5 text-lime-200" />أكمل الدروس بالترتيب لفتح محطات جديدة</div>
       </section>
 
       {/* Search Bar */}

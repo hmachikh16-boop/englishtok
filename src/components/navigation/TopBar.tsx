@@ -1,7 +1,8 @@
 import React from 'react';
-import { Flame, Sparkles, Smartphone, Monitor } from 'lucide-react';
+import { Flame, Sparkles, Smartphone, Monitor, ShieldCheck } from 'lucide-react';
 import { UserProfile } from '../../types';
 import { speechService } from '../../services/speechService';
+import { getUserRank } from '../../services/storageService';
 
 interface TopBarProps {
   userProfile: UserProfile;
@@ -16,17 +17,18 @@ export const TopBar: React.FC<TopBarProps> = ({
   onToggleFrameView,
   onGoToProgress,
 }) => {
+  const rank = getUserRank(userProfile.xp);
   return (
-    <header className="sticky top-0 z-30 w-full bg-slate-950/90 backdrop-blur-md border-b border-slate-800/80 h-14 px-3 sm:px-4">
-      <div className="w-full max-w-6xl mx-auto h-full flex items-center justify-between gap-3">
+    <header className="journey-topbar sticky top-0 z-30 w-full border-b px-3 sm:px-5">
+      <div className="mx-auto flex h-[66px] w-full max-w-6xl items-center justify-between gap-2 sm:gap-4">
         {/* Zone 1: Single text element wordmark */}
-        <div className="flex items-center gap-2">
-          <span className="text-base sm:text-lg font-black tracking-tight text-white font-en whitespace-nowrap shrink-0 flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-sky-400" />
-            <span>English<span className="text-sky-400">Tok</span></span>
+        <div className="flex min-w-0 items-center gap-2 sm:gap-3">
+          <span className="flex shrink-0 items-center gap-2 whitespace-nowrap font-en text-base font-extrabold tracking-tight text-slate-800 sm:text-lg">
+            <span className="brand-mark"><span /></span>
+            <span>English<span className="text-teal-600">Tok</span></span>
           </span>
-          <span className="hidden sm:inline-block text-[11px] text-slate-400 border-r border-slate-700 pr-2">
-            فيديوهات قصيرة للتعلم
+          <span className="hidden border-r border-emerald-100 pr-3 text-xs font-semibold text-slate-500 lg:inline-block">
+            رحلتك اليومية لتعلّم الإنجليزية
           </span>
         </div>
 
@@ -36,22 +38,24 @@ export const TopBar: React.FC<TopBarProps> = ({
             speechService.playPop();
             onGoToProgress();
           }}
-          className="flex items-center gap-2 bg-slate-900/90 hover:bg-slate-800/90 border border-slate-800 px-3 py-1.5 rounded-full text-xs font-bold transition-all active:scale-95 shadow-sm"
+          className="journey-stats flex shrink-0 items-center gap-1 rounded-2xl px-1.5 py-1.5 text-xs font-bold transition-all hover:-translate-y-0.5 active:scale-[.98] sm:gap-2 sm:px-2"
+          aria-label={`المستوى ${rank.titleAr}، ${userProfile.xp} نقطة خبرة، سلسلة ${userProfile.streakDays} يوم`}
         >
-          {/* XP */}
-          <div className="flex items-center gap-1 text-amber-400">
-            <Sparkles className="w-3.5 h-3.5 fill-current" />
-            <span className="font-mono-num">{userProfile.xp}</span>
-            <span className="text-[10px] text-slate-400">XP</span>
+          <div className="topbar-metric topbar-rank hidden sm:flex">
+            <ShieldCheck className="h-[17px] w-[17px]" strokeWidth={2.3} />
+            <span className="max-w-24 truncate">{rank.titleAr}</span>
           </div>
-
-          <span className="text-slate-600">·</span>
-
-          {/* Streak */}
-          <div className="flex items-center gap-1 text-rose-400">
-            <Flame className="w-3.5 h-3.5 fill-current" />
+          <span className="topbar-divider hidden sm:block" aria-hidden="true" />
+          <div className="topbar-metric topbar-xp">
+            <Sparkles className="h-[17px] w-[17px]" strokeWidth={2.3} />
+            <span className="font-mono-num">{userProfile.xp}</span>
+            <span className="topbar-unit">XP</span>
+          </div>
+          <span className="topbar-divider" aria-hidden="true" />
+          <div className="topbar-metric topbar-streak">
+            <Flame className="h-[17px] w-[17px]" strokeWidth={2.3} />
             <span className="font-mono-num">{userProfile.streakDays}</span>
-            <span className="text-[10px] text-slate-400">يوم</span>
+            <span className="topbar-unit hidden sm:inline">يوم</span>
           </div>
         </button>
 
@@ -62,17 +66,17 @@ export const TopBar: React.FC<TopBarProps> = ({
               speechService.playPop();
               onToggleFrameView();
             }}
-            className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-slate-300 hover:text-white text-xs font-bold active:scale-95 transition-all"
+            className="hidden md:flex items-center gap-2 rounded-xl border border-emerald-100 bg-white px-3 py-2 text-xs font-bold text-slate-600 shadow-sm transition-all hover:border-teal-200 hover:text-teal-800 active:scale-95"
             title={isPhoneFrameView ? 'عرض الشاشة الكاملة للتابلت' : 'عرض محاكي شاشة الهاتف'}
           >
             {isPhoneFrameView ? (
               <>
-                <Monitor className="w-3.5 h-3.5 text-sky-400" />
+                <Monitor className="h-4 w-4 text-teal-700" strokeWidth={2.2} />
                 <span>شاشة التابلت</span>
               </>
             ) : (
               <>
-                <Smartphone className="w-3.5 h-3.5 text-amber-400" />
+                <Smartphone className="h-4 w-4 text-teal-700" strokeWidth={2.2} />
                 <span>إطار الهاتف</span>
               </>
             )}

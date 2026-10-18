@@ -358,13 +358,13 @@ export const LevelFinalExam: React.FC<LevelFinalExamProps> = ({
 
   return (
     <div
-      className="fixed inset-0 z-[80] flex items-center justify-center bg-black/80 p-3 backdrop-blur-sm"
+      className="journey-exam fixed inset-0 z-[80] flex items-center justify-center bg-black/65 p-3 backdrop-blur-sm"
       role="dialog"
       aria-modal="true"
       aria-label={`الاختبار النهائي: ${titleAr}`}
       onClick={(event) => event.stopPropagation()}
     >
-      <section className="flex max-h-[92dvh] w-full max-w-xl flex-col overflow-y-auto rounded-3xl border border-slate-700 bg-slate-950 p-4 text-slate-100 shadow-2xl sm:p-6" dir="rtl">
+      <section className="journey-exam-panel flex max-h-[92dvh] w-full max-w-xl flex-col overflow-y-auto rounded-3xl border border-slate-200 bg-white p-4 text-slate-800 shadow-2xl sm:p-6" dir="rtl">
         <header className="flex items-start justify-between gap-3 border-b border-slate-800 pb-4">
           <div>
             <p className="text-xs font-bold text-amber-400">اختبار نهاية المرحلة {stage}</p>

@@ -21,11 +21,11 @@ import {
 } from './services/speechService';
 import { TopBar } from './components/navigation/TopBar';
 import { BottomTabBar } from './components/navigation/BottomTabBar';
-import { FeedPlayer } from './components/video/FeedPlayer';
 import { CategoriesTab } from './components/categories/CategoriesTab';
 import { VocabTab } from './components/vocab/VocabTab';
 import { ProgressTab } from './components/progress/ProgressTab';
 import { SettingsTab } from './components/settings/SettingsTab';
+import { LessonSession } from './components/learning/LessonSession';
 
 export default function App() {
   const [userProfile, setUserProfile] = useState<UserProfile>(() => getStoredProfile());
@@ -33,9 +33,9 @@ export default function App() {
     () => getCachedLearningPath() ?? LEARNING_PATH_LESSONS,
   );
   const learningPath = getLearningPathState(lessons, userProfile);
-  const [activeTab, setActiveTab] = useState<ActiveTab>('feed');
+  const [activeTab, setActiveTab] = useState<ActiveTab>('categories');
   const [selectedLessonId, setSelectedLessonId] = useState<string>(learningPath.nextLessonId);
-  const [isPhoneFrameView, setIsPhoneFrameView] = useState<boolean>(true);
+  const [isPhoneFrameView, setIsPhoneFrameView] = useState<boolean>(false);
   const [speechNotice, setSpeechNotice] = useState<string | null>(null);
   const [speechLoading, setSpeechLoading] = useState(false);
   const [speechProgress, setSpeechProgress] = useState<number | null>(null);
@@ -160,11 +160,11 @@ export default function App() {
 
   const handleSelectLessonFromCategories = (lessonId: string) => {
     setSelectedLessonId(lessonId);
-    setActiveTab('feed');
+    setActiveTab('lesson');
   };
 
   return (
-    <div className="app-shell min-h-0 bg-slate-950 text-slate-100 flex flex-col items-center justify-start overflow-hidden">
+    <div className="app-shell min-h-0 text-slate-100 flex flex-col items-center justify-start overflow-hidden journey-shell">
       {speechNotice && (
         <div
           role="alert"
@@ -255,7 +255,7 @@ export default function App() {
 
       {/* Device wrapper: Sleek mobile mock container on wide screens if isPhoneFrameView is active, or full width on mobile/tablet */}
       <div
-        className={`w-full h-full min-h-0 flex flex-col bg-slate-950 transition-all duration-300 ${
+        className={`w-full h-full min-h-0 flex flex-col transition-all duration-300 journey-shell ${
           isPhoneFrameView
             ? 'max-w-[430px] sm:my-3 sm:rounded-[36px] sm:border-[5px] sm:border-slate-800 sm:shadow-2xl sm:overflow-hidden relative sm:max-h-[calc(100dvh-24px)]'
             : 'max-w-6xl'
@@ -271,31 +271,33 @@ export default function App() {
         )}
 
         {/* Top App Bar */}
-        <TopBar
-          userProfile={userProfile}
-          isPhoneFrameView={isPhoneFrameView}
-          onToggleFrameView={() => setIsPhoneFrameView(!isPhoneFrameView)}
-          onGoToProgress={() => handleChangeTab('progress')}
-        />
+        {activeTab !== 'lesson' && (
+          <TopBar
+            userProfile={userProfile}
+            isPhoneFrameView={isPhoneFrameView}
+            onToggleFrameView={() => setIsPhoneFrameView(!isPhoneFrameView)}
+            onGoToProgress={() => handleChangeTab('progress')}
+          />
+        )}
 
         {/* Main Content Area */}
         <main className="flex-1 min-h-0 relative overflow-hidden flex flex-col">
-          {activeTab === 'feed' && (
-            <FeedPlayer
-              lessons={learningPath.accessibleLessons}
-              initialLessonId={selectedLessonId}
-              userProfile={userProfile}
-              onUpdateProfile={handleUpdateProfile}
-              onOpenCategories={() => handleChangeTab('categories')}
-            />
-          )}
-
           {activeTab === 'categories' && (
             <CategoriesTab
               lessons={lessons}
               userProfile={userProfile}
               onUpdateProfile={handleUpdateProfile}
               onSelectLesson={handleSelectLessonFromCategories}
+            />
+          )}
+
+          {activeTab === 'lesson' && (
+            <LessonSession
+              key={selectedLessonId}
+              lesson={lessons.find((lesson) => lesson.id === selectedLessonId) ?? lessons[0]}
+              userProfile={userProfile}
+              onUpdateProfile={handleUpdateProfile}
+              onBackToPath={() => setActiveTab('categories')}
             />
           )}
 
@@ -314,7 +316,7 @@ export default function App() {
               onUpdateProfile={handleUpdateProfile}
               onResumeLearning={() => {
                 setSelectedLessonId(learningPath.nextLessonId);
-                setActiveTab('feed');
+                setActiveTab('categories');
               }}
             />
           )}
@@ -330,14 +332,14 @@ export default function App() {
         </main>
 
         {/* Fixed Mobile Bottom Tab Bar */}
-        <BottomTabBar
+        {activeTab !== 'lesson' && <BottomTabBar
           activeTab={activeTab}
           savedWordsCount={userProfile.savedWordIds.length}
           userStreak={userProfile.streakDays}
           onChangeTab={handleChangeTab}
-        />
-        <footer
-          className="shrink-0 border-t border-slate-800/80 bg-slate-950/95 px-3 py-2 text-center"
+        />}
+        {activeTab !== 'lesson' && <footer
+          className="journey-footer shrink-0 border-t px-3 py-2 text-center"
           dir="rtl"
         >
           <p className="text-[10px] font-bold text-slate-400 sm:text-xs">
@@ -361,7 +363,7 @@ export default function App() {
               0665003037
             </a>
           </div>
-        </footer>
+        </footer>}
       </div>
     </div>
   );

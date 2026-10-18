@@ -136,4 +136,4 @@ export interface LevelExamResult {
   passedAt?: string;
 }
 
-export type ActiveTab = 'feed' | 'categories' | 'vocab' | 'progress' | 'settings';
+export type ActiveTab = 'categories' | 'lesson' | 'vocab' | 'progress' | 'settings';

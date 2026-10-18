@@ -67,7 +67,7 @@ export const ProgressTab: React.FC<ProgressTabProps> = ({
     {
       id: 'b1',
       titleAr: 'أولى الخطوات',
-      descriptionAr: 'شاهد أول فيديو تعليمي',
+      descriptionAr: 'أكمل أول درس تعليمي',
       icon: 'lesson',
       isUnlocked: totalWatched >= 1,
       progressText: `${Math.min(1, totalWatched)}/1`,
@@ -123,7 +123,7 @@ export const ProgressTab: React.FC<ProgressTabProps> = ({
   ];
 
   return (
-    <div className="w-full h-full max-w-4xl mx-auto overflow-y-auto no-scrollbar p-4 sm:p-6 text-slate-100 flex flex-col gap-5">
+    <div className="journey-secondary w-full h-full max-w-4xl mx-auto overflow-y-auto no-scrollbar p-4 sm:p-6 text-slate-100 flex flex-col gap-5">
       {/* User Rank Card */}
       <div className="bg-gradient-to-br from-slate-900 via-slate-900 to-sky-950 border border-slate-800 rounded-3xl p-5 shadow-2xl relative overflow-hidden">
         {/* Glow behind */}
@@ -178,7 +178,7 @@ export const ProgressTab: React.FC<ProgressTabProps> = ({
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         <div className="bg-slate-900 border border-slate-800 rounded-2xl p-3.5 flex flex-col gap-1 shadow-md">
           <div className="flex items-center justify-between text-slate-400 mb-1">
-            <span className="text-xs font-semibold">فيديوهات شاهدتها</span>
+            <span className="text-xs font-semibold">دروس أكملتها</span>
             <PlayCircle className="w-4 h-4 text-sky-400" />
           </div>
           <span className="text-2xl font-black text-white font-mono-num">
@@ -349,7 +349,7 @@ export const ProgressTab: React.FC<ProgressTabProps> = ({
           onClick={onResumeLearning}
           className="w-full py-3.5 bg-gradient-to-r from-sky-500 to-blue-600 text-slate-950 font-black rounded-2xl text-xs shadow-xl shadow-sky-500/20 active:scale-95 transition-transform flex items-center justify-center gap-2"
         >
-          <span>العودة لمشاهدة الفيديوهات ومواصلة التعلم</span>
+            <span>العودة إلى المسار ومواصلة التعلّم</span>
           <ArrowRight className="w-4 h-4 rotate-180" />
         </button>
       </div>

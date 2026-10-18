@@ -116,7 +116,7 @@ export const VocabTab: React.FC<VocabTabProps> = ({
   };
 
   return (
-    <div className="w-full h-full max-w-4xl mx-auto overflow-y-auto no-scrollbar p-4 sm:p-6 text-slate-100 flex flex-col gap-4">
+    <div className="journey-secondary w-full h-full max-w-4xl mx-auto overflow-y-auto no-scrollbar p-4 sm:p-6 text-slate-100 flex flex-col gap-4">
       {/* Header & Mode Switcher */}
       <div className="flex items-center justify-between">
         <div>
@@ -307,7 +307,7 @@ export const VocabTab: React.FC<VocabTabProps> = ({
               <Bookmark className="w-8 h-8 text-slate-600" />
               <p className="text-xs text-slate-400 font-medium">
                 {filterMode === 'saved'
-                  ? 'لم تقم بحفظ أي كلمات بعد. انقر على أيقونة الكتاب في الفيديوهات لحفظ الكلمات الجديدة!'
+                  ? 'لم تحفظ أي كلمات بعد. أضف كلمات جديدة إلى قائمتك أثناء مراجعة المفردات.'
                   : filterMode === 'review'
                     ? 'لا توجد كلمات مطلوبة للمراجعة حاليًا. أخطاؤك في الاختبارات ستظهر هنا.'
                     : 'لم يتم العثور على كلمات مطابقة للبحث.'}
