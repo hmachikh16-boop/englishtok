@@ -195,6 +195,13 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
         <div className="mt-4 flex items-center justify-center gap-2 text-[10px] text-slate-400"><ArrowDown className="h-3.5 w-3.5 text-lime-200" />أكمل الدروس بالترتيب لفتح محطات جديدة</div>
       </section>
 
+      <details className="lesson-library" dir="rtl">
+        <summary>
+          <span>استعراض جميع الدروس</span>
+          <span className="lesson-library-count">{lessons.length} درسًا</span>
+          <ArrowDown className="lesson-library-chevron" aria-hidden="true" />
+        </summary>
+
       {/* Search Bar */}
       <div className="relative">
         <input
@@ -365,6 +372,7 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
           })
         )}
       </div>
+      </details>
       {examStage !== null && (() => {
         const level = path.levels.find((entry) => entry.stage === examStage);
         if (!level) return null;

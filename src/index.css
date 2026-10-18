@@ -544,6 +544,16 @@ button.journey-frame-toggle:hover { border-color: #d9f99d; color: #1e5900; }
 .continuous-unit-progress { position: absolute; top: 67px; inset-inline: 15px; height: 4px; overflow: hidden; border-radius: 999px; background: rgb(255 255 255 / 35%); }
 .continuous-unit-progress-fill { display: block; height: 100%; border-radius: inherit; background: #fff; transition: width .5s ease; }
 .path-hero .continuous-route-unit .path-node-guide { z-index: 3; }
+.lesson-library { margin-top: 16px; border: 1px solid #e0eadc; border-radius: 18px; background: #fff; box-shadow: 0 4px 0 #e8efe5; }
+.lesson-library > summary { display: flex; min-height: 52px; align-items: center; gap: 9px; padding: 0 15px; color: #31543a; font-size: 13px; font-weight: 900; cursor: pointer; list-style: none; }
+.lesson-library > summary::-webkit-details-marker { display: none; }
+.lesson-library-count { margin-inline-start: auto; color: #718174; font-size: 11px; font-weight: 700; }
+.lesson-library-chevron { width: 16px; height: 16px; color: #459e27; transition: transform .18s ease; }
+.lesson-library[open] > summary { border-bottom: 1px solid #edf1e9; }
+.lesson-library[open] > summary .lesson-library-chevron { transform: rotate(180deg); }
+.lesson-library[open] > :not(summary) { margin-inline: 12px; }
+.lesson-library[open] > .lesson-card-grid { margin-bottom: 12px; }
+.lesson-library > .relative { margin-top: 12px; }
 @media (max-width: 640px) {
   .continuous-route-ribbon path { stroke-width: 2.8; }
   .path-hero .continuous-route-unit .path-stage-heading { height: 82px; min-height: 82px; padding-inline: 11px; }
