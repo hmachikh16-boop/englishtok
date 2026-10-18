@@ -43,6 +43,32 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
   const today = new Date().toISOString().slice(0, 10);
   const dailyLessonCount = userProfile.dailyProgress.date === today ? userProfile.dailyProgress.completedLessonIds.length : 0;
   const dailyGoal = Math.max(1, userProfile.dailyGoalLessons);
+  const routeRows = path.levels.flatMap((level) => [
+    { type: 'unit' as const, level },
+    ...level.lessons.map((entry, index) => ({ type: 'lesson' as const, level, entry, index })),
+    { type: 'exam' as const, level },
+  ]);
+  let routeCursor = 0;
+  const routeNodes = routeRows.flatMap((row) => {
+    if (row.type === 'unit') {
+      routeCursor += 82;
+      return [];
+    }
+    const positioned = { row, y: routeCursor + 56 };
+    routeCursor += 112;
+    return [positioned];
+  });
+  const routeHeight = path.levels.reduce((height, level) => height + 82 + (level.lessons.length + 1) * 112, 0);
+  const routeShifts = [0, 30, 44, 30, 0, -30, -44, -30, 0, 30];
+  const routePath = routeNodes.map((node, nodeIndex) => {
+    const x = 50 + (routeShifts[nodeIndex % routeShifts.length] * 100) / 470;
+    const y = node.y;
+    if (nodeIndex === 0) return `M ${x} ${y}`;
+    const previousIndex = nodeIndex - 1;
+    const previousX = 50 + (routeShifts[previousIndex % routeShifts.length] * 100) / 470;
+    const previousY = routeNodes[previousIndex].y;
+    return `C ${previousX} ${previousY + 38}, ${x} ${y - 38}, ${x} ${y}`;
+  }).join(' ');
 
   const filteredLessons = lessons.filter((lesson) => {
     const matchesCategory = selectedCategory === 'all' || lesson.category === selectedCategory;
@@ -112,7 +138,10 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
           <div className="min-w-0 flex-1"><div className="flex justify-between gap-2 text-[10px] font-black"><span>هدف اليوم</span><span>{dailyLessonCount}/{dailyGoal} دروس</span></div><div className="daily-goal-track mt-1.5 h-1.5 overflow-hidden rounded-full"><div className="daily-goal-fill h-full rounded-full transition-[width] duration-500" style={{ width: `${Math.min(100, (dailyLessonCount / dailyGoal) * 100)}%` }} /></div></div>
           {dailyLessonCount >= dailyGoal && <span className="daily-goal-done"><CheckCircle2 className="h-4 w-4" /> اكتمل</span>}
         </div>
-        <div className="relative mt-6 flex flex-col gap-4">
+        <div className="continuous-route relative mt-6" aria-label="مسار التعلم الكامل">
+          <svg className="continuous-route-ribbon" viewBox={`0 0 100 ${routeHeight}`} preserveAspectRatio="none" aria-hidden="true">
+            <path d={routePath} />
+          </svg>
           {path.levels.map((level) => {
             const locked = !level.isUnlocked;
             const color = [
@@ -120,25 +149,13 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
               'from-green-300 to-lime-300', 'from-lime-300 to-teal-300',
               'from-teal-300 to-emerald-300',
             ][(level.stage - 1) % 5];
-            const mapNodeCount = level.lessons.length + 1;
             const examNodeClass = level.examPassed ? 'is-complete' : level.canTakeExam ? 'is-current' : 'is-locked';
-            return <div key={level.stage} data-stage={level.stage} className={`path-stage rounded-3xl border p-4 sm:p-5 ${locked ? 'is-stage-locked' : ''}`}>
+            return <div key={level.stage} data-stage={level.stage} className={`path-stage continuous-route-unit ${locked ? 'is-stage-locked' : ''}`}>
               <div className="path-stage-heading flex flex-wrap items-center justify-between gap-2">
                 <div><div className="flex items-center gap-2 text-sm font-black text-white"><span className={`flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br ${color} text-slate-950`}>{locked ? <Lock className="h-4 w-4" /> : level.stage}</span> المرحلة {level.stage} <span className="text-teal-100">· {level.titleAr}</span></div><p className="mt-1 text-[10px] text-slate-400">{level.subtitleAr}</p></div>
                 <span className="rounded-full bg-white/[0.06] px-3 py-1 text-[10px] font-bold text-slate-300">{level.completedCount}/{level.lessons.length} درس</span>
               </div>
-              <div className="path-nodes mt-4" aria-label={`دروس المرحلة ${level.stage}`}>
-                <svg className="path-ribbon" viewBox={`0 0 100 ${mapNodeCount * 116}`} preserveAspectRatio="none" aria-hidden="true">
-                  <path d={Array.from({ length: mapNodeCount }, (_, nodeIndex) => {
-                    const shifts = [0, 7, 10, 7, 0, -7, -10, -7, 0, 7];
-                    const x = 50 + shifts[nodeIndex % shifts.length];
-                    const y = nodeIndex * 116 + 68;
-                    if (nodeIndex === 0) return `M ${x} ${y}`;
-                    const previousX = 50 + shifts[(nodeIndex - 1) % shifts.length];
-                    const previousY = (nodeIndex - 1) * 116 + 68;
-                    return `C ${previousX} ${previousY + 38}, ${x} ${y - 38}, ${x} ${y}`;
-                  }).join(' ')} />
-                </svg>
+              <div className="path-nodes continuous-route-nodes" aria-label={`دروس المرحلة ${level.stage}`}>
                 {level.lessons.map((entry, index) => {
                   const { lesson, status } = entry;
                   const complete = status === 'completed';
@@ -148,7 +165,7 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
                   const bestScore = userProfile.quizScores[lesson.id] ?? 0;
                   const starCount = bestScore >= 90 ? 3 : bestScore >= 70 ? 2 : complete ? 1 : 0;
                   return <React.Fragment key={lesson.id}>
-                    <button type="button" disabled={unavailable} onClick={() => onSelectLesson(lesson.id)} className={`path-node group ${complete ? 'is-complete' : current ? 'is-current' : unavailable ? 'is-locked' : 'is-open'}`} aria-label={`${lesson.titleAr}، ${complete ? 'مكتمل' : current ? 'الدرس الحالي' : unavailable ? 'مقفل' : 'متاح'}`}>
+                    <button type="button" disabled={unavailable} onClick={() => onSelectLesson(lesson.id)} style={{ transform: `translateX(${(routeShifts[routeNodes.findIndex((node) => node.row.type === 'lesson' && node.row.entry.lesson.id === lesson.id) % routeShifts.length] / 470) * 100}%)` }} className={`path-node group ${complete ? 'is-complete' : current ? 'is-current' : unavailable ? 'is-locked' : 'is-open'}`} aria-label={`${lesson.titleAr}، ${complete ? 'مكتمل' : current ? 'الدرس الحالي' : unavailable ? 'مقفل' : 'متاح'}`}>
                       <span className="path-node-orb">{complete ? <CheckCircle2 className="path-node-icon path-star h-7 w-7" strokeWidth={3} /> : unavailable ? <Lock className="path-node-icon h-5 w-5" /> : current ? <Footprints className="path-node-icon h-7 w-7" strokeWidth={2.8} /> : <NodeIcon className="path-node-icon h-6 w-6" aria-hidden="true" />}<span className="path-node-number">{index + 1}</span></span>
                       <span className="path-node-title">{lesson.titleAr}</span>
                       {complete && <span className="path-node-stars" aria-label={`${starCount} نجوم`} dir="ltr">{[0, 1, 2].map((star) => <Star key={star} className={star < starCount ? 'earned' : ''} />)}</span>}
@@ -161,6 +178,7 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
                   type="button"
                   disabled={!level.canTakeExam}
                   onClick={() => setExamStage(level.stage)}
+                  style={{ transform: `translateX(${(routeShifts[routeNodes.findIndex((node) => node.row.type === 'exam' && node.row.level.stage === level.stage) % routeShifts.length] / 470) * 100}%)` }}
                   className={`path-node path-exam-node ${examNodeClass}`}
                   aria-label={`اختبار المرحلة ${level.stage}${level.examPassed ? '، مكتمل' : level.canTakeExam ? '، متاح' : '، أكمل الدروس أولًا'}`}
                 >
@@ -170,10 +188,7 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
                   {level.canTakeExam && !level.examPassed && <span className="path-node-hint"><Play className="h-3 w-3 fill-current" /> اختبر نفسك</span>}
                 </button>
               </div>
-              <div className="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-white/[0.07] pt-3">
-                <div className="h-1.5 min-w-24 flex-1 overflow-hidden rounded-full bg-white/10"><div className={`h-full rounded-full bg-gradient-to-l ${color}`} style={{ width: `${level.lessons.length ? (level.completedCount / level.lessons.length) * 100 : 0}%` }} /></div>
-                <span className={`path-exam-summary ${level.examPassed ? 'is-earned' : ''}`}><Trophy className="h-3.5 w-3.5" />{level.examPassed ? `النتيجة ${level.examResult?.bestScore ?? 0}%` : `النجاح من ${CURRICULUM_CONFIG.passingScorePercent}%`}</span>
-              </div>
+              <div className="continuous-unit-progress"><span className="continuous-unit-progress-fill" style={{ width: `${level.lessons.length ? (level.completedCount / level.lessons.length) * 100 : 0}%` }} /></div>
             </div>;
           })}
         </div>

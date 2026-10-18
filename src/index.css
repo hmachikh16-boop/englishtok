@@ -532,6 +532,26 @@ button.journey-frame-toggle:hover { border-color: #d9f99d; color: #1e5900; }
   .journey-nav-icon-active { animation: none !important; }
 }
 
+/* One continuous journey across every learning unit. */
+.path-hero .continuous-route { display: block; position: relative; isolation: isolate; padding-block: 0; }
+.continuous-route-ribbon { position: absolute; top: 0; left: 50%; z-index: 0; width: min(100%, 470px); height: 100%; overflow: visible; transform: translateX(-50%); pointer-events: none; }
+.continuous-route-ribbon path { fill: none; stroke: #a8d88a; stroke-width: 3.2; stroke-dasharray: 1.15 1.45; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+.path-hero .continuous-route-unit { position: relative; z-index: 1; margin: 0; padding: 0; overflow: visible; border: 0; border-radius: 0; background: transparent; box-shadow: none; }
+.path-hero .continuous-route-unit + .continuous-route-unit { margin: 0; padding: 0; border: 0; }
+.path-hero .continuous-route-unit .path-stage-heading { box-sizing: border-box; height: 82px; min-height: 82px; margin: 0; padding: 11px 14px; border-radius: 18px; }
+.path-hero .continuous-route-nodes { box-sizing: border-box; max-width: 470px; margin-inline: auto; padding: 0; overflow: visible; }
+.path-hero .continuous-route-nodes .path-node { box-sizing: border-box; height: 112px; min-height: 112px; flex: 0 0 112px; }
+.continuous-unit-progress { position: absolute; top: 67px; inset-inline: 15px; height: 4px; overflow: hidden; border-radius: 999px; background: rgb(255 255 255 / 35%); }
+.continuous-unit-progress-fill { display: block; height: 100%; border-radius: inherit; background: #fff; transition: width .5s ease; }
+.path-hero .continuous-route-unit .path-node-guide { z-index: 3; }
+@media (max-width: 640px) {
+  .continuous-route-ribbon path { stroke-width: 2.8; }
+  .path-hero .continuous-route-unit .path-stage-heading { height: 82px; min-height: 82px; padding-inline: 11px; }
+  .path-hero .continuous-route-nodes .path-node { height: 112px; min-height: 112px; flex-basis: 112px; }
+  .path-hero .continuous-route-nodes { padding: 0; }
+  .continuous-unit-progress { top: 68px; inset-inline: 12px; }
+}
+
 @layer base {
   * {
     -webkit-tap-highlight-color: transparent;
