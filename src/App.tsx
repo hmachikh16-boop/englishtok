@@ -7,6 +7,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { App as CapacitorApp } from '@capacitor/app';
 import { Browser } from '@capacitor/browser';
 import { Capacitor } from '@capacitor/core';
+import { AtSign, Phone } from 'lucide-react';
 import { ActiveTab, Lesson, UserProfile } from './types';
 import { LEARNING_PATH_LESSONS } from './data/curriculum';
 import { getLearningPathState } from './services/learningPath';
@@ -335,6 +336,32 @@ export default function App() {
           userStreak={userProfile.streakDays}
           onChangeTab={handleChangeTab}
         />
+        <footer
+          className="shrink-0 border-t border-slate-800/80 bg-slate-950/95 px-3 py-2 text-center"
+          dir="rtl"
+        >
+          <p className="text-[10px] font-bold text-slate-400 sm:text-xs">
+            تطوير وبرمجة: <span className="text-sky-300">حمادوش الشيخ</span>
+          </p>
+          <div className="mt-1 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-[10px] text-slate-400 sm:text-xs">
+            <a
+              href="mailto:hmachikh16@gmail.com"
+              className="inline-flex items-center gap-1.5 rounded-md hover:text-sky-300 focus-visible:text-sky-300"
+              dir="ltr"
+            >
+              <AtSign className="h-3 w-3" aria-hidden="true" />
+              hmachikh16@gmail.com
+            </a>
+            <a
+              href="tel:+213665003037"
+              className="inline-flex items-center gap-1.5 rounded-md hover:text-sky-300 focus-visible:text-sky-300"
+              dir="ltr"
+            >
+              <Phone className="h-3 w-3" aria-hidden="true" />
+              0665003037
+            </a>
+          </div>
+        </footer>
       </div>
     </div>
   );

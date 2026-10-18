@@ -16,6 +16,8 @@ import {
   LoaderCircle,
   CircleCheck,
   AlertCircle,
+  AtSign,
+  Phone,
 } from 'lucide-react';
 import { App } from '@capacitor/app';
 import { Browser } from '@capacitor/browser';
@@ -342,6 +344,34 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
               </div>
             )}
           </div>
+
+          <section
+            className="rounded-2xl border border-sky-500/20 bg-gradient-to-br from-slate-900 to-sky-950/30 p-4 shadow-lg"
+            aria-labelledby="developer-heading"
+          >
+            <h3 id="developer-heading" className="text-xs font-bold text-white">
+              عن المطوّر
+            </h3>
+            <p className="mt-2 text-sm font-bold text-sky-300">حمادوش الشيخ</p>
+            <div className="mt-3 flex flex-col gap-2 text-xs text-slate-300 sm:flex-row sm:flex-wrap sm:gap-x-5">
+              <a
+                href="mailto:hmachikh16@gmail.com"
+                className="inline-flex items-center gap-2 hover:text-sky-300"
+                dir="ltr"
+              >
+                <AtSign className="h-3.5 w-3.5 text-sky-400" aria-hidden="true" />
+                hmachikh16@gmail.com
+              </a>
+              <a
+                href="tel:+213665003037"
+                className="inline-flex items-center gap-2 hover:text-sky-300"
+                dir="ltr"
+              >
+                <Phone className="h-3.5 w-3.5 text-sky-400" aria-hidden="true" />
+                0665003037
+              </a>
+            </div>
+          </section>
         </div>
       )}
 
