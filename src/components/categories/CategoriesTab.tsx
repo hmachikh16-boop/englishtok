@@ -97,6 +97,14 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
   const today = new Date().toISOString().slice(0, 10);
   const dailyLessonCount = userProfile.dailyProgress.date === today ? userProfile.dailyProgress.completedLessonIds.length : 0;
   const dailyGoal = Math.max(1, userProfile.dailyGoalLessons);
+  const nextLessonId = selectedSchoolYear?.grade
+    ? (() => {
+        const { yearLessons, priorYearsComplete } = getPrimaryYearProgress(selectedSchoolYear.id);
+        return priorYearsComplete
+          ? yearLessons.find((lesson) => !completedLessonIds.has(lesson.id))?.id ?? path.nextLessonId
+          : path.nextLessonId;
+      })()
+    : path.nextLessonId;
   const routeRows = visibleLevels.flatMap((level) => [
     { type: 'unit' as const, level },
     ...level.lessons.map((entry, index) => ({ type: 'lesson' as const, level, entry, index })),
@@ -184,7 +192,7 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
             <LearningBuddy message="يلا نتعلم!" />
             <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-lime-300 text-slate-950"><Sparkles className="h-5 w-5" /></div>
             <div><div className="text-lg font-black text-white">{path.completedCount}<span className="text-slate-400">/{path.totalLessons}</span></div><div className="text-[10px] text-slate-300">درس مكتمل</div></div>
-            <button type="button" onClick={() => onSelectLesson(path.nextLessonId)} className="mr-1 flex items-center gap-2 rounded-xl bg-lime-300 px-4 py-3 text-xs font-black text-slate-950 shadow-lg shadow-lime-300/20 hover:bg-lime-200 active:scale-95"><Play className="h-4 w-4 fill-current" /> ابدأ الآن</button>
+            <button type="button" onClick={() => handleCardClick(nextLessonId)} className="path-start-button mr-1 flex items-center gap-2 rounded-xl bg-lime-300 px-4 py-3 text-xs font-black text-slate-950 shadow-lg shadow-lime-300/20 hover:bg-lime-200 active:scale-95"><Play className="h-4 w-4 fill-current" /> ابدأ الآن</button>
           </div>
         </div>
         <div className="relative mt-6 h-2 overflow-hidden rounded-full bg-white/10"><div className="h-full rounded-full bg-gradient-to-l from-lime-300 via-teal-300 to-cyan-300 transition-[width] duration-700" style={{ width: `${path.totalLessons ? (path.completedCount / path.totalLessons) * 100 : 0}%` }} /></div>
@@ -255,7 +263,7 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
                   const bestScore = userProfile.quizScores[lesson.id] ?? 0;
                   const starCount = bestScore >= 90 ? 3 : bestScore >= 70 ? 2 : complete ? 1 : 0;
                   return <React.Fragment key={lesson.id}>
-                    <button type="button" disabled={unavailable} onClick={() => onSelectLesson(lesson.id)} style={{ transform: `translateX(${(routeShifts[routeNodes.findIndex((node) => node.row.type === 'lesson' && node.row.entry.lesson.id === lesson.id) % routeShifts.length] / 470) * 100}%)` }} className={`path-node group ${complete ? 'is-complete' : current ? 'is-current' : unavailable ? 'is-locked' : 'is-open'}`} aria-label={`${lesson.titleAr}، ${complete ? 'مكتمل' : current ? 'الدرس الحالي' : unavailable ? 'مقفل' : 'متاح'}`}>
+                    <button type="button" disabled={unavailable} onClick={() => handleCardClick(lesson.id)} style={{ transform: `translateX(${(routeShifts[routeNodes.findIndex((node) => node.row.type === 'lesson' && node.row.entry.lesson.id === lesson.id) % routeShifts.length] / 470) * 100}%)` }} className={`path-node group ${complete ? 'is-complete' : current ? 'is-current' : unavailable ? 'is-locked' : 'is-open'}`} aria-label={`${lesson.titleAr}، ${complete ? 'مكتمل' : current ? 'الدرس الحالي' : unavailable ? 'مقفل' : 'متاح'}`}>
                       <span className="path-node-orb">{complete ? <CheckCircle2 className="path-node-icon path-star h-7 w-7" strokeWidth={3} /> : unavailable ? <Lock className="path-node-icon h-5 w-5" /> : current ? <Footprints className="path-node-icon h-7 w-7" strokeWidth={2.8} /> : <NodeIcon className="path-node-icon h-6 w-6" aria-hidden="true" />}<span className="path-node-number">{index + 1}</span></span>
                       <span className="path-node-title">{lesson.titleAr}</span>
                       {complete && <span className="path-node-stars" aria-label={`${starCount} نجوم`} dir="ltr">{[0, 1, 2].map((star) => <Star key={star} className={star < starCount ? 'earned' : ''} />)}</span>}

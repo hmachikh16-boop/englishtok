@@ -15,9 +15,22 @@
 
 /* EnglishTok learning journey */
 .path-hero {
+  container-type: inline-size;
   background: radial-gradient(ellipse at 8% 0%, rgb(45 212 191 / 13%), transparent 42%),
     linear-gradient(145deg, #10212b 0%, #101a25 48%, #16262a 100%);
 }
+
+/* Size the hero actions from the card itself so embedded phone previews work too. */
+@container (max-width: 420px) {
+  .path-hero-intro,
+  .path-hero-summary { min-width: 0; width: 100%; }
+  .path-hero-summary { box-sizing: border-box; flex-wrap: wrap; justify-content: space-between; gap: 8px; padding: 10px; }
+  .path-hero-summary > .learning-buddy { flex: 0 0 auto; }
+  .path-hero-summary > button.path-start-button { box-sizing: border-box; width: 100%; min-width: 0; min-height: 44px; flex: 1 0 100%; justify-content: center; margin: 0; padding: 10px 12px; white-space: nowrap; }
+}
+
+.journey-home { min-height: 0; overscroll-behavior-y: contain; -webkit-overflow-scrolling: touch; scroll-behavior: smooth; touch-action: pan-y; }
+.journey-home button { touch-action: manipulation; }
 
 .path-stage {
   background: linear-gradient(145deg, rgb(255 255 255 / 4%), rgb(255 255 255 / 1%)), #101923;
