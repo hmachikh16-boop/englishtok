@@ -1,0 +1,98 @@
+@import "tailwindcss";
+
+@layer base {
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  body {
+    font-family: 'Cairo', 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  /* Latin text specific font */
+  .font-en {
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  }
+
+  .font-mono-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+/* Custom scrollbar hide for clean TikTok reels */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Character speaking mouth animation */
+@keyframes mouthTalk {
+  0%, 100% {
+    height: 3px;
+    border-radius: 4px;
+  }
+  50% {
+    height: 14px;
+    border-radius: 50%;
+  }
+}
+
+.animate-mouth {
+  animation: mouthTalk 0.28s infinite ease-in-out;
+}
+
+/* Subtle bobbing animation for speaking character */
+@keyframes characterBob {
+  0%, 100% {
+    transform: translateY(0px) scale(1);
+  }
+  50% {
+    transform: translateY(-4px) scale(1.01);
+  }
+}
+
+.animate-character-speaking {
+  animation: characterBob 0.6s infinite ease-in-out;
+}
+
+/* Float heart animation on double tap */
+@keyframes floatHeart {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(0.6) rotate(-15deg);
+  }
+  50% {
+    opacity: 1;
+    transform: translate(-50%, -80%) scale(1.3) rotate(10deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -120%) scale(1.6) rotate(-5deg);
+  }
+}
+
+.animate-float-heart {
+  animation: floatHeart 0.85s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Pulse glow for XP and streaks */
+@keyframes softPulse {
+  0%, 100% {
+    opacity: 0.8;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+}
+
+.animate-soft-pulse {
+  animation: softPulse 2s infinite ease-in-out;
+}

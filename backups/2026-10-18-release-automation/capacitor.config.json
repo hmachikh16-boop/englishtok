@@ -1,0 +1,13 @@
+{
+  "appId": "com.englishtok.app",
+  "appName": "EnglishTok",
+  "webDir": "dist",
+  "bundledWebRuntime": false,
+  "server": {
+    "androidScheme": "https"
+  },
+  "android": {
+    "backgroundColor": "#090d16",
+    "allowMixedContent": true
+  }
+}

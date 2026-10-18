@@ -1,0 +1,42 @@
+name: Publish lesson content
+
+on:
+  push:
+    branches:
+      - main
+      - master
+    paths:
+      - 'src/data/**'
+      - 'src/types/**'
+      - 'scripts/export-learning-path.ts'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run content:export
+      - name: Publish the rolling content release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          if gh release view content-latest >/dev/null 2>&1; then
+            gh release upload content-latest public/content/learning-path.json --clobber
+          else
+            gh release create content-latest public/content/learning-path.json \
+              --target "$GITHUB_SHA" \
+              --title "EnglishTok latest lesson content" \
+              --notes "Rolling content-only update. This release does not contain an APK." \
+              --prerelease
+          fi
