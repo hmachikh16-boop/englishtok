@@ -156,6 +156,11 @@ export default function App() {
     setUserProfile(fresh);
   };
 
+  const handleRestoreProgress = (profile: UserProfile) => {
+    saveProfile(profile);
+    setUserProfile(profile);
+  };
+
   const handleRefreshContent = async () => {
     const latestLessons = await fetchLatestLearningPath();
     if (!latestLessons) return false;
@@ -335,6 +340,7 @@ export default function App() {
               userProfile={userProfile}
               onUpdateProfile={handleUpdateProfile}
               onResetProgress={handleResetProgress}
+              onRestoreProgress={handleRestoreProgress}
               onRefreshContent={handleRefreshContent}
             />
           )}

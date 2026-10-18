@@ -8,6 +8,7 @@ import type {
   VocabularyWord,
 } from '../types';
 import { INITIAL_LESSONS } from './lessons';
+import { getArabicCharacterName } from './characterNames';
 import { ADDITIONAL_LESSON_SPECS } from './additionalCurriculum';
 
 type LessonSeed = {
@@ -782,12 +783,12 @@ const speakers = (id: string, people: [string, string], stage: number): [Charact
   const [shirtA, shirtB] = palettes[(stage - 1) % palettes.length];
   return [
     {
-      id: `${id}-a`, name: people[0], nameAr: people[0], roleAr: 'المتحدث الأول',
+      id: `${id}-a`, name: people[0], nameAr: getArabicCharacterName(people[0]), roleAr: 'المتحدث الأول',
       avatar: '🧑', voiceGender: 'female', voicePitch: 1.08, shirtColor: shirtA,
       skinTone: '#fcd7b6', hairColor: '#3b2418', hairStyle: 'ponytail',
     },
     {
-      id: `${id}-b`, name: people[1], nameAr: people[1], roleAr: 'المتحدث الثاني',
+      id: `${id}-b`, name: people[1], nameAr: getArabicCharacterName(people[1]), roleAr: 'المتحدث الثاني',
       avatar: '🧑‍🏫', voiceGender: 'male', voicePitch: 0.92, shirtColor: shirtB,
       skinTone: '#f3c99f', hairColor: '#33251d', hairStyle: 'short',
     },

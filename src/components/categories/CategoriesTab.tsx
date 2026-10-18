@@ -279,7 +279,7 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
                         المرحلة {lesson.curriculumStage}
                       </span>
                       <span className="text-[11px] text-slate-400">
-                        {lesson.characterA.name} & {lesson.characterB.name}
+                        {lesson.characterA.nameAr} و{lesson.characterB.nameAr}
                       </span>
                     </div>
                     <h4 className="break-words text-sm font-bold text-white group-hover:text-sky-400 transition-colors">

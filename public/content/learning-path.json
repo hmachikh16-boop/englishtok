@@ -15,7 +15,7 @@
       "characterA": {
         "id": "path-l1-01-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -28,7 +28,7 @@
       "characterB": {
         "id": "path-l1-01-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -163,7 +163,7 @@
       "characterA": {
         "id": "path-l1-02-a",
         "name": "Lina",
-        "nameAr": "Lina",
+        "nameAr": "لينا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -176,7 +176,7 @@
       "characterB": {
         "id": "path-l1-02-b",
         "name": "Noah",
-        "nameAr": "Noah",
+        "nameAr": "محمد",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -322,7 +322,7 @@
       "characterA": {
         "id": "path-l1-03-a",
         "name": "Sara",
-        "nameAr": "Sara",
+        "nameAr": "سارة",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -335,7 +335,7 @@
       "characterB": {
         "id": "path-l1-03-b",
         "name": "Leo",
-        "nameAr": "Leo",
+        "nameAr": "لحسن",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -481,7 +481,7 @@
       "characterA": {
         "id": "path-l1-04-a",
         "name": "Ethan",
-        "nameAr": "Ethan",
+        "nameAr": "يحيى",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -494,7 +494,7 @@
       "characterB": {
         "id": "path-l1-04-b",
         "name": "Ava",
-        "nameAr": "Ava",
+        "nameAr": "آية",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -644,7 +644,7 @@
       "characterA": {
         "id": "path-l1-05-a",
         "name": "Ben",
-        "nameAr": "Ben",
+        "nameAr": "أمين",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -657,7 +657,7 @@
       "characterB": {
         "id": "path-l1-05-b",
         "name": "Maya",
-        "nameAr": "Maya",
+        "nameAr": "مريم",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -802,7 +802,7 @@
       "characterA": {
         "id": "path-l1-06-a",
         "name": "Nora",
-        "nameAr": "Nora",
+        "nameAr": "نور",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -815,7 +815,7 @@
       "characterB": {
         "id": "path-l1-06-b",
         "name": "Adam",
-        "nameAr": "Adam",
+        "nameAr": "آدم",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -962,7 +962,7 @@
       "characterA": {
         "id": "path-l1-07-a",
         "name": "Ivy",
-        "nameAr": "Ivy",
+        "nameAr": "إيناس",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -975,7 +975,7 @@
       "characterB": {
         "id": "path-l1-07-b",
         "name": "Jack",
-        "nameAr": "Jack",
+        "nameAr": "ياسين",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -1120,7 +1120,7 @@
       "characterA": {
         "id": "path-l1-08-a",
         "name": "Zoe",
-        "nameAr": "Zoe",
+        "nameAr": "زينب",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -1133,7 +1133,7 @@
       "characterB": {
         "id": "path-l1-08-b",
         "name": "Ryan",
-        "nameAr": "Ryan",
+        "nameAr": "ريان",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -1280,7 +1280,7 @@
       "characterA": {
         "id": "path-l1-09-a",
         "name": "Ella",
-        "nameAr": "Ella",
+        "nameAr": "ليلى",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -1293,7 +1293,7 @@
       "characterB": {
         "id": "path-l1-09-b",
         "name": "Finn",
-        "nameAr": "Finn",
+        "nameAr": "فارس",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -1440,7 +1440,7 @@
       "characterA": {
         "id": "alex",
         "name": "Alex",
-        "nameAr": "أليكس",
+        "nameAr": "أحمد",
         "roleAr": "نادل المقهى (Barista)",
         "avatar": "👨‍🍳",
         "voiceGender": "male",
@@ -1453,7 +1453,7 @@
       "characterB": {
         "id": "emma",
         "name": "Emma",
-        "nameAr": "إيما",
+        "nameAr": "ليلى",
         "roleAr": "زبونة المقهى",
         "avatar": "👩",
         "voiceGender": "female",
@@ -1642,7 +1642,7 @@
       "characterA": {
         "id": "path-l2-01-a",
         "name": "Hana",
-        "nameAr": "Hana",
+        "nameAr": "هناء",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -1655,7 +1655,7 @@
       "characterB": {
         "id": "path-l2-01-b",
         "name": "Peter",
-        "nameAr": "Peter",
+        "nameAr": "بلال",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -1808,7 +1808,7 @@
       "characterA": {
         "id": "path-l2-02-a",
         "name": "Mariam",
-        "nameAr": "Mariam",
+        "nameAr": "مريم",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -1821,7 +1821,7 @@
       "characterB": {
         "id": "path-l2-02-b",
         "name": "Eli",
-        "nameAr": "Eli",
+        "nameAr": "إلياس",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -1965,7 +1965,7 @@
       "characterA": {
         "id": "path-l2-03-a",
         "name": "Grace",
-        "nameAr": "Grace",
+        "nameAr": "رحمة",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -1978,7 +1978,7 @@
       "characterB": {
         "id": "path-l2-03-b",
         "name": "Yusuf",
-        "nameAr": "Yusuf",
+        "nameAr": "يوسف",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -2123,7 +2123,7 @@
       "characterA": {
         "id": "path-l2-04-a",
         "name": "Layla",
-        "nameAr": "Layla",
+        "nameAr": "ليلى",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -2136,7 +2136,7 @@
       "characterB": {
         "id": "path-l2-04-b",
         "name": "Tom",
-        "nameAr": "Tom",
+        "nameAr": "طارق",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -2280,7 +2280,7 @@
       "characterA": {
         "id": "path-l2-05-a",
         "name": "Amir",
-        "nameAr": "Amir",
+        "nameAr": "أمير",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -2293,7 +2293,7 @@
       "characterB": {
         "id": "path-l2-05-b",
         "name": "Julia",
-        "nameAr": "Julia",
+        "nameAr": "جمانة",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -2440,7 +2440,7 @@
       "characterA": {
         "id": "path-l2-06-a",
         "name": "Dina",
-        "nameAr": "Dina",
+        "nameAr": "دينا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -2453,7 +2453,7 @@
       "characterB": {
         "id": "path-l2-06-b",
         "name": "Max",
-        "nameAr": "Max",
+        "nameAr": "مازن",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -2599,7 +2599,7 @@
       "characterA": {
         "id": "path-l2-07-a",
         "name": "Rami",
-        "nameAr": "Rami",
+        "nameAr": "رامي",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -2612,7 +2612,7 @@
       "characterB": {
         "id": "path-l2-07-b",
         "name": "Sophie",
-        "nameAr": "Sophie",
+        "nameAr": "صوفيا",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -2757,7 +2757,7 @@
       "characterA": {
         "id": "path-l2-08-a",
         "name": "Nadia",
-        "nameAr": "Nadia",
+        "nameAr": "نادية",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -2770,7 +2770,7 @@
       "characterB": {
         "id": "path-l2-08-b",
         "name": "Chris",
-        "nameAr": "Chris",
+        "nameAr": "كريم",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -2915,7 +2915,7 @@
       "characterA": {
         "id": "path-l2-09-a",
         "name": "Hadi",
-        "nameAr": "Hadi",
+        "nameAr": "هادي",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -2928,7 +2928,7 @@
       "characterB": {
         "id": "path-l2-09-b",
         "name": "Emily",
-        "nameAr": "Emily",
+        "nameAr": "إميلي",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -3072,7 +3072,7 @@
       "characterA": {
         "id": "path-l2-10-a",
         "name": "Mona",
-        "nameAr": "Mona",
+        "nameAr": "منى",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -3085,7 +3085,7 @@
       "characterB": {
         "id": "path-l2-10-b",
         "name": "David",
-        "nameAr": "David",
+        "nameAr": "داود",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -3228,7 +3228,7 @@
       "characterA": {
         "id": "path-l3-01-a",
         "name": "Rosa",
-        "nameAr": "Rosa",
+        "nameAr": "روزا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -3241,7 +3241,7 @@
       "characterB": {
         "id": "path-l3-01-b",
         "name": "Michael",
-        "nameAr": "Michael",
+        "nameAr": "ميخائيل",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -3385,7 +3385,7 @@
       "characterA": {
         "id": "path-l3-02-a",
         "name": "Salim",
-        "nameAr": "Salim",
+        "nameAr": "سليم",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -3398,7 +3398,7 @@
       "characterB": {
         "id": "path-l3-02-b",
         "name": "Claire",
-        "nameAr": "Claire",
+        "nameAr": "كلارا",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -3543,7 +3543,7 @@
       "characterA": {
         "id": "path-l3-03-a",
         "name": "Amal",
-        "nameAr": "Amal",
+        "nameAr": "أمل",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -3556,7 +3556,7 @@
       "characterB": {
         "id": "path-l3-03-b",
         "name": "George",
-        "nameAr": "George",
+        "nameAr": "جورج",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -3700,7 +3700,7 @@
       "characterA": {
         "id": "path-l3-04-a",
         "name": "Yara",
-        "nameAr": "Yara",
+        "nameAr": "يارا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -3713,7 +3713,7 @@
       "characterB": {
         "id": "path-l3-04-b",
         "name": "Henry",
-        "nameAr": "Henry",
+        "nameAr": "هيثم",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -3856,7 +3856,7 @@
       "characterA": {
         "id": "jack",
         "name": "Jack",
-        "nameAr": "جاك",
+        "nameAr": "ياسين",
         "roleAr": "بائع الملابس (Store Assistant)",
         "avatar": "👔",
         "voiceGender": "male",
@@ -3869,7 +3869,7 @@
       "characterB": {
         "id": "maya",
         "name": "Maya",
-        "nameAr": "مايا",
+        "nameAr": "مريم",
         "roleAr": "متسوقة",
         "avatar": "🧥",
         "voiceGender": "female",
@@ -4018,7 +4018,7 @@
       "characterA": {
         "id": "path-l3-06-a",
         "name": "Hassan",
-        "nameAr": "Hassan",
+        "nameAr": "حسن",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -4031,7 +4031,7 @@
       "characterB": {
         "id": "path-l3-06-b",
         "name": "Olivia",
-        "nameAr": "Olivia",
+        "nameAr": "علا",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -4176,7 +4176,7 @@
       "characterA": {
         "id": "path-l3-07-a",
         "name": "Nabil",
-        "nameAr": "Nabil",
+        "nameAr": "نبيل",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -4189,7 +4189,7 @@
       "characterB": {
         "id": "path-l3-07-b",
         "name": "Kate",
-        "nameAr": "Kate",
+        "nameAr": "كاتيا",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -4335,7 +4335,7 @@
       "characterA": {
         "id": "path-l3-08-a",
         "name": "Reem",
-        "nameAr": "Reem",
+        "nameAr": "ريم",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -4348,7 +4348,7 @@
       "characterB": {
         "id": "path-l3-08-b",
         "name": "Lucas",
-        "nameAr": "Lucas",
+        "nameAr": "لوكاس",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -4492,7 +4492,7 @@
       "characterA": {
         "id": "leo",
         "name": "Leo",
-        "nameAr": "ليو",
+        "nameAr": "لحسن",
         "roleAr": "صديق",
         "avatar": "🧢",
         "voiceGender": "male",
@@ -4505,7 +4505,7 @@
       "characterB": {
         "id": "chloe",
         "name": "Chloe",
-        "nameAr": "كلوي",
+        "nameAr": "خديجة",
         "roleAr": "صديقة",
         "avatar": "🌸",
         "voiceGender": "female",
@@ -4621,7 +4621,7 @@
       "characterA": {
         "id": "path-l3-05-a",
         "name": "Rita",
-        "nameAr": "Rita",
+        "nameAr": "ريتا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -4634,7 +4634,7 @@
       "characterB": {
         "id": "path-l3-05-b",
         "name": "Sam",
-        "nameAr": "Sam",
+        "nameAr": "سامر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -4779,7 +4779,7 @@
       "characterA": {
         "id": "path-l3-extra-01-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -4792,7 +4792,7 @@
       "characterB": {
         "id": "path-l3-extra-01-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -4917,7 +4917,7 @@
       "characterA": {
         "id": "path-l3-extra-02-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -4930,7 +4930,7 @@
       "characterB": {
         "id": "path-l3-extra-02-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -5055,7 +5055,7 @@
       "characterA": {
         "id": "path-l3-extra-03-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -5068,7 +5068,7 @@
       "characterB": {
         "id": "path-l3-extra-03-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -5195,7 +5195,7 @@
       "characterA": {
         "id": "path-l3-extra-04-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -5208,7 +5208,7 @@
       "characterB": {
         "id": "path-l3-extra-04-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -5335,7 +5335,7 @@
       "characterA": {
         "id": "path-l3-extra-05-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -5348,7 +5348,7 @@
       "characterB": {
         "id": "path-l3-extra-05-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -5473,7 +5473,7 @@
       "characterA": {
         "id": "path-l3-extra-06-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -5486,7 +5486,7 @@
       "characterB": {
         "id": "path-l3-extra-06-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -5611,7 +5611,7 @@
       "characterA": {
         "id": "path-l3-extra-07-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -5624,7 +5624,7 @@
       "characterB": {
         "id": "path-l3-extra-07-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -5749,7 +5749,7 @@
       "characterA": {
         "id": "path-l3-extra-08-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -5762,7 +5762,7 @@
       "characterB": {
         "id": "path-l3-extra-08-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -5889,7 +5889,7 @@
       "characterA": {
         "id": "path-l3-extra-09-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -5902,7 +5902,7 @@
       "characterB": {
         "id": "path-l3-extra-09-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -6029,7 +6029,7 @@
       "characterA": {
         "id": "path-l3-extra-10-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -6042,7 +6042,7 @@
       "characterB": {
         "id": "path-l3-extra-10-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -6167,7 +6167,7 @@
       "characterA": {
         "id": "path-l3-extra-11-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -6180,7 +6180,7 @@
       "characterB": {
         "id": "path-l3-extra-11-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -6305,7 +6305,7 @@
       "characterA": {
         "id": "path-l3-extra-12-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -6318,7 +6318,7 @@
       "characterB": {
         "id": "path-l3-extra-12-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -6445,7 +6445,7 @@
       "characterA": {
         "id": "path-l3-extra-13-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -6458,7 +6458,7 @@
       "characterB": {
         "id": "path-l3-extra-13-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -6585,7 +6585,7 @@
       "characterA": {
         "id": "path-l3-extra-14-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -6598,7 +6598,7 @@
       "characterB": {
         "id": "path-l3-extra-14-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -6723,7 +6723,7 @@
       "characterA": {
         "id": "path-l3-extra-15-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -6736,7 +6736,7 @@
       "characterB": {
         "id": "path-l3-extra-15-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -6861,7 +6861,7 @@
       "characterA": {
         "id": "path-l3-extra-16-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -6874,7 +6874,7 @@
       "characterB": {
         "id": "path-l3-extra-16-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -6999,7 +6999,7 @@
       "characterA": {
         "id": "path-l3-extra-17-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -7012,7 +7012,7 @@
       "characterB": {
         "id": "path-l3-extra-17-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -7139,7 +7139,7 @@
       "characterA": {
         "id": "path-l3-extra-18-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -7152,7 +7152,7 @@
       "characterB": {
         "id": "path-l3-extra-18-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -7277,7 +7277,7 @@
       "characterA": {
         "id": "path-l3-extra-19-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -7290,7 +7290,7 @@
       "characterB": {
         "id": "path-l3-extra-19-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -7417,7 +7417,7 @@
       "characterA": {
         "id": "path-l3-extra-20-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -7430,7 +7430,7 @@
       "characterB": {
         "id": "path-l3-extra-20-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -7555,7 +7555,7 @@
       "characterA": {
         "id": "path-l4-01-a",
         "name": "Tariq",
-        "nameAr": "Tariq",
+        "nameAr": "طارق",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -7568,7 +7568,7 @@
       "characterB": {
         "id": "path-l4-01-b",
         "name": "Megan",
-        "nameAr": "Megan",
+        "nameAr": "ميغان",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -7722,7 +7722,7 @@
       "characterA": {
         "id": "path-l4-02-a",
         "name": "Farah",
-        "nameAr": "Farah",
+        "nameAr": "فرح",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -7735,7 +7735,7 @@
       "characterB": {
         "id": "path-l4-02-b",
         "name": "Daniel",
-        "nameAr": "Daniel",
+        "nameAr": "يوسف",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -7889,7 +7889,7 @@
       "characterA": {
         "id": "path-l4-03-a",
         "name": "Noor",
-        "nameAr": "Noor",
+        "nameAr": "نور",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -7902,7 +7902,7 @@
       "characterB": {
         "id": "path-l4-03-b",
         "name": "Evan",
-        "nameAr": "Evan",
+        "nameAr": "إياد",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -8056,7 +8056,7 @@
       "characterA": {
         "id": "path-l4-04-a",
         "name": "Mariam",
-        "nameAr": "Mariam",
+        "nameAr": "مريم",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -8069,7 +8069,7 @@
       "characterB": {
         "id": "path-l4-04-b",
         "name": "Oliver",
-        "nameAr": "Oliver",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -8214,7 +8214,7 @@
       "characterA": {
         "id": "path-l4-05-a",
         "name": "Huda",
-        "nameAr": "Huda",
+        "nameAr": "هدى",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -8227,7 +8227,7 @@
       "characterB": {
         "id": "path-l4-05-b",
         "name": "James",
-        "nameAr": "James",
+        "nameAr": "جاسم",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -8374,7 +8374,7 @@
       "characterA": {
         "id": "path-l4-06-a",
         "name": "Aisha",
-        "nameAr": "Aisha",
+        "nameAr": "عائشة",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -8387,7 +8387,7 @@
       "characterB": {
         "id": "path-l4-06-b",
         "name": "Ben",
-        "nameAr": "Ben",
+        "nameAr": "أمين",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -8711,7 +8711,7 @@
       "characterA": {
         "id": "sophia",
         "name": "Sophia",
-        "nameAr": "صوفيا",
+        "nameAr": "سلمى",
         "roleAr": "مديرة الفريق (Team Lead)",
         "avatar": "👩‍💼",
         "voiceGender": "female",
@@ -8724,7 +8724,7 @@
       "characterB": {
         "id": "liam",
         "name": "Liam",
-        "nameAr": "ليام",
+        "nameAr": "علي",
         "roleAr": "موظف جديد (Software Engineer)",
         "avatar": "👨‍💻",
         "voiceGender": "male",
@@ -8860,7 +8860,7 @@
       "characterA": {
         "id": "dr_emily",
         "name": "Dr. Emily",
-        "nameAr": "د. إيميلي",
+        "nameAr": "د. إيناس",
         "roleAr": "طبيبة عامة (Physician)",
         "avatar": "👩‍⚕️",
         "voiceGender": "female",
@@ -8873,7 +8873,7 @@
       "characterB": {
         "id": "noah",
         "name": "Noah",
-        "nameAr": "نوح",
+        "nameAr": "محمد",
         "roleAr": "المريض",
         "avatar": "🤒",
         "voiceGender": "male",
@@ -9008,7 +9008,7 @@
       "characterA": {
         "id": "lisa",
         "name": "Lisa",
-        "nameAr": "ليزا",
+        "nameAr": "ليان",
         "roleAr": "موظفة الاستقبال بالفندق",
         "avatar": "🛎️",
         "voiceGender": "female",
@@ -9021,7 +9021,7 @@
       "characterB": {
         "id": "daniel",
         "name": "Daniel",
-        "nameAr": "دانيال",
+        "nameAr": "يوسف",
         "roleAr": "نزيل الفندق",
         "avatar": "🧳",
         "voiceGender": "male",
@@ -9147,7 +9147,7 @@
       "characterA": {
         "id": "path-l4-extra-01-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -9160,7 +9160,7 @@
       "characterB": {
         "id": "path-l4-extra-01-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -9285,7 +9285,7 @@
       "characterA": {
         "id": "path-l4-extra-02-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -9298,7 +9298,7 @@
       "characterB": {
         "id": "path-l4-extra-02-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -9423,7 +9423,7 @@
       "characterA": {
         "id": "path-l4-extra-03-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -9436,7 +9436,7 @@
       "characterB": {
         "id": "path-l4-extra-03-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -9561,7 +9561,7 @@
       "characterA": {
         "id": "path-l4-extra-04-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -9574,7 +9574,7 @@
       "characterB": {
         "id": "path-l4-extra-04-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -9699,7 +9699,7 @@
       "characterA": {
         "id": "path-l4-extra-05-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -9712,7 +9712,7 @@
       "characterB": {
         "id": "path-l4-extra-05-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -9837,7 +9837,7 @@
       "characterA": {
         "id": "path-l4-extra-06-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -9850,7 +9850,7 @@
       "characterB": {
         "id": "path-l4-extra-06-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -9975,7 +9975,7 @@
       "characterA": {
         "id": "path-l4-extra-07-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -9988,7 +9988,7 @@
       "characterB": {
         "id": "path-l4-extra-07-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -10113,7 +10113,7 @@
       "characterA": {
         "id": "path-l4-extra-08-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -10126,7 +10126,7 @@
       "characterB": {
         "id": "path-l4-extra-08-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -10251,7 +10251,7 @@
       "characterA": {
         "id": "path-l4-extra-09-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -10264,7 +10264,7 @@
       "characterB": {
         "id": "path-l4-extra-09-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -10389,7 +10389,7 @@
       "characterA": {
         "id": "path-l4-extra-10-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -10402,7 +10402,7 @@
       "characterB": {
         "id": "path-l4-extra-10-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -10527,7 +10527,7 @@
       "characterA": {
         "id": "path-l4-extra-11-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -10540,7 +10540,7 @@
       "characterB": {
         "id": "path-l4-extra-11-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -10665,7 +10665,7 @@
       "characterA": {
         "id": "path-l4-extra-12-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -10678,7 +10678,7 @@
       "characterB": {
         "id": "path-l4-extra-12-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -10803,7 +10803,7 @@
       "characterA": {
         "id": "path-l4-extra-13-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -10816,7 +10816,7 @@
       "characterB": {
         "id": "path-l4-extra-13-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -10941,7 +10941,7 @@
       "characterA": {
         "id": "path-l4-extra-14-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -10954,7 +10954,7 @@
       "characterB": {
         "id": "path-l4-extra-14-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -11079,7 +11079,7 @@
       "characterA": {
         "id": "path-l4-extra-15-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -11092,7 +11092,7 @@
       "characterB": {
         "id": "path-l4-extra-15-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -11217,7 +11217,7 @@
       "characterA": {
         "id": "path-l4-extra-16-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -11230,7 +11230,7 @@
       "characterB": {
         "id": "path-l4-extra-16-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -11357,7 +11357,7 @@
       "characterA": {
         "id": "path-l4-extra-17-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -11370,7 +11370,7 @@
       "characterB": {
         "id": "path-l4-extra-17-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -11495,7 +11495,7 @@
       "characterA": {
         "id": "path-l4-extra-18-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -11508,7 +11508,7 @@
       "characterB": {
         "id": "path-l4-extra-18-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -11633,7 +11633,7 @@
       "characterA": {
         "id": "path-l4-extra-19-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -11646,7 +11646,7 @@
       "characterB": {
         "id": "path-l4-extra-19-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -11773,7 +11773,7 @@
       "characterA": {
         "id": "path-l4-extra-20-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -11786,7 +11786,7 @@
       "characterB": {
         "id": "path-l4-extra-20-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -11911,7 +11911,7 @@
       "characterA": {
         "id": "path-l5-01-a",
         "name": "Nadine",
-        "nameAr": "Nadine",
+        "nameAr": "نادين",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -11924,7 +11924,7 @@
       "characterB": {
         "id": "path-l5-01-b",
         "name": "Theo",
-        "nameAr": "Theo",
+        "nameAr": "تيم",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -12084,7 +12084,7 @@
       "characterA": {
         "id": "path-l5-02-a",
         "name": "Rana",
-        "nameAr": "Rana",
+        "nameAr": "رنا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -12097,7 +12097,7 @@
       "characterB": {
         "id": "path-l5-02-b",
         "name": "Miles",
-        "nameAr": "Miles",
+        "nameAr": "مالك",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -12253,7 +12253,7 @@
       "characterA": {
         "id": "path-l5-03-a",
         "name": "Samar",
-        "nameAr": "Samar",
+        "nameAr": "سمر",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -12266,7 +12266,7 @@
       "characterB": {
         "id": "path-l5-03-b",
         "name": "Elliot",
-        "nameAr": "Elliot",
+        "nameAr": "إلياس",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -12409,7 +12409,7 @@
       "characterA": {
         "id": "path-l5-04-a",
         "name": "Amina",
-        "nameAr": "Amina",
+        "nameAr": "أمينة",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -12422,7 +12422,7 @@
       "characterB": {
         "id": "path-l5-04-b",
         "name": "Jack",
-        "nameAr": "Jack",
+        "nameAr": "ياسين",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -12567,7 +12567,7 @@
       "characterA": {
         "id": "path-l5-05-a",
         "name": "Dalia",
-        "nameAr": "Dalia",
+        "nameAr": "داليا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -12580,7 +12580,7 @@
       "characterB": {
         "id": "path-l5-05-b",
         "name": "Ryan",
-        "nameAr": "Ryan",
+        "nameAr": "ريان",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -12734,7 +12734,7 @@
       "characterA": {
         "id": "path-l5-06-a",
         "name": "Hala",
-        "nameAr": "Hala",
+        "nameAr": "هالة",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -12747,7 +12747,7 @@
       "characterB": {
         "id": "path-l5-06-b",
         "name": "Oscar",
-        "nameAr": "Oscar",
+        "nameAr": "أسامة",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -12892,7 +12892,7 @@
       "characterA": {
         "id": "path-l5-07-a",
         "name": "Maha",
-        "nameAr": "Maha",
+        "nameAr": "مها",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -12905,7 +12905,7 @@
       "characterB": {
         "id": "path-l5-07-b",
         "name": "Ethan",
-        "nameAr": "Ethan",
+        "nameAr": "يحيى",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -13059,7 +13059,7 @@
       "characterA": {
         "id": "path-l5-08-a",
         "name": "Salma",
-        "nameAr": "Salma",
+        "nameAr": "سلمى",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -13072,7 +13072,7 @@
       "characterB": {
         "id": "path-l5-08-b",
         "name": "Peter",
-        "nameAr": "Peter",
+        "nameAr": "بلال",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -13225,7 +13225,7 @@
       "characterA": {
         "id": "path-l5-09-a",
         "name": "Noura",
-        "nameAr": "Noura",
+        "nameAr": "نورة",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -13238,7 +13238,7 @@
       "characterB": {
         "id": "path-l5-09-b",
         "name": "Alex",
-        "nameAr": "Alex",
+        "nameAr": "أحمد",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -13386,7 +13386,7 @@
       "characterA": {
         "id": "mike",
         "name": "Mike",
-        "nameAr": "مايك",
+        "nameAr": "أمين",
         "roleAr": "متحدث أصلي (Native Speaker)",
         "avatar": "🧢",
         "voiceGender": "male",
@@ -13399,7 +13399,7 @@
       "characterB": {
         "id": "zara",
         "name": "Zara",
-        "nameAr": "زارا",
+        "nameAr": "زهراء",
         "roleAr": "طالبة لغة إنجليزية",
         "avatar": "🎒",
         "voiceGender": "female",
@@ -13535,7 +13535,7 @@
       "characterA": {
         "id": "path-l5-extra-01-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -13548,7 +13548,7 @@
       "characterB": {
         "id": "path-l5-extra-01-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -13673,7 +13673,7 @@
       "characterA": {
         "id": "path-l5-extra-02-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -13686,7 +13686,7 @@
       "characterB": {
         "id": "path-l5-extra-02-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -13811,7 +13811,7 @@
       "characterA": {
         "id": "path-l5-extra-03-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -13824,7 +13824,7 @@
       "characterB": {
         "id": "path-l5-extra-03-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -13949,7 +13949,7 @@
       "characterA": {
         "id": "path-l5-extra-04-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -13962,7 +13962,7 @@
       "characterB": {
         "id": "path-l5-extra-04-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -14087,7 +14087,7 @@
       "characterA": {
         "id": "path-l5-extra-05-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -14100,7 +14100,7 @@
       "characterB": {
         "id": "path-l5-extra-05-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -14225,7 +14225,7 @@
       "characterA": {
         "id": "path-l5-extra-06-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -14238,7 +14238,7 @@
       "characterB": {
         "id": "path-l5-extra-06-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -14365,7 +14365,7 @@
       "characterA": {
         "id": "path-l5-extra-07-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -14378,7 +14378,7 @@
       "characterB": {
         "id": "path-l5-extra-07-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -14503,7 +14503,7 @@
       "characterA": {
         "id": "path-l5-extra-08-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -14516,7 +14516,7 @@
       "characterB": {
         "id": "path-l5-extra-08-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -14641,7 +14641,7 @@
       "characterA": {
         "id": "path-l5-extra-09-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -14654,7 +14654,7 @@
       "characterB": {
         "id": "path-l5-extra-09-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -14779,7 +14779,7 @@
       "characterA": {
         "id": "path-l5-extra-10-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -14792,7 +14792,7 @@
       "characterB": {
         "id": "path-l5-extra-10-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -14917,7 +14917,7 @@
       "characterA": {
         "id": "path-l5-extra-11-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -14930,7 +14930,7 @@
       "characterB": {
         "id": "path-l5-extra-11-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -15055,7 +15055,7 @@
       "characterA": {
         "id": "path-l5-extra-12-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -15068,7 +15068,7 @@
       "characterB": {
         "id": "path-l5-extra-12-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -15193,7 +15193,7 @@
       "characterA": {
         "id": "path-l5-extra-13-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -15206,7 +15206,7 @@
       "characterB": {
         "id": "path-l5-extra-13-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -15331,7 +15331,7 @@
       "characterA": {
         "id": "path-l5-extra-14-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -15344,7 +15344,7 @@
       "characterB": {
         "id": "path-l5-extra-14-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -15469,7 +15469,7 @@
       "characterA": {
         "id": "path-l5-extra-15-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -15482,7 +15482,7 @@
       "characterB": {
         "id": "path-l5-extra-15-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -15607,7 +15607,7 @@
       "characterA": {
         "id": "path-l5-extra-16-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -15620,7 +15620,7 @@
       "characterB": {
         "id": "path-l5-extra-16-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -15745,7 +15745,7 @@
       "characterA": {
         "id": "path-l5-extra-17-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -15758,7 +15758,7 @@
       "characterB": {
         "id": "path-l5-extra-17-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -15883,7 +15883,7 @@
       "characterA": {
         "id": "path-l5-extra-18-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -15896,7 +15896,7 @@
       "characterB": {
         "id": "path-l5-extra-18-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -16023,7 +16023,7 @@
       "characterA": {
         "id": "path-l5-extra-19-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -16036,7 +16036,7 @@
       "characterB": {
         "id": "path-l5-extra-19-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -16161,7 +16161,7 @@
       "characterA": {
         "id": "path-l5-extra-20-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -16174,7 +16174,7 @@
       "characterB": {
         "id": "path-l5-extra-20-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -16299,7 +16299,7 @@
       "characterA": {
         "id": "path-l6-extra-01-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -16312,7 +16312,7 @@
       "characterB": {
         "id": "path-l6-extra-01-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -16437,7 +16437,7 @@
       "characterA": {
         "id": "path-l6-extra-02-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -16450,7 +16450,7 @@
       "characterB": {
         "id": "path-l6-extra-02-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -16575,7 +16575,7 @@
       "characterA": {
         "id": "path-l6-extra-03-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -16588,7 +16588,7 @@
       "characterB": {
         "id": "path-l6-extra-03-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -16713,7 +16713,7 @@
       "characterA": {
         "id": "path-l6-extra-04-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -16726,7 +16726,7 @@
       "characterB": {
         "id": "path-l6-extra-04-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -16851,7 +16851,7 @@
       "characterA": {
         "id": "path-l6-extra-05-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -16864,7 +16864,7 @@
       "characterB": {
         "id": "path-l6-extra-05-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -16989,7 +16989,7 @@
       "characterA": {
         "id": "path-l6-extra-06-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -17002,7 +17002,7 @@
       "characterB": {
         "id": "path-l6-extra-06-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -17129,7 +17129,7 @@
       "characterA": {
         "id": "path-l6-extra-07-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -17142,7 +17142,7 @@
       "characterB": {
         "id": "path-l6-extra-07-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -17267,7 +17267,7 @@
       "characterA": {
         "id": "path-l6-extra-08-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -17280,7 +17280,7 @@
       "characterB": {
         "id": "path-l6-extra-08-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -17405,7 +17405,7 @@
       "characterA": {
         "id": "path-l6-extra-09-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -17418,7 +17418,7 @@
       "characterB": {
         "id": "path-l6-extra-09-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -17543,7 +17543,7 @@
       "characterA": {
         "id": "path-l6-extra-10-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -17556,7 +17556,7 @@
       "characterB": {
         "id": "path-l6-extra-10-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -17681,7 +17681,7 @@
       "characterA": {
         "id": "path-l6-extra-11-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -17694,7 +17694,7 @@
       "characterB": {
         "id": "path-l6-extra-11-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -17819,7 +17819,7 @@
       "characterA": {
         "id": "path-l6-extra-12-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -17832,7 +17832,7 @@
       "characterB": {
         "id": "path-l6-extra-12-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -17957,7 +17957,7 @@
       "characterA": {
         "id": "path-l6-extra-13-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -17970,7 +17970,7 @@
       "characterB": {
         "id": "path-l6-extra-13-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -18095,7 +18095,7 @@
       "characterA": {
         "id": "path-l6-extra-14-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -18108,7 +18108,7 @@
       "characterB": {
         "id": "path-l6-extra-14-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -18235,7 +18235,7 @@
       "characterA": {
         "id": "path-l6-extra-15-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -18248,7 +18248,7 @@
       "characterB": {
         "id": "path-l6-extra-15-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -18373,7 +18373,7 @@
       "characterA": {
         "id": "path-l6-extra-16-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -18386,7 +18386,7 @@
       "characterB": {
         "id": "path-l6-extra-16-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -18511,7 +18511,7 @@
       "characterA": {
         "id": "path-l6-extra-17-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -18524,7 +18524,7 @@
       "characterB": {
         "id": "path-l6-extra-17-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -18649,7 +18649,7 @@
       "characterA": {
         "id": "path-l6-extra-18-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -18662,7 +18662,7 @@
       "characterB": {
         "id": "path-l6-extra-18-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -18787,7 +18787,7 @@
       "characterA": {
         "id": "path-l6-extra-19-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -18800,7 +18800,7 @@
       "characterB": {
         "id": "path-l6-extra-19-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -18925,7 +18925,7 @@
       "characterA": {
         "id": "path-l6-extra-20-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -18938,7 +18938,7 @@
       "characterB": {
         "id": "path-l6-extra-20-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -19063,7 +19063,7 @@
       "characterA": {
         "id": "path-l7-extra-01-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -19076,7 +19076,7 @@
       "characterB": {
         "id": "path-l7-extra-01-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -19201,7 +19201,7 @@
       "characterA": {
         "id": "path-l7-extra-02-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -19214,7 +19214,7 @@
       "characterB": {
         "id": "path-l7-extra-02-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -19339,7 +19339,7 @@
       "characterA": {
         "id": "path-l7-extra-03-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -19352,7 +19352,7 @@
       "characterB": {
         "id": "path-l7-extra-03-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -19477,7 +19477,7 @@
       "characterA": {
         "id": "path-l7-extra-04-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -19490,7 +19490,7 @@
       "characterB": {
         "id": "path-l7-extra-04-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -19617,7 +19617,7 @@
       "characterA": {
         "id": "path-l7-extra-05-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -19630,7 +19630,7 @@
       "characterB": {
         "id": "path-l7-extra-05-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -19757,7 +19757,7 @@
       "characterA": {
         "id": "path-l7-extra-06-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -19770,7 +19770,7 @@
       "characterB": {
         "id": "path-l7-extra-06-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -19897,7 +19897,7 @@
       "characterA": {
         "id": "path-l7-extra-07-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -19910,7 +19910,7 @@
       "characterB": {
         "id": "path-l7-extra-07-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -20035,7 +20035,7 @@
       "characterA": {
         "id": "path-l7-extra-08-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -20048,7 +20048,7 @@
       "characterB": {
         "id": "path-l7-extra-08-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -20173,7 +20173,7 @@
       "characterA": {
         "id": "path-l7-extra-09-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -20186,7 +20186,7 @@
       "characterB": {
         "id": "path-l7-extra-09-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -20311,7 +20311,7 @@
       "characterA": {
         "id": "path-l7-extra-10-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -20324,7 +20324,7 @@
       "characterB": {
         "id": "path-l7-extra-10-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -20449,7 +20449,7 @@
       "characterA": {
         "id": "path-l7-extra-11-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -20462,7 +20462,7 @@
       "characterB": {
         "id": "path-l7-extra-11-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -20587,7 +20587,7 @@
       "characterA": {
         "id": "path-l7-extra-12-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -20600,7 +20600,7 @@
       "characterB": {
         "id": "path-l7-extra-12-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -20727,7 +20727,7 @@
       "characterA": {
         "id": "path-l7-extra-13-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -20740,7 +20740,7 @@
       "characterB": {
         "id": "path-l7-extra-13-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -20867,7 +20867,7 @@
       "characterA": {
         "id": "path-l7-extra-14-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -20880,7 +20880,7 @@
       "characterB": {
         "id": "path-l7-extra-14-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -21007,7 +21007,7 @@
       "characterA": {
         "id": "path-l7-extra-15-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -21020,7 +21020,7 @@
       "characterB": {
         "id": "path-l7-extra-15-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -21147,7 +21147,7 @@
       "characterA": {
         "id": "path-l7-extra-16-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -21160,7 +21160,7 @@
       "characterB": {
         "id": "path-l7-extra-16-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -21285,7 +21285,7 @@
       "characterA": {
         "id": "path-l7-extra-17-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -21298,7 +21298,7 @@
       "characterB": {
         "id": "path-l7-extra-17-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -21423,7 +21423,7 @@
       "characterA": {
         "id": "path-l7-extra-18-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -21436,7 +21436,7 @@
       "characterB": {
         "id": "path-l7-extra-18-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -21561,7 +21561,7 @@
       "characterA": {
         "id": "path-l7-extra-19-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -21574,7 +21574,7 @@
       "characterB": {
         "id": "path-l7-extra-19-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",
@@ -21701,7 +21701,7 @@
       "characterA": {
         "id": "path-l7-extra-20-a",
         "name": "Mia",
-        "nameAr": "Mia",
+        "nameAr": "ميا",
         "roleAr": "المتحدث الأول",
         "avatar": "🧑",
         "voiceGender": "female",
@@ -21714,7 +21714,7 @@
       "characterB": {
         "id": "path-l7-extra-20-b",
         "name": "Omar",
-        "nameAr": "Omar",
+        "nameAr": "عمر",
         "roleAr": "المتحدث الثاني",
         "avatar": "🧑‍🏫",
         "voiceGender": "male",

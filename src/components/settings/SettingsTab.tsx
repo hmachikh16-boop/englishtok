@@ -18,6 +18,8 @@ import {
   AlertCircle,
   AtSign,
   Phone,
+  KeyRound,
+  Upload,
 } from 'lucide-react';
 import { App } from '@capacitor/app';
 import { Browser } from '@capacitor/browser';
@@ -25,11 +27,19 @@ import { Capacitor } from '@capacitor/core';
 import { UserProfile, UserSettings } from '../../types';
 import { speechService } from '../../services/speechService';
 import { checkForAppUpdate, type AppUpdateManifest } from '../../services/appUpdateService';
+import {
+  createProgressBackup,
+  getLocalProgressBackup,
+  isValidProgressCode,
+  parseProgressBackupFile,
+  type ProgressBackup,
+} from '../../services/storageService';
 
 interface SettingsTabProps {
   userProfile: UserProfile;
   onUpdateProfile: (updated: Partial<UserProfile>) => void;
   onResetProgress: () => void;
+  onRestoreProgress: (profile: UserProfile) => void;
   onRefreshContent: () => Promise<boolean>;
 }
 
@@ -37,6 +47,7 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
   userProfile,
   onUpdateProfile,
   onResetProgress,
+  onRestoreProgress,
   onRefreshContent,
 }) => {
   const [copiedCmd, setCopiedCmd] = useState<string | null>(null);
@@ -47,6 +58,70 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
   const [updateMessage, setUpdateMessage] = useState<string | null>(null);
   const [isRefreshingContent, setIsRefreshingContent] = useState(false);
   const [contentMessage, setContentMessage] = useState<string | null>(null);
+  const [progressCode, setProgressCode] = useState('');
+  const [createdBackup, setCreatedBackup] = useState<ProgressBackup | null>(null);
+  const [backupFile, setBackupFile] = useState<File | null>(null);
+  const [backupMessage, setBackupMessage] = useState<string | null>(null);
+
+  const handleCreateProgressBackup = () => {
+    try {
+      const backup = createProgressBackup(userProfile);
+      setCreatedBackup(backup);
+      setProgressCode(backup.code);
+      setBackupMessage('تم حفظ التقدم وإنشاء ملف النسخة الاحتياطية. احتفظ بالملف والرمز معًا.');
+      const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement('a');
+      anchor.href = url;
+      anchor.download = `englishtok-progress-${backup.code}.json`;
+      anchor.click();
+      window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+    } catch (error) {
+      setBackupMessage(error instanceof Error ? error.message : 'تعذر إنشاء النسخة الاحتياطية.');
+    }
+  };
+
+  const handleCopyProgressCode = async () => {
+    if (!createdBackup) return;
+    try {
+      await navigator.clipboard.writeText(createdBackup.code);
+      setBackupMessage('تم نسخ الرمز.');
+    } catch {
+      setBackupMessage('تعذر النسخ تلقائيًا؛ حدّد الرمز وانسخه يدويًا.');
+    }
+  };
+
+  const handleRestoreProgress = async () => {
+    setBackupMessage(null);
+    const normalizedCode = progressCode.trim().toUpperCase();
+    if (!isValidProgressCode(normalizedCode)) {
+      setBackupMessage('أدخل الرمز بصيغة 3 أحرف إنجليزية ثم 3 أرقام.');
+      return;
+    }
+
+    try {
+      let backup = getLocalProgressBackup(normalizedCode);
+      if (!backup && backupFile) {
+        backup = parseProgressBackupFile(await backupFile.text(), normalizedCode);
+      }
+      if (!backup) {
+        setBackupMessage('لم نعثر على نسخة بهذا الرمز على هذا الجهاز. اختر ملف النسخة الاحتياطية المرتبط بالرمز.');
+        return;
+      }
+
+      const currentHasProgress = userProfile.xp > 120 || userProfile.completedLessonIds.length > 0 ||
+        userProfile.masteredWordIds.length > 0 || userProfile.savedWordIds.length > 2 ||
+        Object.keys(userProfile.quizScores).length > 0 || Object.keys(userProfile.levelExamResults).length > 0;
+      const differs = JSON.stringify(userProfile) !== JSON.stringify(backup.profile);
+      if (currentHasProgress && differs && !window.confirm('استعادة هذه النسخة ستستبدل تقدم هذا الجهاز الحالي. هل تريد المتابعة؟')) return;
+
+      onRestoreProgress(backup.profile);
+      setBackupMessage('تمت استعادة التقدم بنجاح على هذا الجهاز.');
+      setBackupFile(null);
+    } catch (error) {
+      setBackupMessage(error instanceof Error ? error.message : 'تعذرت قراءة النسخة الاحتياطية.');
+    }
+  };
 
   const updateSetting = <K extends keyof UserSettings>(key: K, value: UserSettings[K]) => {
     speechService.playPop();
@@ -306,6 +381,45 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
               </span>
             </div>
           </div>
+
+          <section className="rounded-2xl border border-sky-500/25 bg-gradient-to-br from-slate-900 to-sky-950/25 p-4 shadow-lg" aria-labelledby="progress-backup-title">
+            <h3 id="progress-backup-title" className="flex items-center gap-2 text-sm font-black text-white">
+              <KeyRound className="h-4 w-4 text-sky-300" />
+              حفظ واستعادة التقدم
+            </h3>
+            <p className="mt-2 text-xs leading-relaxed text-slate-300">
+              أنشئ رمزًا قصيرًا وملفًا يحتوي على نسخة من تقدمك. الرمز معرّف للنسخة وليس كلمة مرور؛ لا ينقل البيانات إلى جهاز آخر وحده. احتفظ بملف JSON وارفقه عند الاستعادة. لا تُرفع بياناتك إلى خادم.
+            </p>
+            <button type="button" onClick={handleCreateProgressBackup} className="mt-3 inline-flex min-h-10 items-center justify-center gap-2 rounded-xl bg-sky-400 px-4 py-2 text-xs font-black text-slate-950 transition hover:bg-sky-300 active:scale-[.98]">
+              <Download className="h-4 w-4" />
+              إنشاء نسخة ورمز جديد
+            </button>
+            {createdBackup && (
+              <div className="mt-3 rounded-xl border border-sky-400/30 bg-slate-950/70 p-3">
+                <p className="text-[11px] text-slate-400">رمز النسخة</p>
+                <div className="mt-1 flex flex-wrap items-center gap-2">
+                  <code dir="ltr" className="rounded-lg bg-slate-900 px-3 py-1.5 font-mono text-lg font-black tracking-[.22em] text-sky-200">{createdBackup.code}</code>
+                  <button type="button" onClick={() => void handleCopyProgressCode()} className="inline-flex min-h-9 items-center gap-1.5 rounded-lg border border-slate-700 px-3 text-xs font-bold text-slate-200 hover:bg-slate-800">
+                    <Copy className="h-3.5 w-3.5" /> نسخ الرمز
+                  </button>
+                </div>
+                <p className="mt-2 text-[11px] text-slate-400">احفظ الرمز وملف <bdi dir="ltr">englishtok-progress-{createdBackup.code}.json</bdi> في مكان آمن.</p>
+              </div>
+            )}
+            <div className="mt-4 border-t border-slate-700/70 pt-3">
+              <label htmlFor="progress-backup-code" className="text-xs font-bold text-slate-200">استعادة نسخة محفوظة</label>
+              <input id="progress-backup-code" value={progressCode} onChange={(event) => setProgressCode(event.target.value.toUpperCase().slice(0, 6))} placeholder="ABC123" autoCapitalize="characters" maxLength={6} dir="ltr" className="mt-2 min-h-11 w-full rounded-xl border border-slate-700 bg-slate-950 px-3 font-mono text-base font-bold tracking-[.2em] text-white outline-none focus:border-sky-400 sm:max-w-xs" />
+              <label htmlFor="progress-backup-file" className="mt-2 flex min-h-10 cursor-pointer items-center gap-2 text-xs font-semibold text-sky-300 hover:text-sky-200">
+                <Upload className="h-4 w-4" />
+                {backupFile ? backupFile.name : 'اختر ملف النسخة الاحتياطية (مطلوب لجهاز آخر)'}
+              </label>
+              <input id="progress-backup-file" type="file" accept=".json,application/json" className="sr-only" onChange={(event) => setBackupFile(event.target.files?.[0] ?? null)} />
+              <button type="button" onClick={() => void handleRestoreProgress()} className="mt-2 min-h-10 rounded-xl border border-emerald-400/30 bg-emerald-500/15 px-4 py-2 text-xs font-black text-emerald-200 transition hover:bg-emerald-500/25">
+                تحقق واستعد التقدم
+              </button>
+            </div>
+            {backupMessage && <p role="status" className="mt-3 rounded-xl bg-slate-950/70 p-3 text-xs leading-relaxed text-slate-200">{backupMessage}</p>}
+          </section>
 
           {/* Danger zone / Reset */}
           <div className="bg-slate-900 border border-rose-900/40 rounded-2xl p-4 flex flex-col gap-3 shadow-lg">

@@ -343,8 +343,8 @@ class SpeechService {
     });
   }
 
-  private getAudioKey(text: string, voice: GenerateRequest['voice'], speed: number) {
-    return `${voice}|${speed}|${text}`;
+  private getAudioKey(text: string, voice: GenerateRequest['voice'], speed: number, accent: string) {
+    return `kokoro:v2:${JSON.stringify([text, accent, voice, speed])}`;
   }
 
   private getCachedAudio(key: string): Blob | undefined {
@@ -462,9 +462,12 @@ class SpeechService {
     voice: GenerateRequest['voice'],
     speed: number,
     onProgress: (progress: number) => void,
-    audioAssetUrl?: string
+    audioAssetUrl?: string,
+    accent = 'en-US'
   ): Promise<Blob> {
-    const key = audioAssetUrl ? `asset:${audioAssetUrl}` : this.getAudioKey(text, voice, speed);
+    const key = audioAssetUrl
+      ? `asset:v2:${JSON.stringify([audioAssetUrl, accent, voice, speed])}`
+      : this.getAudioKey(text, voice, speed, accent);
     const cached = this.getCachedAudio(key);
     if (cached) return Promise.resolve(cached);
 
@@ -551,10 +554,10 @@ class SpeechService {
     const speed = Math.max(0.5, Math.min(1.2, rate));
     const key = audioAssetUrl
       ? `asset:${audioAssetUrl}`
-      : this.getAudioKey(cleanText, voice, speed);
+      : this.getAudioKey(cleanText, voice, speed, accent);
     if (this.getCachedAudio(key) || this.inFlightAudio.has(key)) return;
 
-    void this.getOrGenerateAudio(cleanText, voice, speed, () => undefined, audioAssetUrl).catch(
+    void this.getOrGenerateAudio(cleanText, voice, speed, () => undefined, audioAssetUrl, accent).catch(
       (error: unknown) => {
         console.warn('[speechService] Speech preloading failed:', error);
       }
@@ -658,13 +661,13 @@ class SpeechService {
     const speed = Math.max(0.5, Math.min(1.2, rate));
     const audioKey = audioAssetUrl
       ? `asset:${audioAssetUrl}`
-      : this.getAudioKey(cleanText, voice, speed);
+      : this.getAudioKey(cleanText, voice, speed, accent);
     const cachedAudio = this.getCachedAudio(audioKey);
     if (!cachedAudio) this.setStatus('loading');
 
     void this.getOrGenerateAudio(cleanText, voice, speed, (progress) => {
       if (requestId === this.requestId) this.setStatus('loading', progress);
-    }, audioAssetUrl)
+    }, audioAssetUrl, accent)
       .then(async (audioBlob) => {
         if (requestId !== this.requestId) return;
 

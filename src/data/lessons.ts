@@ -1,4 +1,5 @@
 import { Lesson, CategoryInfo, CategoryKey } from '../types';
+import { getArabicCharacterName } from './characterNames';
 import { BookOpen, Briefcase, Coffee, Hand, Lightbulb, Plane, ShoppingBag, Stethoscope } from 'lucide-react';
 
 export const CATEGORIES: CategoryInfo[] = [
@@ -81,7 +82,7 @@ export const INITIAL_LESSONS: Lesson[] = [
     characterA: {
       id: 'alex',
       name: 'Alex',
-      nameAr: 'أليكس',
+      nameAr: getArabicCharacterName('Alex'),
       roleAr: 'نادل المقهى (Barista)',
       avatar: '👨‍🍳',
       voiceGender: 'male',
@@ -94,7 +95,7 @@ export const INITIAL_LESSONS: Lesson[] = [
     characterB: {
       id: 'emma',
       name: 'Emma',
-      nameAr: 'إيما',
+      nameAr: getArabicCharacterName('Emma'),
       roleAr: 'زبونة المقهى',
       avatar: '👩',
       voiceGender: 'female',
@@ -243,7 +244,7 @@ export const INITIAL_LESSONS: Lesson[] = [
     characterA: {
       id: 'sarah',
       name: 'Sarah',
-      nameAr: 'سارة',
+      nameAr: getArabicCharacterName('Sarah'),
       roleAr: 'موظفة الطيران',
       avatar: '👩‍✈️',
       voiceGender: 'female',
@@ -256,7 +257,7 @@ export const INITIAL_LESSONS: Lesson[] = [
     characterB: {
       id: 'omar',
       name: 'Omar',
-      nameAr: 'عمر',
+      nameAr: getArabicCharacterName('Omar'),
       roleAr: 'مسافر',
       avatar: '🧳',
       voiceGender: 'male',
@@ -387,7 +388,7 @@ export const INITIAL_LESSONS: Lesson[] = [
     characterA: {
       id: 'sophia',
       name: 'Sophia',
-      nameAr: 'صوفيا',
+      nameAr: getArabicCharacterName('Sophia'),
       roleAr: 'مديرة الفريق (Team Lead)',
       avatar: '👩‍💼',
       voiceGender: 'female',
@@ -400,7 +401,7 @@ export const INITIAL_LESSONS: Lesson[] = [
     characterB: {
       id: 'liam',
       name: 'Liam',
-      nameAr: 'ليام',
+      nameAr: getArabicCharacterName('Liam'),
       roleAr: 'موظف جديد (Software Engineer)',
       avatar: '👨‍💻',
       voiceGender: 'male',
@@ -513,7 +514,7 @@ export const INITIAL_LESSONS: Lesson[] = [
     characterA: {
       id: 'jack',
       name: 'Jack',
-      nameAr: 'جاك',
+      nameAr: getArabicCharacterName('Jack'),
       roleAr: 'بائع الملابس (Store Assistant)',
       avatar: '👔',
       voiceGender: 'male',
@@ -526,7 +527,7 @@ export const INITIAL_LESSONS: Lesson[] = [
     characterB: {
       id: 'maya',
       name: 'Maya',
-      nameAr: 'مايا',
+      nameAr: getArabicCharacterName('Maya'),
       roleAr: 'متسوقة',
       avatar: '🧥',
       voiceGender: 'female',
@@ -648,7 +649,7 @@ export const INITIAL_LESSONS: Lesson[] = [
     characterA: {
       id: 'dr_emily',
       name: 'Dr. Emily',
-      nameAr: 'د. إيميلي',
+      nameAr: getArabicCharacterName('Dr. Emily'),
       roleAr: 'طبيبة عامة (Physician)',
       avatar: '👩‍⚕️',
       voiceGender: 'female',
@@ -661,7 +662,7 @@ export const INITIAL_LESSONS: Lesson[] = [
     characterB: {
       id: 'noah',
       name: 'Noah',
-      nameAr: 'نوح',
+      nameAr: getArabicCharacterName('Noah'),
       roleAr: 'المريض',
       avatar: '🤒',
       voiceGender: 'male',
@@ -774,7 +775,7 @@ export const INITIAL_LESSONS: Lesson[] = [
     characterA: {
       id: 'mike',
       name: 'Mike',
-      nameAr: 'مايك',
+      nameAr: getArabicCharacterName('Mike'),
       roleAr: 'متحدث أصلي (Native Speaker)',
       avatar: '🧢',
       voiceGender: 'male',
@@ -787,7 +788,7 @@ export const INITIAL_LESSONS: Lesson[] = [
     characterB: {
       id: 'zara',
       name: 'Zara',
-      nameAr: 'زارا',
+      nameAr: getArabicCharacterName('Zara'),
       roleAr: 'طالبة لغة إنجليزية',
       avatar: '🎒',
       voiceGender: 'female',
@@ -900,7 +901,7 @@ export const INITIAL_LESSONS: Lesson[] = [
     characterA: {
       id: 'leo',
       name: 'Leo',
-      nameAr: 'ليو',
+      nameAr: getArabicCharacterName('Leo'),
       roleAr: 'صديق',
       avatar: '🧢',
       voiceGender: 'male',
@@ -913,7 +914,7 @@ export const INITIAL_LESSONS: Lesson[] = [
     characterB: {
       id: 'chloe',
       name: 'Chloe',
-      nameAr: 'كلوي',
+      nameAr: getArabicCharacterName('Chloe'),
       roleAr: 'صديقة',
       avatar: '🌸',
       voiceGender: 'female',
@@ -1008,7 +1009,7 @@ export const INITIAL_LESSONS: Lesson[] = [
     characterA: {
       id: 'lisa',
       name: 'Lisa',
-      nameAr: 'ليزا',
+      nameAr: getArabicCharacterName('Lisa'),
       roleAr: 'موظفة الاستقبال بالفندق',
       avatar: '🛎️',
       voiceGender: 'female',
@@ -1021,7 +1022,7 @@ export const INITIAL_LESSONS: Lesson[] = [
     characterB: {
       id: 'daniel',
       name: 'Daniel',
-      nameAr: 'دانيال',
+      nameAr: getArabicCharacterName('Daniel'),
       roleAr: 'نزيل الفندق',
       avatar: '🧳',
       voiceGender: 'male',

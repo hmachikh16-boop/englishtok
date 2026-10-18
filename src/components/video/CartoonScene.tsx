@@ -415,7 +415,7 @@ export const CartoonScene = React.memo<CartoonSceneProps>(({
             fontWeight="bold"
             fontFamily="'Plus Jakarta Sans', sans-serif"
           >
-            {char.name}
+            {char.nameAr}
           </text>
         </g>
       </g>
@@ -499,7 +499,7 @@ export const CartoonScene = React.memo<CartoonSceneProps>(({
               fontWeight="bold"
               fontFamily="'Plus Jakarta Sans', sans-serif"
             >
-              {isASpeaking ? characterA.name : characterB.name}
+              {isASpeaking ? characterA.nameAr : characterB.nameAr}
             </text>
 
             {/* Animated Audio Wave Indicator inside speech bubble */}

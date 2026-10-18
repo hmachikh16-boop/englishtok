@@ -1,6 +1,19 @@
 import { UserProfile, UserSettings } from '../types';
 
 const STORAGE_KEY = 'englishtok_user_profile_v1';
+const PROGRESS_BACKUPS_KEY = 'englishtok_progress_backups_v1';
+const PROGRESS_BACKUP_FORMAT = 'englishtok-progress-backup';
+const PROGRESS_BACKUP_SCHEMA_VERSION = 1;
+const CODE_LETTERS = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
+const CODE_DIGITS = '23456789';
+
+export interface ProgressBackup {
+  format: typeof PROGRESS_BACKUP_FORMAT;
+  schemaVersion: typeof PROGRESS_BACKUP_SCHEMA_VERSION;
+  code: string;
+  createdAt: string;
+  profile: UserProfile;
+}
 
 const DEFAULT_SETTINGS: UserSettings = {
   playbackSpeed: 1.0,
@@ -78,6 +91,168 @@ export const saveProfile = (profile: UserProfile): void => {
   } catch (e) {
     console.error('Failed to save profile to localStorage:', e);
   }
+};
+
+export const isValidProgressCode = (value: string): boolean => /^[A-Z]{3}\d{3}$/i.test(value.trim());
+
+const makeProgressCode = (): string => {
+  const bytes = new Uint8Array(6);
+  if (!globalThis.crypto?.getRandomValues) {
+    throw new Error('يتطلب إنشاء الرمز مولّدًا عشوائيًا آمنًا في هذا المتصفح.');
+  }
+  globalThis.crypto.getRandomValues(bytes);
+  return `${Array.from(bytes.slice(0, 3), (byte) => CODE_LETTERS[byte % CODE_LETTERS.length]).join('')}${Array.from(bytes.slice(3), (byte) => CODE_DIGITS[byte % CODE_DIGITS.length]).join('')}`;
+};
+
+const readProgressBackups = (): Record<string, ProgressBackup> => {
+  try {
+    const raw = localStorage.getItem(PROGRESS_BACKUPS_KEY);
+    if (!raw) return {};
+    const parsed: unknown = JSON.parse(raw);
+    return parsed && typeof parsed === 'object' && !Array.isArray(parsed)
+      ? parsed as Record<string, ProgressBackup>
+      : {};
+  } catch {
+    return {};
+  }
+};
+
+const writeProgressBackup = (backup: ProgressBackup): void => {
+  const backups = { ...readProgressBackups(), [backup.code]: backup };
+  const recent = Object.entries(backups)
+    .sort(([, left], [, right]) => Date.parse(right.createdAt) - Date.parse(left.createdAt))
+    .slice(0, 5);
+  localStorage.setItem(PROGRESS_BACKUPS_KEY, JSON.stringify(Object.fromEntries(recent)));
+};
+
+export const createProgressBackup = (profile: UserProfile): ProgressBackup => {
+  if (typeof window === 'undefined') throw new Error('إنشاء النسخة الاحتياطية متاح داخل التطبيق فقط.');
+  const backups = readProgressBackups();
+  let code = '';
+  for (let attempt = 0; attempt < 16; attempt += 1) {
+    code = makeProgressCode();
+    if (!backups[code]) break;
+    code = '';
+  }
+  if (!code) throw new Error('تعذر إنشاء رمز فريد. حاول مرة أخرى.');
+
+  const backup: ProgressBackup = {
+    format: PROGRESS_BACKUP_FORMAT,
+    schemaVersion: PROGRESS_BACKUP_SCHEMA_VERSION,
+    code,
+    createdAt: new Date().toISOString(),
+    profile: JSON.parse(JSON.stringify(profile)) as UserProfile,
+  };
+  writeProgressBackup(backup);
+  return backup;
+};
+
+const boundedStringArray = (value: unknown): string[] | null =>
+  Array.isArray(value) && value.length <= 2000 && value.every((item) => typeof item === 'string' && item.length <= 200)
+    ? [...new Set(value)]
+    : null;
+
+const scoreMap = (value: unknown): Record<string, number> | null => {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return null;
+  const entries = Object.entries(value);
+  if (entries.length > 2000 || entries.some(([key, score]) => key.length > 200 || typeof score !== 'number' || !Number.isFinite(score) || score < 0 || score > 100)) return null;
+  return Object.fromEntries(entries) as Record<string, number>;
+};
+
+const sanitizeProfile = (value: unknown): UserProfile | null => {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return null;
+  const raw = value as Record<string, unknown>;
+  const likedLessonIds = boundedStringArray(raw.likedLessonIds);
+  const favoriteLessonIds = boundedStringArray(raw.favoriteLessonIds);
+  const watchedLessonIds = boundedStringArray(raw.watchedLessonIds);
+  const completedLessonIds = boundedStringArray(raw.completedLessonIds);
+  const savedWordIds = boundedStringArray(raw.savedWordIds);
+  const masteredWordIds = boundedStringArray(raw.masteredWordIds);
+  const reviewWordIds = boundedStringArray(raw.reviewWordIds);
+  const quizScores = scoreMap(raw.quizScores);
+  if ([likedLessonIds, favoriteLessonIds, watchedLessonIds, completedLessonIds, savedWordIds, masteredWordIds, reviewWordIds, quizScores].some((item) => item === null)) return null;
+  if (!Number.isSafeInteger(raw.xp) || (raw.xp as number) < 0 || (raw.xp as number) > 100_000_000) return null;
+  if (!Number.isSafeInteger(raw.streakDays) || (raw.streakDays as number) < 0 || (raw.streakDays as number) > 100_000) return null;
+  if (!Number.isSafeInteger(raw.dailyGoalLessons) || (raw.dailyGoalLessons as number) < 1 || (raw.dailyGoalLessons as number) > 100) return null;
+  if (typeof raw.lastActiveDate !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(raw.lastActiveDate)) return null;
+
+  const exams = raw.levelExamResults;
+  if (!exams || typeof exams !== 'object' || Array.isArray(exams) || Object.keys(exams).length > 100) return null;
+  const levelExamResults: UserProfile['levelExamResults'] = {};
+  for (const [key, entry] of Object.entries(exams)) {
+    if (!entry || typeof entry !== 'object' || Array.isArray(entry)) return null;
+    const exam = entry as Record<string, unknown>;
+    const reviewTopics = boundedStringArray(exam.reviewTopics);
+    const reviewIds = boundedStringArray(exam.reviewWordIds);
+    if (!Number.isSafeInteger(exam.attempts) || (exam.attempts as number) < 0 || typeof exam.passed !== 'boolean' || !reviewTopics || !reviewIds) return null;
+    if (typeof exam.bestScore !== 'number' || exam.bestScore < 0 || exam.bestScore > 100 || typeof exam.latestScore !== 'number' || exam.latestScore < 0 || exam.latestScore > 100) return null;
+    levelExamResults[key] = {
+      attempts: exam.attempts as number,
+      bestScore: exam.bestScore,
+      latestScore: exam.latestScore,
+      passed: exam.passed,
+      reviewTopics,
+      reviewWordIds: reviewIds,
+      ...(typeof exam.passedAt === 'string' ? { passedAt: exam.passedAt } : {}),
+    };
+  }
+
+  const dailyProgress = raw.dailyProgress;
+  if (!dailyProgress || typeof dailyProgress !== 'object' || Array.isArray(dailyProgress)) return null;
+  const daily = dailyProgress as Record<string, unknown>;
+  const dailyCompleted = boundedStringArray(daily.completedLessonIds);
+  if (typeof daily.date !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(daily.date) || !dailyCompleted) return null;
+
+  const settings = raw.settings;
+  if (!settings || typeof settings !== 'object' || Array.isArray(settings)) return null;
+  const config = settings as Record<string, unknown>;
+  if (typeof config.playbackSpeed !== 'number' || ![0.5, 0.75, 1].includes(config.playbackSpeed)) return null;
+  if (!['both', 'en', 'ar', 'none'].includes(String(config.subtitlesMode)) || typeof config.soundEffects !== 'boolean' || typeof config.autoNext !== 'boolean' || !['en-US', 'en-GB'].includes(String(config.voiceAccent))) return null;
+
+  return {
+    xp: raw.xp as number,
+    streakDays: raw.streakDays as number,
+    lastActiveDate: raw.lastActiveDate,
+    likedLessonIds: likedLessonIds!, favoriteLessonIds: favoriteLessonIds!, watchedLessonIds: watchedLessonIds!,
+    completedLessonIds: completedLessonIds!, savedWordIds: savedWordIds!, masteredWordIds: masteredWordIds!, reviewWordIds: reviewWordIds!,
+    quizScores: quizScores!, levelExamResults,
+    dailyGoalLessons: raw.dailyGoalLessons as number,
+    dailyProgress: { date: daily.date, completedLessonIds: dailyCompleted },
+    settings: {
+      playbackSpeed: config.playbackSpeed as number,
+      subtitlesMode: config.subtitlesMode as UserSettings['subtitlesMode'],
+      soundEffects: config.soundEffects,
+      autoNext: config.autoNext,
+      voiceAccent: config.voiceAccent as UserSettings['voiceAccent'],
+    },
+  };
+};
+
+export const getLocalProgressBackup = (codeInput: string): ProgressBackup | null => {
+  const code = codeInput.trim().toUpperCase();
+  if (!isValidProgressCode(code)) return null;
+  const backup = readProgressBackups()[code];
+  if (!backup || backup.code !== code || backup.format !== PROGRESS_BACKUP_FORMAT || backup.schemaVersion !== PROGRESS_BACKUP_SCHEMA_VERSION) return null;
+  const profile = sanitizeProfile(backup.profile);
+  return profile ? { ...backup, profile } : null;
+};
+
+export const parseProgressBackupFile = (contents: string, codeInput: string): ProgressBackup => {
+  const code = codeInput.trim().toUpperCase();
+  if (!isValidProgressCode(code)) throw new Error('أدخل الرمز بصيغة 3 أحرف إنجليزية ثم 3 أرقام.');
+  if (contents.length > 2_000_000) throw new Error('حجم ملف النسخة الاحتياطية أكبر من الحد المسموح.');
+  let parsed: unknown;
+  try { parsed = JSON.parse(contents) as unknown; } catch { throw new Error('ملف النسخة الاحتياطية ليس JSON صالحًا.'); }
+  if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) throw new Error('بنية ملف النسخة الاحتياطية غير صالحة.');
+  const raw = parsed as Record<string, unknown>;
+  if (raw.format !== PROGRESS_BACKUP_FORMAT || raw.schemaVersion !== PROGRESS_BACKUP_SCHEMA_VERSION) throw new Error('إصدار ملف النسخة الاحتياطية غير مدعوم.');
+  if (typeof raw.code !== 'string' || raw.code.toUpperCase() !== code) throw new Error('الرمز لا يطابق ملف النسخة الاحتياطية.');
+  if (typeof raw.createdAt !== 'string' || !Number.isFinite(Date.parse(raw.createdAt))) throw new Error('تاريخ النسخة الاحتياطية غير صالح.');
+  const profile = sanitizeProfile(raw.profile);
+  if (!profile) throw new Error('بيانات التقدم غير صالحة أو لا تطابق مخطط EnglishTok.');
+  const backup: ProgressBackup = { format: PROGRESS_BACKUP_FORMAT, schemaVersion: PROGRESS_BACKUP_SCHEMA_VERSION, code, createdAt: raw.createdAt, profile };
+  writeProgressBackup(backup);
+  return backup;
 };
 
 export const getUserRank = (xp: number): { titleAr: string; titleEn: string; nextThreshold: number; progressPercent: number } => {
