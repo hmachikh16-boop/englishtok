@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, Sparkles, Play, BookOpen, Clock, Heart, Lock, CheckCircle2, Trophy, Star, ArrowDown, Volume2, MessageCircle, Languages, Pencil, Mic, Headphones, Compass } from 'lucide-react';
+import { Search, Sparkles, Play, BookOpen, Clock, Heart, Lock, CheckCircle2, Trophy, Star, ArrowDown, Footprints } from 'lucide-react';
 import { Lesson, CategoryKey, UserProfile } from '../../types';
 import { CATEGORIES } from '../../data/lessons';
 import { CURRICULUM_CONFIG, CURRICULUM_LEVELS } from '../../data/curriculum';
@@ -9,7 +9,16 @@ import { LevelFinalExam } from '../quiz/LevelFinalExam';
 import { PremiumIcon } from '../icons/PremiumIcon';
 import { LearningBuddy } from '../learning/LearningBuddy';
 
-const PATH_ICONS = [BookOpen, Volume2, MessageCircle, Languages, Pencil, Mic, Headphones, Compass, Sparkles, BookOpen];
+const StageChest: React.FC<{ earned: boolean }> = ({ earned }) => (
+  <svg viewBox="0 0 48 48" className={`path-chest-art ${earned ? 'is-earned' : ''}`} aria-hidden="true">
+    <path d="M7 18h34v23H7z" fill="#f2a900" stroke="#c77b00" strokeWidth="2.5" strokeLinejoin="round" />
+    <path d="M5 13h38v9H5z" fill="#ffd43b" stroke="#d28a00" strokeWidth="2.5" strokeLinejoin="round" />
+    <path d="M11 7h26l5 6H6z" fill="#ffe66d" stroke="#d28a00" strokeWidth="2.5" strokeLinejoin="round" />
+    <path d="M7 28h34M16 22v19m16-19v19" stroke="#d28a00" strokeWidth="2.5" />
+    <rect x="21" y="27" width="6" height="8" rx="1" fill="#fff3a6" stroke="#b46a00" strokeWidth="2" />
+    {earned && <path d="m17 3 3 3 7-5" fill="none" stroke="#fff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />}
+  </svg>
+);
 
 interface CategoriesTabProps {
   lessons: Lesson[];
@@ -107,20 +116,21 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
           {path.levels.map((level) => {
             const locked = !level.isUnlocked;
             const color = [
-              'from-cyan-300 to-teal-300', 'from-lime-300 to-emerald-300',
-              'from-amber-300 to-orange-300', 'from-violet-300 to-fuchsia-300',
-              'from-rose-300 to-pink-300', 'from-violet-300 to-fuchsia-300',
-              'from-pink-300 to-rose-300',
-            ][(level.stage - 1) % 7];
-            return <div key={level.stage} data-stage={level.stage} className={`path-stage rounded-3xl border p-4 sm:p-5 ${locked ? 'opacity-55' : ''}`}>
+              'from-lime-300 to-emerald-300', 'from-emerald-300 to-green-300',
+              'from-green-300 to-lime-300', 'from-lime-300 to-teal-300',
+              'from-teal-300 to-emerald-300',
+            ][(level.stage - 1) % 5];
+            const mapNodeCount = level.lessons.length + 1;
+            const examNodeClass = level.examPassed ? 'is-complete' : level.canTakeExam ? 'is-current' : 'is-locked';
+            return <div key={level.stage} data-stage={level.stage} className={`path-stage rounded-3xl border p-4 sm:p-5 ${locked ? 'is-stage-locked' : ''}`}>
               <div className="path-stage-heading flex flex-wrap items-center justify-between gap-2">
                 <div><div className="flex items-center gap-2 text-sm font-black text-white"><span className={`flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br ${color} text-slate-950`}>{locked ? <Lock className="h-4 w-4" /> : level.stage}</span> المرحلة {level.stage} <span className="text-teal-100">· {level.titleAr}</span></div><p className="mt-1 text-[10px] text-slate-400">{level.subtitleAr}</p></div>
                 <span className="rounded-full bg-white/[0.06] px-3 py-1 text-[10px] font-bold text-slate-300">{level.completedCount}/{level.lessons.length} درس</span>
               </div>
               <div className="path-nodes mt-4" aria-label={`دروس المرحلة ${level.stage}`}>
-                <svg className="path-ribbon" viewBox={`0 0 100 ${level.lessons.length * 116}`} preserveAspectRatio="none" aria-hidden="true">
-                  <path d={level.lessons.map((_, nodeIndex) => {
-                    const shifts = [0, 22, 30, 22, 0, -22, -30, -22, 0, 22];
+                <svg className="path-ribbon" viewBox={`0 0 100 ${mapNodeCount * 116}`} preserveAspectRatio="none" aria-hidden="true">
+                  <path d={Array.from({ length: mapNodeCount }, (_, nodeIndex) => {
+                    const shifts = [0, 7, 10, 7, 0, -7, -10, -7, 0, 7];
                     const x = 50 + shifts[nodeIndex % shifts.length];
                     const y = nodeIndex * 116 + 68;
                     if (nodeIndex === 0) return `M ${x} ${y}`;
@@ -134,23 +144,35 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
                   const complete = status === 'completed';
                   const current = status === 'current';
                   const unavailable = status === 'locked';
-                  const NodeIcon = PATH_ICONS[index % PATH_ICONS.length];
+                  const NodeIcon = CATEGORIES.find((category) => category.key === lesson.category)?.icon ?? BookOpen;
                   const bestScore = userProfile.quizScores[lesson.id] ?? 0;
                   const starCount = bestScore >= 90 ? 3 : bestScore >= 70 ? 2 : complete ? 1 : 0;
                   return <React.Fragment key={lesson.id}>
                     <button type="button" disabled={unavailable} onClick={() => onSelectLesson(lesson.id)} className={`path-node group ${complete ? 'is-complete' : current ? 'is-current' : unavailable ? 'is-locked' : 'is-open'}`} aria-label={`${lesson.titleAr}، ${complete ? 'مكتمل' : current ? 'الدرس الحالي' : unavailable ? 'مقفل' : 'متاح'}`}>
-                      <span className="path-node-orb">{complete ? <Star className="path-node-icon path-star h-6 w-6 fill-current" /> : unavailable ? <Lock className="path-node-icon h-5 w-5" /> : current ? <Play className="path-node-icon h-6 w-6 fill-current" /> : <NodeIcon className="path-node-icon h-6 w-6" aria-hidden="true" />}<span className="path-node-number">{index + 1}</span></span>
+                      <span className="path-node-orb">{complete ? <CheckCircle2 className="path-node-icon path-star h-7 w-7" strokeWidth={3} /> : unavailable ? <Lock className="path-node-icon h-5 w-5" /> : current ? <Footprints className="path-node-icon h-7 w-7" strokeWidth={2.8} /> : <NodeIcon className="path-node-icon h-6 w-6" aria-hidden="true" />}<span className="path-node-number">{index + 1}</span></span>
                       <span className="path-node-title">{lesson.titleAr}</span>
                       {complete && <span className="path-node-stars" aria-label={`${starCount} نجوم`} dir="ltr">{[0, 1, 2].map((star) => <Star key={star} className={star < starCount ? 'earned' : ''} />)}</span>}
-                      {current && <span className="path-node-hint">ابدأ هنا</span>}
+                      {current && <span className="path-node-hint"><Play className="h-3 w-3 fill-current" /> ابدأ هنا</span>}
+                      {current && <span className="path-node-guide" aria-hidden="true"><LearningBuddy compact /></span>}
                     </button>
-                    {index < level.lessons.length - 1 && <span className="path-node-link" aria-hidden="true" />}
                   </React.Fragment>;
                 })}
+                <button
+                  type="button"
+                  disabled={!level.canTakeExam}
+                  onClick={() => setExamStage(level.stage)}
+                  className={`path-node path-exam-node ${examNodeClass}`}
+                  aria-label={`اختبار المرحلة ${level.stage}${level.examPassed ? '، مكتمل' : level.canTakeExam ? '، متاح' : '، أكمل الدروس أولًا'}`}
+                >
+                  <span className="path-node-orb"><StageChest earned={level.examPassed} />{!level.canTakeExam && !level.examPassed && <Lock className="path-exam-lock" />}</span>
+                  <span className="path-node-title">اختبار المرحلة</span>
+                  {level.examPassed && <span className="path-node-hint exam-earned-hint"><CheckCircle2 className="h-3 w-3" /> اجتزت الاختبار</span>}
+                  {level.canTakeExam && !level.examPassed && <span className="path-node-hint"><Play className="h-3 w-3 fill-current" /> اختبر نفسك</span>}
+                </button>
               </div>
               <div className="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-white/[0.07] pt-3">
                 <div className="h-1.5 min-w-24 flex-1 overflow-hidden rounded-full bg-white/10"><div className={`h-full rounded-full bg-gradient-to-l ${color}`} style={{ width: `${level.lessons.length ? (level.completedCount / level.lessons.length) * 100 : 0}%` }} /></div>
-                <button type="button" disabled={!level.canTakeExam} onClick={() => setExamStage(level.stage)} className="flex items-center gap-1.5 rounded-xl border border-amber-300/20 bg-amber-300/[0.06] px-3 py-2 text-[10px] font-bold text-amber-100 disabled:opacity-40"><Trophy className="h-3.5 w-3.5" />{level.examPassed ? `اجتزت المرحلة · ${level.examResult?.bestScore ?? 0}%` : level.canTakeExam ? `اختبار المرحلة · النجاح ${CURRICULUM_CONFIG.passingScorePercent}%` : `أكمل ${level.lessons.length - level.completedCount} درسًا للاختبار`}</button>
+                <span className={`path-exam-summary ${level.examPassed ? 'is-earned' : ''}`}><Trophy className="h-3.5 w-3.5" />{level.examPassed ? `النتيجة ${level.examResult?.bestScore ?? 0}%` : `النجاح من ${CURRICULUM_CONFIG.passingScorePercent}%`}</span>
               </div>
             </div>;
           })}

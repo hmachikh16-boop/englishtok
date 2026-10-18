@@ -1,5 +1,5 @@
 import React from 'react';
-import { Flame, Sparkles, Smartphone, Monitor, ShieldCheck } from 'lucide-react';
+import { BookOpen, Flame, Gem, Smartphone, Monitor, ShieldCheck } from 'lucide-react';
 import { UserProfile } from '../../types';
 import { speechService } from '../../services/speechService';
 import { getUserRank } from '../../services/storageService';
@@ -18,6 +18,7 @@ export const TopBar: React.FC<TopBarProps> = ({
   onGoToProgress,
 }) => {
   const rank = getUserRank(userProfile.xp);
+  const accentFlag = userProfile.settings.voiceAccent === 'en-GB' ? '🇬🇧' : '🇺🇸';
   return (
     <header
       dir="ltr"
@@ -27,7 +28,7 @@ export const TopBar: React.FC<TopBarProps> = ({
         {/* Zone 1: Single text element wordmark */}
         <div className="flex min-w-0 items-center gap-2 sm:gap-3">
           <span className="journey-brand-name flex shrink-0 items-center gap-2 whitespace-nowrap font-en text-base font-extrabold tracking-tight text-slate-800 sm:text-lg">
-            <span className="brand-mark journey-brand-mark"><span /></span>
+            <span className="brand-mark journey-brand-mark"><BookOpen className="h-4 w-4" strokeWidth={2.8} /></span>
             <span>English<span className="text-teal-600">Tok</span></span>
           </span>
           <span className="journey-topbar-tagline hidden border-r border-emerald-100 pr-3 text-xs font-semibold text-slate-500 lg:inline-block">
@@ -45,13 +46,17 @@ export const TopBar: React.FC<TopBarProps> = ({
           aria-label={`المستوى ${rank.titleAr}، ${userProfile.xp} نقطة خبرة، سلسلة ${userProfile.streakDays} يوم`}
           dir="rtl"
         >
+          <div className="topbar-metric topbar-language" title={userProfile.settings.voiceAccent === 'en-GB' ? 'النطق البريطاني' : 'النطق الأمريكي'}>
+            <span aria-hidden="true">{accentFlag}</span><span className="topbar-language-code">EN</span>
+          </div>
+          <span className="topbar-divider" aria-hidden="true" />
           <div className="topbar-metric topbar-rank hidden sm:flex">
             <ShieldCheck className="h-[17px] w-[17px]" strokeWidth={2.3} />
             <span className="max-w-24 truncate">{rank.titleAr}</span>
           </div>
           <span className="topbar-divider hidden sm:block" aria-hidden="true" />
           <div className="topbar-metric topbar-xp flex">
-            <Sparkles className="h-[17px] w-[17px]" strokeWidth={2.3} />
+            <Gem className="h-[17px] w-[17px]" strokeWidth={2.3} />
             <span className="font-mono-num">{userProfile.xp}</span>
             <span className="topbar-unit">XP</span>
           </div>
