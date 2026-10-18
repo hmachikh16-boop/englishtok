@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Search, Sparkles, Play, BookOpen, Clock, Heart, Lock, CheckCircle2, Trophy, Star, ArrowDown, Volume2, MessageCircle, Languages, Pencil, Mic, Headphones, Compass } from 'lucide-react';
 import { Lesson, CategoryKey, UserProfile } from '../../types';
 import { CATEGORIES } from '../../data/lessons';
-import { CURRICULUM_CONFIG } from '../../data/curriculum';
+import { CURRICULUM_CONFIG, CURRICULUM_LEVELS } from '../../data/curriculum';
 import { speechService } from '../../services/speechService';
 import { getLearningPathState } from '../../services/learningPath';
 import { LevelFinalExam } from '../quiz/LevelFinalExam';
@@ -16,6 +16,7 @@ interface CategoriesTabProps {
   userProfile: UserProfile;
   onUpdateProfile: (updated: Partial<UserProfile>) => void;
   onSelectLesson: (lessonId: string) => void;
+  isPhoneFrameView: boolean;
 }
 
 export const CategoriesTab: React.FC<CategoriesTabProps> = ({
@@ -23,6 +24,7 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
   userProfile,
   onUpdateProfile,
   onSelectLesson,
+  isPhoneFrameView,
 }) => {
   const [selectedCategory, setSelectedCategory] = useState<CategoryKey | 'all'>('all');
   const [selectedLevel, setSelectedLevel] = useState<number | 'all'>('all');
@@ -79,14 +81,14 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
   };
 
   return (
-    <div className="journey-home w-full h-full max-w-4xl mx-auto overflow-y-auto no-scrollbar p-4 sm:p-6 text-slate-100 flex flex-col gap-5">
+    <div className={`journey-home w-full h-full max-w-4xl mx-auto overflow-y-auto no-scrollbar p-4 sm:p-6 text-slate-100 flex flex-col gap-5 ${isPhoneFrameView ? 'is-phone-frame' : ''}`}>
       <section className="path-hero relative overflow-hidden rounded-[2rem] border border-teal-200/10 p-5 shadow-2xl sm:p-7" dir="rtl">
         <div className="pointer-events-none absolute -left-16 -top-20 h-64 w-64 rounded-full bg-cyan-300/10 blur-3xl" />
         <div className="relative flex flex-wrap items-center justify-between gap-4">
           <div>
             <p className="flex items-center gap-2 text-xs font-black text-teal-200"><span className="h-2 w-2 rounded-full bg-lime-300 shadow-[0_0_14px_#bef264]" /> رحلتك في EnglishTok</p>
             <h2 className="mt-2 text-2xl font-black tracking-tight text-white sm:text-3xl">كل يوم، خطوة أقرب للطلاقة</h2>
-            <p className="mt-2 max-w-lg text-xs leading-6 text-slate-300">خمس مراحل و50 درسًا بمواقف واقعية. واصل من حيث توقفت واجمع XP مع كل إنجاز.</p>
+            <p className="mt-2 max-w-lg text-xs leading-6 text-slate-300">{path.levels.length} مراحل و{path.totalLessons} درسًا بمواقف واقعية. واصل من حيث توقفت واجمع XP مع كل إنجاز.</p>
           </div>
           <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.06] px-4 py-3">
             <LearningBuddy message="يلا نتعلم!" />
@@ -104,15 +106,28 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
         <div className="relative mt-6 flex flex-col gap-4">
           {path.levels.map((level) => {
             const locked = !level.isUnlocked;
-            const color = ['from-cyan-300 to-teal-300', 'from-lime-300 to-emerald-300', 'from-amber-300 to-orange-300', 'from-violet-300 to-fuchsia-300', 'from-rose-300 to-pink-300'][level.stage - 1];
+            const color = [
+              'from-cyan-300 to-teal-300', 'from-lime-300 to-emerald-300',
+              'from-amber-300 to-orange-300', 'from-violet-300 to-fuchsia-300',
+              'from-rose-300 to-pink-300', 'from-violet-300 to-fuchsia-300',
+              'from-pink-300 to-rose-300',
+            ][(level.stage - 1) % 7];
             return <div key={level.stage} data-stage={level.stage} className={`path-stage rounded-3xl border p-4 sm:p-5 ${locked ? 'opacity-55' : ''}`}>
               <div className="path-stage-heading flex flex-wrap items-center justify-between gap-2">
                 <div><div className="flex items-center gap-2 text-sm font-black text-white"><span className={`flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br ${color} text-slate-950`}>{locked ? <Lock className="h-4 w-4" /> : level.stage}</span> المرحلة {level.stage} <span className="text-teal-100">· {level.titleAr}</span></div><p className="mt-1 text-[10px] text-slate-400">{level.subtitleAr}</p></div>
                 <span className="rounded-full bg-white/[0.06] px-3 py-1 text-[10px] font-bold text-slate-300">{level.completedCount}/{level.lessons.length} درس</span>
               </div>
               <div className="path-nodes mt-4" aria-label={`دروس المرحلة ${level.stage}`}>
-                <svg className="path-ribbon" viewBox="0 0 100 1000" preserveAspectRatio="none" aria-hidden="true">
-                  <path d="M50 45 C50 95 76 95 76 145 S88 195 88 245 S76 295 76 345 S50 395 50 445 S24 495 24 545 S12 595 12 645 S24 695 24 745 S50 795 50 845 S76 895 76 945" />
+                <svg className="path-ribbon" viewBox={`0 0 100 ${level.lessons.length * 116}`} preserveAspectRatio="none" aria-hidden="true">
+                  <path d={level.lessons.map((_, nodeIndex) => {
+                    const shifts = [0, 22, 30, 22, 0, -22, -30, -22, 0, 22];
+                    const x = 50 + shifts[nodeIndex % shifts.length];
+                    const y = nodeIndex * 116 + 68;
+                    if (nodeIndex === 0) return `M ${x} ${y}`;
+                    const previousX = 50 + shifts[(nodeIndex - 1) % shifts.length];
+                    const previousY = (nodeIndex - 1) * 116 + 68;
+                    return `C ${previousX} ${previousY + 38}, ${x} ${y - 38}, ${x} ${y}`;
+                  }).join(' ')} />
                 </svg>
                 {level.lessons.map((entry, index) => {
                   const { lesson, status } = entry;
@@ -209,29 +224,30 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
           <h3 className="text-xs font-bold text-slate-300">المرحلة التعليمية</h3>
         </div>
 
-        <div className="flex gap-1.5 p-1 bg-slate-900 rounded-xl border border-slate-800">
-          {(['all', 1, 2, 3, 4, 5] as (number | 'all')[]).map((lvl) => (
+        <div className="flex gap-1.5 overflow-x-auto no-scrollbar p-1 bg-slate-900 rounded-xl border border-slate-800">
+          {(['all', ...CURRICULUM_LEVELS.map((level) => level.stage)] as (number | 'all')[]).map((lvl) => (
             <button
               key={lvl}
               onClick={() => {
                 setSelectedLevel(lvl);
                 speechService.playPop();
               }}
-              className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition-all ${
+              aria-label={lvl === 'all' ? 'جميع المراحل' : `المرحلة ${lvl}`}
+              className={`shrink-0 min-w-9 px-2 py-1.5 rounded-lg text-xs font-bold transition-all ${
                 selectedLevel === lvl
                   ? 'bg-slate-800 text-amber-400 shadow-sm'
                   : 'text-slate-400 hover:text-slate-200'
               }`}
             >
-              {lvl === 'all' ? 'جميع المراحل' : `المرحلة ${lvl}`}
+              {lvl === 'all' ? 'الكل' : lvl}
             </button>
           ))}
         </div>
       </div>
 
       {/* Filtered Lessons Cards Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-        <div className="flex items-center justify-between text-xs text-slate-400">
+        <div className={`lesson-card-grid grid grid-cols-1 md:grid-cols-2 gap-3 ${isPhoneFrameView ? 'is-phone-frame' : ''}`}>
+        <div className="md:col-span-2 flex items-center justify-between gap-2 text-xs text-slate-400">
           <span>دروس المسار ({filteredLessons.length})</span>
           <span className="text-[11px] text-slate-500">تُفتح الدروس تباعًا بعد إكمال الدرس السابق</span>
         </div>
@@ -252,12 +268,12 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
               className={`group flex flex-col gap-2.5 rounded-2xl border p-3.5 text-right shadow-lg transition-all active:scale-[0.99] ${path.lessonStatusById.get(lesson.id) === 'locked' ? 'cursor-not-allowed border-slate-800 bg-slate-950/60 opacity-60' : 'cursor-pointer border-slate-800 bg-slate-900 hover:border-slate-700'}`}
             >
               <div className="flex items-start justify-between gap-3">
-                <div className="flex items-center gap-3">
+              <div className="flex min-w-0 items-center gap-3">
                   {/* Avatar badge */}
                   <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-slate-800 to-slate-700 border border-slate-700 flex items-center justify-center text-xl shrink-0 group-hover:scale-105 transition-transform">
                     {lesson.characterA.avatar}
                   </div>
-                  <div>
+                  <div className="min-w-0">
                     <div className="flex items-center gap-2 mb-1">
                       <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-amber-500/15 text-amber-400 border border-amber-500/30">
                         المرحلة {lesson.curriculumStage}
@@ -266,7 +282,7 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
                         {lesson.characterA.name} & {lesson.characterB.name}
                       </span>
                     </div>
-                    <h4 className="text-sm font-bold text-white group-hover:text-sky-400 transition-colors">
+                    <h4 className="break-words text-sm font-bold text-white group-hover:text-sky-400 transition-colors">
                       {lesson.titleAr}
                     </h4>
                     <p dir="ltr" className="text-xs text-slate-400 font-en text-left">

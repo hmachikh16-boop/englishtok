@@ -4,7 +4,7 @@ import type { DialogueLine, Lesson, QuizQuestion, UserProfile } from '../../type
 import { getLevelExamPassingScore } from '../../services/learningPath';
 import { speechService } from '../../services/speechService';
 import { LearningBuddy, type BuddyMood } from './LearningBuddy';
-import { CartoonScene } from '../video/CartoonScene';
+import { LessonVisual } from './LessonVisual';
 
 type SessionPhase = 'welcome' | 'story' | 'quiz' | 'result';
 
@@ -192,7 +192,12 @@ export const LessonSession: React.FC<LessonSessionProps> = ({ lesson, userProfil
               <div><span className="lesson-kicker">استمع وافهم · {dialogueIndex + 1} من {lesson.dialogue.length}</span><h1 className="mt-2 text-xl font-black text-slate-800 sm:text-2xl">تعرّف على الموقف</h1></div>
               <LearningBuddy compact mood={isAnswerChecked ? lessonMood : 'happy'} />
             </div>
-            <div className="lesson-scene mt-4 h-48 overflow-hidden rounded-[1.75rem] sm:h-64"><CartoonScene sceneType={lesson.sceneType} characterA={lesson.characterA} characterB={lesson.characterB} currentLine={line} isPlaying={false} /></div>
+            <LessonVisual
+              lesson={lesson}
+              currentLine={line}
+              alt={`صورة تعليمية تمثل ${lesson.titleAr}: ${lesson.descriptionAr}`}
+              className="lesson-visual-story mt-4"
+            />
             <div className="lesson-dialogue-card mt-4 rounded-[1.5rem] p-4 sm:p-5">
               <div className="flex items-center justify-between gap-3"><span className="lesson-speaker-chip">{lineSpeaker.avatar} {lineSpeaker.name}</span><button type="button" onClick={() => speakLine(line, dialogueIndex)} className="lesson-audio-button" aria-label="استمع إلى الجملة"><Volume2 className="h-5 w-5" /></button></div>
               <p dir="ltr" className="mt-4 text-left font-en text-lg font-extrabold leading-relaxed text-slate-800 sm:text-xl">{line.textEn}</p>
@@ -211,6 +216,12 @@ export const LessonSession: React.FC<LessonSessionProps> = ({ lesson, userProfil
           <div key={question.id} className="lesson-quiz-step mt-6 flex flex-1 flex-col animate-fade-in">
             <div className="flex items-center justify-between gap-3"><span className="lesson-kicker">تدرّب · سؤال {questionIndex + 1} من {questions.length}</span>{question.questionEn && <button type="button" onClick={playQuestionAudio} className="lesson-audio-button" aria-label="استمع إلى السؤال"><Volume2 className="h-5 w-5" /></button>}</div>
             <div className="mt-5 flex items-start gap-3"><LearningBuddy compact mood={lessonMood} message={isAnswerChecked ? (isCorrectAnswer ? 'ممتاز!' : 'لا بأس، تعلّمنا!') : 'فكر فيها'} /><div><h1 className="text-xl font-black leading-relaxed text-slate-800 sm:text-2xl">{question.questionAr}</h1>{question.questionEn && <p dir="ltr" className="mt-2 text-left font-en text-sm font-semibold text-slate-500">{question.type === 'fill_blank' ? question.questionEn.replace(/_{3,}/g, '______') : question.questionEn}</p>}</div></div>
+
+            <LessonVisual
+              lesson={lesson}
+              alt={`رسم توضيحي لدرس ${lesson.titleAr}، مرتبط بهذا السؤال: ${question.questionAr}${question.questionEn ? ` — ${question.questionEn}` : ''}`}
+              className="lesson-visual-question mt-4"
+            />
 
             {question.type === 'fill_blank' ? (
               <div className="mt-7 flex flex-1 flex-col gap-4">

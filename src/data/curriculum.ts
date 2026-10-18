@@ -8,6 +8,7 @@ import type {
   VocabularyWord,
 } from '../types';
 import { INITIAL_LESSONS } from './lessons';
+import { ADDITIONAL_LESSON_SPECS } from './additionalCurriculum';
 
 type LessonSeed = {
   id: string;
@@ -16,11 +17,12 @@ type LessonSeed = {
   descriptionAr: string;
   category: CategoryKey;
   scene: SceneType;
-  stage: 1 | 2 | 3 | 4 | 5;
+  stage: number;
   level: Level;
   people: [string, string];
   lines: [string, string][];
   words: [string, string, string, string, string][];
+  learningNoteAr?: string;
 };
 
 const seeds: LessonSeed[] = [
@@ -707,7 +709,37 @@ const seeds: LessonSeed[] = [
   },
 ];
 
-const stageByLegacyLesson: Record<string, 1 | 2 | 3 | 4 | 5> = {
+const continuationStageForUnit = (unit: number) =>
+  unit <= 6 ? 3 : unit === 7 ? 4 : unit === 8 ? 5 : unit === 9 ? 6 : 7;
+const continuationStageSequence = new Map<number, number>();
+const additionalSeeds: LessonSeed[] = ADDITIONAL_LESSON_SPECS.map((spec) => {
+  const curriculumStage = continuationStageForUnit(spec.stage);
+  const sequence = (continuationStageSequence.get(curriculumStage) ?? 0) + 1;
+  continuationStageSequence.set(curriculumStage, sequence);
+  const id = `path-l${curriculumStage}-extra-${String(sequence).padStart(2, '0')}`;
+  return {
+    id,
+    title: spec.title,
+    titleAr: spec.titleAr,
+    descriptionAr: spec.descriptionAr,
+    category: spec.category,
+    scene: spec.scene,
+    stage: curriculumStage,
+    level: curriculumStage === 3 ? 'A2' : curriculumStage === 4 ? 'B1' : curriculumStage <= 6 ? 'B2' : 'C1',
+    people: ['Mia', 'Omar'],
+    lines: [
+      [spec.exampleEn, spec.exampleAr],
+      [`The key expression is “${spec.focus}.”`, `التعبير الأساسي هو «${spec.focus}»، ومعناه ${spec.translationAr}.`],
+      [`Try using “${spec.focus}” in another sentence.`, `جرّب استخدام «${spec.focus}» في جملة أخرى.`],
+      [`You can use it in this situation.`, `يمكنك استخدامه في هذا الموقف: ${spec.descriptionAr}`],
+    ],
+    words: [[spec.focus, spec.phonetic, spec.translationAr, spec.exampleEn, spec.exampleAr]],
+    learningNoteAr: spec.noteAr,
+  };
+});
+seeds.push(...additionalSeeds);
+
+const stageByLegacyLesson: Record<string, number> = {
   'lesson-cafe-01': 1,
   'lesson-shopping-04': 3,
   'lesson-grammar-07': 3,
@@ -724,20 +756,30 @@ const stageOrder: Record<number, string[]> = {
   3: [
     'path-l3-01', 'path-l3-02', 'path-l3-03', 'path-l3-04', 'lesson-shopping-04',
     'path-l3-06', 'path-l3-07', 'path-l3-08', 'lesson-grammar-07', 'path-l3-05',
+    ...additionalSeeds.filter((seed) => seed.stage === 3).map((seed) => seed.id),
   ],
   4: [
-    ...seeds.filter((seed) => seed.stage === 4).map((seed) => seed.id),
+    ...seeds.filter((seed) => seed.stage === 4 && !seed.id.includes('-extra-')).map((seed) => seed.id),
     'lesson-airport-02', 'lesson-office-03', 'lesson-doctor-05', 'lesson-hotel-08',
+    ...additionalSeeds.filter((seed) => seed.stage === 4).map((seed) => seed.id),
   ],
-  5: [...seeds.filter((seed) => seed.stage === 5).map((seed) => seed.id), 'lesson-idioms-06'],
+  5: [
+    ...seeds.filter((seed) => seed.stage === 5 && !seed.id.includes('-extra-')).map((seed) => seed.id),
+    'lesson-idioms-06',
+    ...additionalSeeds.filter((seed) => seed.stage === 5).map((seed) => seed.id),
+  ],
+  6: additionalSeeds.filter((seed) => seed.stage === 6).map((seed) => seed.id),
+  7: additionalSeeds.filter((seed) => seed.stage === 7).map((seed) => seed.id),
 };
 
 const speakers = (id: string, people: [string, string], stage: number): [Character, Character] => {
   const palettes = [
     ['#0f766e', '#f43f5e'], ['#2563eb', '#ea580c'], ['#7c3aed', '#0891b2'],
     ['#4f46e5', '#059669'], ['#be123c', '#0369a1'],
+    ['#0f766e', '#f43f5e'], ['#2563eb', '#ea580c'], ['#7c3aed', '#0891b2'],
+    ['#4f46e5', '#059669'], ['#be123c', '#0369a1'],
   ];
-  const [shirtA, shirtB] = palettes[stage - 1];
+  const [shirtA, shirtB] = palettes[(stage - 1) % palettes.length];
   return [
     {
       id: `${id}-a`, name: people[0], nameAr: people[0], roleAr: 'المتحدث الأول',
@@ -839,7 +881,7 @@ const generatedLessons: Lesson[] = seeds.map((seed) => {
     title: seed.title,
     titleAr: seed.titleAr,
     descriptionAr: seed.descriptionAr,
-    learningNoteAr: learningNotes[seed.id],
+  learningNoteAr: seed.learningNoteAr ?? learningNotes[seed.id],
     category: seed.category,
     level: seed.level,
     curriculumStage: seed.stage,
@@ -938,7 +980,7 @@ for (const lesson of legacyWithStages) {
 
 export const CURRICULUM_CONFIG = {
   passingScorePercent: 80,
-  expectedLessonCount: 50,
+  expectedLessonCount: 150,
 } as const;
 
 export const CURRICULUM_LEVELS = [
@@ -947,6 +989,8 @@ export const CURRICULUM_LEVELS = [
   { stage: 3, titleAr: 'ما قبل المتوسط', subtitleAr: 'الروتين والاتجاهات والوصف والماضي والمستقبل', color: 'amber' },
   { stage: 4, titleAr: 'المتوسط', subtitleAr: 'السفر والدراسة والعمل والآراء والمواقف الواقعية', color: 'violet' },
   { stage: 5, titleAr: 'المتوسط المتقدم', subtitleAr: 'حوارات أطول وتعبيرات طبيعية وتواصل أكثر دقة', color: 'rose' },
+  { stage: 6, titleAr: 'المتقدم', subtitleAr: 'الأدلة والعروض والتفاوض الدقيق', color: 'violet' },
+  { stage: 7, titleAr: 'الإتقان المتقدم', subtitleAr: 'الفروق الدقيقة والسجل الرسمي والتعبيرات الاصطلاحية', color: 'rose' },
 ] as const;
 
 export const LEARNING_PATH_LESSONS: Lesson[] = Object.values(stageOrder).flatMap((ids) =>

@@ -42,6 +42,11 @@ export default function App() {
   const speechNoticeTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [availableAppUpdate, setAvailableAppUpdate] = useState<AppUpdateManifest | null>(null);
   const [updateDownloadError, setUpdateDownloadError] = useState<string | null>(null);
+  const notificationTop = activeTab === 'lesson'
+    ? 'calc(env(safe-area-inset-top, 0px) + 12px)'
+    : isPhoneFrameView
+      ? 'calc(env(safe-area-inset-top, 0px) + 112px)'
+      : 'calc(env(safe-area-inset-top, 0px) + 74px)';
 
   useEffect(() => {
     if (Capacitor.getPlatform() !== 'android') return;
@@ -169,7 +174,8 @@ export default function App() {
         <div
           role="alert"
           aria-live="assertive"
-          className="fixed inset-x-4 top-4 z-[100] mx-auto flex max-w-md items-start justify-between gap-3 rounded-2xl border border-amber-400/50 bg-slate-900 px-4 py-3 text-sm text-amber-100 shadow-2xl"
+          className="fixed inset-x-4 z-[100] mx-auto flex max-w-md items-start justify-between gap-3 rounded-2xl border border-amber-400/50 bg-slate-900 px-4 py-3 text-sm text-amber-100 shadow-2xl"
+          style={{ top: notificationTop }}
         >
           <p dir="rtl">{speechNotice}</p>
           <button
@@ -189,7 +195,8 @@ export default function App() {
         <div
           role="status"
           aria-live="polite"
-          className="fixed inset-x-4 top-4 z-[100] mx-auto w-fit rounded-full border border-sky-400/40 bg-slate-900 px-4 py-2 text-sm text-sky-100 shadow-xl"
+          className="fixed inset-x-4 z-[100] mx-auto w-fit rounded-full border border-sky-400/40 bg-slate-900 px-4 py-2 text-sm text-sky-100 shadow-xl"
+          style={{ top: notificationTop }}
           dir="rtl"
         >
           <span>
@@ -217,7 +224,8 @@ export default function App() {
       {availableAppUpdate && (
         <div
           role="status"
-          className="fixed inset-x-4 top-20 z-[100] mx-auto flex max-w-md items-start gap-3 rounded-2xl border border-emerald-400/40 bg-slate-900 px-4 py-3 text-sm text-emerald-100 shadow-2xl"
+          className="fixed inset-x-4 z-[100] mx-auto flex max-w-md items-start gap-3 rounded-2xl border border-emerald-400/40 bg-slate-900 px-4 py-3 text-sm text-emerald-100 shadow-2xl"
+          style={{ top: notificationTop }}
           dir="rtl"
         >
           <div className="min-w-0 flex-1">
@@ -288,6 +296,7 @@ export default function App() {
               userProfile={userProfile}
               onUpdateProfile={handleUpdateProfile}
               onSelectLesson={handleSelectLessonFromCategories}
+              isPhoneFrameView={isPhoneFrameView}
             />
           )}
 
