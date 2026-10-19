@@ -8,7 +8,7 @@
     "generate:speech": "tsx scripts/generate-speech-assets.ts",
     "content:export": "tsx scripts/export-learning-path.ts",
     "generate:lesson-illustrations": "tsx scripts/generate-lesson-illustrations.ts",
-    "build": "npm run content:export && npm run generate:lesson-illustrations && vite build",
+    "build": "npm run content:export && npm run generate:lesson-illustrations && node scripts/stage-latest-apk.mjs && vite build",
     "android:sync": "npm run build && cap sync android",
     "android:apk": "node scripts/build-android-apk.mjs",
     "serve:releases": "node scripts/serve-releases.mjs",

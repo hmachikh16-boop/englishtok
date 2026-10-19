@@ -2,6 +2,16 @@
   "framework": "vite",
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
+  "headers": [
+    {
+      "source": "/english-tok.apk",
+      "headers": [
+        { "key": "Content-Type", "value": "application/octet-stream" },
+        { "key": "Content-Disposition", "value": "attachment; filename=\"english-tok.apk\"" },
+        { "key": "Cache-Control", "value": "public, max-age=300" }
+      ]
+    }
+  ],
   "rewrites": [
     {
       "source": "/(.*)",

@@ -20,6 +20,8 @@ android/keystore.properties
 android/KEYSTORE-CREDENTIALS.txt
 releases/
 update-manifest.json
+# Staged at deploy time only, never committed (the latest APK from GitHub Releases).
+public/english-tok.apk
 
 # Local snapshots, upload staging and browser profiles are not source files.
 backups/
