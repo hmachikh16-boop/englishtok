@@ -1,0 +1,6 @@
+{
+  "name": "EnglishTok",
+  "description": "تطبيق تعليم اللغة الإنجليزية بأسلوب فيديوهات تيك توك التفاعلية القصيرة للهواتف والتابلت مع شخصيات كرتونية ومحادثات ونظام نقاط وترجمة فورية.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
