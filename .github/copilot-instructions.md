@@ -33,6 +33,7 @@ Important details:
 - `npm run build` runs `npm run content:export` first and then `vite build`.
 - `npm run lint` is the project’s CI validation step and currently runs `tsc --noEmit`.
 - `npm run content:export` regenerates `public/content/learning-path.json` from the source curriculum.
+- `npm run generate:speech` rebuilds the bundled speech library in `public/audio/tts/` (Opus/Ogg clips). It is a one-off authoring step, not part of the build; existing clips are skipped so it can be resumed.
 - `npm run android:sync` runs the web build and then `cap sync android` for the Android project.
 - There is no dedicated unit-test runner in this repo right now. For validation, prefer `npm run lint` and, when needed, a focused TypeScript compile check (`npx tsc --noEmit`).
 
@@ -47,7 +48,7 @@ The app intentionally separates authored lesson content from the UI layer:
 - `src/services/contentService.ts` validates the downloaded or cached content, checks the GitHub `content-latest` release, and falls back to local bundle data when offline.
 - `src/App.tsx` loads cached content first, then refreshes from GitHub if `VITE_GITHUB_REPOSITORY` is configured.
 - `src/services/storageService.ts` manages persistent learner state such as profile data, streaks, progress, and favorites.
-- `src/services/speechService.ts` runs a local Kokoro-based speech pipeline through a Web Worker and IndexedDB cache; do not assume the app uses a remote TTS API.
+- `src/services/speechService.ts` plays pre-generated Opus clips bundled under `public/audio/tts/` and falls back to the device speech voice; `src/services/speechClip.ts` owns the shared voice/normalisation/hash rules used by both the app and `scripts/generate-speech-library.ts`. There is no remote TTS API and no runtime model download.
 - `src/components/*` are mostly view/state containers; keep business logic in services and typed models rather than spreading it across components.
 
 The app is designed to work as both a web app and an Android app. Release automation is split across GitHub workflows:

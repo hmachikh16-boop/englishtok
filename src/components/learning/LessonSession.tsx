@@ -44,7 +44,7 @@ export const LessonSession: React.FC<LessonSessionProps> = ({ lesson, userProfil
   const questions = lesson.quiz ?? [];
   const question = questions[questionIndex];
   const line = lesson.dialogue[dialogueIndex];
-  const accent = userProfile.settings.voiceAccent || 'en-US';
+  const language = userProfile.settings.voiceLanguage || 'en';
   const playEffect = (effect: 'success' | 'error') => {
     if (!userProfile.settings.soundEffects) return;
     if (effect === 'success') speechService.playSuccessChime();
@@ -74,8 +74,7 @@ export const LessonSession: React.FC<LessonSessionProps> = ({ lesson, userProfil
       rate: userProfile.settings.playbackSpeed || 1,
       pitch: speaker.voicePitch || 1,
       gender: speaker.voiceGender,
-      accent,
-      audioAssetUrl: speechService.getLessonSpeechAssetUrl(lesson.id, dialogueLine.id, speaker.voiceGender, accent),
+      accent: language,
       onStart: () => setDialogueIndex(index),
     });
   };
@@ -97,16 +96,10 @@ export const LessonSession: React.FC<LessonSessionProps> = ({ lesson, userProfil
         text: upcoming.textEn,
         rate,
         gender: speaker.voiceGender,
-        accent,
-        audioAssetUrl: speechService.getLessonSpeechAssetUrl(
-          lesson.id,
-          upcoming.id,
-          speaker.voiceGender,
-          accent
-        ),
+        accent: language,
       });
     }
-  }, [phase, dialogueIndex, lesson, accent, userProfile.settings.playbackSpeed]);
+  }, [phase, dialogueIndex, lesson, language, userProfile.settings.playbackSpeed]);
 
   const completeSession = (finalCorrectCount: number) => {
     const score = questions.length ? Math.round((finalCorrectCount / questions.length) * 100) : 100;
@@ -176,7 +169,7 @@ export const LessonSession: React.FC<LessonSessionProps> = ({ lesson, userProfil
 
   const playQuestionAudio = () => {
     if (!question?.questionEn) return;
-    speechService.speakText({ source: `lesson-question:${lesson.id}:${question.id}`, text: question.questionEn, accent, rate: .9 });
+    speechService.speakText({ source: `lesson-question:${lesson.id}:${question.id}`, text: question.questionEn, accent: language, rate: .9 });
   };
 
   const score = questions.length ? Math.round((correctCount / questions.length) * 100) : 100;

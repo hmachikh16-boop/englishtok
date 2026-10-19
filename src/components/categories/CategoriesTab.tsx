@@ -576,7 +576,7 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
             titleAr={level.titleAr}
             lessons={level.lessons.map((entry) => entry.lesson)}
             result={userProfile.levelExamResults[String(level.stage)]}
-            voiceAccent={userProfile.settings.voiceAccent}
+            voiceLanguage={userProfile.settings.voiceLanguage}
             onClose={() => setExamStage(null)}
             onComplete={(score, topics, wordIds) => saveLevelExamResult(level.stage, score, topics, wordIds)}
           />

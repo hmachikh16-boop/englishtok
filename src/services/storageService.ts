@@ -1,4 +1,5 @@
 import { UserProfile, UserSettings } from '../types';
+import { normalizeSpeechLanguage } from './speechClip';
 
 const STORAGE_KEY = 'englishtok_user_profile_v1';
 const PROGRESS_BACKUPS_KEY = 'englishtok_progress_backups_v1';
@@ -20,8 +21,7 @@ const DEFAULT_SETTINGS: UserSettings = {
   subtitlesMode: 'both',
   soundEffects: true,
   autoNext: false,
-  voiceAccent: 'en-US',
-  speechEngine: 'device',
+  voiceLanguage: 'en',
 };
 
 const DEFAULT_PROFILE: UserProfile = {
@@ -287,7 +287,7 @@ const sanitizeProfile = (value: unknown): UserProfile | null => {
   if (!settings || typeof settings !== 'object' || Array.isArray(settings)) return null;
   const config = settings as Record<string, unknown>;
   if (typeof config.playbackSpeed !== 'number' || ![0.5, 0.75, 1].includes(config.playbackSpeed)) return null;
-  if (!['both', 'en', 'ar', 'none'].includes(String(config.subtitlesMode)) || typeof config.soundEffects !== 'boolean' || typeof config.autoNext !== 'boolean' || !['en-US', 'en-GB'].includes(String(config.voiceAccent))) return null;
+  if (!['both', 'en', 'ar', 'none'].includes(String(config.subtitlesMode)) || typeof config.soundEffects !== 'boolean' || typeof config.autoNext !== 'boolean') return null;
   const placementAssessment = sanitizePlacementAssessment(raw.placementAssessment);
   if (placementAssessment === null) return null;
 
@@ -306,8 +306,7 @@ const sanitizeProfile = (value: unknown): UserProfile | null => {
       subtitlesMode: config.subtitlesMode as UserSettings['subtitlesMode'],
       soundEffects: config.soundEffects,
       autoNext: config.autoNext,
-      voiceAccent: config.voiceAccent as UserSettings['voiceAccent'],
-      speechEngine: config.speechEngine === 'neural' ? 'neural' : 'device',
+      voiceLanguage: normalizeSpeechLanguage(config.voiceLanguage ?? config.voiceAccent),
     },
   };
 };

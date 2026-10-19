@@ -34,7 +34,7 @@ interface ExamQuestion {
   audioText?: string;
   audioAssetUrl?: string;
   audioGender?: 'male' | 'female';
-  audioAccent: 'en-US' | 'en-GB';
+  audioLanguage: 'en' | 'fr';
   reviewWordIds: string[];
 }
 
@@ -43,7 +43,7 @@ interface LevelFinalExamProps {
   titleAr: string;
   lessons: Lesson[];
   result?: LevelExamResult;
-  voiceAccent: 'en-US' | 'en-GB';
+  voiceLanguage: 'en' | 'fr';
   onClose: () => void;
   onComplete: (score: number, reviewTopics: string[], reviewWordIds: string[]) => void;
 }
@@ -68,7 +68,7 @@ const shuffle = <T,>(items: T[]): T[] => {
 
 const normalize = (value: string) => value.toLowerCase().replace(/[.,!?;:]/g, '').replace(/\s+/g, ' ').trim();
 
-const buildQuestionPool = (lessons: Lesson[], voiceAccent: 'en-US' | 'en-GB') => {
+const buildQuestionPool = (lessons: Lesson[], voiceLanguage: 'en' | 'fr') => {
   const allWords = lessons.flatMap((lesson) => lesson.vocabulary);
   const translations = [...new Set(allWords.map((word) => word.translationAr))];
   const pool: ExamQuestion[] = [];
@@ -88,7 +88,7 @@ const buildQuestionPool = (lessons: Lesson[], voiceAccent: 'en-US' | 'en-GB') =>
         options: lessonQuiz.options,
         correctAnswer: lessonQuiz.correctAnswer,
         explanationAr: lessonQuiz.explanationAr,
-        audioAccent: voiceAccent,
+        audioLanguage: voiceLanguage,
         reviewWordIds: lesson.vocabulary.slice(0, 1).map((word) => word.id),
       });
     }
@@ -117,13 +117,12 @@ const buildQuestionPool = (lessons: Lesson[], voiceAccent: 'en-US' | 'en-GB') =>
         explanationAr: `تقول الجملة: «${listeningLine.textAr}»`,
         audioText: listeningLine.textEn,
         audioGender: speaker.voiceGender,
-        audioAssetUrl: speechService.getLessonSpeechAssetUrl(
-          lesson.id,
-          listeningLine.id,
+        audioAssetUrl: speechService.getSpeechClipUrl(
+          listeningLine.textEn,
           speaker.voiceGender,
-          voiceAccent
+          voiceLanguage
         ),
-        audioAccent: voiceAccent,
+        audioLanguage: voiceLanguage,
         reviewWordIds: listeningReviewWordIds.length
           ? listeningReviewWordIds
           : vocabulary.slice(0, 1).map((word) => word.id),
@@ -143,7 +142,7 @@ const buildQuestionPool = (lessons: Lesson[], voiceAccent: 'en-US' | 'en-GB') =>
         options: shuffle([matchWord.translationAr, ...alternatives.slice(0, 3)]),
         correctAnswer: matchWord.translationAr,
         explanationAr: `تعني "${matchWord.word}" ${matchWord.translationAr}. مثال: ${matchWord.exampleSentence}`,
-        audioAccent: voiceAccent,
+        audioLanguage: voiceLanguage,
         reviewWordIds: [matchWord.id],
       });
     }
@@ -160,7 +159,7 @@ const buildQuestionPool = (lessons: Lesson[], voiceAccent: 'en-US' | 'en-GB') =>
         words: shuffle(words.map((word, index) => ({ id: `${lesson.id}-token-${index}`, text: word }))),
         correctAnswer: words.join(' '),
         explanationAr: `الترتيب الصحيح: ${sentenceLine.textEn}`,
-        audioAccent: voiceAccent,
+        audioLanguage: voiceLanguage,
         reviewWordIds: vocabulary.slice(0, 2).map((word) => word.id),
       });
     }
@@ -185,7 +184,7 @@ const buildQuestionPool = (lessons: Lesson[], voiceAccent: 'en-US' | 'en-GB') =>
         options: shuffle([blankWord.word, ...alternatives.slice(0, 3)]),
         correctAnswer: blankWord.word,
         explanationAr: `الكلمة المناسبة هي "${blankWord.word}" ومعناها ${blankWord.translationAr}.`,
-        audioAccent: voiceAccent,
+        audioLanguage: voiceLanguage,
         reviewWordIds: [blankWord.id],
       });
     }
@@ -206,7 +205,7 @@ const buildQuestionPool = (lessons: Lesson[], voiceAccent: 'en-US' | 'en-GB') =>
         options: shuffle([...new Set([answerLine.textAr, ...distractors])]).slice(0, 4),
         correctAnswer: answerLine.textAr,
         explanationAr: `آخر رد هو: «${answerLine.textAr}»`,
-        audioAccent: voiceAccent,
+        audioLanguage: voiceLanguage,
         reviewWordIds: vocabulary.slice(0, 2).map((word) => word.id),
       });
     }
@@ -215,8 +214,8 @@ const buildQuestionPool = (lessons: Lesson[], voiceAccent: 'en-US' | 'en-GB') =>
   return pool;
 };
 
-const createExam = (lessons: Lesson[], voiceAccent: 'en-US' | 'en-GB') => {
-  const pool = buildQuestionPool(lessons, voiceAccent);
+const createExam = (lessons: Lesson[], voiceLanguage: 'en' | 'fr') => {
+  const pool = buildQuestionPool(lessons, voiceLanguage);
   const kinds: QuestionKind[] = [
     'multiple_choice',
     'listening',
@@ -255,14 +254,14 @@ export const LevelFinalExam: React.FC<LevelFinalExamProps> = ({
   titleAr,
   lessons,
   result,
-  voiceAccent,
+  voiceLanguage,
   onClose,
   onComplete,
 }) => {
   const [examVersion, setExamVersion] = useState(0);
   const questions = useMemo(
-    () => createExam(lessons, voiceAccent),
-    [examVersion, lessons, voiceAccent]
+    () => createExam(lessons, voiceLanguage),
+    [examVersion, lessons, voiceLanguage]
   );
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
@@ -342,7 +341,7 @@ export const LevelFinalExam: React.FC<LevelFinalExamProps> = ({
       source: `level-exam:${stage}:${question.id}`,
       text: question.audioText,
       gender: question.audioGender ?? 'female',
-      accent: question.audioAccent,
+      accent: question.audioLanguage,
       audioAssetUrl: question.audioAssetUrl,
     });
   };

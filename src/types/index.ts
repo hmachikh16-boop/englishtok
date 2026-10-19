@@ -120,9 +120,8 @@ export interface UserSettings {
   subtitlesMode: 'both' | 'en' | 'ar' | 'none';
   soundEffects: boolean;
   autoNext: boolean;
-  voiceAccent: 'en-US' | 'en-GB';
-  /** 'device' plays instantly with the phone voice; 'neural' downloads the Kokoro model once. */
-  speechEngine: 'device' | 'neural';
+  /** Language used for speech: English (course language) or French (second option). */
+  voiceLanguage: 'en' | 'fr';
 }
 
 export interface UserProfile {

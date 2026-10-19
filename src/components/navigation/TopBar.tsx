@@ -18,7 +18,8 @@ export const TopBar: React.FC<TopBarProps> = ({
   onGoToProgress,
 }) => {
   const rank = getUserRank(userProfile.xp);
-  const accentFlag = userProfile.settings.voiceAccent === 'en-GB' ? '🇬🇧' : '🇺🇸';
+  const isFrench = userProfile.settings.voiceLanguage === 'fr';
+  const languageFlag = isFrench ? '🇫🇷' : '🇺🇸';
   return (
     <header
       dir="ltr"
@@ -45,8 +46,8 @@ export const TopBar: React.FC<TopBarProps> = ({
           className="journey-stats flex shrink-0 items-center gap-1 rounded-2xl px-1.5 py-1.5 text-xs font-bold transition-all hover:-translate-y-0.5 active:scale-[.98] sm:gap-2 sm:px-2"
           dir="rtl"
         >
-          <div className="topbar-metric topbar-language" title={userProfile.settings.voiceAccent === 'en-GB' ? 'النطق البريطاني' : 'النطق الأمريكي'}>
-            <span aria-hidden="true">{accentFlag}</span><span className="topbar-language-code hidden sm:inline">EN</span>
+          <div className="topbar-metric topbar-language" title={isFrench ? 'النطق الفرنسي' : 'النطق الإنجليزي'}>
+            <span aria-hidden="true">{languageFlag}</span><span className="topbar-language-code hidden sm:inline">{isFrench ? 'FR' : 'EN'}</span>
           </div>
           <span className="topbar-divider" aria-hidden="true" />
           <div className="topbar-metric topbar-rank hidden sm:flex">

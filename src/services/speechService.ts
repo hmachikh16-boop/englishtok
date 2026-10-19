@@ -1,4 +1,12 @@
-/** Local Kokoro English speech playback and synthesized UI sound effects. */
+/** Studio English speech playback (bundled clips) plus synthesized UI sound effects. */
+
+import {
+  normalizeSpeechLanguage,
+  normalizeSpeechText as normalizeClipText,
+  resolveSpeechLanguage,
+  speechClipUrl,
+  type SpeechVoice,
+} from './speechClip';
 
 export const SPEECH_UNAVAILABLE_EVENT = 'englishtok:speech-unavailable';
 export const SPEECH_STATUS_EVENT = 'englishtok:speech-status';
@@ -10,36 +18,6 @@ interface SpeechUnavailableDetail {
 interface SpeechStatusDetail {
   status: 'loading' | 'playing' | 'idle';
   progress?: number;
-}
-
-const ARABIC_SCRIPT = /\p{Script=Arabic}/u;
-const PREGENERATED_LESSON_IDS = new Set([
-  'lesson-airport-02',
-  'lesson-cafe-01',
-  'lesson-doctor-05',
-  'lesson-grammar-07',
-  'lesson-hotel-08',
-  'lesson-idioms-06',
-  'lesson-office-03',
-  'lesson-shopping-04',
-]);
-
-interface GenerateRequest {
-  requestId: number;
-  text: string;
-  voice: 'af_heart' | 'am_michael' | 'bf_emma' | 'bm_george';
-  speed: number;
-}
-
-type GenerateResponse =
-  | { requestId: number; type: 'progress'; progress: number }
-  | { requestId: number; type: 'audio'; buffer: ArrayBuffer; mimeType: string }
-  | { requestId: number; type: 'error'; message: string };
-
-interface PendingGeneration {
-  resolve: (audio: Blob) => void;
-  reject: (error: Error) => void;
-  onProgress: (progress: number) => void;
 }
 
 interface SpeechOptions {
@@ -80,18 +58,14 @@ class SpeechService {
   private currentAudioUrl: string | null = null;
   private currentUtterance: SpeechSynthesisUtterance | null = null;
   private currentSource: string | null = null;
-  private preferBrowserSpeech = false;
-  private preferredEngine: 'device' | 'neural' = 'device';
-  private inferenceWorker: Worker | null = null;
-  private pendingGenerations = new Map<number, PendingGeneration>();
-  private generationQueue: Promise<void> = Promise.resolve();
   private requestId = 0;
-  private generationRequestId = 0;
   private generatedAudio = new Map<string, Blob>();
   private generatedAudioBytes = 0;
   private inFlightAudio = new Map<string, Promise<Blob>>();
   private audioDatabasePromise: Promise<IDBDatabase | null> | null = null;
   private lastUnavailableMessage: string | null = null;
+  /** Clips this build does not ship, remembered so we never fetch them twice. */
+  private missingAudioKeys = new Set<string>();
 
   constructor() {
     if (typeof window !== 'undefined') {
@@ -136,23 +110,9 @@ class SpeechService {
     return this.lastUnavailableMessage;
   }
 
-  /** Select how speech is produced: the instant phone voice or the on-device Kokoro model. */
-  public setPreferredEngine(engine: 'device' | 'neural') {
-    this.preferredEngine = engine === 'neural' ? 'neural' : 'device';
-  }
-
-  public getLessonSpeechAssetUrl(
-    lessonId: string,
-    lineId: string,
-    gender: 'male' | 'female',
-    accent: string
-  ): string | undefined {
-    if (!PREGENERATED_LESSON_IDS.has(lessonId)) return undefined;
-
-    const assetAccent = accent === 'en-GB' ? 'en-GB' : 'en-US';
-    const voice = this.getVoice(assetAccent, gender);
-    const voiceAccent = voice === 'bf_emma' || voice === 'bm_george' ? 'en-GB' : 'en-US';
-    return `/audio/lessons/${encodeURIComponent(lessonId)}/${encodeURIComponent(lineId)}/${voiceAccent}.wav`;
+  /** URL of the bundled studio clip for a line, or undefined when there is none. */
+  public getSpeechClipUrl(text: string, gender: 'male' | 'female', accent: string) {
+    return speechClipUrl(text, gender, accent) ?? undefined;
   }
 
   private getAudioContext(): AudioContext | null {
@@ -200,47 +160,6 @@ class SpeechService {
     this.currentAudioUrl = null;
   }
 
-  private createInferenceWorker(): Worker {
-    if (this.inferenceWorker) return this.inferenceWorker;
-
-    const worker = new Worker(new URL('./speechWorker.ts', import.meta.url), {
-      type: 'module',
-      name: 'englishtok-kokoro',
-    });
-    worker.onmessage = ({ data }: MessageEvent<GenerateResponse>) => {
-      const pending = this.pendingGenerations.get(data.requestId);
-      if (!pending) return;
-
-      if (data.type === 'progress') {
-        pending.onProgress(data.progress);
-      } else {
-        this.pendingGenerations.delete(data.requestId);
-        if (data.type === 'audio') {
-          pending.resolve(new Blob([data.buffer], { type: data.mimeType }));
-        } else {
-          pending.reject(new Error(data.message));
-        }
-      }
-    };
-
-    worker.onerror = (event) => {
-      event.preventDefault();
-      const error = event.error instanceof Error
-        ? event.error
-        : new Error(
-            event.message ||
-              `Kokoro worker failed at ${event.filename || 'unknown source'}:${event.lineno}:${event.colno}.`
-          );
-      this.failPendingGenerations(error);
-    };
-    worker.onmessageerror = () => {
-      this.failPendingGenerations(new Error('Kokoro worker returned an unreadable response.'));
-    };
-
-    this.inferenceWorker = worker;
-    return worker;
-  }
-
   private playBrowserSpeech({
     requestId,
     source,
@@ -253,11 +172,9 @@ class SpeechService {
     onEnd,
     onError,
     reason,
-    markKokoroUnavailable = true,
-  }: PlaybackHandlers & { reason: unknown; markKokoroUnavailable?: boolean }) {
+  }: PlaybackHandlers & { reason: unknown }) {
     if (requestId !== this.requestId) return;
 
-    if (markKokoroUnavailable) this.preferBrowserSpeech = true;
     if (
       typeof window === 'undefined' ||
       !window.speechSynthesis ||
@@ -270,22 +187,21 @@ class SpeechService {
       return;
     }
 
-    if (markKokoroUnavailable) {
-      console.warn('[speechService] Kokoro playback failed; using the device speech voice.', reason);
-    } else {
-      console.info('[speechService] Speaking with the device voice for instant playback.', reason);
-    }
+    console.info('[speechService] Speaking with the device voice for instant playback.', reason);
     this.clearPlayback();
 
     const synthesis = window.speechSynthesis;
     const utterance = new SpeechSynthesisUtterance(text);
-    const language = accent === 'en-GB' ? 'en-GB' : 'en-US';
+    const language = normalizeSpeechLanguage(accent) === 'fr' ? 'fr-FR' : 'en-US';
     const voices = synthesis
       .getVoices()
       .filter((voice) => voice.lang.toLowerCase().startsWith(language.toLowerCase()));
-    const genderPattern = gender === 'female'
-      ? /female|woman|samantha|zira|jenny|aria/i
-      : /male|man|david|mark|george/i;
+    const genderPattern =
+      language === 'fr-FR'
+        ? /female|woman|amélie|amelie|audrey|thomas/i
+        : gender === 'female'
+          ? /female|woman|samantha|zira|jenny|aria/i
+          : /male|man|david|mark|george/i;
     utterance.voice = voices.find((voice) => genderPattern.test(voice.name)) ?? voices[0] ?? null;
     utterance.lang = language;
     utterance.rate = Math.max(0.5, Math.min(1.2, rate));
@@ -326,37 +242,6 @@ class SpeechService {
       );
       console.error('[speechService] Device speech fallback failed:', error);
     }
-  }
-
-  private failPendingGenerations(error: Error) {
-    this.inferenceWorker?.terminate();
-    this.inferenceWorker = null;
-    this.pendingGenerations.forEach(({ reject }) => reject(error));
-    this.pendingGenerations.clear();
-  }
-
-  private generateInWorker(
-    request: GenerateRequest,
-    onProgress: (progress: number) => void
-  ): Promise<Blob> {
-    return new Promise((resolve, reject) => {
-      this.pendingGenerations.set(request.requestId, {
-        resolve,
-        reject,
-        onProgress,
-      });
-
-      try {
-        this.createInferenceWorker().postMessage(request);
-      } catch (error) {
-        this.pendingGenerations.delete(request.requestId);
-        reject(error instanceof Error ? error : new Error(String(error)));
-      }
-    });
-  }
-
-  private getAudioKey(text: string, voice: GenerateRequest['voice'], speed: number, accent: string) {
-    return `kokoro:v2:${JSON.stringify([text, accent, voice, speed])}`;
   }
 
   private getCachedAudio(key: string): Blob | undefined {
@@ -469,85 +354,9 @@ class SpeechService {
     });
   }
 
-  private getOrGenerateAudio(
-    text: string,
-    voice: GenerateRequest['voice'],
-    speed: number,
-    onProgress: (progress: number) => void,
-    audioAssetUrl?: string,
-    accent = 'en-US'
-  ): Promise<Blob> {
-    const key = audioAssetUrl
-      ? `asset:v2:${JSON.stringify([audioAssetUrl, accent, voice, speed])}`
-      : this.getAudioKey(text, voice, speed, accent);
-    const cached = this.getCachedAudio(key);
-    if (cached) return Promise.resolve(cached);
-
-    const existing = this.inFlightAudio.get(key);
-    if (existing) return existing;
-
-    const sharedGeneration = (async () => {
-      let persisted: Blob | undefined;
-      try {
-        persisted = await this.readPersistentAudio(key);
-      } catch (error) {
-        console.warn('[speechService] Could not read persistent speech cache:', error);
-      }
-      if (persisted) {
-        this.cacheAudio(key, persisted);
-        return persisted;
-      }
-
-      if (audioAssetUrl) {
-        try {
-          const response = await fetch(audioAssetUrl, { cache: 'force-cache' });
-          if (!response.ok) {
-            throw new Error(`Pre-generated speech asset request failed (${response.status}).`);
-          }
-          const audio = await response.blob();
-          if (!audio.type.startsWith('audio/')) {
-            throw new Error(`Unexpected pre-generated speech asset type: ${audio.type || 'unknown'}.`);
-          }
-          this.cacheAudio(key, audio);
-          try {
-            await this.writePersistentAudio(key, audio);
-          } catch (error) {
-            console.warn('[speechService] Could not persist pre-generated speech audio:', error);
-          }
-          return audio;
-        } catch (error) {
-          console.warn(
-            `[speechService] Could not load pre-generated speech asset "${audioAssetUrl}"; falling back to Kokoro.`,
-            error
-          );
-        }
-      }
-
-      const generation = this.generationQueue.then(() => {
-        const requestId = ++this.generationRequestId;
-        return this.generateInWorker({ requestId, text, voice, speed }, onProgress);
-      });
-      this.generationQueue = generation.then(
-        () => undefined,
-        () => undefined
-      );
-      const audio = await generation;
-      this.cacheAudio(key, audio);
-      try {
-        await this.writePersistentAudio(key, audio);
-      } catch (error) {
-        console.warn('[speechService] Could not persist generated speech audio:', error);
-      }
-      return audio;
-    })().finally(() => this.inFlightAudio.delete(key));
-    this.inFlightAudio.set(key, sharedGeneration);
-    return sharedGeneration;
-  }
 
   private normalizeSpeechText(text: string): string | null {
-    const cleanText = text.replace(/[\u{1F600}-\u{1F64F}]/gu, '').trim();
-    if (!cleanText || ARABIC_SCRIPT.test(cleanText)) return null;
-    return cleanText;
+    return normalizeClipText(text);
   }
 
   /** True when this browser exposes a usable speech synthesiser. */
@@ -559,14 +368,17 @@ class SpeechService {
     );
   }
 
-  /** Fetch a pre-recorded clip (memory, IndexedDB, then network) without touching Kokoro. */
+  /** Fetch a bundled clip (memory, IndexedDB, then network) without touching Kokoro. */
   private loadRecordedAudio(
     audioAssetUrl: string,
-    voice: GenerateRequest['voice'],
+    voice: SpeechVoice,
     speed: number,
     accent: string
   ): Promise<Blob> {
-    const key = `asset:v2:${JSON.stringify([audioAssetUrl, accent, voice, speed])}`;
+    const key = `asset:v3:${JSON.stringify([audioAssetUrl, accent, voice, speed])}`;
+    if (this.missingAudioKeys.has(key)) {
+      return Promise.reject(new Error(`No bundled clip for "${audioAssetUrl}".`));
+    }
     const cached = this.getCachedAudio(key);
     if (cached) return Promise.resolve(cached);
     const existing = this.inFlightAudio.get(key);
@@ -586,17 +398,19 @@ class SpeechService {
 
       const response = await fetch(audioAssetUrl, { cache: 'force-cache' });
       if (!response.ok) {
-        throw new Error(`Pre-generated speech asset request failed (${response.status}).`);
+        this.missingAudioKeys.add(key);
+        throw new Error(`Bundled speech clip request failed (${response.status}).`);
       }
       const audio = await response.blob();
       if (!audio.type.startsWith('audio/')) {
-        throw new Error(`Unexpected pre-generated speech asset type: ${audio.type || 'unknown'}.`);
+        this.missingAudioKeys.add(key);
+        throw new Error(`Unexpected bundled speech clip type: ${audio.type || 'unknown'}.`);
       }
       this.cacheAudio(key, audio);
       try {
         await this.writePersistentAudio(key, audio);
       } catch (error) {
-        console.warn('[speechService] Could not persist pre-generated speech audio:', error);
+        console.warn('[speechService] Could not persist bundled speech audio:', error);
       }
       return audio;
     })().finally(() => this.inFlightAudio.delete(key));
@@ -646,17 +460,17 @@ class SpeechService {
   }
 
   /**
-   * Instant path: play a pre-recorded clip when one exists, otherwise hand straight
-   * over to the phone voice, which never needs a download.
+   * Instant path: play the bundled studio clip when the library has one, otherwise
+   * hand straight over to the phone voice, which never needs a download.
    */
   private playFastPath(handlers: PlaybackHandlers, audioAssetUrl?: string) {
     const useDeviceVoice = (reason: unknown) => {
       if (handlers.requestId !== this.requestId) return;
       if (this.canUseDeviceSpeech()) {
-        this.playBrowserSpeech({ ...handlers, reason, markKokoroUnavailable: false });
+        this.playBrowserSpeech({ ...handlers, reason });
         return;
       }
-      this.playKokoro(handlers, undefined);
+      this.finishWithError('لا يوجد صوت مضمّن لهذه الجملة، وصوت الجهاز غير متاح.', handlers.onError);
     };
 
     if (!audioAssetUrl) {
@@ -666,104 +480,36 @@ class SpeechService {
 
     const voice = this.getVoice(handlers.accent, handlers.gender);
     const speed = Math.max(0.5, Math.min(1.2, handlers.rate));
-    this.setStatus('loading');
+    // Bundled clips load straight from the app, so no loading state is needed.
     void this.loadRecordedAudio(audioAssetUrl, voice, speed, handlers.accent)
       .then((blob) => {
         if (handlers.requestId !== this.requestId) return;
         this.playAudioBlob(blob, handlers, useDeviceVoice);
       })
       .catch((error: unknown) => {
-        console.warn('[speechService] Could not load pre-generated speech audio:', error);
         useDeviceVoice(error);
       });
   }
 
-  /** High-quality path: pre-recorded clips first, then the on-device Kokoro model. */
-  private playKokoro(handlers: PlaybackHandlers, audioAssetUrl?: string) {
-    const { requestId, text, rate, gender, accent, source } = handlers;
-    const useDeviceVoice = (reason: unknown) => {
-      this.playBrowserSpeech({ ...handlers, reason });
-    };
-
-    if (this.preferBrowserSpeech) {
-      useDeviceVoice(new Error('Kokoro failed earlier in this session.'));
-      return;
-    }
-
-    if (typeof WebAssembly === 'undefined' || typeof Audio === 'undefined') {
-      useDeviceVoice(new Error('This browser does not support local Kokoro audio.'));
-      return;
-    }
-
-    if (
-      typeof navigator !== 'undefined' &&
-      'deviceMemory' in navigator &&
-      typeof navigator.deviceMemory === 'number' &&
-      navigator.deviceMemory < 2
-    ) {
-      useDeviceVoice(new Error('This device has less than 2 GB of memory available for Kokoro.'));
-      return;
-    }
-
-    this.lastUnavailableMessage = null;
-    this.currentSource = source;
-    const voice = this.getVoice(accent, gender);
-    const speed = Math.max(0.5, Math.min(1.2, rate));
-    const audioKey = audioAssetUrl
-      ? `asset:${audioAssetUrl}`
-      : this.getAudioKey(text, voice, speed, accent);
-    if (!this.getCachedAudio(audioKey)) this.setStatus('loading');
-
-    void this.getOrGenerateAudio(
-      text,
-      voice,
-      speed,
-      (progress) => {
-        if (requestId === this.requestId) this.setStatus('loading', progress);
-      },
-      audioAssetUrl,
-      accent
-    )
-      .then((audioBlob) => {
-        if (requestId !== this.requestId) return;
-        this.playAudioBlob(audioBlob, { ...handlers, rate: speed }, useDeviceVoice);
-      })
-      .catch((error: unknown) => {
-        if (requestId !== this.requestId) return;
-        useDeviceVoice(error);
-      });
-  }
 
   public preloadText({
     text,
     rate = 1.0,
     gender = 'female',
-    accent = 'en-US',
+    accent = 'en',
     audioAssetUrl,
   }: SpeechOptions) {
     const cleanText = this.normalizeSpeechText(text);
     if (!cleanText) return;
-    const voice = this.getVoice(accent, gender);
+    const language = resolveSpeechLanguage(cleanText, accent);
+    const voice = this.getVoice(language, gender);
     const speed = Math.max(0.5, Math.min(1.2, rate));
+    const clipUrl = audioAssetUrl ?? this.getSpeechClipUrl(cleanText, gender, language);
 
-    // Recorded clips are worth fetching ahead of time; the phone voice is already instant.
-    if (audioAssetUrl) {
-      void this.loadRecordedAudio(audioAssetUrl, voice, speed, accent).catch((error: unknown) => {
-        console.warn('[speechService] Speech preloading failed:', error);
-      });
-      return;
+    // Bundled clips are worth fetching ahead of time; the phone voice is already instant.
+    if (clipUrl) {
+      void this.loadRecordedAudio(clipUrl, voice, speed, language).catch(() => undefined);
     }
-
-    if (this.preferredEngine !== 'neural' || this.preferBrowserSpeech) return;
-
-    const key = this.getAudioKey(cleanText, voice, speed, accent);
-    if (this.getCachedAudio(key) || this.inFlightAudio.has(key)) return;
-
-    void this.getOrGenerateAudio(cleanText, voice, speed, () => undefined, undefined, accent).catch(
-      (error: unknown) => {
-        console.warn('[speechService] Speech preloading failed:', error);
-      }
-    );
   }
 
   public speakText({
@@ -772,7 +518,7 @@ class SpeechService {
     rate = 1.0,
     pitch = 1.0,
     gender = 'female',
-    accent = 'en-US',
+    accent = 'en',
     onStart,
     onEnd,
     onError,
@@ -794,12 +540,13 @@ class SpeechService {
     const cleanText = this.normalizeSpeechText(text);
     if (!cleanText) {
       this.reportSpeechUnavailable(
-        'أدخل نصًا إنجليزيًا صالحًا للنطق؛ لا تُرسل الترجمة العربية إلى محرك الصوت.',
+        'أدخل نصًا إنجليزيًا أو فرنسيًا صالحًا للنطق؛ لا تُرسل الترجمة العربية إلى محرك الصوت.',
         onError
       );
       return;
     }
 
+    const language = resolveSpeechLanguage(cleanText, accent);
     const handlers: PlaybackHandlers = {
       requestId: this.requestId,
       source,
@@ -807,27 +554,19 @@ class SpeechService {
       rate,
       pitch,
       gender,
-      accent,
+      accent: language,
       onStart,
       onEnd,
       onError,
     };
 
-    if (this.preferredEngine === 'neural') {
-      this.playKokoro(handlers, audioAssetUrl);
-      return;
-    }
-
-    this.playFastPath(handlers, audioAssetUrl);
+    const clipUrl = audioAssetUrl ?? this.getSpeechClipUrl(cleanText, gender, language);
+    this.playFastPath(handlers, clipUrl);
   }
 
-  private getVoice(
-    accent: string,
-    gender: 'male' | 'female'
-  ): GenerateRequest['voice'] {
-    if (accent === 'en-GB') {
-      return gender === 'male' ? 'bm_george' : 'bf_emma';
-    }
+  private getVoice(accent: string, gender: 'male' | 'female'): SpeechVoice {
+    // Kokoro has a single French voice; English has one per gender.
+    if (normalizeSpeechLanguage(accent) === 'fr') return 'ff_siwis';
     return gender === 'male' ? 'am_michael' : 'af_heart';
   }
 
