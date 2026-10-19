@@ -23,6 +23,7 @@ param(
 )
 
 $ErrorActionPreference = "Continue"
+$env:Path += ";C:\Program Files\GitHub CLI"
 $root = Split-Path -Parent $PSScriptRoot
 Set-Location $root
 
@@ -30,6 +31,10 @@ function Fail([string]$message) {
   Write-Host ""
   Write-Host "ERROR: $message" -ForegroundColor Red
   exit 1
+}
+
+if (-not (Get-Command gh -ErrorAction SilentlyContinue)) {
+  Fail "GitHub CLI is not installed. Run: winget install --id GitHub.cli -e"
 }
 
 # 0. Required files
@@ -46,6 +51,7 @@ if ($LASTEXITCODE -ne 0) {
   gh auth login --hostname github.com --git-protocol https --web
   if ($LASTEXITCODE -ne 0) { Fail "GitHub login did not complete." }
 }
+gh auth setup-git *> $null
 
 $login = (gh api user --jq .login).Trim()
 if (-not $login) { Fail "Could not read the GitHub username." }
