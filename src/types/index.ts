@@ -21,6 +21,21 @@ export interface CategoryInfo {
   descriptionAr: string;
 }
 
+/**
+ * Hand-built cartoon designs used by the primary-school lessons. Each value maps
+ * to a detailed vector illustration in src/characters/characterArt.ts.
+ */
+export type CharacterDesign =
+  | 'boy-monster'
+  | 'girl-teal'
+  | 'girl-pink'
+  | 'girl-green-hat'
+  | 'squirrel'
+  | 'squirrel-glasses'
+  | 'squirrel-scarf'
+  | 'fox-flowers'
+  | 'dog-brown';
+
 export interface Character {
   id: string;
   name: string;
@@ -34,6 +49,8 @@ export interface Character {
   skinTone: string;
   hairColor: string;
   hairStyle: 'short' | 'curly' | 'ponytail' | 'glasses' | 'spiky';
+  /** When set, the character is drawn with its dedicated cartoon illustration. */
+  design?: CharacterDesign;
 }
 
 export interface DialogueLine {

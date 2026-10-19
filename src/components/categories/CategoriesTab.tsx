@@ -8,6 +8,7 @@ import { getLearningPathState } from '../../services/learningPath';
 import { LevelFinalExam } from '../quiz/LevelFinalExam';
 import { PremiumIcon } from '../icons/PremiumIcon';
 import { LearningBuddy } from '../learning/LearningBuddy';
+import { PrimaryAvatar } from '../video/PrimaryCharacterArt';
 import { EDUCATIONAL_PHASES, findSchoolYearRoute, SCHOOL_YEAR_ALIGNMENT_NOTE } from '../../data/educationalStructure';
 
 const StageChest: React.FC<{ earned: boolean }> = ({ earned }) => (
@@ -493,8 +494,10 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
               <div className="flex items-start justify-between gap-3">
               <div className="flex min-w-0 items-center gap-3">
                   {/* Avatar badge */}
-                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-emerald-50 to-teal-100 border border-emerald-100 flex items-center justify-center text-xl shrink-0 group-hover:scale-105 transition-transform">
-                    {lesson.characterA.avatar}
+                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-emerald-50 to-teal-100 border border-emerald-100 flex items-center justify-center text-xl shrink-0 group-hover:scale-105 transition-transform overflow-hidden">
+                    {lesson.characterA.design
+                      ? <PrimaryAvatar design={lesson.characterA.design} className="h-12 w-12" label={lesson.characterA.nameAr} />
+                      : lesson.characterA.avatar}
                   </div>
                   <div className="min-w-0">
                     <div className="flex items-center gap-2 mb-1">

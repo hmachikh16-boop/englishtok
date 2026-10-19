@@ -1,5 +1,6 @@
 import type {
   Character,
+  CharacterDesign,
   CategoryKey,
   DialogueLine,
   Lesson,
@@ -827,7 +828,12 @@ const stageOrder: Record<number, string[]> = {
   7: additionalSeeds.filter((seed) => seed.stage === 7).map((seed) => seed.id),
 };
 
-const speakers = (id: string, people: [string, string], stage: number): [Character, Character] => {
+const speakers = (
+  id: string,
+  people: [string, string],
+  stage: number,
+  designs?: [CharacterDesign?, CharacterDesign?],
+): [Character, Character] => {
   const palettes = [
     ['#0f766e', '#f43f5e'], ['#2563eb', '#ea580c'], ['#7c3aed', '#0891b2'],
     ['#4f46e5', '#059669'], ['#be123c', '#0369a1'],
@@ -840,18 +846,32 @@ const speakers = (id: string, people: [string, string], stage: number): [Charact
       id: `${id}-a`, name: people[0], nameAr: getArabicCharacterName(people[0]), roleAr: 'المتحدث الأول',
       avatar: '🧑', voiceGender: 'female', voicePitch: 1.08, shirtColor: shirtA,
       skinTone: '#fcd7b6', hairColor: '#3b2418', hairStyle: 'ponytail',
+      design: designs?.[0],
     },
     {
       id: `${id}-b`, name: people[1], nameAr: getArabicCharacterName(people[1]), roleAr: 'المتحدث الثاني',
       avatar: '🧑‍🏫', voiceGender: 'male', voicePitch: 0.92, shirtColor: shirtB,
       skinTone: '#f3c99f', hairColor: '#33251d', hairStyle: 'short',
+      design: designs?.[1],
     },
   ];
 };
 
+/**
+ * The primary-school cast. Every grade gets its own pair of the hand-drawn
+ * characters so the youngest learners always meet the same friendly faces.
+ */
+const PRIMARY_CHARACTER_DESIGNS: Record<number, [CharacterDesign, CharacterDesign]> = {
+  1: ['girl-teal', 'boy-monster'],
+  2: ['squirrel-scarf', 'squirrel-glasses'],
+  3: ['girl-pink', 'fox-flowers'],
+  4: ['girl-green-hat', 'boy-monster'],
+  5: ['squirrel', 'dog-brown'],
+};
+
 const fillFocus = (template: string, focus: string) => template.replaceAll('{focus}', focus);
 const primaryLessons: Lesson[] = PRIMARY_LESSON_SPECS.map((spec) => {
-  const people = speakers(spec.id, ['Lina', 'Omar'], spec.grade);
+  const people = speakers(spec.id, ['Lina', 'Omar'], spec.grade, PRIMARY_CHARACTER_DESIGNS[spec.grade]);
   const vocabulary = [
     [spec.focus, spec.translationAr],
     ...spec.relatedWords,

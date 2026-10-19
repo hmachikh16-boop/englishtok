@@ -1,5 +1,6 @@
 import React from 'react';
 import { Character, DialogueLine, SceneType } from '../../types';
+import { PrimaryCharacter } from './PrimaryCharacterArt';
 
 interface CartoonSceneProps {
   sceneType: SceneType;
@@ -249,6 +250,12 @@ export const CartoonScene = React.memo<CartoonSceneProps>(({
         )}
 
         {/* Character Body / Clothes */}
+        {char.design ? (
+          <g transform={`translate(${xBase}, ${yBase + 46}) scale(0.82)`}>
+            <PrimaryCharacter design={char.design} speaking={isSpeaking} playing={isPlaying} />
+          </g>
+        ) : (
+          <>
         <path
           d={`M${xBase - 36},${yBase + 40} C${xBase - 36},${yBase - 35} ${xBase - 25},${yBase - 55} ${xBase},${yBase - 55} C${xBase + 25},${yBase - 55} ${xBase + 36},${yBase - 35} ${xBase + 36},${yBase + 40} Z`}
           fill={char.shirtColor}
@@ -391,6 +398,9 @@ export const CartoonScene = React.memo<CartoonSceneProps>(({
             strokeWidth="2.5"
             strokeLinecap="round"
           />
+        )}
+
+          </>
         )}
 
         {/* Name tag on character */}

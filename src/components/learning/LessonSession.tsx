@@ -5,6 +5,7 @@ import { getLevelExamPassingScore } from '../../services/learningPath';
 import { speechService } from '../../services/speechService';
 import { LearningBuddy, type BuddyMood } from './LearningBuddy';
 import { LessonVisual } from './LessonVisual';
+import { PrimaryAvatar } from '../video/PrimaryCharacterArt';
 
 type SessionPhase = 'welcome' | 'story' | 'quiz' | 'result';
 
@@ -199,7 +200,7 @@ export const LessonSession: React.FC<LessonSessionProps> = ({ lesson, userProfil
               className="lesson-visual-story mt-4"
             />
             <div className="lesson-dialogue-card mt-4 rounded-[1.5rem] p-4 sm:p-5">
-              <div className="flex items-center justify-between gap-3"><span className="lesson-speaker-chip">{lineSpeaker.avatar} {lineSpeaker.nameAr}</span><button type="button" onClick={() => speakLine(line, dialogueIndex)} className="lesson-audio-button" aria-label="استمع إلى الجملة"><Volume2 className="h-5 w-5" /></button></div>
+              <div className="flex items-center justify-between gap-3"><span className="lesson-speaker-chip">{lineSpeaker.design ? <PrimaryAvatar design={lineSpeaker.design} className="h-6 w-6 shrink-0" label={lineSpeaker.nameAr} /> : lineSpeaker.avatar} {lineSpeaker.nameAr}</span><button type="button" onClick={() => speakLine(line, dialogueIndex)} className="lesson-audio-button" aria-label="استمع إلى الجملة"><Volume2 className="h-5 w-5" /></button></div>
               <p dir="ltr" className="mt-4 text-left font-en text-lg font-extrabold leading-relaxed text-slate-800 sm:text-xl">{line.textEn}</p>
               <p className="mt-2 text-sm leading-7 text-slate-600">{line.textAr}</p>
             </div>
