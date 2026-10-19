@@ -53,17 +53,23 @@ export default function App() {
     if (Capacitor.getPlatform() !== 'android') return;
 
     let isMounted = true;
-    void CapacitorApp.getInfo()
-      .then(({ version }) => checkForAppUpdate(version))
-      .then((update) => {
-        if (isMounted && update) setAvailableAppUpdate(update);
-      })
-      .catch((error: unknown) => {
-        console.warn('Unable to check for EnglishTok updates on launch:', error);
-      });
+    const runUpdateCheck = () => {
+      void CapacitorApp.getInfo()
+        .then(({ version }) => checkForAppUpdate(version))
+        .then((update) => {
+          if (isMounted && update) setAvailableAppUpdate(update);
+        })
+        .catch((error: unknown) => {
+          console.warn('Unable to check for EnglishTok updates:', error);
+        });
+    };
+
+    runUpdateCheck();
+    const resumeListener = CapacitorApp.addListener('resume', runUpdateCheck);
 
     return () => {
       isMounted = false;
+      void resumeListener.then((handle) => handle.remove());
     };
   }, []);
 

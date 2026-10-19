@@ -1,7 +1,6 @@
 import type { Lesson } from '../types';
 
-const CONTENT_CACHE_KEY = 'englishtok_learning_path_content_v2';
-const CONTENT_RELEASE_TAG = 'content-latest';
+const CONTENT_CACHE_KEY = 'englishtok_learning_path_content_v3';
 const GITHUB_REPOSITORY = import.meta.env.VITE_GITHUB_REPOSITORY;
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
@@ -10,10 +9,21 @@ const isRecord = (value: unknown): value is Record<string, unknown> =>
 const hasText = (value: unknown): value is string =>
   typeof value === 'string' && value.trim().length > 0;
 
-const isReleaseAssetUrl = (value: unknown, repository: string): value is string =>
-  typeof value === 'string' &&
-  value.startsWith(`https://api.github.com/repos/${repository}/releases/assets/`) &&
-  /^\d+$/.test(value.slice(`https://api.github.com/repos/${repository}/releases/assets/`.length));
+/**
+ * AbortSignal.timeout is missing on some older Android WebViews. Falling back
+ * to a manual controller keeps content refreshes working there as well.
+ */
+const timeoutSignal = (milliseconds: number): AbortSignal | undefined => {
+  if (typeof AbortSignal !== 'undefined' && typeof AbortSignal.timeout === 'function') {
+    return AbortSignal.timeout(milliseconds);
+  }
+  if (typeof AbortController !== 'undefined') {
+    const controller = new AbortController();
+    setTimeout(() => controller.abort(), milliseconds);
+    return controller.signal;
+  }
+  return undefined;
+};
 
 const isLessonList = (value: unknown): value is Lesson[] =>
   Array.isArray(value) &&
@@ -111,51 +121,57 @@ const getRepository = () => {
   return repository;
 };
 
+/**
+ * Lesson content lives in the repository (public/content/learning-path.json)
+ * and is also mirrored to jsDelivr. Both endpoints send CORS headers, unlike
+ * GitHub release assets whose download redirect is blocked inside the WebView.
+ */
+const contentUrls = (repository: string): { url: string; githubApi: boolean }[] => [
+  {
+    url: `https://api.github.com/repos/${repository}/contents/public/content/learning-path.json?ref=main`,
+    githubApi: true,
+  },
+  {
+    url: `https://cdn.jsdelivr.net/gh/${repository}@main/public/content/learning-path.json`,
+    githubApi: false,
+  },
+];
+
 export const fetchLatestLearningPath = async (): Promise<Lesson[] | null> => {
   const repository = getRepository();
   if (!repository) return null;
 
-  const releaseResponse = await fetch(
-    `https://api.github.com/repos/${repository}/releases/tags/${CONTENT_RELEASE_TAG}`,
-    {
-      cache: 'no-store',
-      headers: { Accept: 'application/vnd.github+json' },
-      signal: AbortSignal.timeout(15_000),
-    },
-  );
-  if (releaseResponse.status === 404) return null;
-  if (!releaseResponse.ok) {
-    throw new Error(`Lesson content update check failed (${releaseResponse.status}).`);
+  let lastError: unknown = new Error('تعذر تحميل محتوى الدروس.');
+
+  for (const candidate of contentUrls(repository)) {
+    try {
+      const contentResponse = await fetch(candidate.url, {
+        cache: 'no-store',
+        headers: candidate.githubApi
+          ? { Accept: 'application/vnd.github.raw', 'X-GitHub-Api-Version': '2022-11-28' }
+          : { Accept: 'application/json' },
+        signal: timeoutSignal(20_000),
+      });
+      if (!contentResponse.ok) {
+        lastError = new Error(`Lesson content download failed (${contentResponse.status}).`);
+        continue;
+      }
+
+      const lessons = parseContent(await contentResponse.json());
+      if (!lessons) {
+        lastError = new Error('The downloaded lesson content has an unsupported or invalid format.');
+        continue;
+      }
+
+      saveContent(lessons);
+      return lessons;
+    } catch (error) {
+      lastError = error;
+    }
   }
 
-  const release: unknown = await releaseResponse.json();
-  if (!isRecord(release) || release.tag_name !== CONTENT_RELEASE_TAG || !Array.isArray(release.assets)) {
-    throw new Error('The published lesson-content release metadata is invalid.');
-  }
-  const asset = release.assets.find(
-    (candidate) => isRecord(candidate) && candidate.name === 'learning-path.json',
-  );
-  if (
-    !isRecord(asset) ||
-    !isReleaseAssetUrl(asset.url, repository)
-  ) {
-    throw new Error('The latest lesson-content release is missing learning-path.json.');
-  }
-
-  const contentResponse = await fetch(asset.url, {
-    cache: 'no-store',
-    headers: {
-      Accept: 'application/octet-stream',
-      'X-GitHub-Api-Version': '2022-11-28',
-    },
-    signal: AbortSignal.timeout(20_000),
-  });
-  if (!contentResponse.ok) {
-    throw new Error(`Lesson content download failed (${contentResponse.status}).`);
-  }
-
-  const lessons = parseContent(await contentResponse.json());
-  if (!lessons) throw new Error('The downloaded lesson content has an unsupported or invalid format.');
-  saveContent(lessons);
-  return lessons;
+  throw lastError instanceof Error
+    ? lastError
+    : new Error('Unable to download the latest lesson content.');
 };
+
