@@ -828,6 +828,21 @@ const stageOrder: Record<number, string[]> = {
   7: additionalSeeds.filter((seed) => seed.stage === 7).map((seed) => seed.id),
 };
 
+/**
+ * Fallback cast for the general, middle and secondary tracks. The primary
+ * tracks keep their per-grade pair; every other lesson uses one of these so
+ * the hand-drawn cast appears in every lesson.
+ */
+const DEFAULT_CHARACTER_DESIGNS: [CharacterDesign, CharacterDesign][] = [
+  ['girl-teal', 'boy-monster'],
+  ['girl-pink', 'boy-monster'],
+  ['girl-green-hat', 'boy-monster'],
+  ['girl-teal', 'boy-monster'],
+  ['girl-pink', 'boy-monster'],
+  ['girl-green-hat', 'boy-monster'],
+  ['girl-teal', 'boy-monster'],
+];
+
 const speakers = (
   id: string,
   people: [string, string],
@@ -841,18 +856,20 @@ const speakers = (
     ['#4f46e5', '#059669'], ['#be123c', '#0369a1'],
   ];
   const [shirtA, shirtB] = palettes[(stage - 1) % palettes.length];
+  const defaultDesigns =
+    DEFAULT_CHARACTER_DESIGNS[(Math.max(1, stage) - 1) % DEFAULT_CHARACTER_DESIGNS.length];
   return [
     {
       id: `${id}-a`, name: people[0], nameAr: getArabicCharacterName(people[0]), roleAr: 'المتحدث الأول',
       avatar: '🧑', voiceGender: 'female', voicePitch: 1.08, shirtColor: shirtA,
       skinTone: '#fcd7b6', hairColor: '#3b2418', hairStyle: 'ponytail',
-      design: designs?.[0],
+      design: designs?.[0] ?? defaultDesigns[0],
     },
     {
       id: `${id}-b`, name: people[1], nameAr: getArabicCharacterName(people[1]), roleAr: 'المتحدث الثاني',
       avatar: '🧑‍🏫', voiceGender: 'male', voicePitch: 0.92, shirtColor: shirtB,
       skinTone: '#f3c99f', hairColor: '#33251d', hairStyle: 'short',
-      design: designs?.[1],
+      design: designs?.[1] ?? defaultDesigns[1],
     },
   ];
 };
@@ -1075,10 +1092,18 @@ const generatedLessons: Lesson[] = seeds.map((seed) => {
 
 const allGeneratedLessons = [...generatedLessons, ...primaryLessons, ...schoolLessons];
 const generatedById = new Map(allGeneratedLessons.map((lesson) => [lesson.id, lesson]));
+/** Legacy lessons predate the hand-drawn cast; give them the same faces. */
+const designFor = (character: Character): CharacterDesign =>
+  character.design ?? (character.voiceGender === 'male' ? 'boy-monster' : 'girl-teal');
+const withDefaultDesigns = (lesson: Lesson): Lesson => ({
+  ...lesson,
+  characterA: { ...lesson.characterA, design: designFor(lesson.characterA) },
+  characterB: { ...lesson.characterB, design: designFor(lesson.characterB) },
+});
 const legacyById = new Map(
   INITIAL_LESSONS.map((lesson) => [
     lesson.id,
-    { ...lesson, curriculumStage: stageByLegacyLesson[lesson.id] },
+    { ...withDefaultDesigns(lesson), curriculumStage: stageByLegacyLesson[lesson.id] },
   ])
 );
 const lessonById = new Map([...legacyById, ...generatedById]);
@@ -1144,7 +1169,7 @@ const generatedWithQuizzes = allGeneratedLessons.map((lesson) => ({
 }));
 
 const legacyWithStages = INITIAL_LESSONS.map((lesson) => ({
-  ...lesson,
+  ...withDefaultDesigns(lesson),
   curriculumStage: stageByLegacyLesson[lesson.id],
   learningNoteAr: legacyLearningNotes[lesson.id],
 }));
