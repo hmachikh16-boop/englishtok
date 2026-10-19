@@ -1031,3 +1031,198 @@ svg {
 .journey-secondary [class*="text-amber-400"] { color: #8a5a00; }
 .journey-home [class*="text-rose-400"],
 .journey-secondary [class*="text-rose-400"] { color: #be123c; }
+
+/* ============================================================
+   EnglishTok x Duolingo-inspired refresh
+   Bright palette, chunky 3D surfaces, pressable buttons and a
+   playful learning path. Text-bearing surfaces use accessible
+   green shades while the path keeps the vivid Duolingo green.
+   ============================================================ */
+:root {
+  --duo-green: #58cc02;
+  --duo-green-dark: #46a302;
+  --duo-green-darker: #2f8000;
+  --duo-green-deep: #1d5c00;
+  --duo-green-light: #eafcd7;
+  --duo-blue: #1cb0f6;
+  --duo-blue-dark: #1899d6;
+  --duo-blue-darker: #0b6fa4;
+  --duo-red: #ff4b4b;
+  --duo-red-dark: #e63f3f;
+  --duo-yellow: #ffc800;
+  --duo-yellow-dark: #e6a700;
+  --duo-purple: #ce82ff;
+  --duo-purple-dark: #a568cc;
+  --duo-orange: #ff9600;
+  --duo-orange-dark: #e07d00;
+  --duo-text: #3c3c3c;
+  --duo-muted: #777777;
+  --duo-faint: #afafaf;
+  --duo-border: #e5e5e5;
+  --duo-surface: #ffffff;
+  --duo-page: #f7f7f7;
+}
+
+/* ---------- Surfaces ---------- */
+body { background: var(--duo-page); background-image: none; }
+.journey-shell, .journey-home, .journey-secondary { background: var(--duo-page); color: var(--duo-text); }
+
+/* ---------- Top bar: clean white, chunky bottom border ---------- */
+.journey-topbar {
+  color: var(--duo-text);
+  background: var(--duo-surface);
+  border-color: var(--duo-border);
+  box-shadow: 0 2px 0 var(--duo-border);
+}
+.journey-topbar .journey-brand-name { color: var(--duo-text); }
+.journey-topbar .journey-brand-accent { color: var(--duo-green-darker); }
+.journey-topbar .journey-topbar-tagline { color: var(--duo-muted); border-color: var(--duo-border); }
+.journey-topbar .brand-mark { color: #fff; background: var(--duo-green); box-shadow: 0 3px 0 var(--duo-green-dark); border-radius: 11px; }
+.journey-topbar .brand-mark span { border-color: #fff; }
+.journey-stats { color: var(--duo-text); background: #fff; border: 2px solid var(--duo-border); box-shadow: 0 3px 0 var(--duo-border); border-radius: 14px; }
+.journey-stats:hover { border-color: #d6d6d6; }
+.journey-stats:focus-visible { outline: 3px solid var(--duo-blue); outline-offset: 3px; }
+.journey-stats .topbar-rank, .journey-stats .topbar-xp, .journey-stats .topbar-streak { color: var(--duo-text); }
+.journey-stats .topbar-xp svg { color: var(--duo-blue); }
+.journey-stats .topbar-streak svg { color: var(--duo-orange); }
+.journey-stats .topbar-rank svg { color: var(--duo-purple); }
+.topbar-language { color: var(--duo-blue-darker); }
+.topbar-language-code { color: var(--duo-blue-darker); }
+.topbar-unit { color: #6b6b6b; }
+.topbar-divider { background: var(--duo-border); }
+button.journey-frame-toggle { color: var(--duo-blue-darker); background: #fff; border: 2px solid var(--duo-border); box-shadow: 0 3px 0 var(--duo-border); border-radius: 14px; }
+button.journey-frame-toggle:hover { color: var(--duo-blue-dark); border-color: #d6d6d6; }
+button.journey-frame-toggle svg { color: var(--duo-blue); }
+
+/* ---------- Bottom navigation ---------- */
+.journey-nav { background: #fff; border-color: var(--duo-border); box-shadow: 0 -2px 0 var(--duo-border); }
+.journey-tab { color: var(--duo-faint); }
+.journey-tab:hover { color: var(--duo-muted); background: var(--duo-page); }
+.journey-tab.is-active { color: var(--duo-green); background: var(--duo-green-light); box-shadow: none; }
+.journey-tab.is-active .journey-nav-icon { color: var(--duo-green); }
+.journey-tab.is-active span { color: var(--duo-green-darker); }
+.journey-tab:focus-visible { outline: 3px solid var(--duo-blue); outline-offset: 2px; }
+
+/* ---------- Stage rail ---------- */
+.path-stage-rail { background: rgb(255 255 255 / 96%); border-color: var(--duo-border); box-shadow: 0 2px 0 rgb(229 229 229 / 90%); }
+.path-stage-rail-label { color: #6b6b6b; }
+.path-stage-chip { color: var(--duo-muted); background: #fff; border: 2px solid var(--duo-border); box-shadow: 0 2px 0 var(--duo-border); border-radius: 12px; }
+.path-stage-chip:hover { color: var(--duo-text); border-color: #cfcfcf; }
+.path-stage-chip.is-active { color: #fff; background: var(--duo-green-darker); border-color: var(--duo-green-darker); box-shadow: 0 2px 0 var(--duo-green-deep); }
+.path-stage-chip.is-locked { color: var(--duo-faint); background: var(--duo-page); border-color: var(--duo-border); box-shadow: none; }
+.path-stage-chip-dot { background: var(--duo-yellow); box-shadow: 0 0 0 2px #fff; }
+.path-stage-chip.is-active .path-stage-chip-dot { background: #ffe27a; box-shadow: 0 0 0 2px var(--duo-green-darker); }
+.path-stage-rail-search { color: var(--duo-blue); background: #fff; border: 2px solid var(--duo-border); box-shadow: 0 2px 0 var(--duo-border); }
+.path-stage-rail-search:hover { color: var(--duo-blue-dark); background: var(--duo-page); border-color: #cfcfcf; }
+
+/* ---------- Hero card, daily goal and school explorer ---------- */
+.path-hero { background: #fff; border: 2px solid var(--duo-border); border-radius: 20px; box-shadow: 0 4px 0 var(--duo-border); }
+.daily-goal-card, .path-hero .daily-goal-card { background: #fff; border: 2px solid var(--duo-border); border-radius: 16px; box-shadow: 0 3px 0 var(--duo-border); }
+.daily-goal-card, .daily-goal-card * { color: var(--duo-text); }
+.daily-goal-icon { color: var(--duo-yellow-dark); background: #fff4cc; border-radius: 11px; }
+.daily-goal-track { background: var(--duo-border); }
+.daily-goal-fill { background: var(--duo-green); box-shadow: inset 0 -2px 0 rgb(0 0 0 / 12%); }
+.school-phase-explorer { background: #fff; border: 2px solid var(--duo-border); border-radius: 16px; box-shadow: 0 3px 0 var(--duo-border); }
+.school-phase-card { background: #fff; border: 2px solid var(--duo-border); border-radius: 14px; box-shadow: 0 2px 0 var(--duo-border); }
+.school-phase-card:hover { background: #fbfff6; border-color: #bde6a0; }
+.school-phase-icon { color: var(--duo-green-dark); background: var(--duo-green-light); border-radius: 12px; }
+.school-phase-count { color: var(--duo-green-darker); }
+.school-phase-back { color: var(--duo-green-darker); background: var(--duo-green-light); }
+
+/* ---------- Unit banners + route ribbon ---------- */
+.path-hero .continuous-route-unit .path-stage-heading { background: var(--duo-green-darker); color: #fff; box-shadow: 0 4px 0 rgb(0 0 0 / 18%); border-radius: 18px; }
+.path-hero .continuous-route-unit[data-stage="1"] .path-stage-heading { background: #2f8000; }
+.path-hero .continuous-route-unit[data-stage="2"] .path-stage-heading { background: #0b6fa4; }
+.path-hero .continuous-route-unit[data-stage="3"] .path-stage-heading { background: #8a4dbb; }
+.path-hero .continuous-route-unit[data-stage="4"] .path-stage-heading { background: #b93232; }
+.path-hero .continuous-route-unit[data-stage="5"] .path-stage-heading { background: #b45309; }
+.path-hero .continuous-route-unit[data-stage="6"] .path-stage-heading { background: #0f766e; }
+.path-hero .continuous-route-unit[data-stage="7"] .path-stage-heading { background: #6d28d9; }
+.path-stage[data-stage] > .path-stage-heading .text-white,
+.path-stage[data-stage] > .path-stage-heading .text-teal-100,
+.path-stage[data-stage] > .path-stage-heading .text-slate-400 { color: #fff; }
+.path-stage-heading > span { color: #fff !important; background: rgb(255 255 255 / 22%) !important; }
+.path-stage-heading .bg-gradient-to-br { color: var(--duo-green-darker); background: #fff; }
+.continuous-route-ribbon path { fill: none; stroke: var(--duo-border); stroke-width: 5; stroke-dasharray: 0.01 3; stroke-linecap: round; }
+.continuous-unit-progress { background: rgb(255 255 255 / 32%); }
+.continuous-unit-progress-fill { background: #fff; }
+
+/* ---------- Path nodes ---------- */
+.path-node-orb { width: 72px; height: 72px; flex-basis: 72px; border: 0; color: var(--duo-faint); background: var(--duo-border); box-shadow: 0 6px 0 #d0d0d0; }
+.path-node.is-complete .path-node-orb { color: #fff; background: var(--duo-green); box-shadow: 0 6px 0 var(--duo-green-dark); }
+.path-node.is-current .path-node-orb { color: #fff; background: var(--duo-green); box-shadow: 0 6px 0 var(--duo-green-dark), 0 0 0 8px rgb(88 204 2 / 18%); }
+.path-node.is-open .path-node-orb { color: var(--duo-green-dark); background: var(--duo-green-light); box-shadow: 0 6px 0 #cdeeb1; }
+.path-node.is-locked .path-node-orb { color: var(--duo-faint); background: var(--duo-border); box-shadow: 0 6px 0 #d0d0d0; }
+.path-node.is-current .path-node-orb::after { content: none; }
+.path-node-title { color: #4b4b4b; font-weight: 800; }
+.path-node.is-current .path-node-title { color: var(--duo-green-darker); }
+.path-node-number { color: #4b4b4b; background: #fff; border: 2px solid var(--duo-border); }
+.path-node.is-complete .path-node-number { color: #fff; background: var(--duo-green-darker); border-color: #fff; }
+.path-node.is-current .path-node-number { color: var(--duo-green-darker); background: #fff; border-color: var(--duo-green); }
+.path-node.is-open .path-node-number { color: var(--duo-green-dark); background: #fff; border-color: var(--duo-border); }
+.path-node:focus-visible .path-node-orb { outline: 3px solid var(--duo-blue); outline-offset: 5px; }
+
+/* "Start here" bubble on the current lesson (Duolingo style) */
+.path-node:not(.path-exam-node).is-current .path-node-hint {
+  color: #fff;
+  background: var(--duo-green-darker);
+  border-color: var(--duo-green-darker);
+  box-shadow: 0 3px 0 var(--duo-green-deep);
+  border-radius: 12px;
+  font-weight: 900;
+  animation: duoBubble 1.8s ease-in-out infinite;
+}
+.path-node:not(.path-exam-node).is-current .path-node-hint::after {
+  position: absolute;
+  top: 50%;
+  right: -5px;
+  width: 10px;
+  height: 10px;
+  content: '';
+  transform: translateY(-50%) rotate(45deg);
+  border-radius: 2px;
+  background: inherit;
+}
+@keyframes duoBubble { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+@media (prefers-reduced-motion: reduce) { .path-node:not(.path-exam-node).is-current .path-node-hint { animation: none; } }
+
+/* ---------- Primary call-to-actions ---------- */
+.path-start-button { color: #fff; background: var(--duo-green-darker); border: 0; border-radius: 16px; box-shadow: 0 4px 0 var(--duo-green-deep); font-weight: 900; }
+.path-start-button:hover { background: #276b00; }
+.path-start-button:active { transform: translateY(4px); box-shadow: none; }
+
+/* ---------- Lesson library + cards ---------- */
+.lesson-library { background: #fff; border: 2px solid var(--duo-border); border-radius: 18px; box-shadow: 0 4px 0 var(--duo-border); }
+.lesson-library input { background: var(--duo-page); border: 2px solid var(--duo-border); border-radius: 14px; }
+.lesson-library input:focus { background: #fff; border-color: var(--duo-blue); }
+.lesson-card-grid > button { background: #fff; border: 2px solid var(--duo-border); border-radius: 16px; box-shadow: 0 3px 0 var(--duo-border); }
+.lesson-card-grid > button:hover { border-color: #c7e9ff; box-shadow: 0 3px 0 #c7e9ff; }
+.lesson-library [class*="bg-emerald-500"] { background-color: var(--duo-green-darker); }
+.lesson-library [class*="text-emerald-800"], .lesson-library [class*="text-emerald-700"] { color: var(--duo-green-darker); }
+
+/* ---------- Progress surfaces ---------- */
+.journey-secondary .rounded-3xl { border: 2px solid var(--duo-border); box-shadow: 0 4px 0 var(--duo-border); }
+.progress-metrics > div { background: #fff; border: 2px solid var(--duo-border); border-radius: 16px; box-shadow: 0 3px 0 var(--duo-border); }
+.progress-stage-map > div { background: #fff; border: 2px solid var(--duo-border); border-radius: 14px; box-shadow: 0 2px 0 var(--duo-border); }
+
+/* ---------- Green pulsing glow for the active lesson ----------
+   The legacy pathGlow keyframes animate the box-shadow to a teal
+   colour, so we replace the animation entirely to keep the palette. */
+.path-node:not(.path-exam-node).is-current .path-node-orb {
+  animation: pathFloat 2.6s ease-in-out infinite, duoNodeGlow 2.6s ease-in-out infinite;
+}
+@keyframes duoNodeGlow {
+  0%, 100% { box-shadow: 0 6px 0 var(--duo-green-dark), 0 0 0 7px rgb(88 204 2 / 20%); }
+  50% { box-shadow: 0 6px 0 var(--duo-green-dark), 0 0 0 14px rgb(88 204 2 / 6%); }
+}
+.path-exam-node.is-current .path-node-orb {
+  animation: pathFloat 2.6s ease-in-out infinite, duoNodeGoldGlow 2.6s ease-in-out infinite;
+}
+@keyframes duoNodeGoldGlow {
+  0%, 100% { box-shadow: 0 6px 0 #e4c760, 0 0 0 7px rgb(255 197 38 / 22%); }
+  50% { box-shadow: 0 6px 0 #e4c760, 0 0 0 14px rgb(255 197 38 / 6%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .path-node:not(.path-exam-node).is-current .path-node-orb { animation: none; box-shadow: 0 6px 0 var(--duo-green-dark), 0 0 0 8px rgb(88 204 2 / 18%); }
+  .path-exam-node.is-current .path-node-orb { animation: none; box-shadow: 0 6px 0 #e4c760, 0 0 0 8px rgb(255 197 38 / 18%); }
+}
