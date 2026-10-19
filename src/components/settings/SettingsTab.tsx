@@ -23,11 +23,11 @@ import {
   GraduationCap,
 } from 'lucide-react';
 import { App } from '@capacitor/app';
-import { Browser } from '@capacitor/browser';
 import { Capacitor } from '@capacitor/core';
 import { UserProfile, UserSettings } from '../../types';
 import { speechService } from '../../services/speechService';
 import { checkForAppUpdate, type AppUpdateManifest } from '../../services/appUpdateService';
+import { downloadAndInstallAppUpdate } from '../../services/apkInstaller';
 import {
   createProgressBackup,
   getLocalProgressBackup,
@@ -61,6 +61,7 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
   const [isCheckingUpdate, setIsCheckingUpdate] = useState(false);
   const [availableUpdate, setAvailableUpdate] = useState<AppUpdateManifest | null>(null);
   const [updateMessage, setUpdateMessage] = useState<string | null>(null);
+  const [downloadPercent, setDownloadPercent] = useState<number | null>(null);
   const [isRefreshingContent, setIsRefreshingContent] = useState(false);
   const [contentMessage, setContentMessage] = useState<string | null>(null);
   const [progressCode, setProgressCode] = useState('');
@@ -215,11 +216,17 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
 
   const handleDownloadUpdate = async () => {
     if (!availableUpdate) return;
+    setDownloadPercent(0);
     try {
-      await Browser.open({ url: availableUpdate.apkUrl });
+      await downloadAndInstallAppUpdate(availableUpdate, setDownloadPercent);
+      setUpdateMessage('اكتمل التنزيل؛ أكمل التثبيت من نافذة النظام.');
     } catch (error) {
-      console.error('Failed to open the Android update download:', error);
-      setUpdateMessage('تعذر فتح تنزيل التحديث. تحقق من اتصال الإنترنت وحاول مرة أخرى.');
+      console.error('Failed to install the EnglishTok update:', error);
+      setUpdateMessage(
+        error instanceof Error ? error.message : 'تعذر تنزيل التحديث. حاول مرة أخرى.',
+      );
+    } finally {
+      setDownloadPercent(null);
     }
   };
 
@@ -657,7 +664,7 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
               <h3 className="text-xs font-bold text-white">تحديث إصدار التطبيق</h3>
             </div>
             <p className="text-[11px] leading-relaxed text-slate-400">
-              يتحقق التطبيق من آخر إصدار منشور في مستودع GitHub الموثوق، ويعرض ملاحظات الإصدار ورقم الحزمة والبصمة المنشورة. تنزيل APK يفتح صفحة التنزيل؛ ثم يراجع Android التوقيع والتوافق ويطلب موافقتك على التثبيت.
+              يتحقق التطبيق من آخر إصدار منشور في مستودع GitHub الموثوق، ويعرض ملاحظات الإصدار ورقم الحزمة والبصمة المنشورة. يُنزّل التطبيق ملف APK بنفسه مع عرض التقدّم، ثم يتحقق من بصمة SHA-256 ويفتح مثبّت Android لمراجعة التوقيع وطلب موافقتك.
             </p>
             <button
               type="button"
@@ -703,11 +710,22 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
                       <button
                         type="button"
                         onClick={handleDownloadUpdate}
-                        className="mt-3 flex min-h-10 items-center justify-center gap-2 rounded-xl bg-emerald-500 px-4 py-2 font-bold text-slate-950 transition-colors hover:bg-emerald-400"
+                        disabled={downloadPercent !== null}
+                        className="mt-3 flex min-h-10 items-center justify-center gap-2 rounded-xl bg-emerald-500 px-4 py-2 font-bold text-slate-950 transition-colors hover:bg-emerald-400 disabled:cursor-wait disabled:opacity-70"
                       >
                         <Download className="h-4 w-4" />
-                        تنزيل تحديث Android
+                        {downloadPercent !== null
+                          ? `جارٍ التنزيل… ${downloadPercent}%`
+                          : 'تنزيل وتثبيت تحديث Android'}
                       </button>
+                      {downloadPercent !== null && (
+                        <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-slate-800">
+                          <div
+                            className="h-full rounded-full bg-emerald-400 transition-[width]"
+                            style={{ width: `${downloadPercent}%` }}
+                          />
+                        </div>
+                      )}
                     </>
                   )}
                 </div>

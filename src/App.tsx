@@ -5,7 +5,6 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { App as CapacitorApp } from '@capacitor/app';
-import { Browser } from '@capacitor/browser';
 import { Capacitor } from '@capacitor/core';
 import { ActiveTab, Lesson, UserProfile } from './types';
 import { LEARNING_PATH_LESSONS } from './data/curriculum';
@@ -13,6 +12,7 @@ import { getLearningPathState } from './services/learningPath';
 import { getStoredProfile, saveProfile } from './services/storageService';
 import { fetchLatestLearningPath, getCachedLearningPath } from './services/contentService';
 import { checkForAppUpdate, type AppUpdateManifest } from './services/appUpdateService';
+import { downloadAndInstallAppUpdate } from './services/apkInstaller';
 import {
   SPEECH_STATUS_EVENT,
   SPEECH_UNAVAILABLE_EVENT,
@@ -43,6 +43,7 @@ export default function App() {
   const speechNoticeTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [availableAppUpdate, setAvailableAppUpdate] = useState<AppUpdateManifest | null>(null);
   const [updateDownloadError, setUpdateDownloadError] = useState<string | null>(null);
+  const [updateDownloadPercent, setUpdateDownloadPercent] = useState<number | null>(null);
   const notificationTop = activeTab === 'lesson'
     ? 'calc(env(safe-area-inset-top, 0px) + 12px)'
     : isPhoneFrameView
@@ -76,11 +77,18 @@ export default function App() {
   const handleDownloadAppUpdate = async () => {
     if (!availableAppUpdate) return;
     setUpdateDownloadError(null);
+    setUpdateDownloadPercent(0);
     try {
-      await Browser.open({ url: availableAppUpdate.apkUrl });
+      await downloadAndInstallAppUpdate(availableAppUpdate, setUpdateDownloadPercent);
     } catch (error) {
-      console.error('Failed to open the Android update download:', error);
-      setUpdateDownloadError('تعذر فتح تنزيل التحديث. تحقق من اتصال الإنترنت وحاول مرة أخرى.');
+      console.error('Failed to install the EnglishTok update:', error);
+      setUpdateDownloadError(
+        error instanceof Error
+          ? error.message
+          : 'تعذر تنزيل التحديث. تحقق من اتصال الإنترنت وحاول مرة أخرى.',
+      );
+    } finally {
+      setUpdateDownloadPercent(null);
     }
   };
 
@@ -264,12 +272,23 @@ export default function App() {
             <button
               type="button"
               onClick={handleDownloadAppUpdate}
-              className="mt-3 rounded-lg bg-emerald-400 px-3 py-2 text-xs font-bold text-slate-950 hover:bg-emerald-300"
+              disabled={updateDownloadPercent !== null}
+              className="mt-3 rounded-lg bg-emerald-400 px-3 py-2 text-xs font-bold text-slate-950 hover:bg-emerald-300 disabled:cursor-wait disabled:opacity-70"
             >
-              تنزيل التحديث
+              {updateDownloadPercent !== null
+                ? `جارٍ التنزيل… ${updateDownloadPercent}%`
+                : 'تنزيل وتثبيت التحديث'}
             </button>
+            {updateDownloadPercent !== null && (
+              <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-slate-800">
+                <div
+                  className="h-full rounded-full bg-emerald-400 transition-[width]"
+                  style={{ width: `${updateDownloadPercent}%` }}
+                />
+              </div>
+            )}
             <p className="mt-2 text-[10px] text-slate-400">
-              سيتحقق Android من التوافق والتوقيع، ويطلب موافقتك قبل التثبيت.
+              يُنزّل التطبيق الملف بنفسه مع عرض التقدّم، ثم يفتح مثبّت Android لمراجعة التوقيع وطلب موافقتك.
             </p>
           </div>
           <button
