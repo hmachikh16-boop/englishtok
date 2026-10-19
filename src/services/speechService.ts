@@ -50,6 +50,19 @@ interface SpeechOptions {
   audioAssetUrl?: string;
 }
 
+interface PlaybackHandlers {
+  requestId: number;
+  source: string;
+  text: string;
+  rate: number;
+  pitch: number;
+  gender: 'male' | 'female';
+  accent: string;
+  onStart?: () => void;
+  onEnd?: () => void;
+  onError?: (error: unknown) => void;
+}
+
 interface CachedAudioRecord {
   key: string;
   audio: Blob;
@@ -68,6 +81,7 @@ class SpeechService {
   private currentUtterance: SpeechSynthesisUtterance | null = null;
   private currentSource: string | null = null;
   private preferBrowserSpeech = false;
+  private preferredEngine: 'device' | 'neural' = 'device';
   private inferenceWorker: Worker | null = null;
   private pendingGenerations = new Map<number, PendingGeneration>();
   private generationQueue: Promise<void> = Promise.resolve();
@@ -120,6 +134,11 @@ class SpeechService {
 
   public getLastUnavailableMessage() {
     return this.lastUnavailableMessage;
+  }
+
+  /** Select how speech is produced: the instant phone voice or the on-device Kokoro model. */
+  public setPreferredEngine(engine: 'device' | 'neural') {
+    this.preferredEngine = engine === 'neural' ? 'neural' : 'device';
   }
 
   public getLessonSpeechAssetUrl(
@@ -234,22 +253,11 @@ class SpeechService {
     onEnd,
     onError,
     reason,
-  }: {
-    requestId: number;
-    source: string;
-    text: string;
-    rate: number;
-    pitch: number;
-    gender: 'male' | 'female';
-    accent: string;
-    onStart?: () => void;
-    onEnd?: () => void;
-    onError?: (error: unknown) => void;
-    reason: unknown;
-  }) {
+    markKokoroUnavailable = true,
+  }: PlaybackHandlers & { reason: unknown; markKokoroUnavailable?: boolean }) {
     if (requestId !== this.requestId) return;
 
-    this.preferBrowserSpeech = true;
+    if (markKokoroUnavailable) this.preferBrowserSpeech = true;
     if (
       typeof window === 'undefined' ||
       !window.speechSynthesis ||
@@ -262,7 +270,11 @@ class SpeechService {
       return;
     }
 
-    console.warn('[speechService] Kokoro playback failed; using the device speech voice.', reason);
+    if (markKokoroUnavailable) {
+      console.warn('[speechService] Kokoro playback failed; using the device speech voice.', reason);
+    } else {
+      console.info('[speechService] Speaking with the device voice for instant playback.', reason);
+    }
     this.clearPlayback();
 
     const synthesis = window.speechSynthesis;
@@ -280,7 +292,7 @@ class SpeechService {
     utterance.pitch = Math.max(0.5, Math.min(2, pitch));
     this.currentSource = source;
     this.currentUtterance = utterance;
-    this.setStatus('loading');
+    // The device voice starts instantly, so there is no loading state to report.
 
     utterance.onstart = () => {
       if (requestId !== this.requestId) return;
@@ -538,6 +550,190 @@ class SpeechService {
     return cleanText;
   }
 
+  /** True when this browser exposes a usable speech synthesiser. */
+  private canUseDeviceSpeech() {
+    return (
+      typeof window !== 'undefined' &&
+      Boolean(window.speechSynthesis) &&
+      typeof SpeechSynthesisUtterance !== 'undefined'
+    );
+  }
+
+  /** Fetch a pre-recorded clip (memory, IndexedDB, then network) without touching Kokoro. */
+  private loadRecordedAudio(
+    audioAssetUrl: string,
+    voice: GenerateRequest['voice'],
+    speed: number,
+    accent: string
+  ): Promise<Blob> {
+    const key = `asset:v2:${JSON.stringify([audioAssetUrl, accent, voice, speed])}`;
+    const cached = this.getCachedAudio(key);
+    if (cached) return Promise.resolve(cached);
+    const existing = this.inFlightAudio.get(key);
+    if (existing) return existing;
+
+    const load = (async () => {
+      let persisted: Blob | undefined;
+      try {
+        persisted = await this.readPersistentAudio(key);
+      } catch (error) {
+        console.warn('[speechService] Could not read persistent speech cache:', error);
+      }
+      if (persisted) {
+        this.cacheAudio(key, persisted);
+        return persisted;
+      }
+
+      const response = await fetch(audioAssetUrl, { cache: 'force-cache' });
+      if (!response.ok) {
+        throw new Error(`Pre-generated speech asset request failed (${response.status}).`);
+      }
+      const audio = await response.blob();
+      if (!audio.type.startsWith('audio/')) {
+        throw new Error(`Unexpected pre-generated speech asset type: ${audio.type || 'unknown'}.`);
+      }
+      this.cacheAudio(key, audio);
+      try {
+        await this.writePersistentAudio(key, audio);
+      } catch (error) {
+        console.warn('[speechService] Could not persist pre-generated speech audio:', error);
+      }
+      return audio;
+    })().finally(() => this.inFlightAudio.delete(key));
+
+    this.inFlightAudio.set(key, load);
+    return load;
+  }
+
+  /** Play an in-memory clip and report back when it cannot be decoded. */
+  private playAudioBlob(
+    blob: Blob,
+    handlers: PlaybackHandlers,
+    onFailure: (reason: unknown) => void
+  ) {
+    const { requestId } = handlers;
+    const audioUrl = URL.createObjectURL(blob);
+    this.clearPlayback();
+    this.currentAudioUrl = audioUrl;
+
+    const audio = new Audio(audioUrl);
+    audio.playbackRate = Math.max(0.5, Math.min(1.2, handlers.rate));
+    audio.preservesPitch = true;
+    this.currentAudio = audio;
+
+    audio.onplaying = () => {
+      if (requestId !== this.requestId) return;
+      this.setStatus('playing');
+      handlers.onStart?.();
+    };
+    audio.onended = () => {
+      if (requestId !== this.requestId) return;
+      this.clearPlayback();
+      this.currentSource = null;
+      this.requestId += 1;
+      this.setStatus('idle');
+      handlers.onEnd?.();
+    };
+    audio.onerror = () => {
+      if (requestId !== this.requestId) return;
+      onFailure(new Error('The speech audio file could not be played.'));
+    };
+
+    void audio.play().catch((error: unknown) => {
+      if (requestId !== this.requestId) return;
+      onFailure(error);
+    });
+  }
+
+  /**
+   * Instant path: play a pre-recorded clip when one exists, otherwise hand straight
+   * over to the phone voice, which never needs a download.
+   */
+  private playFastPath(handlers: PlaybackHandlers, audioAssetUrl?: string) {
+    const useDeviceVoice = (reason: unknown) => {
+      if (handlers.requestId !== this.requestId) return;
+      if (this.canUseDeviceSpeech()) {
+        this.playBrowserSpeech({ ...handlers, reason, markKokoroUnavailable: false });
+        return;
+      }
+      this.playKokoro(handlers, undefined);
+    };
+
+    if (!audioAssetUrl) {
+      useDeviceVoice(new Error('Instant playback with the device voice.'));
+      return;
+    }
+
+    const voice = this.getVoice(handlers.accent, handlers.gender);
+    const speed = Math.max(0.5, Math.min(1.2, handlers.rate));
+    this.setStatus('loading');
+    void this.loadRecordedAudio(audioAssetUrl, voice, speed, handlers.accent)
+      .then((blob) => {
+        if (handlers.requestId !== this.requestId) return;
+        this.playAudioBlob(blob, handlers, useDeviceVoice);
+      })
+      .catch((error: unknown) => {
+        console.warn('[speechService] Could not load pre-generated speech audio:', error);
+        useDeviceVoice(error);
+      });
+  }
+
+  /** High-quality path: pre-recorded clips first, then the on-device Kokoro model. */
+  private playKokoro(handlers: PlaybackHandlers, audioAssetUrl?: string) {
+    const { requestId, text, rate, gender, accent, source } = handlers;
+    const useDeviceVoice = (reason: unknown) => {
+      this.playBrowserSpeech({ ...handlers, reason });
+    };
+
+    if (this.preferBrowserSpeech) {
+      useDeviceVoice(new Error('Kokoro failed earlier in this session.'));
+      return;
+    }
+
+    if (typeof WebAssembly === 'undefined' || typeof Audio === 'undefined') {
+      useDeviceVoice(new Error('This browser does not support local Kokoro audio.'));
+      return;
+    }
+
+    if (
+      typeof navigator !== 'undefined' &&
+      'deviceMemory' in navigator &&
+      typeof navigator.deviceMemory === 'number' &&
+      navigator.deviceMemory < 2
+    ) {
+      useDeviceVoice(new Error('This device has less than 2 GB of memory available for Kokoro.'));
+      return;
+    }
+
+    this.lastUnavailableMessage = null;
+    this.currentSource = source;
+    const voice = this.getVoice(accent, gender);
+    const speed = Math.max(0.5, Math.min(1.2, rate));
+    const audioKey = audioAssetUrl
+      ? `asset:${audioAssetUrl}`
+      : this.getAudioKey(text, voice, speed, accent);
+    if (!this.getCachedAudio(audioKey)) this.setStatus('loading');
+
+    void this.getOrGenerateAudio(
+      text,
+      voice,
+      speed,
+      (progress) => {
+        if (requestId === this.requestId) this.setStatus('loading', progress);
+      },
+      audioAssetUrl,
+      accent
+    )
+      .then((audioBlob) => {
+        if (requestId !== this.requestId) return;
+        this.playAudioBlob(audioBlob, { ...handlers, rate: speed }, useDeviceVoice);
+      })
+      .catch((error: unknown) => {
+        if (requestId !== this.requestId) return;
+        useDeviceVoice(error);
+      });
+  }
+
   public preloadText({
     text,
     rate = 1.0,
@@ -545,19 +741,25 @@ class SpeechService {
     accent = 'en-US',
     audioAssetUrl,
   }: SpeechOptions) {
-    if (this.preferBrowserSpeech) return;
-
     const cleanText = this.normalizeSpeechText(text);
     if (!cleanText) return;
-
     const voice = this.getVoice(accent, gender);
     const speed = Math.max(0.5, Math.min(1.2, rate));
-    const key = audioAssetUrl
-      ? `asset:${audioAssetUrl}`
-      : this.getAudioKey(cleanText, voice, speed, accent);
+
+    // Recorded clips are worth fetching ahead of time; the phone voice is already instant.
+    if (audioAssetUrl) {
+      void this.loadRecordedAudio(audioAssetUrl, voice, speed, accent).catch((error: unknown) => {
+        console.warn('[speechService] Speech preloading failed:', error);
+      });
+      return;
+    }
+
+    if (this.preferredEngine !== 'neural' || this.preferBrowserSpeech) return;
+
+    const key = this.getAudioKey(cleanText, voice, speed, accent);
     if (this.getCachedAudio(key) || this.inFlightAudio.has(key)) return;
 
-    void this.getOrGenerateAudio(cleanText, voice, speed, () => undefined, audioAssetUrl, accent).catch(
+    void this.getOrGenerateAudio(cleanText, voice, speed, () => undefined, undefined, accent).catch(
       (error: unknown) => {
         console.warn('[speechService] Speech preloading failed:', error);
       }
@@ -598,132 +800,25 @@ class SpeechService {
       return;
     }
 
-    if (this.preferBrowserSpeech) {
-      this.playBrowserSpeech({
-        requestId: this.requestId,
-        source,
-        text: cleanText,
-        rate,
-        pitch,
-        gender,
-        accent,
-        onStart,
-        onEnd,
-        onError,
-        reason: new Error('Kokoro failed earlier in this session.'),
-      });
+    const handlers: PlaybackHandlers = {
+      requestId: this.requestId,
+      source,
+      text: cleanText,
+      rate,
+      pitch,
+      gender,
+      accent,
+      onStart,
+      onEnd,
+      onError,
+    };
+
+    if (this.preferredEngine === 'neural') {
+      this.playKokoro(handlers, audioAssetUrl);
       return;
     }
 
-    if (typeof WebAssembly === 'undefined' || typeof Audio === 'undefined') {
-      this.playBrowserSpeech({
-        requestId: this.requestId,
-        source,
-        text: cleanText,
-        rate,
-        pitch,
-        gender,
-        accent,
-        onStart,
-        onEnd,
-        onError,
-        reason: new Error('This browser does not support local Kokoro audio.'),
-      });
-      return;
-    }
-
-    if (
-      typeof navigator !== 'undefined' &&
-      'deviceMemory' in navigator &&
-      typeof navigator.deviceMemory === 'number' &&
-      navigator.deviceMemory < 2
-    ) {
-      this.playBrowserSpeech({
-        requestId: this.requestId,
-        source,
-        text: cleanText,
-        rate,
-        pitch,
-        gender,
-        accent,
-        onStart,
-        onEnd,
-        onError,
-        reason: new Error('This device has less than 2 GB of memory available for Kokoro.'),
-      });
-      return;
-    }
-
-    this.lastUnavailableMessage = null;
-    const requestId = this.requestId;
-    this.currentSource = source;
-    const voice = this.getVoice(accent, gender);
-    const speed = Math.max(0.5, Math.min(1.2, rate));
-    const audioKey = audioAssetUrl
-      ? `asset:${audioAssetUrl}`
-      : this.getAudioKey(cleanText, voice, speed, accent);
-    const cachedAudio = this.getCachedAudio(audioKey);
-    if (!cachedAudio) this.setStatus('loading');
-
-    void this.getOrGenerateAudio(cleanText, voice, speed, (progress) => {
-      if (requestId === this.requestId) this.setStatus('loading', progress);
-    }, audioAssetUrl, accent)
-      .then(async (audioBlob) => {
-        if (requestId !== this.requestId) return;
-
-        const audioUrl = URL.createObjectURL(audioBlob);
-        const audio = new Audio(audioUrl);
-        audio.playbackRate = speed;
-        audio.preservesPitch = true;
-        this.currentAudioUrl = audioUrl;
-        this.currentAudio = audio;
-        audio.onplaying = () => {
-          if (requestId !== this.requestId) return;
-          this.setStatus('playing');
-          onStart?.();
-        };
-        audio.onended = () => {
-          if (requestId !== this.requestId) return;
-          this.clearPlayback();
-          this.currentSource = null;
-          this.requestId += 1;
-          this.setStatus('idle');
-          onEnd?.();
-        };
-        audio.onerror = () => {
-          if (requestId !== this.requestId) return;
-          this.playBrowserSpeech({
-            requestId,
-            source,
-            text: cleanText,
-            rate: speed,
-            pitch,
-            gender,
-            accent,
-            onStart,
-            onEnd,
-            onError,
-            reason: new Error('The generated audio file could not be played.'),
-          });
-        };
-        await audio.play();
-      })
-      .catch((error: unknown) => {
-        if (requestId !== this.requestId) return;
-        this.playBrowserSpeech({
-          requestId,
-          source,
-          text: cleanText,
-          rate: speed,
-          pitch,
-          gender,
-          accent,
-          onStart,
-          onEnd,
-          onError,
-          reason: error,
-        });
-      });
+    this.playFastPath(handlers, audioAssetUrl);
   }
 
   private getVoice(

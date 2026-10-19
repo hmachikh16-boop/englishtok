@@ -151,6 +151,11 @@ export default function App() {
     };
   }, []);
 
+  // Keep the speech engine in sync with the user's preference.
+  useEffect(() => {
+    speechService.setPreferredEngine(userProfile.settings.speechEngine);
+  }, [userProfile.settings.speechEngine]);
+
   const handleChangeTab = (tab: ActiveTab) => {
     if (placementGateOpen && tab !== 'categories') return;
     if (tab !== activeTab) speechService.stopSpeaking();

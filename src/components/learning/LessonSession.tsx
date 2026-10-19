@@ -85,6 +85,29 @@ export const LessonSession: React.FC<LessonSessionProps> = ({ lesson, userProfil
     setDialogueIndex(Math.max(0, Math.min(lesson.dialogue.length - 1, index)));
   };
 
+  // Warm up the next few lines so the first tap on the speaker button is instant.
+  useEffect(() => {
+    if (phase !== 'story') return;
+    const rate = userProfile.settings.playbackSpeed || 1;
+    for (const offset of [0, 1, 2]) {
+      const upcoming = lesson.dialogue[dialogueIndex + offset];
+      if (!upcoming) break;
+      const speaker = upcoming.speakerId === lesson.characterA.id ? lesson.characterA : lesson.characterB;
+      speechService.preloadText({
+        text: upcoming.textEn,
+        rate,
+        gender: speaker.voiceGender,
+        accent,
+        audioAssetUrl: speechService.getLessonSpeechAssetUrl(
+          lesson.id,
+          upcoming.id,
+          speaker.voiceGender,
+          accent
+        ),
+      });
+    }
+  }, [phase, dialogueIndex, lesson, accent, userProfile.settings.playbackSpeed]);
+
   const completeSession = (finalCorrectCount: number) => {
     const score = questions.length ? Math.round((finalCorrectCount / questions.length) * 100) : 100;
     const passed = score >= getLevelExamPassingScore();

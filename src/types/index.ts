@@ -121,6 +121,8 @@ export interface UserSettings {
   soundEffects: boolean;
   autoNext: boolean;
   voiceAccent: 'en-US' | 'en-GB';
+  /** 'device' plays instantly with the phone voice; 'neural' downloads the Kokoro model once. */
+  speechEngine: 'device' | 'neural';
 }
 
 export interface UserProfile {

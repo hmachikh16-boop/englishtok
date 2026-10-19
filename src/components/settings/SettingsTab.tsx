@@ -451,6 +451,36 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
               </div>
             </div>
 
+            {/* Speech engine */}
+            <div className="flex items-center justify-between gap-3 pt-2 border-t border-slate-800/80">
+              <div className="min-w-0">
+                <span className="text-xs font-semibold text-slate-300 block">محرّك النطق</span>
+                <span className="text-[11px] text-slate-500">«فوري» ينطق مباشرة بصوت الهاتف دون تنزيل؛ «عالي الجودة» ينزّل محرّك Kokoro مرة واحدة (~٩٠ ميجابايت)</span>
+              </div>
+              <div className="flex gap-1.5 p-1 bg-slate-950 rounded-xl border border-slate-800 shrink-0">
+                <button
+                  onClick={() => updateSetting('speechEngine', 'device')}
+                  className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
+                    userProfile.settings.speechEngine === 'device'
+                      ? 'bg-emerald-500 text-slate-950'
+                      : 'text-slate-400 hover:text-slate-200'
+                  }`}
+                >
+                  فوري
+                </button>
+                <button
+                  onClick={() => updateSetting('speechEngine', 'neural')}
+                  className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
+                    userProfile.settings.speechEngine === 'neural'
+                      ? 'bg-sky-500 text-slate-950'
+                      : 'text-slate-400 hover:text-slate-200'
+                  }`}
+                >
+                  عالي الجودة
+                </button>
+              </div>
+            </div>
+
             {/* Default Speech Speed */}
             <div className="flex items-center justify-between pt-2 border-t border-slate-800/80">
               <div>

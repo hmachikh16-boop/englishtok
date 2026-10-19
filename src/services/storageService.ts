@@ -21,6 +21,7 @@ const DEFAULT_SETTINGS: UserSettings = {
   soundEffects: true,
   autoNext: false,
   voiceAccent: 'en-US',
+  speechEngine: 'device',
 };
 
 const DEFAULT_PROFILE: UserProfile = {
@@ -306,6 +307,7 @@ const sanitizeProfile = (value: unknown): UserProfile | null => {
       soundEffects: config.soundEffects,
       autoNext: config.autoNext,
       voiceAccent: config.voiceAccent as UserSettings['voiceAccent'],
+      speechEngine: config.speechEngine === 'neural' ? 'neural' : 'device',
     },
   };
 };
