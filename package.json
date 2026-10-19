@@ -10,6 +10,7 @@
     "build": "npm run content:export && vite build",
     "android:sync": "npm run build && cap sync android",
     "android:apk": "node scripts/build-android-apk.mjs",
+    "serve:releases": "node scripts/serve-releases.mjs",
     "android:open": "cap open android",
     "preview": "vite preview",
     "start": "tsx server.ts --production",
