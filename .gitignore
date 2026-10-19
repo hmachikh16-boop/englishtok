@@ -25,3 +25,6 @@ update-manifest.json
 backups/
 .git-upload-staging/
 tmp-placement-browser/
+
+# Local preview tooling (cloudflared binary for phone previews).
+tools/

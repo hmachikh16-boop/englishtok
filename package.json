@@ -1,7 +1,7 @@
 {
   "name": "english-tok",
   "private": true,
-  "version": "1.1.1",
+  "version": "1.2.0",
   "type": "module",
   "scripts": {
     "dev": "tsx server.ts",
@@ -13,6 +13,7 @@
     "serve:releases": "node scripts/serve-releases.mjs",
     "android:open": "cap open android",
     "preview": "vite preview",
+    "preview:phone": "npm run build && node scripts/preview-phone.mjs",
     "start": "tsx server.ts --production",
     "clean": "rm -rf dist server.js",
     "lint": "tsc --noEmit"

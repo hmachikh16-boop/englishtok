@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { 
   Volume2, 
   Languages, 
@@ -67,6 +67,18 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
   const [createdBackup, setCreatedBackup] = useState<ProgressBackup | null>(null);
   const [backupFile, setBackupFile] = useState<File | null>(null);
   const [backupMessage, setBackupMessage] = useState<string | null>(null);
+  const [isUpdatingAll, setIsUpdatingAll] = useState(false);
+  const [updateAllMessage, setUpdateAllMessage] = useState<string | null>(null);
+  const [appVersion, setAppVersion] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (Capacitor.getPlatform() !== 'android') return;
+    void App.getInfo()
+      .then((info) => setAppVersion(info.version))
+      .catch(() => {
+        /* الإصدار غير متاح خارج تطبيق Android */
+      });
+  }, []);
 
   const handleCreateProgressBackup = async () => {
     try {
@@ -229,6 +241,48 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
     }
   };
 
+  const handleUpdateEverything = async () => {
+    setIsUpdatingAll(true);
+    setUpdateAllMessage(null);
+    setAvailableUpdate(null);
+    const notes: string[] = [];
+
+    // 1) أحدث الدروس من المستودع
+    try {
+      const updated = await onRefreshContent();
+      notes.push(updated ? 'تم تحديث الدروس من المستودع.' : 'الدروس محدّثة مسبقًا.');
+    } catch {
+      notes.push('تعذر تحديث الدروس الآن؛ سيبقى المحتوى المحفوظ.');
+    }
+
+    // 2) إصدار التطبيق
+    if (Capacitor.getPlatform() !== 'android') {
+      notes.push('نسخة الويب تتحدّث تلقائيًا من الموقع.');
+      setUpdateAllMessage(notes.join(' '));
+      setIsUpdatingAll(false);
+      return;
+    }
+
+    try {
+      const appInfo = await App.getInfo();
+      setAppVersion(appInfo.version);
+      const update = await checkForAppUpdate(appInfo.version);
+      setAvailableUpdate(update);
+      notes.push(
+        update
+          ? `يتوفر إصدار جديد للتطبيق: ${update.version} (لديك ${appInfo.version}).`
+          : `التطبيق محدّث إلى الإصدار ${appInfo.version}.`,
+      );
+    } catch (error) {
+      console.error('Failed to check for EnglishTok updates:', error);
+      notes.push(error instanceof Error ? error.message : 'تعذر التحقق من إصدار التطبيق.');
+    } finally {
+      setIsUpdatingAll(false);
+    }
+
+    setUpdateAllMessage(notes.join(' '));
+  };
+
   return (
     <div className="journey-secondary w-full h-full max-w-4xl mx-auto overflow-y-auto no-scrollbar p-4 sm:p-6 text-slate-100 flex flex-col gap-5">
       {/* Tab Header Sub-nav */}
@@ -279,6 +333,73 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
       {/* Subtab 1: App Settings */}
       {activeSubTab === 'app' && (
         <div className="flex flex-col gap-4">
+          <section
+            className="bg-gradient-to-br from-sky-950 via-slate-900 to-emerald-950/40 border border-sky-500/30 rounded-2xl p-4 flex flex-col gap-3 shadow-xl"
+            aria-labelledby="updates-title"
+          >
+            <h3 id="updates-title" className="text-sm font-bold text-white flex items-center gap-2">
+              <RefreshCw className="h-4 w-4 text-sky-400" />
+              تحديث التطبيق والدروس
+            </h3>
+            <p className="text-[11px] leading-6 text-slate-300">
+              يجلب أحدث الدروس من المستودع ويتحقق من وجود إصدار جديد للتطبيق.
+              {appVersion && (
+                <span className="text-slate-400">
+                  {' '}الإصدار الحالي: <span dir="ltr" className="font-mono">{appVersion}</span>.
+                </span>
+              )}
+            </p>
+            <button
+              type="button"
+              onClick={handleUpdateEverything}
+              disabled={isUpdatingAll}
+              className="flex min-h-11 items-center justify-center gap-2 rounded-xl bg-sky-500 px-4 py-2 text-sm font-black text-slate-950 transition-colors hover:bg-sky-400 disabled:cursor-wait disabled:opacity-60"
+            >
+              {isUpdatingAll ? (
+                <LoaderCircle className="h-4 w-4 animate-spin" />
+              ) : (
+                <RefreshCw className="h-4 w-4" />
+              )}
+              {isUpdatingAll ? 'جارٍ التحديث…' : 'تحديث الآن'}
+            </button>
+            {updateAllMessage && (
+              <div
+                role="status"
+                className={`flex items-start gap-2 rounded-xl border p-3 text-[11px] leading-relaxed ${
+                  availableUpdate
+                    ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-100'
+                    : 'border-slate-700 bg-slate-950/70 text-slate-300'
+                }`}
+              >
+                {availableUpdate ? (
+                  <CircleCheck className="mt-0.5 h-4 w-4 shrink-0 text-emerald-400" />
+                ) : (
+                  <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-sky-300" />
+                )}
+                <div className="min-w-0 flex-1">
+                  <p>{updateAllMessage}</p>
+                  {availableUpdate && (
+                    <>
+                      <p className="mt-2 whitespace-pre-wrap text-slate-300">
+                        {availableUpdate.notes || 'لا توجد ملاحظات إصدار إضافية.'}
+                      </p>
+                      <p className="mt-2 text-slate-400">
+                        بعد التنزيل يتحقق Android من التوقيع والتوافق ويطلب موافقتك قبل التثبيت.
+                      </p>
+                      <button
+                        type="button"
+                        onClick={handleDownloadUpdate}
+                        className="mt-3 flex min-h-10 items-center justify-center gap-2 rounded-xl bg-emerald-500 px-4 py-2 font-bold text-slate-950 transition-colors hover:bg-emerald-400"
+                      >
+                        <Download className="h-4 w-4" />
+                        تنزيل إصدار {availableUpdate.version}
+                      </button>
+                    </>
+                  )}
+                </div>
+              </div>
+            )}
+          </section>
           <section className="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-col gap-3 shadow-lg" aria-labelledby="placement-settings-title">
             <h3 id="placement-settings-title" className="text-xs font-bold text-white flex items-center gap-2"><GraduationCap className="h-4 w-4 text-emerald-400" />تحديد المستوى التعليمي</h3>
             <p className="text-[11px] leading-6 text-slate-400">{userProfile.placementAssessment?.result
