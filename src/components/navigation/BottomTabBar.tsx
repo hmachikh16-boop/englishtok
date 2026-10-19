@@ -62,7 +62,7 @@ export const BottomTabBar: React.FC<BottomTabBarProps> = ({
               key={tab.id}
               onClick={() => handleTabClick(tab.id)}
               className={`journey-tab group relative flex min-h-[54px] min-w-[54px] flex-col items-center justify-center gap-1 rounded-2xl px-2 py-1 transition-all active:scale-95 ${isActive ? 'is-active' : ''}`}
-              aria-label={tab.labelAr}
+              aria-label={tab.badge ? `${tab.labelAr}، ${tab.badge > 99 ? '99+' : tab.badge}${tab.id === 'progress' ? ' يوم' : ' كلمة محفوظة'}` : tab.labelAr}
               aria-current={isActive ? 'page' : undefined}
             >
               <div className="relative grid h-7 w-7 place-items-center">
@@ -72,7 +72,7 @@ export const BottomTabBar: React.FC<BottomTabBarProps> = ({
                 {tab.badge && (
                   <span
                     className={`absolute -right-2 -top-1.5 flex h-[17px] min-w-[17px] items-center justify-center rounded-full px-1 font-mono-num text-[9px] font-black ring-2 ring-white ${
-                      tab.id === 'progress' ? 'bg-amber-400 text-amber-950' : 'bg-teal-600 text-white'
+                      tab.id === 'progress' ? 'bg-amber-400 text-amber-950' : 'bg-teal-700 text-white'
                     }`}
                   >
                     {tab.id === 'progress' ? (

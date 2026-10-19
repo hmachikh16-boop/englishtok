@@ -171,7 +171,7 @@
 .topbar-rank { color: #407961; }
 .topbar-xp { color: #bd8615; }
 .topbar-streak { color: #d46b35; }
-.topbar-unit { color: #7b8980; font-size: 10px; font-weight: 700; }
+.topbar-unit { color: #4f6055; font-size: 10px; font-weight: 700; }
 .topbar-divider { width: 1px; height: 19px; background: #e5ece5; }
 .journey-nav { background: rgb(255 255 255 / 97%); border-color: #e5eee8; }
 .journey-tab { color: #77857b; }
@@ -249,7 +249,7 @@
 .journey-shell { background: #f3f8ee; color: #23352e; }
 .journey-home { background: #f3f8ee; color: #263831; }
 .journey-home .text-slate-100, .journey-home .text-white { color: #21372f; }
-.journey-home .text-slate-300, .journey-home .text-slate-400, .journey-home .text-slate-500 { color: #66786f; }
+.journey-home .text-slate-300, .journey-home .text-slate-400, .journey-home .text-slate-500 { color: #5b6f63; }
 .journey-home [class*="bg-slate-900"] { background-color: #fff; }
 .journey-home [class*="bg-slate-950"] { background-color: #f8faf7; }
 .journey-home [class*="border-slate-800"] { border-color: #dce7df; }
@@ -271,17 +271,17 @@
 .lesson-session { background: linear-gradient(180deg, #f4faef, #fff 62%); color: #23352e; }
 .lesson-session-shell { direction: rtl; }
 .lesson-session-header { min-height: 42px; }
-.lesson-exit-button { display: grid; width: 38px; height: 38px; flex: 0 0 38px; place-items: center; border: 1px solid #dce7df; border-radius: 999px; color: #718178; background: #fff; box-shadow: 0 2px 0 #e4ebe5; }
+.lesson-exit-button { display: grid; width: 38px; height: 38px; flex: 0 0 38px; place-items: center; border: 1px solid #dce7df; border-radius: 999px; color: #59675f; background: #fff; box-shadow: 0 2px 0 #e4ebe5; }
 .lesson-exit-button:hover { color: #b84747; background: #fff5f3; }
-.lesson-step-count { min-width: 56px; color: #728178; font-size: 11px; font-weight: 900; text-align: left; }
+.lesson-step-count { min-width: 56px; color: #5b6b61; font-size: 11px; font-weight: 900; text-align: left; }
 .lesson-progress-fill { background: linear-gradient(90deg, #17a899, #82d1a0); box-shadow: 0 0 12px rgb(23 168 153 / 25%); }
 .lesson-welcome-card { border: 1px solid #e1ecdf; background: radial-gradient(circle at 8% 15%, #e3f8e4, transparent 28%), linear-gradient(145deg, #fff, #f8fff3); box-shadow: 0 8px 0 #e6eee2, 0 18px 38px rgb(42 80 48 / 7%); }
-.lesson-level-chip { display: inline-flex; border-radius: 999px; padding: 5px 10px; background: #e6f6e5; color: #368052; font-size: 10px; font-weight: 900; }
-.lesson-kicker { color: #22877d; font-size: 11px; font-weight: 900; }
+.lesson-level-chip { display: inline-flex; border-radius: 999px; padding: 5px 10px; background: #e6f6e5; color: #266b42; font-size: 10px; font-weight: 900; }
+.lesson-kicker { color: #176f66; font-size: 11px; font-weight: 900; }
 .lesson-primary-button, .lesson-secondary-button { display: inline-flex; min-height: 48px; align-items: center; justify-content: center; gap: 8px; border-radius: 15px; padding: 0 20px; font-size: 13px; font-weight: 900; transition: transform 160ms ease, background 160ms ease, box-shadow 160ms ease; }
-.lesson-primary-button { border: 0; color: #fff; background: #12a99b; box-shadow: 0 4px 0 #087c73, 0 8px 18px rgb(18 169 155 / 17%); }
-.lesson-primary-button:hover { background: #0e988c; transform: translateY(-1px); }
-.lesson-primary-button:active { transform: translateY(2px); box-shadow: 0 2px 0 #087c73; }
+.lesson-primary-button { border: 0; color: #fff; background: #0f766e; box-shadow: 0 4px 0 #0b5a54, 0 8px 18px rgb(15 118 110 / 17%); }
+.lesson-primary-button:hover { background: #0d6b64; transform: translateY(-1px); }
+.lesson-primary-button:active { transform: translateY(2px); box-shadow: 0 2px 0 #0b5a54; }
 .lesson-secondary-button { border: 1px solid #dfe8e0; color: #5c7064; background: #fff; box-shadow: 0 3px 0 #e4ebe4; }
 .lesson-secondary-button:hover:not(:disabled) { background: #f6fbf5; }
 .lesson-visual { display: grid; width: 100%; place-items: center; overflow: hidden; border: 1px solid #dce9df; border-radius: 1.75rem; background: radial-gradient(ellipse at 50% 0, #f5fff5, transparent 72%), #e7f6ed; box-shadow: 0 5px 0 #e4eee4; }
@@ -293,11 +293,11 @@
 @media (prefers-reduced-motion: reduce) { .lesson-visual-image, .lesson-visual-fallback { animation: none; } }
 .lesson-dialogue-card { border: 1px solid #e3ebe4; background: #fff; box-shadow: 0 4px 0 #e8eee8, 0 12px 25px rgb(32 61 40 / 5%); }
 .lesson-speaker-chip { display: inline-flex; align-items: center; gap: 6px; border-radius: 999px; background: #f0f8ef; padding: 6px 10px; color: #426250; font-size: 11px; font-weight: 900; }
-.lesson-audio-button { display: grid; width: 42px; height: 42px; place-items: center; border: 1px solid #bce5da; border-radius: 13px; color: #0d9788; background: #e9faf4; }
+.lesson-audio-button { display: grid; width: 42px; height: 42px; place-items: center; border: 1px solid #bce5da; border-radius: 13px; color: #0b7a6e; background: #e9faf4; }
 .lesson-audio-button:active { transform: scale(.94); }
 .lesson-answer-option { display: flex; min-height: 58px; align-items: center; justify-content: space-between; gap: 12px; border: 2px solid #e1e9e2; border-radius: 16px; padding: 12px 16px; color: #33453b; background: #fff; box-shadow: 0 3px 0 #e8eee8; font-size: 14px; font-weight: 800; text-align: right; transition: transform 150ms ease, border-color 150ms ease, background 150ms ease; }
 .lesson-answer-option:hover:not(:disabled) { border-color: #80cdb7; transform: translateY(-1px); }
-.lesson-answer-option.selected { border-color: #17a899; background: #e8f9f4; color: #13776d; }
+.lesson-answer-option.selected { border-color: #17a899; background: #e8f9f4; color: #0f655d; }
 .lesson-answer-option.correct { border-color: #63be7b; background: #e9f8e8; color: #297344; }
 .lesson-answer-option.wrong { border-color: #e98787; background: #fff0ee; color: #b74444; }
 .lesson-word-chip { min-height: 42px; border: 1px solid #d5e6dc; border-radius: 12px; padding: 8px 13px; color: #344b3d; background: #fff; box-shadow: 0 3px 0 #e1ebe3; font-size: 13px; font-weight: 900; }
@@ -309,7 +309,7 @@
 .lesson-feedback { border: 1px solid; animation: bubbleEnter 220ms ease-out both; }
 .lesson-feedback.is-correct { border-color: #b5dfbd; color: #2d7541; background: #effaf0; }
 .lesson-feedback.is-wrong { border-color: #f1c5b8; color: #9c583e; background: #fff5ed; }
-.lesson-check-button { display: flex; width: 100%; min-height: 52px; align-items: center; justify-content: center; gap: 9px; border: 0; border-radius: 15px; color: #fff; background: #12a99b; box-shadow: 0 4px 0 #087c73; font-size: 14px; font-weight: 900; }
+.lesson-check-button { display: flex; width: 100%; min-height: 52px; align-items: center; justify-content: center; gap: 9px; border: 0; border-radius: 15px; color: #fff; background: #0f766e; box-shadow: 0 4px 0 #0b5a54; font-size: 14px; font-weight: 900; }
 .lesson-check-button:disabled { color: #9ba8a0; background: #e7ece8; box-shadow: 0 4px 0 #dce4dd; cursor: not-allowed; }
 .lesson-check-button.review-next { color: #654b2b; background: #ffe6bd; box-shadow: 0 4px 0 #efcf99; }
 .lesson-result-card { border: 1px solid #e0ebde; background: radial-gradient(circle at 50% 0, #e8f9d7, transparent 45%), #fff; box-shadow: 0 8px 0 #e4ede1, 0 20px 50px rgb(34 68 40 / 9%); }
@@ -320,7 +320,7 @@
 .lesson-result-stats { border: 1px solid #e6eee5; border-radius: 18px; background: #f8fcf6; padding: 12px 8px; }
 .lesson-result-stats div { display: flex; flex-direction: column; gap: 3px; }
 .lesson-result-stats strong { color: #188c7e; font-size: 19px; font-weight: 1000; }
-.lesson-result-stats span { color: #78887f; font-size: 9px; font-weight: 800; }
+.lesson-result-stats span { color: #5b6b61; font-size: 9px; font-weight: 800; }
 .journey-secondary { background: #f3f8ee; color: #263831; }
 .journey-secondary [class*="bg-gradient-to-br"], .journey-secondary [class*="bg-gradient-to-tr"] { background-image: none; background-color: #fff; }
 .journey-secondary [class*="bg-slate-950"] { background-color: #f7faf6; }
@@ -329,7 +329,7 @@
 .journey-secondary [class*="border-slate-800"], .journey-secondary [class*="border-slate-700"] { border-color: #dfe9e0; }
 .journey-secondary [class*="text-white"] { color: #23372e; }
 .journey-secondary [class*="text-slate-100"], .journey-secondary [class*="text-slate-200"] { color: #35483e; }
-.journey-secondary [class*="text-slate-300"], .journey-secondary [class*="text-slate-400"], .journey-secondary [class*="text-slate-500"] { color: #687a70; }
+.journey-secondary [class*="text-slate-300"], .journey-secondary [class*="text-slate-400"], .journey-secondary [class*="text-slate-500"] { color: #5b6f63; }
 .journey-secondary input { color: #263831; background: #fff; }
 .journey-exam-panel [class*="bg-slate-950"], .journey-exam-panel [class*="bg-slate-900"] { background-color: #f7faf6; }
 .journey-exam-panel [class*="bg-slate-800"] { background-color: #edf3ee; }
@@ -346,20 +346,20 @@
 /* EnglishTok's bright, map-first learning journey. */
 .journey-topbar {
   color: #fff;
-  background: #58c900;
-  border-color: #48b500;
-  box-shadow: 0 4px 0 rgb(42 139 0 / 12%);
+  background: #2f8000;
+  border-color: #276b00;
+  box-shadow: 0 4px 0 rgb(23 92 0 / 18%);
 }
 .journey-topbar .journey-brand-name,
 .journey-topbar .journey-topbar-tagline { color: #fff; }
 .journey-topbar .journey-topbar-tagline { border-color: rgb(255 255 255 / 30%); }
-.journey-topbar .brand-mark { color: #35a900; background: #fff; box-shadow: 0 3px 0 rgb(38 131 0 / 28%); }
-.journey-topbar .brand-mark span { border-color: #35a900; }
+.journey-topbar .brand-mark { color: #2f8000; background: #fff; box-shadow: 0 3px 0 rgb(23 92 0 / 32%); }
+.journey-topbar .brand-mark span { border-color: #2f8000; }
 .journey-stats { color: #32530e; border-color: rgb(255 255 255 / 55%); background: #f8fff1; box-shadow: 0 3px 0 rgb(48 128 0 / 20%); }
 .journey-stats .topbar-rank { color: #3c6d18; }
-.journey-stats .topbar-xp { color: #df9c08; }
-.journey-stats .topbar-streak { color: #ee672f; }
-.topbar-language { color: #308b16; }
+.journey-stats .topbar-xp { color: #8a5a00; }
+.journey-stats .topbar-streak { color: #b45309; }
+.topbar-language { color: #2f7d15; }
 .topbar-language > span:first-child { font-size: 15px; line-height: 1; }
 .topbar-language-code { color: #537c46; font-size: 9px; font-weight: 1000; }
 button.journey-frame-toggle { border-color: rgb(255 255 255 / 45%); color: #296f0d; background: #f8fff1; }
@@ -578,14 +578,14 @@ button.journey-frame-toggle:hover { border-color: #d9f99d; color: #1e5900; }
 .lesson-library > .relative { margin-top: 12px; }
 .placement-gate { background: rgb(13 27 20 / 76%); backdrop-filter: blur(8px); padding-block: max(12px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-bottom)); }
 .placement-panel { border-color: #dcebe0; color: #273b32; }
-.placement-panel-top { color: #fff; background: linear-gradient(105deg, #38b900, #69d400); }
+.placement-panel-top { color: #fff; background: linear-gradient(105deg, #1f6b00, #2f8000); }
 .placement-logo { display: grid; width: 38px; height: 38px; place-items: center; border-radius: 13px; color: #188720; background: #fff; }
 .placement-lock-label { display: inline-flex; align-items: center; gap: 5px; border: 1px solid rgb(255 255 255 / 35%); border-radius: 999px; padding: 5px 9px; font-size: 9px; font-weight: 800; }
 .placement-result-mark { display: grid; width: 58px; height: 58px; margin-inline: auto; place-items: center; border-radius: 18px; color: #fff; background: linear-gradient(140deg, #58c700, #20ae91); box-shadow: 0 5px 0 #299524; }
 .placement-skill-chip { display: flex; min-height: 42px; align-items: center; justify-content: center; gap: 6px; border: 1px solid #dceee2; border-radius: 13px; background: #f5fcf7; color: #347c49; font-size: 10px; font-weight: 800; }
 .placement-primary-button, .placement-secondary-button { display: inline-flex; min-height: 46px; align-items: center; justify-content: center; gap: 8px; border-radius: 14px; padding: 0 14px; font-size: 12px; font-weight: 900; }
-.placement-primary-button { color: #fff; background: #3ebc16; box-shadow: 0 4px 0 #258f16; }
-.placement-primary-button:hover:not(:disabled) { background: #34a916; }
+.placement-primary-button { color: #fff; background: #2f8000; box-shadow: 0 4px 0 #1d5c00; }
+.placement-primary-button:hover:not(:disabled) { background: #276b00; }
 .placement-primary-button:disabled { opacity: .45; }
 .placement-secondary-button { border: 1px solid #dce9de; color: #57705d; background: #fff; }
 .placement-option { display: flex; min-height: 48px; align-items: center; justify-content: space-between; gap: 10px; border: 1px solid #dce6de; border-radius: 13px; padding: 10px 13px; color: #405649; background: #fff; font-size: 12px; font-weight: 700; text-align: right; }
@@ -602,9 +602,9 @@ button.journey-frame-toggle:hover { border-color: #d9f99d; color: #1e5900; }
 .school-phase-card:hover { border-color: #a7d99d; background: #f7fff3; transform: translateY(-1px); }
 .school-phase-icon { display: grid; width: 36px; height: 36px; flex: 0 0 36px; place-items: center; border-radius: 12px; color: #308c29; background: #e9f8df; }
 .school-phase-card strong, .school-phase-card small { display: block; }
-.school-phase-card strong { color: #344b3c; font-size: 11px; font-weight: 900; }
-.school-phase-card small { margin-top: 3px; color: #7a897d; font-size: 8px; line-height: 1.5; }
-.school-phase-count { color: #478c36; font-size: 8px; font-weight: 900; white-space: nowrap; }
+.school-phase-card strong { color: #344b3c; font-size: 12px; font-weight: 900; }
+.school-phase-card small { margin-top: 3px; color: #5f7063; font-size: 10px; line-height: 1.45; }
+.school-phase-count { color: #2f6e22; font-size: 9px; font-weight: 900; white-space: nowrap; }
 .school-phase-back { border-radius: 999px; padding: 6px 9px; color: #398744; background: #edf8e8; font-size: 9px; font-weight: 900; }
 .school-year-list { display: grid; gap: 7px; }
 .school-year-options { display: grid; gap: 7px; }
@@ -617,8 +617,8 @@ button.journey-frame-toggle:hover { border-color: #d9f99d; color: #1e5900; }
   .school-phase-grid { gap: 6px; }
   .school-phase-card { min-height: 64px; gap: 6px; padding: 7px; }
   .school-phase-icon { width: 31px; height: 31px; flex-basis: 31px; }
-  .school-phase-card strong { font-size: 9px; }
-  .school-phase-card small { font-size: 7px; }
+  .school-phase-card strong { font-size: 11px; }
+  .school-phase-card small { font-size: 9px; }
   .school-phase-count { display: none; }
   .school-year-options { display: flex; gap: 8px; overflow-x: auto; overscroll-behavior-x: contain; padding: 2px 1px 8px; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; touch-action: pan-x; scrollbar-width: none; }
   .school-year-options::-webkit-scrollbar { display: none; }
@@ -639,7 +639,7 @@ button.journey-frame-toggle:hover { border-color: #d9f99d; color: #1e5900; }
   html {
     height: 100%;
     min-height: 100%;
-    color-scheme: dark;
+    color-scheme: light;
     text-size-adjust: 100%;
     scroll-behavior: smooth;
   }
@@ -650,8 +650,8 @@ button.journey-frame-toggle:hover { border-color: #d9f99d; color: #1e5900; }
     min-height: 0;
     overflow: hidden;
     background:
-      radial-gradient(ellipse at 50% -18%, rgb(14 116 144 / 16%), transparent 48%),
-      #090d16;
+      radial-gradient(ellipse at 50% -18%, rgb(88 201 0 / 9%), transparent 48%),
+      #f3f8ee;
     font-family: var(--font-arabic);
     font-size: 15px;
     line-height: 1.65;
@@ -696,7 +696,7 @@ button.journey-frame-toggle:hover { border-color: #d9f99d; color: #1e5900; }
   input:focus-visible,
   textarea:focus-visible,
   select:focus-visible {
-    outline: 2px solid #38bdf8;
+    outline: 2px solid #0f9d8a;
     outline-offset: 2px;
   }
 
@@ -880,3 +880,154 @@ svg {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Stage rail: quick, thumb-friendly navigation across the long learning path. */
+.path-stage-rail {
+  background: rgb(243 248 238 / 94%);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+.path-stage-rail-label {
+  color: #5d7364;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: .02em;
+}
+.path-stage-rail-track {
+  scrollbar-width: none;
+  scroll-behavior: smooth;
+  padding-block: 1px;
+}
+.path-stage-rail-track::-webkit-scrollbar { display: none; }
+.path-stage-chip {
+  position: relative;
+  display: inline-flex;
+  min-width: 38px;
+  height: 34px;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  border: 1px solid #dbe8d8;
+  border-radius: 12px;
+  padding: 0 11px;
+  color: #4f6254;
+  background: #fff;
+  font-size: 12px;
+  font-weight: 900;
+  box-shadow: 0 2px 0 #e8efe4;
+}
+.path-stage-chip:hover { border-color: #b8dfa9; color: #2e7d1c; }
+.path-stage-chip.is-active {
+  color: #fff;
+  border-color: #3bae16;
+  background: #45bd13;
+  box-shadow: 0 3px 0 #2c8f0c;
+}
+.path-stage-chip.is-locked {
+  color: #8d9a8f;
+  background: #f3f6f1;
+  border-color: #e6ece2;
+  box-shadow: none;
+}
+.path-stage-chip-dot {
+  position: absolute;
+  top: 5px;
+  right: 6px;
+  width: 5px;
+  height: 5px;
+  border-radius: 999px;
+  background: #f2a900;
+  box-shadow: 0 0 0 2px #fff;
+}
+.path-stage-chip.is-active .path-stage-chip-dot {
+  background: #ffe27a;
+  box-shadow: 0 0 0 2px #45bd13;
+}
+
+/* Make metric grids respond to the app frame, not the desktop window. */
+.journey-secondary { container-type: inline-size; }
+@container (max-width: 620px) {
+  .progress-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+}
+
+/* Legacy blue accents still live in a few feature screens; align them with
+   the teal-green EnglishTok palette instead of letting the app look mixed. */
+.journey-home [class*="text-sky-"],
+.journey-secondary [class*="text-sky-"] { color: #0f8f83; }
+.journey-home [class*="border-sky-"],
+.journey-secondary [class*="border-sky-"] { border-color: #cfe9e2; }
+.journey-home [class*="bg-sky-500/"],
+.journey-secondary [class*="bg-sky-500/"] { background-color: rgb(15 157 138 / 12%); }
+.journey-home [class*="bg-sky-400"],
+.journey-secondary [class*="bg-sky-400"],
+.journey-home [class*="bg-sky-500"]:not([class*="bg-sky-500/"]),
+.journey-secondary [class*="bg-sky-500"]:not([class*="bg-sky-500/"]) {
+  color: #fff;
+  background-color: #0f9d8a;
+}
+
+/* The stage rail is the first child: let it sit flush under the app bar. */
+.journey-home:has(> .path-stage-rail) { padding-top: 0; }
+
+.path-stage-rail-search {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
+  place-items: center;
+  border: 1px solid #dbe8d8;
+  border-radius: 12px;
+  color: #3f7f35;
+  background: #fff;
+  box-shadow: 0 2px 0 #e8efe4;
+}
+.path-stage-rail-search:hover { border-color: #b8dfa9; color: #2e7d1c; background: #f7fff2; }
+
+.lesson-library { scroll-margin-top: 70px; }
+
+.lesson-library-more {
+  display: flex;
+  min-height: 46px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 1px dashed #b9dfa9;
+  border-radius: 14px;
+  color: #2e7d1c;
+  background: #f7fff2;
+  font-size: 12px;
+  font-weight: 900;
+}
+.lesson-library-more:hover { border-color: #74c94a; background: #effbea; }
+.lesson-library-more-count { color: #71906a; font-size: 10px; font-weight: 700; }
+
+/* The lesson screen hides the app bar, so it must inset itself from the device edges. */
+.lesson-session {
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+
+@container (max-width: 620px) {
+  .progress-stage-map { grid-template-columns: 1fr !important; }
+}
+
+.path-hero .continuous-route { scroll-margin-top: 70px; }
+
+/* Keep accent colors readable on the light journey surfaces. */
+.journey-home [class*="text-teal-500"],
+.journey-home [class*="text-teal-600"],
+.journey-secondary [class*="text-teal-500"],
+.journey-secondary [class*="text-teal-600"] { color: #0f766e; }
+.journey-home [class*="text-emerald-400"],
+.journey-home [class*="text-emerald-500"],
+.journey-secondary [class*="text-emerald-400"],
+.journey-secondary [class*="text-emerald-500"] { color: #2f6e22; }
+.journey-home [class*="text-amber-300"],
+.journey-home [class*="text-amber-400"],
+.journey-secondary [class*="text-amber-200"],
+.journey-secondary [class*="text-amber-300"],
+.journey-secondary [class*="text-amber-400"] { color: #8a5a00; }
+.journey-home [class*="text-rose-400"],
+.journey-secondary [class*="text-rose-400"] { color: #be123c; }

@@ -29,7 +29,7 @@ export const TopBar: React.FC<TopBarProps> = ({
         <div className="flex min-w-0 items-center gap-2 sm:gap-3">
           <span className="journey-brand-name flex shrink-0 items-center gap-2 whitespace-nowrap font-en text-base font-extrabold tracking-tight text-slate-800 sm:text-lg">
             <span className="brand-mark journey-brand-mark"><BookOpen className="h-4 w-4" strokeWidth={2.8} /></span>
-            <span>English<span className="text-teal-600">Tok</span></span>
+            <span>English<span className="text-[#eaffd0]">Tok</span></span>
           </span>
           <span className="journey-topbar-tagline hidden border-r border-emerald-100 pr-3 text-xs font-semibold text-slate-500 lg:inline-block">
             رحلتك اليومية لتعلّم الإنجليزية
@@ -43,11 +43,10 @@ export const TopBar: React.FC<TopBarProps> = ({
             onGoToProgress();
           }}
           className="journey-stats flex shrink-0 items-center gap-1 rounded-2xl px-1.5 py-1.5 text-xs font-bold transition-all hover:-translate-y-0.5 active:scale-[.98] sm:gap-2 sm:px-2"
-          aria-label={`المستوى ${rank.titleAr}، ${userProfile.xp} نقطة خبرة، سلسلة ${userProfile.streakDays} يوم`}
           dir="rtl"
         >
           <div className="topbar-metric topbar-language" title={userProfile.settings.voiceAccent === 'en-GB' ? 'النطق البريطاني' : 'النطق الأمريكي'}>
-            <span aria-hidden="true">{accentFlag}</span><span className="topbar-language-code">EN</span>
+            <span aria-hidden="true">{accentFlag}</span><span className="topbar-language-code hidden sm:inline">EN</span>
           </div>
           <span className="topbar-divider" aria-hidden="true" />
           <div className="topbar-metric topbar-rank hidden sm:flex">

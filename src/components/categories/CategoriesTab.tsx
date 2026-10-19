@@ -37,6 +37,7 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
   isPhoneFrameView,
 }) => {
   const routeRef = useRef<HTMLDivElement>(null);
+  const libraryRef = useRef<HTMLDetailsElement>(null);
   const [selectedCategory, setSelectedCategory] = useState<CategoryKey | 'all'>('all');
   const [selectedLevel, setSelectedLevel] = useState<number | 'all'>('all');
   const [searchQuery, setSearchQuery] = useState('');
@@ -44,12 +45,20 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
   const [selectedPhaseId, setSelectedPhaseId] = useState<string | null>(null);
   const [selectedSchoolYearId, setSelectedSchoolYearId] = useState<string | null>(null);
   const path = getLearningPathState(lessons, userProfile);
+  const currentStageNumber = path.levels.find((level) =>
+    level.lessons.some((entry) => entry.lesson.id === path.nextLessonId)
+  )?.stage ?? 1;
+  const [selectedPathStage, setSelectedPathStage] = useState<number | 'all'>(currentStageNumber);
+  const [libraryPageSize, setLibraryPageSize] = useState(24);
   const selectedPhase = EDUCATIONAL_PHASES.find((phase) => phase.id === selectedPhaseId);
   const selectedSchoolYear = findSchoolYearRoute(selectedSchoolYearId);
   useEffect(() => {
     if (!selectedSchoolYearId) return;
     routeRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }, [selectedSchoolYearId]);
+  useEffect(() => {
+    setLibraryPageSize(24);
+  }, [selectedCategory, selectedLevel, searchQuery]);
   const completedLessonIds = new Set(userProfile.completedLessonIds);
   const getSchoolYearProgress = (yearId: string) => {
     const yearLessons = lessons.filter((lesson) => lesson.schoolYearId === yearId);
@@ -95,7 +104,9 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
     }
     return selectedSchoolYear
       ? path.levels.filter((level) => selectedSchoolYear.stages.includes(level.stage))
-      : path.levels;
+      : selectedPathStage === 'all'
+        ? path.levels
+        : path.levels.filter((level) => level.stage === selectedPathStage);
   })();
   const isSchoolYearCourse = Boolean(selectedSchoolYear?.grade);
   const today = new Date().toISOString().slice(0, 10);
@@ -149,12 +160,32 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
 
     return matchesCategory && matchesLevel && matchesSearch;
   });
+  const visibleLibraryLessons = filteredLessons.slice(0, libraryPageSize);
 
   const handleCardClick = (id: string) => {
     const lesson = lessons.find((entry) => entry.id === id);
     if (lesson && getLessonStatus(lesson) === 'locked') return;
     speechService.playPop();
     onSelectLesson(id);
+  };
+
+  const handleSelectPathStage = (stage: number | 'all') => {
+    const home = document.querySelector<HTMLElement>('.journey-home');
+    setSelectedPhaseId(null);
+    setSelectedSchoolYearId(null);
+    setSelectedPathStage(stage);
+    speechService.playPop();
+    if (home && home.scrollTop > 120) {
+      routeRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
+  const handleOpenLibrary = () => {
+    const library = libraryRef.current;
+    if (!library) return;
+    library.open = true;
+    library.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    speechService.playPop();
   };
 
   const saveLevelExamResult = (
@@ -184,6 +215,50 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
 
   return (
     <div className={`journey-home w-full h-full max-w-4xl mx-auto overflow-y-auto no-scrollbar p-4 sm:p-6 text-slate-100 flex flex-col gap-5 ${isPhoneFrameView ? 'is-phone-frame' : ''}`}>
+      {!selectedSchoolYear && (
+        <nav className="path-stage-rail sticky top-0 z-30 -mx-3 border-b border-emerald-100/80 px-3 py-2.5 sm:-mx-6 sm:px-5" aria-label="التنقل بين مراحل المسار">
+          <div className="flex items-center gap-2">
+            <span className="path-stage-rail-label shrink-0">المراحل</span>
+            <div className="path-stage-rail-track flex min-w-0 flex-1 items-center gap-1.5 overflow-x-auto">
+              <button
+                type="button"
+                onClick={() => handleSelectPathStage('all')}
+                aria-pressed={selectedPathStage === 'all'}
+                className={`path-stage-chip ${selectedPathStage === 'all' ? 'is-active' : ''}`}
+              >
+                الكل
+              </button>
+              {path.levels.map((level) => {
+                const active = selectedPathStage === level.stage;
+                const hasCurrent = level.lessons.some((entry) => entry.lesson.id === path.nextLessonId);
+                return (
+                  <button
+                    key={level.stage}
+                    type="button"
+                    onClick={() => handleSelectPathStage(level.stage)}
+                    aria-label={`المرحلة ${level.stage}${level.examPassed ? '، مكتملة' : !level.isUnlocked ? '، مقفلة' : ''}`}
+                    aria-pressed={active}
+                    className={`path-stage-chip ${active ? 'is-active' : ''} ${!level.isUnlocked ? 'is-locked' : ''}`}
+                  >
+                    <span>{level.stage}</span>
+                    {!level.isUnlocked && <Lock className="h-3 w-3" aria-hidden="true" />}
+                    {hasCurrent && <span className="path-stage-chip-dot" aria-hidden="true" />}
+                  </button>
+                );
+              })}
+            </div>
+            <button
+              type="button"
+              onClick={handleOpenLibrary}
+              className="path-stage-rail-search shrink-0"
+              aria-label="البحث في جميع الدروس"
+              title="البحث في جميع الدروس"
+            >
+              <Search className="h-4 w-4" aria-hidden="true" />
+            </button>
+          </div>
+        </nav>
+      )}
       <section className="path-hero relative overflow-hidden rounded-[2rem] border border-teal-200/10 p-5 shadow-2xl sm:p-7" dir="rtl">
         <div className="pointer-events-none absolute -left-16 -top-20 h-64 w-64 rounded-full bg-cyan-300/10 blur-3xl" />
         <div className="path-hero-intro relative flex flex-wrap items-center justify-between gap-4">
@@ -196,18 +271,18 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
             <LearningBuddy message="يلا نتعلم!" />
             <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-lime-300 text-slate-950"><Sparkles className="h-5 w-5" /></div>
             <div><div className="text-lg font-black text-white">{path.completedCount}<span className="text-slate-400">/{path.totalLessons}</span></div><div className="text-[10px] text-slate-300">درس مكتمل</div></div>
-            <button type="button" onClick={() => handleCardClick(nextLessonId)} className="path-start-button mr-1 flex items-center gap-2 rounded-xl bg-lime-300 px-4 py-3 text-xs font-black text-slate-950 shadow-lg shadow-lime-300/20 hover:bg-lime-200 active:scale-95"><Play className="h-4 w-4 fill-current" /> ابدأ الآن</button>
+            <button type="button" onClick={() => handleCardClick(nextLessonId)} className="path-start-button mr-1 flex items-center gap-2 rounded-xl bg-lime-300 px-4 py-3 text-xs font-black text-slate-950 shadow-lg shadow-lime-300/20 hover:bg-lime-200 active:scale-95"><Play className="h-4 w-4 fill-current" /> {path.completedCount > 0 ? 'تابع التعلّم' : 'ابدأ الآن'}</button>
           </div>
         </div>
         <div className="relative mt-6 h-2 overflow-hidden rounded-full bg-white/10"><div className="h-full rounded-full bg-gradient-to-l from-lime-300 via-teal-300 to-cyan-300 transition-[width] duration-700" style={{ width: `${path.totalLessons ? (path.completedCount / path.totalLessons) * 100 : 0}%` }} /></div>
         <div className="daily-goal-card relative mt-3 flex items-center gap-3 rounded-2xl px-3 py-2.5">
           <span className="daily-goal-icon"><Sparkles className="h-4 w-4" /></span>
-          <div className="min-w-0 flex-1"><div className="flex justify-between gap-2 text-[10px] font-black"><span>هدف اليوم</span><span>{dailyLessonCount}/{dailyGoal} دروس</span></div><div className="daily-goal-track mt-1.5 h-1.5 overflow-hidden rounded-full"><div className="daily-goal-fill h-full rounded-full transition-[width] duration-500" style={{ width: `${Math.min(100, (dailyLessonCount / dailyGoal) * 100)}%` }} /></div></div>
+          <div className="min-w-0 flex-1"><div className="flex justify-between gap-2 text-[11px] font-black"><span>هدف اليوم</span><span>{dailyLessonCount}/{dailyGoal} دروس</span></div><div className="daily-goal-track mt-1.5 h-1.5 overflow-hidden rounded-full"><div className="daily-goal-fill h-full rounded-full transition-[width] duration-500" style={{ width: `${Math.min(100, (dailyLessonCount / dailyGoal) * 100)}%` }} /></div></div>
           {dailyLessonCount >= dailyGoal && <span className="daily-goal-done"><CheckCircle2 className="h-4 w-4" /> اكتمل</span>}
         </div>
         <section className="school-phase-explorer mt-5" aria-labelledby="school-phase-title">
           <div className="mb-3 flex items-start justify-between gap-3">
-            <div><h3 id="school-phase-title" className="text-sm font-black text-slate-800">التعلّم حسب الطور الدراسي</h3><p className="mt-1 text-[10px] leading-5 text-slate-500">اختر طورًا وسنة لعرض وحدات المحتوى المرتبطة بها.</p></div>
+            <div><h3 id="school-phase-title" className="text-sm font-black text-slate-800">التعلّم حسب الطور الدراسي</h3><p className="mt-1 text-[11px] leading-5 text-slate-500">اختر طورًا وسنة لعرض وحدات المحتوى المرتبطة بها.</p></div>
             {selectedPhase && <button type="button" onClick={() => { setSelectedPhaseId(null); setSelectedSchoolYearId(null); }} className="school-phase-back">كل الأطوار</button>}
           </div>
           {!selectedPhase ? (
@@ -237,7 +312,7 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
                   </button>;
                 })}
               </div>
-              <p className="mt-2 text-[10px] leading-5 text-slate-500">{SCHOOL_YEAR_ALIGNMENT_NOTE}</p>
+              <p className="mt-2 text-[11px] leading-5 text-slate-500">{SCHOOL_YEAR_ALIGNMENT_NOTE}</p>
             </div>
           )}
         </section>
@@ -299,7 +374,7 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
         <div className="mt-4 flex items-center justify-center gap-2 text-[10px] text-slate-400"><ArrowDown className="h-3.5 w-3.5 text-lime-200" />أكمل الدروس بالترتيب لفتح محطات جديدة</div>
       </section>
 
-      <details className="lesson-library" dir="rtl">
+      <details className="lesson-library" dir="rtl" ref={libraryRef}>
         <summary>
           <span>استعراض جميع الدروس</span>
           <span className="lesson-library-count">{lessons.length} درسًا</span>
@@ -313,9 +388,9 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="ابحث عن درس، كلمة، أو موقف يومي..."
-          className="w-full bg-slate-900 border border-slate-800 rounded-2xl py-3.5 pr-11 pl-4 text-xs font-medium text-slate-200 placeholder-slate-500 focus:outline-none focus:border-sky-500 transition-colors shadow-lg"
+          className="w-full bg-white border border-emerald-100 rounded-2xl py-3.5 pr-11 pl-4 text-xs font-medium text-slate-700 placeholder-slate-400 focus:outline-none focus:border-emerald-400 transition-colors shadow-sm"
         />
-        <Search className="w-4 h-4 text-slate-400 absolute right-4 top-1/2 -translate-y-1/2" />
+        <Search className="w-4 h-4 text-emerald-500 absolute right-4 top-1/2 -translate-y-1/2" />
       </div>
 
       {/* Categories Horizontal Carousel */}
@@ -335,8 +410,8 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
             }}
             className={`px-3.5 py-2 rounded-xl text-xs font-bold shrink-0 transition-all active:scale-95 border ${
               selectedCategory === 'all'
-                ? 'bg-sky-500 text-slate-950 border-sky-400 shadow-md shadow-sky-500/20'
-                : 'bg-slate-900 text-slate-300 border-slate-800 hover:border-slate-700'
+                ? 'bg-emerald-500 text-white border-emerald-500 shadow-md shadow-emerald-500/20'
+                : 'bg-white text-slate-600 border-emerald-100 hover:border-emerald-300 hover:text-emerald-800'
             }`}
           >
             الكل
@@ -354,8 +429,8 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
                 }}
                 className={`px-3 py-2 rounded-xl text-xs font-bold shrink-0 flex items-center gap-1.5 transition-all active:scale-95 border ${
                   isSelected
-                    ? 'bg-sky-500 text-slate-950 border-sky-400 shadow-md shadow-sky-500/20'
-                    : 'bg-slate-900 text-slate-300 border-slate-800 hover:border-slate-700'
+                    ? 'bg-emerald-500 text-white border-emerald-500 shadow-md shadow-emerald-500/20'
+                    : 'bg-white text-slate-600 border-emerald-100 hover:border-emerald-300 hover:text-emerald-800'
                 }`}
               >
                 <CategoryIcon className="w-4 h-4" aria-hidden="true" />
@@ -372,7 +447,7 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
           <h3 className="text-xs font-bold text-slate-300">المرحلة التعليمية</h3>
         </div>
 
-        <div className="flex gap-1.5 overflow-x-auto no-scrollbar p-1 bg-slate-900 rounded-xl border border-slate-800">
+        <div className="flex gap-1.5 overflow-x-auto no-scrollbar p-1 bg-white rounded-xl border border-emerald-100">
           {(['all', ...CURRICULUM_LEVELS.map((level) => level.stage)] as (number | 'all')[]).map((lvl) => (
             <button
               key={lvl}
@@ -383,8 +458,8 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
               aria-label={lvl === 'all' ? 'جميع المراحل' : `المرحلة ${lvl}`}
               className={`shrink-0 min-w-9 px-2 py-1.5 rounded-lg text-xs font-bold transition-all ${
                 selectedLevel === lvl
-                  ? 'bg-slate-800 text-amber-400 shadow-sm'
-                  : 'text-slate-400 hover:text-slate-200'
+                  ? 'bg-emerald-500 text-white shadow-sm'
+                  : 'text-slate-500 hover:text-emerald-800'
               }`}
             >
               {lvl === 'all' ? 'الكل' : lvl}
@@ -405,7 +480,7 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
             <p className="text-xs text-slate-400">لم يتم العثور على دروس تطابق هذا البحث.</p>
           </div>
         ) : (
-          filteredLessons.map((lesson) => {
+          visibleLibraryLessons.map((lesson) => {
             const durationMinutes = Math.max(1, Math.ceil(lesson.dialogue.reduce((duration, line) => duration + line.durationSec, 0) / 60));
             return (
             <button
@@ -413,12 +488,12 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
               key={lesson.id}
               onClick={() => handleCardClick(lesson.id)}
               disabled={path.lessonStatusById.get(lesson.id) === 'locked'}
-              className={`group flex flex-col gap-2.5 rounded-2xl border p-3.5 text-right shadow-lg transition-all active:scale-[0.99] ${path.lessonStatusById.get(lesson.id) === 'locked' ? 'cursor-not-allowed border-slate-800 bg-slate-950/60 opacity-60' : 'cursor-pointer border-slate-800 bg-slate-900 hover:border-slate-700'}`}
+              className={`group flex flex-col gap-2.5 rounded-2xl border p-3.5 text-right shadow-sm transition-all active:scale-[0.99] ${path.lessonStatusById.get(lesson.id) === 'locked' ? 'cursor-not-allowed border-emerald-100 bg-white/60 opacity-60' : 'cursor-pointer border-emerald-100 bg-white hover:-translate-y-0.5 hover:border-emerald-300 hover:shadow-lg'}`}
             >
               <div className="flex items-start justify-between gap-3">
               <div className="flex min-w-0 items-center gap-3">
                   {/* Avatar badge */}
-                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-slate-800 to-slate-700 border border-slate-700 flex items-center justify-center text-xl shrink-0 group-hover:scale-105 transition-transform">
+                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-emerald-50 to-teal-100 border border-emerald-100 flex items-center justify-center text-xl shrink-0 group-hover:scale-105 transition-transform">
                     {lesson.characterA.avatar}
                   </div>
                   <div className="min-w-0">
@@ -430,7 +505,7 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
                         {lesson.characterA.nameAr} و{lesson.characterB.nameAr}
                       </span>
                     </div>
-                    <h4 className="break-words text-sm font-bold text-white group-hover:text-sky-400 transition-colors">
+                    <h4 className="break-words text-sm font-bold text-white group-hover:text-emerald-700 transition-colors">
                       {lesson.titleAr}
                     </h4>
                     <p dir="ltr" className="text-xs text-slate-400 font-en text-left">
@@ -440,7 +515,7 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
                 </div>
 
                 {/* Play button */}
-                <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full border transition-colors ${path.lessonStatusById.get(lesson.id) === 'locked' ? 'border-slate-700 bg-slate-800 text-slate-500' : 'border-sky-500/30 bg-sky-500/10 text-sky-400 group-hover:bg-sky-500 group-hover:text-slate-950'}`}>
+                <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full border transition-colors ${path.lessonStatusById.get(lesson.id) === 'locked' ? 'border-slate-200 bg-slate-100 text-slate-400' : 'border-emerald-500/30 bg-emerald-500/10 text-emerald-600 group-hover:bg-emerald-500 group-hover:text-white'}`}>
                   {path.lessonStatusById.get(lesson.id) === 'locked' ? <Lock className="h-4 w-4" /> : path.lessonStatusById.get(lesson.id) === 'completed' ? <CheckCircle2 className="h-4 w-4" /> : <Play className="w-4 h-4 fill-current translate-x-0.5" />}
                 </div>
               </div>
@@ -450,14 +525,14 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
               </p>
 
               {/* Lesson metadata footer */}
-              <div className="flex items-center justify-between pt-2 border-t border-slate-800/80 text-[11px] text-slate-400">
+              <div className="flex items-center justify-between pt-2 border-t border-emerald-50 text-[11px] text-slate-500">
                 <div className="flex items-center gap-3">
                   <span className="flex items-center gap-1">
                     <BookOpen className="w-3.5 h-3.5 text-emerald-400" />
                     <span>{lesson.vocabulary.length} كلمات</span>
                   </span>
                   <span className="flex items-center gap-1">
-                    <Clock className="w-3.5 h-3.5 text-sky-400" />
+                    <Clock className="w-3.5 h-3.5 text-teal-500" />
                     <span>{durationMinutes} د</span>
                   </span>
                   <span className="flex items-center gap-1">
@@ -474,6 +549,17 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
             </button>
             );
           })
+        )}
+        {filteredLessons.length > libraryPageSize && (
+          <button
+            type="button"
+            onClick={() => setLibraryPageSize((size) => size + 24)}
+            className="lesson-library-more md:col-span-2"
+          >
+            <span>عرض المزيد من الدروس</span>
+            <span className="lesson-library-more-count">متبقي {filteredLessons.length - libraryPageSize}</span>
+            <ArrowDown className="h-4 w-4" aria-hidden="true" />
+          </button>
         )}
       </div>
       </details>

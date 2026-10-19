@@ -125,15 +125,15 @@ export const ProgressTab: React.FC<ProgressTabProps> = ({
   return (
     <div className="journey-secondary w-full h-full max-w-4xl mx-auto overflow-y-auto no-scrollbar p-4 sm:p-6 text-slate-100 flex flex-col gap-5">
       {/* User Rank Card */}
-      <div className="bg-gradient-to-br from-slate-900 via-slate-900 to-sky-950 border border-slate-800 rounded-3xl p-5 shadow-2xl relative overflow-hidden">
+      <div className="bg-white border border-emerald-100 rounded-3xl p-5 shadow-2xl relative overflow-hidden">
         {/* Glow behind */}
-        <div className="absolute top-0 left-0 w-32 h-32 bg-sky-500/10 rounded-full blur-2xl" />
+        <div className="absolute top-0 left-0 w-32 h-32 bg-emerald-400/15 rounded-full blur-2xl" />
 
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
             <PremiumIcon name="trophy" size={56} />
             <div>
-              <span className="text-[11px] font-bold text-sky-400 tracking-wider">
+              <span className="text-[11px] font-bold text-teal-600 tracking-wider">
                 رتبة التعلّم الحالية
               </span>
               <h2 className="text-lg font-black text-white">{rank.titleAr}</h2>
@@ -175,18 +175,18 @@ export const ProgressTab: React.FC<ProgressTabProps> = ({
       </div>
 
       {/* 4 Key Metrics Grid */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+      <div className="progress-metrics grid grid-cols-2 lg:grid-cols-4 gap-3">
         <div className="bg-slate-900 border border-slate-800 rounded-2xl p-3.5 flex flex-col gap-1 shadow-md">
           <div className="flex items-center justify-between text-slate-400 mb-1">
             <span className="text-xs font-semibold">دروس أكملتها</span>
-            <PlayCircle className="w-4 h-4 text-sky-400" />
+            <PlayCircle className="w-4 h-4 text-teal-500" />
           </div>
           <span className="text-2xl font-black text-white font-mono-num">
             {Math.min(totalWatched, totalLessons)} <span className="text-xs font-normal text-slate-400">/ {totalLessons}</span>
           </span>
           <div className="w-full bg-slate-800 h-1 rounded-full overflow-hidden mt-1">
             <div
-              className="bg-sky-400 h-full"
+              className="bg-teal-400 h-full"
               style={{ width: `${(totalWatched / totalLessons) * 100}%` }}
             />
           </div>
@@ -243,7 +243,7 @@ export const ProgressTab: React.FC<ProgressTabProps> = ({
                 type="button"
                 aria-pressed={userProfile.dailyGoalLessons === goal}
                 onClick={() => onUpdateProfile({ dailyGoalLessons: goal })}
-                className={`h-9 w-9 rounded-xl text-sm font-bold ${userProfile.dailyGoalLessons === goal ? 'bg-sky-400 text-slate-950' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'}`}
+                className={`h-9 w-9 rounded-xl text-sm font-bold ${userProfile.dailyGoalLessons === goal ? 'bg-emerald-500 text-white shadow-sm' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'}`}
               >
                 {goal}
               </button>
@@ -264,7 +264,7 @@ export const ProgressTab: React.FC<ProgressTabProps> = ({
           </div>
           <span className="text-[10px] font-bold text-amber-300">محاولات الاختبارات: {examAttempts}</span>
         </div>
-        <div className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-5">
+        <div className="progress-stage-map mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-5">
           {path.levels.map((level) => (
             <div key={level.stage} className={`rounded-2xl border p-3 ${level.isUnlocked ? 'border-slate-700 bg-slate-950/60' : 'border-slate-800 bg-slate-950/30 opacity-65'}`}>
               <div className="flex items-center justify-between gap-2">
@@ -347,7 +347,7 @@ export const ProgressTab: React.FC<ProgressTabProps> = ({
       <div className="pt-2">
         <button
           onClick={onResumeLearning}
-          className="w-full py-3.5 bg-gradient-to-r from-sky-500 to-blue-600 text-slate-950 font-black rounded-2xl text-xs shadow-xl shadow-sky-500/20 active:scale-95 transition-transform flex items-center justify-center gap-2"
+          className="w-full py-3.5 bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-black rounded-2xl text-xs shadow-xl shadow-emerald-500/20 active:scale-95 transition-transform flex items-center justify-center gap-2"
         >
             <span>العودة إلى المسار ومواصلة التعلّم</span>
           <ArrowRight className="w-4 h-4 rotate-180" />
