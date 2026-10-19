@@ -19,6 +19,7 @@ android/*.iml
 android/keystore.properties
 android/KEYSTORE-CREDENTIALS.txt
 releases/
+update-manifest.json
 
 # Local snapshots, upload staging and browser profiles are not source files.
 backups/
