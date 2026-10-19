@@ -9,6 +9,7 @@
     "content:export": "tsx scripts/export-learning-path.ts",
     "build": "npm run content:export && vite build",
     "android:sync": "npm run build && cap sync android",
+    "android:apk": "node scripts/build-android-apk.mjs",
     "android:open": "cap open android",
     "preview": "vite preview",
     "start": "tsx server.ts --production",

@@ -1,5 +1,35 @@
 # EnglishTok releases and deployment
 
+## Quick start (already prepared in this workspace)
+
+A dedicated Android release key already exists **locally** and is intentionally ignored by Git:
+
+- `android/english-tok-release.keystore` — the signing key (never commit it).
+- `android/keystore.properties` — local signing credentials used by `npm run android:apk`.
+- `android/KEYSTORE-CREDENTIALS.txt` — a plain-text backup of the alias/passwords/fingerprint. Move it to a safe place and delete the plain-text copy when done.
+
+Build an installable, signed APK on this machine:
+
+```powershell
+npm run android:apk
+```
+
+The result is `releases/english-tok-<version>.apk`. Installing a newer APK built with the **same key** updates the app in place and keeps learner data.
+
+Publish the first GitHub release and enable in-app updates:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/setup-github-release.ps1
+```
+
+The script logs in to GitHub CLI, creates a **public** repository, pushes `main`, uploads the four signing secrets, and pushes the `v<package.json version>` tag. `.github/workflows/android-release.yml` then builds the signed APK and publishes it with `update-manifest.json` to GitHub Releases. The installed app checks that release at launch (it must be built with `VITE_GITHUB_REPOSITORY=owner/repo`, which the workflow sets automatically).
+
+If you prefer a local build that can also check for updates, set the repository before building:
+
+```powershell
+$env:VITE_GITHUB_REPOSITORY="owner/repo"; npm run android:apk
+```
+
 ## Repository and website
 
 The project must be pushed to a GitHub repository before GitHub Actions can run. The current workspace had no `.git` directory and Git was not installed, so no remote repository could be configured from this environment.

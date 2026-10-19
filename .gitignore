@@ -16,6 +16,9 @@ android/.idea/
 android/*.iml
 *.jks
 *.keystore
+android/keystore.properties
+android/KEYSTORE-CREDENTIALS.txt
+releases/
 
 # Local snapshots, upload staging and browser profiles are not source files.
 backups/
