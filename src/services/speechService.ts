@@ -5,6 +5,7 @@ import {
   normalizeSpeechText as normalizeClipText,
   resolveSpeechLanguage,
   speechClipUrl,
+  speechTextForTts,
   type SpeechVoice,
 } from './speechClip';
 
@@ -111,7 +112,10 @@ class SpeechService {
 
   /** URL of the bundled studio clip for a line, or undefined when there is none. */
   public getSpeechClipUrl(text: string, gender: 'male' | 'female', accent: string) {
-    return speechClipUrl(text, gender, accent) ?? undefined;
+    // `accent` is the learner's preference, not the language of this sentence.
+    // Resolve English course text to English even when the UI is set to French.
+    const language = resolveSpeechLanguage(text, accent);
+    return speechClipUrl(text, gender, language) ?? undefined;
   }
 
   private getAudioContext(): AudioContext | null {
@@ -188,7 +192,7 @@ class SpeechService {
     this.clearPlayback();
 
     const synthesis = window.speechSynthesis;
-    const utterance = new SpeechSynthesisUtterance(text);
+    const utterance = new SpeechSynthesisUtterance(speechTextForTts(text));
     const language = normalizeSpeechLanguage(accent) === 'fr' ? 'fr-FR' : 'en-US';
     const voices = synthesis
       .getVoices()

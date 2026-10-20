@@ -12,6 +12,7 @@ import {
   normalizeSpeechText,
   resolveSpeechLanguage,
   speechClipPath,
+  speechTextForTts,
   voiceFor,
   type SpeechVoice,
 } from '../src/services/speechClip';
@@ -30,12 +31,22 @@ for (const lesson of LEARNING_PATH_LESSONS) {
 }
 
 const required = new Map<string, { voice: string; text: string }>();
+const unsafeTtsTexts: string[] = [];
 
 for (const rawText of texts) {
   const text = normalizeSpeechText(rawText);
   if (!text) continue;
   const language = resolveSpeechLanguage(text, 'en');
   if (language !== 'en') continue;
+
+  // The clip is keyed by the displayed text, but must be synthesized from the
+  // classroom-friendly version. A remaining slash pair would be read aloud as
+  // "slash ... slash" by the phonemizer.
+  const spokenText = speechTextForTts(text);
+  if (!spokenText || /\/[^/\n]{1,24}\//.test(spokenText)) {
+    unsafeTtsTexts.push(text);
+  }
+
   const voices = new Set<SpeechVoice>([
     voiceFor(language, 'female'),
     voiceFor(language, 'male'),
@@ -63,6 +74,12 @@ if (missing.length) {
   if (missing.length > 40) console.error(`  ... and ${missing.length - 40} more.`);
   console.error('[speech-check] Run `npm run speech:generate` and commit the new files.');
   process.exitCode = 1;
-} else {
-  console.log(`[speech-check] All ${checked} bundled clips are present.`);
+}
+if (unsafeTtsTexts.length) {
+  console.error('[speech-check] IPA notation would still be read as "slash":');
+  for (const item of unsafeTtsTexts.slice(0, 20)) console.error(`  - ${item}`);
+  process.exitCode = 1;
+}
+if (!missing.length && !unsafeTtsTexts.length) {
+  console.log(`[speech-check] All ${checked} bundled clips are present and TTS-safe.`);
 }

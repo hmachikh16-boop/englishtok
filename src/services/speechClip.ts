@@ -27,7 +27,9 @@ export const voiceFor = (
   return gender === 'male' ? 'am_michael' : 'af_heart';
 };
 
-const FRENCH_ACCENTS = /[àâäçéèêëîïôöùûüÿœæÀÂÄÇÉÈÊËÎÏÔÖÙÛÜŸŒÆ]/;
+// Keep IPA symbols such as /æ/ out of this class: English phonics text uses
+// them, and treating them as French accents sent those lines to device TTS.
+const FRENCH_ACCENTS = /[àâäçéèêëîïôöùûüÿœÀÂÄÇÉÈÊËÎÏÔÖÙÛÜŸŒ]/;
 
 const FRENCH_WORDS =
   /\b(le|la|les|un|une|des|du|est|sont|vous|nous|je|tu|il|elle|et|avec|pour|dans|sur|bonjour|merci|salut|comment|pourquoi|oui|non|très|bien|au revoir|s'il vous plaît)\b/gi;
@@ -56,6 +58,33 @@ export const normalizeSpeechText = (text: string): string | null => {
 };
 
 /**
+ * IPA labels are useful on screen but ruin a TTS clip: the phonemizer reads
+ * "/b/" literally as "slash b slash". Turn the labels into natural classroom
+ * phrases before synthesis. The clip file name still hashes the original text,
+ * so the running app can keep using the displayed sentence unchanged.
+ */
+const IPA_SOUND_LABELS: Record<string, string> = {
+  æ: 'a', b: 'b', d: 'd', k: 'k', f: 'f', g: 'g', h: 'h', j: 'y', l: 'l',
+  m: 'm', n: 'n', p: 'p', r: 'r', s: 's', t: 't', v: 'v', w: 'w', z: 'z',
+  θ: 'th', ð: 'th', ʃ: 'sh', ʒ: 'zh', ŋ: 'ng', tʃ: 'ch', dʒ: 'j',
+  ə: 'uh', ɪ: 'i', ʊ: 'u', ʌ: 'uh', ɛ: 'e', ɒ: 'o', ɔ: 'aw',
+  ɑ: 'ah', ɜ: 'ur', i: 'ee', u: 'oo', eɪ: 'ay', aɪ: 'eye',
+  ɔɪ: 'oy', aʊ: 'ow', əʊ: 'oh', eə: 'air', ɪə: 'ear', ʊə: 'oor',
+};
+
+export const speechTextForTts = (text: string): string => {
+  const withExamples = text.replace(/,\s*\/([^/]{1,24})\/,\s*/g, ' as in ');
+  return withExamples
+    .replace(/\s*\/([^/]{1,24})\/\s*/g, (_match, rawIpa: string) => {
+      const label = rawIpa.replace(/[ˈˌː]/g, '').trim();
+      return ` the ${IPA_SOUND_LABELS[label] ?? label} sound `;
+    })
+    .replace(/\s+/g, ' ')
+    .replace(/\s+([,.!?;:])/g, '$1')
+    .trim();
+};
+
+/**
  * FNV-1a 64-bit over the UTF-16 code units. Synchronous on purpose: the client
  * needs the URL while rendering, and both sides must derive the same name.
  */
@@ -74,7 +103,7 @@ export const speechClipHash = (text: string): string => {
  * Bump this whenever the audio library is regenerated so phones and browsers
  * cannot keep serving an older clip from their HTTP cache for the same text.
  */
-export const SPEECH_LIBRARY_VERSION = '2';
+export const SPEECH_LIBRARY_VERSION = '3';
 
 /** Public URL of the bundled clip for a line, or null when it is not speakable. */
 export const speechClipUrl = (

@@ -65,15 +65,19 @@ run('npm', ['run', 'android:sync'], root);
 console.log('2/3  Building the signed release APK…');
 const gradlew = process.platform === 'win32' ? 'gradlew.bat' : './gradlew';
 const keystore = resolve(androidDir, props.storeFile);
+// Gradle is launched through the Windows shell here. The workspace path can
+// contain spaces and non-ASCII characters, so each property value must be
+// quoted or cmd.exe splits the keystore path into stray Gradle task names.
+const gradleProperty = (name, value) => `-P${name}="${value}"`;
 run(
   gradlew,
   [
     'assembleRelease',
     '-Pandroid.overridePathCheck=true',
-    `-Pandroid.injected.signing.store.file=${keystore}`,
-    `-Pandroid.injected.signing.store.password=${props.storePassword}`,
-    `-Pandroid.injected.signing.key.alias=${props.keyAlias}`,
-    `-Pandroid.injected.signing.key.password=${props.keyPassword}`,
+    gradleProperty('android.injected.signing.store.file', keystore),
+    gradleProperty('android.injected.signing.store.password', props.storePassword),
+    gradleProperty('android.injected.signing.key.alias', props.keyAlias),
+    gradleProperty('android.injected.signing.key.password', props.keyPassword),
   ],
   androidDir,
 );

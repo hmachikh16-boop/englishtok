@@ -18,6 +18,7 @@ import {
   normalizeSpeechText,
   resolveSpeechLanguage,
   speechClipPath,
+  speechTextForTts,
   voiceFor,
   type SpeechVoice,
 } from '../src/services/speechClip';
@@ -36,6 +37,7 @@ const LIMIT = (() => {
 interface ClipJob {
   voice: SpeechVoice;
   text: string;
+  speechText: string;
   target: string;
 }
 
@@ -53,6 +55,8 @@ const collectJobs = (): ClipJob[] => {
     if (!rawText) return;
     const text = normalizeSpeechText(rawText);
     if (!text) return;
+    const speechText = speechTextForTts(text);
+    if (!speechText) return;
 
     // The same text can be requested with different voices: a lesson line uses
     // the speaking character, the vocabulary bank uses the female voice, and
@@ -69,7 +73,7 @@ const collectJobs = (): ClipJob[] => {
     for (const voice of voices) {
       const relative = speechClipPath(text, voice);
       if (jobs.has(relative)) continue;
-      jobs.set(relative, { voice, text, target: join(process.cwd(), relative) });
+      jobs.set(relative, { voice, text, speechText, target: join(process.cwd(), relative) });
     }
   };
 
@@ -151,7 +155,7 @@ async function main() {
 
   for (const [index, job] of pending.entries()) {
     try {
-      const audio = await model.generate(job.text, { voice: job.voice as never });
+      const audio = await model.generate(job.speechText, { voice: job.voice as never });
       const wav = Buffer.from(await audio.toBlob().arrayBuffer());
       audioSeconds += wav.byteLength / 2 / 24000;
       const ogg = encodeOpus(wav);
