@@ -55,11 +55,8 @@ const run = (command, args, cwd) => {
 };
 
 if (!process.env.VITE_GITHUB_REPOSITORY) {
-  console.warn(
-    '\nWARNING: VITE_GITHUB_REPOSITORY is not set, so this APK cannot check GitHub for updates.\n' +
-      'Set it before building, for example:\n' +
-      '  $env:VITE_GITHUB_REPOSITORY="your-user/your-repo"; npm run android:apk\n',
-  );
+  process.env.VITE_GITHUB_REPOSITORY = 'hmachikh16-boop/englishtok';
+  console.log(`Using the release repository ${process.env.VITE_GITHUB_REPOSITORY} for in-app updates.`);
 }
 
 console.log('1/3  Building web assets and syncing Capacitor…');
@@ -72,6 +69,7 @@ run(
   gradlew,
   [
     'assembleRelease',
+    '-Pandroid.overridePathCheck=true',
     `-Pandroid.injected.signing.store.file=${keystore}`,
     `-Pandroid.injected.signing.store.password=${props.storePassword}`,
     `-Pandroid.injected.signing.key.alias=${props.keyAlias}`,

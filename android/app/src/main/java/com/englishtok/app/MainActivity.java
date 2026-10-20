@@ -10,5 +10,11 @@ public class MainActivity extends BridgeActivity {
     public void onCreate(Bundle savedInstanceState) {
         registerPlugin(ApkUpdaterPlugin.class);
         super.onCreate(savedInstanceState);
+
+        // Lesson audio is bundled with the app. Do not let WebView reject play()
+        // calls that happen just after a user taps a speaker button.
+        if (getBridge() != null && getBridge().getWebView() != null) {
+            getBridge().getWebView().getSettings().setMediaPlaybackRequiresUserGesture(false);
+        }
     }
 }

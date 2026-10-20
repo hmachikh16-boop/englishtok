@@ -21,7 +21,8 @@ export const voiceFor = (
   language: string,
   gender: 'male' | 'female' = 'female'
 ): SpeechVoice => {
-  // Kokoro ships a single French voice, so both genders share it.
+  // Kokoro-82M's bundled English voices are the only generated clips. French
+  // text keeps the fallback voice name so it can be handed to device TTS.
   if (language === 'fr') return 'ff_siwis';
   return gender === 'male' ? 'am_michael' : 'af_heart';
 };
@@ -38,13 +39,14 @@ export const looksFrench = (text: string): boolean => {
 };
 
 /**
- * The language a line should be spoken in. French text is always read with the
- * French voice; everything else follows the learner's preferred language.
+ * The language a line should be spoken in. French text is detected
+ * automatically; English course text always uses an English voice so the
+ * bundled lesson library is never bypassed by the French preference.
  */
 export const resolveSpeechLanguage = (
   text: string,
-  preferred: unknown = 'en'
-): SpeechLanguage => (looksFrench(text) ? 'fr' : normalizeSpeechLanguage(preferred));
+  _preferred: unknown = 'en'
+): SpeechLanguage => (looksFrench(text) ? 'fr' : 'en');
 
 /** Strip emoji and reject anything that is not plain Latin-script text. */
 export const normalizeSpeechText = (text: string): string | null => {
@@ -68,6 +70,12 @@ export const speechClipHash = (text: string): string => {
   return hash.toString(16).padStart(16, '0');
 };
 
+/**
+ * Bump this whenever the audio library is regenerated so phones and browsers
+ * cannot keep serving an older clip from their HTTP cache for the same text.
+ */
+export const SPEECH_LIBRARY_VERSION = '2';
+
 /** Public URL of the bundled clip for a line, or null when it is not speakable. */
 export const speechClipUrl = (
   text: string,
@@ -76,7 +84,7 @@ export const speechClipUrl = (
 ): string | null => {
   const clean = normalizeSpeechText(text);
   if (!clean) return null;
-  return `/audio/tts/${voiceFor(language, gender)}/${speechClipHash(clean)}.ogg`;
+  return `/audio/tts/${voiceFor(language, gender)}/${speechClipHash(clean)}.ogg?v=${SPEECH_LIBRARY_VERSION}`;
 };
 
 /** Path of the same clip inside the repository. */

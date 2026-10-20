@@ -55,7 +55,6 @@ class SpeechService {
   private static readonly AUDIO_DATABASE_NAME = 'englishtok-speech-cache';
   private audioCtx: AudioContext | null = null;
   private currentAudio: HTMLAudioElement | null = null;
-  private currentAudioUrl: string | null = null;
   private currentUtterance: SpeechSynthesisUtterance | null = null;
   private currentSource: string | null = null;
   private requestId = 0;
@@ -156,8 +155,6 @@ class SpeechService {
       this.currentAudio.load();
       this.currentAudio = null;
     }
-    if (this.currentAudioUrl) URL.revokeObjectURL(this.currentAudioUrl);
-    this.currentAudioUrl = null;
   }
 
   private playBrowserSpeech({
@@ -419,18 +416,23 @@ class SpeechService {
     return load;
   }
 
-  /** Play an in-memory clip and report back when it cannot be decoded. */
-  private playAudioBlob(
-    blob: Blob,
+  /**
+   * Play a bundled clip directly from its URL. Starting the media element
+   * synchronously keeps the browser's user gesture alive; fetching a Blob first
+   * can make Android WebView reject the later play() call.
+   */
+  private playAudioUrl(
+    audioUrl: string,
     handlers: PlaybackHandlers,
     onFailure: (reason: unknown) => void
   ) {
     const { requestId } = handlers;
-    const audioUrl = URL.createObjectURL(blob);
     this.clearPlayback();
-    this.currentAudioUrl = audioUrl;
+    this.currentSource = handlers.source;
 
-    const audio = new Audio(audioUrl);
+    const audio = new Audio();
+    audio.preload = 'auto';
+    audio.src = audioUrl;
     audio.playbackRate = Math.max(0.5, Math.min(1.2, handlers.rate));
     audio.preservesPitch = true;
     this.currentAudio = audio;
@@ -478,17 +480,7 @@ class SpeechService {
       return;
     }
 
-    const voice = this.getVoice(handlers.accent, handlers.gender);
-    const speed = Math.max(0.5, Math.min(1.2, handlers.rate));
-    // Bundled clips load straight from the app, so no loading state is needed.
-    void this.loadRecordedAudio(audioAssetUrl, voice, speed, handlers.accent)
-      .then((blob) => {
-        if (handlers.requestId !== this.requestId) return;
-        this.playAudioBlob(blob, handlers, useDeviceVoice);
-      })
-      .catch((error: unknown) => {
-        useDeviceVoice(error);
-      });
+    this.playAudioUrl(audioAssetUrl, handlers, useDeviceVoice);
   }
 
 

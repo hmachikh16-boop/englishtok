@@ -49,20 +49,37 @@ const collectJobs = (): ClipJob[] => {
   const lessons = LEARNING_PATH_LESSONS;
   const jobs = new Map<string, ClipJob>();
 
-  for (const lesson of lessons) {
-    for (const line of lesson.dialogue ?? []) {
-      const speaker =
-        line.speakerId === lesson.characterA.id ? lesson.characterA : lesson.characterB;
-      const gender = speaker.voiceGender === 'male' ? 'male' : 'female';
-      const text = normalizeSpeechText(line.textEn);
-      if (!text) continue;
+  const addText = (rawText: string | undefined) => {
+    if (!rawText) return;
+    const text = normalizeSpeechText(rawText);
+    if (!text) return;
 
-      const language = resolveSpeechLanguage(text, 'en');
-      const voice = voiceFor(language, gender);
+    // The same text can be requested with different voices: a lesson line uses
+    // the speaking character, the vocabulary bank uses the female voice, and
+    // placement/exam playback may use either. Bundle both English voices so a
+    // clip is always available regardless of which screen asks for it.
+    const language = resolveSpeechLanguage(text, 'en');
+    // Kokoro-82M only ships English voices. French text is left to the device
+    // voice fallback instead of asking for a voice the model does not have.
+    if (language !== 'en') return;
+    const voices = new Set<SpeechVoice>([
+      voiceFor(language, 'female'),
+      voiceFor(language, 'male'),
+    ]);
+    for (const voice of voices) {
       const relative = speechClipPath(text, voice);
       if (jobs.has(relative)) continue;
       jobs.set(relative, { voice, text, target: join(process.cwd(), relative) });
     }
+  };
+
+  for (const lesson of lessons) {
+    for (const line of lesson.dialogue ?? []) addText(line.textEn);
+    for (const word of lesson.vocabulary ?? []) {
+      addText(word.word);
+      addText(word.exampleSentence);
+    }
+    for (const quiz of lesson.quiz ?? []) addText(quiz.questionEn);
   }
 
   // Finish one voice completely before starting the next, so a partial library
