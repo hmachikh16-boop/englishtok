@@ -40,6 +40,7 @@ import {
 
 interface SettingsTabProps {
   userProfile: UserProfile;
+  hasLessons: boolean;
   onUpdateProfile: (updated: Partial<UserProfile>) => void;
   onRetakePlacement: () => void;
   onResetProgress: () => void;
@@ -49,6 +50,7 @@ interface SettingsTabProps {
 
 export const SettingsTab: React.FC<SettingsTabProps> = ({
   userProfile,
+  hasLessons,
   onUpdateProfile,
   onRetakePlacement,
   onResetProgress,
@@ -407,13 +409,13 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
               </div>
             )}
           </section>
-          <section className="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-col gap-3 shadow-lg" aria-labelledby="placement-settings-title">
+          {hasLessons && <section className="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-col gap-3 shadow-lg" aria-labelledby="placement-settings-title">
             <h3 id="placement-settings-title" className="text-xs font-bold text-white flex items-center gap-2"><GraduationCap className="h-4 w-4 text-emerald-400" />تحديد المستوى التعليمي</h3>
             <p className="text-[11px] leading-6 text-slate-400">{userProfile.placementAssessment?.result
               ? `نقطة البداية المقترحة حاليًا: المستوى ${userProfile.placementAssessment.result.suggestedStage} في EnglishTok. إعادة الاختبار لا تحذف XP أو الدروس المكتملة.`
               : 'لم يُسجّل اختبار تحديد مستوى لهذا الملف بعد.'}</p>
             <button type="button" onClick={onRetakePlacement} className="min-h-11 rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs font-bold text-emerald-800 hover:bg-emerald-100">إعادة اختبار تحديد المستوى</button>
-          </section>
+          </section>}
           {/* Audio & Pronunciation settings */}
           <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-col gap-3 shadow-lg">
             <h3 className="text-xs font-bold text-white flex items-center gap-2">

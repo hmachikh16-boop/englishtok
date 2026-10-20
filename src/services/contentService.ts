@@ -1,6 +1,6 @@
 import type { Lesson } from '../types';
 
-const CONTENT_CACHE_KEY = 'englishtok_learning_path_content_v3';
+const CONTENT_CACHE_KEY = 'englishtok_learning_path_content_v7';
 const GITHUB_REPOSITORY = import.meta.env.VITE_GITHUB_REPOSITORY;
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
@@ -27,7 +27,6 @@ const timeoutSignal = (milliseconds: number): AbortSignal | undefined => {
 
 const isLessonList = (value: unknown): value is Lesson[] =>
   Array.isArray(value) &&
-  value.length > 0 &&
   value.every((item) => {
     if (!isRecord(item)) return false;
     return (
@@ -73,20 +72,11 @@ const isLessonList = (value: unknown): value is Lesson[] =>
   new Set(value.map((lesson) => (isRecord(lesson) ? lesson.id : null))).size === value.length;
 
 const parseContent = (value: unknown): Lesson[] | null => {
-  if (!isRecord(value) || value.schemaVersion !== 2) {
+  if (!isRecord(value) || value.schemaVersion !== 4) {
     return null;
   }
   const lessons = value.lessons;
   if (!isLessonList(lessons)) return null;
-  const hasCompletePrimaryTracks = [1, 2, 3, 4, 5].every((grade) =>
-    lessons.filter((lesson) => lesson.schoolYearId === `primary-${grade}`).length === 50,
-  );
-  const hasCompleteSchoolTracks = [1, 2, 3, 4].every((year) =>
-    lessons.filter((lesson) => lesson.schoolYearId === `middle-${year}`).length === 50,
-  ) && [1, 2, 3].every((year) =>
-    lessons.filter((lesson) => lesson.schoolYearId === `secondary-${year}`).length === 50,
-  );
-  if (!hasCompletePrimaryTracks || !hasCompleteSchoolTracks) return null;
   return lessons;
 };
 
@@ -106,7 +96,7 @@ const saveContent = (lessons: Lesson[]) => {
   try {
     window.localStorage.setItem(
       CONTENT_CACHE_KEY,
-      JSON.stringify({ schemaVersion: 2, lessons }),
+      JSON.stringify({ schemaVersion: 4, lessons }),
     );
   } catch (error) {
     console.warn('Unable to cache the latest EnglishTok lesson content:', error);

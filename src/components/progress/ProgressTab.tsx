@@ -44,17 +44,23 @@ export const ProgressTab: React.FC<ProgressTabProps> = ({
   const rank = getUserRank(userProfile.xp);
   const path = getLearningPathState(lessons, userProfile);
 
-  // Compute stats
-  const totalWatched = userProfile.watchedLessonIds.length;
+  // Compute stats against the lessons that exist in the current curriculum, so
+  // progress saved for retired lessons never inflates the counters.
+  const lessonIds = new Set(lessons.map((lesson) => lesson.id));
+  const wordIds = new Set(lessons.flatMap((lesson) => lesson.vocabulary.map((word) => word.id)));
+  const totalWatched = userProfile.watchedLessonIds.filter((id) => lessonIds.has(id)).length;
   const totalLessons = lessons.length;
-  const totalSavedWords = userProfile.savedWordIds.length;
-  const totalMasteredWords = userProfile.masteredWordIds.length;
-  const quizzesTaken = Object.keys(userProfile.quizScores).length;
+  const totalSavedWords = userProfile.savedWordIds.filter((id) => wordIds.has(id)).length;
+  const totalMasteredWords = userProfile.masteredWordIds.filter((id) => wordIds.has(id)).length;
+  const quizzesTaken = Object.keys(userProfile.quizScores).filter((id) => lessonIds.has(id)).length;
   const today = new Date().toISOString().slice(0, 10);
   const dailyLessons = userProfile.dailyProgress.date === today
-    ? userProfile.dailyProgress.completedLessonIds.length
+    ? userProfile.dailyProgress.completedLessonIds.filter((id) => lessonIds.has(id)).length
     : 0;
-  const examAttempts = Object.values(userProfile.levelExamResults).reduce((total, exam) => total + exam.attempts, 0);
+  const examAttempts = path.levels.reduce(
+    (total, level) => total + (userProfile.levelExamResults[String(level.stage)]?.attempts ?? 0),
+    0,
+  );
   const reviewTopics = [...new Set(
     Object.values(userProfile.levelExamResults).flatMap((exam) => exam.reviewTopics)
   )];
@@ -99,10 +105,10 @@ export const ProgressTab: React.FC<ProgressTabProps> = ({
     {
       id: 'b5',
       titleAr: 'خبير المقاهي',
-      descriptionAr: 'أتقن درس طلب القهوة',
+      descriptionAr: 'أتقن درس المطعم والتفضيلات',
       icon: 'coffee',
-      isUnlocked: userProfile.completedLessonIds.includes('lesson-cafe-01'),
-      progressText: userProfile.completedLessonIds.includes('lesson-cafe-01') ? 'تم الإنجاز' : 'قيد التعلم',
+      isUnlocked: userProfile.completedLessonIds.includes('a2-l2-ordering-food'),
+      progressText: userProfile.completedLessonIds.includes('a2-l2-ordering-food') ? 'تم الإنجاز' : 'قيد التعلم',
     },
     {
       id: 'b6',
@@ -117,7 +123,7 @@ export const ProgressTab: React.FC<ProgressTabProps> = ({
       titleAr: 'رحلة الخمسين',
       descriptionAr: 'أكمل جميع دروس المسار التعليمي',
       icon: 'award',
-      isUnlocked: path.completedCount >= lessons.length,
+      isUnlocked: lessons.length > 0 && path.completedCount >= lessons.length,
       progressText: `${path.completedCount}/${lessons.length} درسًا`,
     },
   ];
@@ -187,7 +193,7 @@ export const ProgressTab: React.FC<ProgressTabProps> = ({
           <div className="w-full bg-slate-800 h-1 rounded-full overflow-hidden mt-1">
             <div
               className="bg-teal-400 h-full"
-              style={{ width: `${(totalWatched / totalLessons) * 100}%` }}
+              style={{ width: `${totalLessons ? (totalWatched / totalLessons) * 100 : 0}%` }}
             />
           </div>
         </div>
@@ -214,7 +220,7 @@ export const ProgressTab: React.FC<ProgressTabProps> = ({
             {quizzesTaken} <span className="text-xs font-normal text-slate-400">اختبار</span>
           </span>
           <span className="text-[10px] text-slate-500">
-            {userProfile.completedLessonIds.length} دروس مكتملة
+            {path.completedCount} دروس مكتملة
           </span>
         </div>
 
@@ -277,6 +283,11 @@ export const ProgressTab: React.FC<ProgressTabProps> = ({
             </div>
           ))}
         </div>
+        {path.levels.length === 0 && (
+          <p className="mt-4 rounded-2xl border border-dashed border-slate-700 bg-slate-950/40 px-4 py-5 text-center text-xs leading-6 text-slate-400" dir="rtl">
+            لا توجد مراحل أو دروس بعد. ستظهر خريطة المراحل والاختبارات هنا بعد إضافة المنهج الجديد.
+          </p>
+        )}
         {(reviewTopics.length > 0 || reviewWords.length > 0) && (
           <div className="mt-4 rounded-2xl border border-amber-500/20 bg-amber-500/5 p-3">
             {reviewTopics.length > 0 && (

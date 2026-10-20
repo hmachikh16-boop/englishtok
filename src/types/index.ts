@@ -34,7 +34,11 @@ export type CharacterDesign =
   | 'squirrel-glasses'
   | 'squirrel-scarf'
   | 'fox-flowers'
-  | 'dog-brown';
+  | 'dog-brown'
+  /** Leo, the clever dog of the CEFR A1 beginner track. */
+  | 'dog-leo'
+  /** Gigi, the creative giraffe of the CEFR A1 beginner track. */
+  | 'giraffe-gigi';
 
 export interface Character {
   id: string;
@@ -78,6 +82,8 @@ export interface QuizQuestion {
   type: 'multiple_choice' | 'arrange_sentence' | 'fill_blank';
   questionAr: string;
   questionEn?: string;
+  /** Arabic sentence the learner is asked to translate in an arrange exercise. */
+  promptAr?: string;
   options: string[];
   correctAnswer: string;
   explanationAr: string;

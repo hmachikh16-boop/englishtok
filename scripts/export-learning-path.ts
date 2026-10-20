@@ -8,7 +8,7 @@ const outputFile = resolve(contentDirectory, 'learning-path.json');
 await mkdir(contentDirectory, { recursive: true });
 await writeFile(
   outputFile,
-  `${JSON.stringify({ schemaVersion: 2, lessons: LEARNING_PATH_LESSONS }, null, 2)}\n`,
+  `${JSON.stringify({ schemaVersion: 4, lessons: LEARNING_PATH_LESSONS }, null, 2)}\n`,
   'utf8',
 );
 

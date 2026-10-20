@@ -29,13 +29,15 @@ import { PlacementAssessmentGate } from './components/placement/PlacementAssessm
 
 export default function App() {
   const [userProfile, setUserProfile] = useState<UserProfile>(() => getStoredProfile());
-  const [placementGateOpen, setPlacementGateOpen] = useState(() => !userProfile.placementAssessment?.result);
   const [lessons, setLessons] = useState<Lesson[]>(
     () => getCachedLearningPath() ?? LEARNING_PATH_LESSONS,
   );
+  const [placementGateOpen, setPlacementGateOpen] = useState(() => lessons.length > 0 && !userProfile.placementAssessment?.result);
   const learningPath = getLearningPathState(lessons, userProfile);
+  const vocabularyIds = new Set(lessons.flatMap((lesson) => lesson.vocabulary.map((word) => word.id)));
+  const savedWordsCount = userProfile.savedWordIds.filter((id) => vocabularyIds.has(id)).length;
   const [activeTab, setActiveTab] = useState<ActiveTab>('categories');
-  const [selectedLessonId, setSelectedLessonId] = useState<string>(learningPath.nextLessonId);
+  const [selectedLessonId, setSelectedLessonId] = useState<string | null>(learningPath.nextLessonId);
   const [isPhoneFrameView, setIsPhoneFrameView] = useState<boolean>(false);
   const [speechNotice, setSpeechNotice] = useState<string | null>(null);
   const [speechLoading, setSpeechLoading] = useState(false);
@@ -108,6 +110,12 @@ export default function App() {
   }, []);
 
   useEffect(() => {
+    if (lessons.length === 0 && placementGateOpen) {
+      setPlacementGateOpen(false);
+    }
+  }, [lessons.length, placementGateOpen]);
+
+  useEffect(() => {
     const handleSpeechUnavailable = (event: Event) => {
       const detail = (event as CustomEvent<{ message?: unknown }>).detail;
       if (!detail || typeof detail.message !== 'string') return;
@@ -170,16 +178,17 @@ export default function App() {
     localStorage.removeItem('englishtok_user_profile_v1');
     const fresh = getStoredProfile();
     setUserProfile(fresh);
-    setPlacementGateOpen(true);
+    setPlacementGateOpen(lessons.length > 0);
   };
 
   const handleRestoreProgress = (profile: UserProfile) => {
     saveProfile(profile);
     setUserProfile(profile);
-    setPlacementGateOpen(!profile.placementAssessment?.result);
+    setPlacementGateOpen(lessons.length > 0 && !profile.placementAssessment?.result);
   };
 
   const handleRetakePlacement = () => {
+    if (lessons.length === 0) return;
     if (!window.confirm('سيُعاد اختبار تحديد المستوى ويُغيّر مستوى البداية المقترح. لن يُحذف XP أو سجل الدروس والاختبارات. هل تريد المتابعة؟')) return;
     handleUpdateProfile({ placementAssessment: undefined });
     setActiveTab('categories');
@@ -341,15 +350,19 @@ export default function App() {
             />
           )}
 
-          {activeTab === 'lesson' && (
-            <LessonSession
-              key={selectedLessonId}
-              lesson={lessons.find((lesson) => lesson.id === selectedLessonId) ?? lessons[0]}
-              userProfile={userProfile}
-              onUpdateProfile={handleUpdateProfile}
-              onBackToPath={() => setActiveTab('categories')}
-            />
-          )}
+          {activeTab === 'lesson' && (() => {
+            const selectedLesson =
+              lessons.find((lesson) => lesson.id === selectedLessonId) ?? lessons[0];
+            return selectedLesson ? (
+              <LessonSession
+                key={selectedLesson.id}
+                lesson={selectedLesson}
+                userProfile={userProfile}
+                onUpdateProfile={handleUpdateProfile}
+                onBackToPath={() => setActiveTab('categories')}
+              />
+            ) : null;
+          })()}
 
           {activeTab === 'vocab' && (
             <VocabTab
@@ -374,6 +387,7 @@ export default function App() {
           {activeTab === 'settings' && (
             <SettingsTab
               userProfile={userProfile}
+              hasLessons={lessons.length > 0}
               onUpdateProfile={handleUpdateProfile}
             onRetakePlacement={handleRetakePlacement}
               onResetProgress={handleResetProgress}
@@ -386,12 +400,12 @@ export default function App() {
         {/* Fixed Mobile Bottom Tab Bar */}
         {activeTab !== 'lesson' && <BottomTabBar
           activeTab={activeTab}
-          savedWordsCount={userProfile.savedWordIds.length}
+          savedWordsCount={savedWordsCount}
           userStreak={userProfile.streakDays}
           onChangeTab={handleChangeTab}
         />}
       </div>
-      {placementGateOpen && <PlacementAssessmentGate
+      {placementGateOpen && lessons.length > 0 && <PlacementAssessmentGate
         lessons={lessons}
         profile={userProfile}
         onUpdateProfile={handleUpdateProfile}

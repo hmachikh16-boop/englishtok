@@ -24,7 +24,7 @@ export interface LearningPathState {
   levels: LevelPathEntry[];
   lessonStatusById: Map<string, LessonPathStatus>;
   accessibleLessons: Lesson[];
-  nextLessonId: string;
+  nextLessonId: string | null;
   completedCount: number;
   totalLessons: number;
 }
@@ -33,9 +33,8 @@ export const getLearningPathState = (
   lessons: Lesson[],
   profile: UserProfile
 ): LearningPathState => {
-  // School-year lessons have their own five-course prerequisite sequence in
-  // the primary-school explorer. Keep them out of the seven existing English
-  // stages so adding a school course cannot invalidate old exam results.
+  // Lessons live in ordered stages; school-year tracks (when present) keep
+  // their own prerequisite sequence and stay out of the staged path.
   const pathLessons = lessons.filter((lesson) => !lesson.schoolYearId);
   const completedIds = new Set(profile.completedLessonIds);
   const pathLessonIds = new Set(pathLessons.map((lesson) => lesson.id));
@@ -101,7 +100,7 @@ export const getLearningPathState = (
     levels,
     lessonStatusById,
     accessibleLessons,
-    nextLessonId: nextLesson.id,
+    nextLessonId: nextLesson?.id ?? null,
     completedCount: pathCompletedCount,
     totalLessons: pathLessons.length,
   };

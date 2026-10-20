@@ -13,7 +13,6 @@ import { execFileSync } from 'node:child_process';
 import { existsSync, mkdirSync, statSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { KokoroTTS } from 'kokoro-js';
-import { INITIAL_LESSONS } from '../src/data/lessons';
 import { LEARNING_PATH_LESSONS } from '../src/data/curriculum';
 import {
   normalizeSpeechText,
@@ -47,7 +46,7 @@ const VOICE_PRIORITY: Record<SpeechVoice, number> = {
 };
 
 const collectJobs = (): ClipJob[] => {
-  const lessons = [...INITIAL_LESSONS, ...LEARNING_PATH_LESSONS];
+  const lessons = LEARNING_PATH_LESSONS;
   const jobs = new Map<string, ClipJob>();
 
   for (const lesson of lessons) {

@@ -42,6 +42,9 @@ export const VocabTab: React.FC<VocabTabProps> = ({
     });
   });
 
+  const savedWordCount = allVocab.filter((v) => userProfile.savedWordIds.includes(v.id)).length;
+  const reviewWordCount = allVocab.filter((v) => userProfile.reviewWordIds.includes(v.id)).length;
+
   const displayedVocab = allVocab.filter((v) => {
     const isSaved = userProfile.savedWordIds.includes(v.id);
     const isUnderReview = userProfile.reviewWordIds.includes(v.id);
@@ -165,7 +168,7 @@ export const VocabTab: React.FC<VocabTabProps> = ({
               : 'text-slate-400 hover:text-slate-200'
           }`}
         >
-          كلماتي المحفوظة ({userProfile.savedWordIds.length})
+          كلماتي المحفوظة ({savedWordCount})
         </button>
         <button
           onClick={() => {
@@ -191,7 +194,7 @@ export const VocabTab: React.FC<VocabTabProps> = ({
               : 'text-slate-400 hover:text-slate-200'
           }`}
         >
-          للمراجعة ({userProfile.reviewWordIds.length})
+          للمراجعة ({reviewWordCount})
         </button>
       </div>
 

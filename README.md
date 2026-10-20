@@ -55,7 +55,10 @@ src/
 ├── types/
 │   └── index.ts               # تعريفات الواجهات والأنواع (Lesson, Character, Vocab, Quiz)
 ├── data/
-│   └── lessons.ts             # قاعدة بيانات الدروس، التصنيفات، والشخصيات (مكان إضافة الدروس)
+│   ├── lessons.ts             # التصنيفات التعليمية فقط (CATEGORIES)
+│   ├── curriculumContent.ts   # المنهج الكامل: 4 مستويات و16 درساً + الشخصيات والحوارات والتمارين
+│   ├── curriculum.ts          # نقطة ربط المسار: CURRICULUM_LEVELS و LEARNING_PATH_LESSONS
+│   └── educationalStructure.ts# أطوار/مستويات المستكشف (فارغة، المسار العام يكفي حالياً)
 ├── services/
 │   ├── speechService.ts       # تشغيل المقاطع المضمّنة + صوت الجهاز + مؤثرات Web Audio
 │   ├── speechClip.ts          # أصوات المكتبة، تطبيع النص، والتجزئة (FNV-1a) ومسار المقطع
@@ -94,28 +97,32 @@ src/
 - الترميز بـ`ffmpeg` (`libopus`، ‏24 kbps، أحادي القناة، إعداد `voip`) وهو الأنسب للكلام البشري.
 - لم يعد التطبيق يحمّل نموذج Kokoro أو أوزان ONNX/WASM (كانت نحو 20 ميجابايت)، فانخفض حجم الحزمة وزمن الإقلاع.
 
-### كيف تضيف درساً جديداً؟
-افتح الملف `src/data/lessons.ts` وأضف كائناً جديداً إلى مصفوفة `INITIAL_LESSONS`:
-```typescript
-{
-  id: 'lesson-custom-01',
-  slug: 'ordering-pizza',
-  title: 'Ordering Pizza Delivery',
-  titleAr: 'طلب بيتزا عبر الهاتف',
-  descriptionAr: 'تعلم تحديد الحجم والإضافات وعنوان التوصيل.',
-  category: 'food',
-  level: 'A1',
-  sceneType: 'cafe',
-  characterA: { ... },
-  characterB: { ... },
-  dialogue: [ ... ],
-  vocabulary: [ ... ],
-  quiz: [ ... ],
-  likesCount: 500,
-  sharesCount: 120,
-  savedCount: 340,
-}
+### المنهج الحالي: 4 مستويات و16 درساً
+
+| المستوى | CEFR | الشخصيات | المنهجية | الدروس |
+| --- | --- | --- | --- | --- |
+| المبتدئ | A1 | Leo وGigi | Phonics والتكرار المتباعد | الحروف والأصوات، الأرقام والعدّ، الألوان والأشكال، التعريف بالنفس |
+| المتوسط / الإعدادي | A2–B1 | Alex وMaya | التعلّم القائم على المهام | الروتين اليومي، المطعم والتفضيلات، الماضي البسيط، الاتجاهات والسفر |
+| الثانوي | B2 | Sarah وDavid | التواصل الناقد والمصطلحات | التعبير عن الرأي، التعبيرات الاصطلاحية، الجمل الشرطية، التكنولوجيا والبيئة |
+| المتقدم | C1–C2 | Dr. Arthur وElena | الانغماس والفروق الدقيقة | التفاوض المهني، الكتابة الأكاديمية، الفروق البلاغية، الخطابة والإقناع |
+
+- بيانات المنهج في `src/data/curriculumContent.ts`، ويعيد `src/data/curriculum.ts` تصديرها للمسار.
+- كل درس يحمل `curriculumStage` من 1 إلى 4، ويُفتح المستوى التالي بعد اجتياز اختبار المستوى الحالي.
+- `EDUCATIONAL_PHASES = []` في `src/data/educationalStructure.ts`؛ المستويات الأربعة تظهر مباشرة في المسار العام.
+- ملف `public/content/learning-path.json` يُصدَّر بإصدار مخطط 4 ويحتوي الدروس الـ16.
+- الصور الناقصة لدروس جديدة تسقط تلقائياً إلى مشهد SVG الكرتوني، ومكتبة الأصوات المضمّنة تُعاد استخدامها حسب تجزئة النص.
+
+### إضافة أو تعديل الدروس
+
+عدّل `LESSON_SPECS` في `src/data/curriculumContent.ts` (كلمات، حوار، اختبارات)، ثم نفّذ:
+
+```bash
+npm run content:export   # تحديث public/content/learning-path.json
+npm run generate:speech  # توليد مقاطع الحوار الجديدة (اختياري)
+npm run lint && npx vite build
 ```
+
+حافظ على تفرّد المعرّفات `id` و`slug`، وعلى تطابق `curriculumStage` مع المرحلة المقصودة.
 
 ---
 

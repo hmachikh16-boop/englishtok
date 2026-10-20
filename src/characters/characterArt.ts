@@ -247,6 +247,103 @@ const dog = (opts: CharacterArtOptions): string => `
   ${blush(24, -122)}
 `;
 
+/**
+ * Leo, the clever dog of the CEFR A1 beginner track. He is a warmer, friendlier
+ * variant of the brown dog: round glasses, a blue collar and a golden star tag.
+ */
+const leoDog = (opts: CharacterArtOptions): string => {
+  const mouth =
+    opts.speaking && opts.playing
+      ? '<ellipse cx="0" cy="-121" rx="8.2" ry="6.2" fill="#9f2434"/><ellipse cx="0" cy="-117" rx="4.6" ry="2.8" fill="#ef5b7a"/>'
+      : '<path d="M0 -124 v3 M0 -121 q-7 6 -12 1 M0 -121 q7 6 12 1" stroke="#3b2a23" stroke-width="2.1" fill="none" stroke-linecap="round"/>';
+  return `
+  ${shadow()}
+  <path d="M18 -55 C50 -50 60 -82 38 -98" stroke="#a9743f" stroke-width="10" fill="none" stroke-linecap="round"/>
+  <ellipse cx="-15" cy="-7" rx="15" ry="9" fill="#8a5a34"/>
+  <ellipse cx="15" cy="-7" rx="15" ry="9" fill="#8a5a34"/>
+  <ellipse cx="0" cy="-56" rx="33" ry="44" fill="#d9a066"/>
+  <ellipse cx="0" cy="-52" rx="21" ry="32" fill="#f7e6cf"/>
+  <g transform="rotate(16 -34 -124)"><ellipse cx="-34" cy="-124" rx="11" ry="25" fill="#8a5a34"/></g>
+  <g transform="rotate(-16 34 -124)"><ellipse cx="34" cy="-124" rx="11" ry="25" fill="#8a5a34"/></g>
+  ${half(arm('#d9a066', '#d9a066'))}
+  <circle cx="0" cy="-133" r="33" fill="#d9a066" stroke="#a9743f" stroke-width="1.5" stroke-opacity="0.5"/>
+  <ellipse cx="0" cy="-117" rx="19" ry="15" fill="#f7e6cf"/>
+  <ellipse cx="-14" cy="-147" rx="9" ry="7" fill="#c98b52" opacity="0.55"/>
+  ${animalEyes(12, -138)}
+  <ellipse cx="0" cy="-130" rx="5.4" ry="4.2" fill="#3b2a23"/>
+  <path d="M0 -126 v3" stroke="#3b2a23" stroke-width="2.1" fill="none" stroke-linecap="round"/>
+  ${mouth}
+  <circle cx="-12" cy="-138" r="12.5" fill="none" stroke="#1f2937" stroke-width="3"/>
+  <circle cx="12" cy="-138" r="12.5" fill="none" stroke="#1f2937" stroke-width="3"/>
+  <path d="M-1 -138 h2 M-24.5 -140 l-7 -3 M24.5 -140 l7 -3" stroke="#1f2937" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <path d="M-28 -100 C-15 -93 15 -93 28 -100" stroke="#2563eb" stroke-width="7" fill="none" stroke-linecap="round"/>
+  <path d="M0 -95 l2.9 5.9 6.5 1 -4.7 4.6 1.1 6.5 -5.8 -3.1 -5.8 3.1 1.1 -6.5 -4.7 -4.6 6.5 -1 z" fill="#fbbf24" stroke="#d97706" stroke-width="1.2" stroke-linejoin="round"/>
+  ${blush(-25, -122)}
+  ${blush(25, -122)}
+`;
+};
+
+/**
+ * Gigi, the creative giraffe of the CEFR A1 beginner track. A long spotted neck
+ * keeps her recognisable in the tiny avatar crop, and a teal bow marks her as
+ * the artistic half of the duo.
+ */
+const giraffeGigi = (opts: CharacterArtOptions): string => {
+  const mouth =
+    opts.speaking && opts.playing
+      ? '<ellipse cx="2" cy="-176" rx="8" ry="6" fill="#9f2434"/><ellipse cx="2" cy="-173" rx="4.4" ry="2.6" fill="#ef5b7a"/>'
+      : '<path d="M2 -179 v3 M2 -176 q-6 6 -11 1 M2 -176 q6 6 11 1" stroke="#8a5a2b" stroke-width="2.1" fill="none" stroke-linecap="round"/>';
+  return `
+  ${shadow()}
+  <path d="M22 -52 C50 -48 56 -74 36 -86" stroke="#dfa93c" stroke-width="6" fill="none" stroke-linecap="round"/>
+  <circle cx="35" cy="-87" r="6.5" fill="#b9741f"/>
+  <rect x="-27" y="-60" width="16" height="54" rx="8" fill="#f4c95d"/>
+  <rect x="11" y="-60" width="16" height="54" rx="8" fill="#f4c95d"/>
+  <ellipse cx="-19" cy="-7" rx="14" ry="8.4" fill="#b9741f"/>
+  <ellipse cx="19" cy="-7" rx="14" ry="8.4" fill="#b9741f"/>
+  <path d="M-15 -60 L-14 -12 M15 -60 L14 -12" stroke="#dfa93c" stroke-width="1.6" opacity="0.6"/>
+  <ellipse cx="0" cy="-74" rx="32" ry="31" fill="#f4c95d"/>
+  <ellipse cx="0" cy="-70" rx="20" ry="20" fill="#fdf0d5"/>
+  <circle cx="-19" cy="-86" r="6.4" fill="#e08a2e" opacity="0.85"/>
+  <circle cx="-6" cy="-94" r="5.4" fill="#e08a2e" opacity="0.85"/>
+  <circle cx="20" cy="-88" r="5.8" fill="#e08a2e" opacity="0.85"/>
+  <path d="M-13 -94 C-17 -132 -13 -164 -7 -178 L12 -178 C16 -154 16 -120 13 -94 Z" fill="#f4c95d"/>
+  <path d="M-9 -110 C-13 -110 -14 -104 -10 -102 C-6 -100 -3 -104 -4 -108 Z" fill="#e08a2e" opacity="0.85"/>
+  <path d="M-9 -128 C-13 -128 -14 -122 -10 -120 C-6 -118 -3 -122 -4 -126 Z" fill="#e08a2e" opacity="0.85"/>
+  <path d="M-8 -146 C-12 -146 -13 -140 -9 -138 C-5 -136 -2 -140 -3 -144 Z" fill="#e08a2e" opacity="0.85"/>
+  <path d="M6 -118 C12 -116 15 -110 12 -106 C9 -102 4 -104 4 -108 Z" fill="#e08a2e" opacity="0.85"/>
+  <path d="M6 -142 C12 -140 15 -134 12 -130 C9 -126 4 -128 4 -132 Z" fill="#e08a2e" opacity="0.85"/>
+  <path d="M-15 -176 C-20 -148 -18 -118 -14 -100" stroke="#d9822b" stroke-width="5" fill="none" stroke-linecap="round"/>
+  <path d="M-16 -170 l-5 -2 M-17 -156 l-5 -2 M-17 -142 l-5 -2 M-16 -128 l-5 -2 M-15 -114 l-5 -2" stroke="#d9822b" stroke-width="4" stroke-linecap="round"/>
+  <ellipse cx="-31" cy="-200" rx="11" ry="6.5" transform="rotate(-24 -31 -200)" fill="#f4c95d" stroke="#dfa93c" stroke-width="1.2"/>
+  <ellipse cx="35" cy="-200" rx="11" ry="6.5" transform="rotate(24 35 -200)" fill="#f4c95d" stroke="#dfa93c" stroke-width="1.2"/>
+  <path d="M-17 -208 L-19 -226" stroke="#dfa93c" stroke-width="8" stroke-linecap="round"/>
+  <path d="M21 -208 L23 -226" stroke="#dfa93c" stroke-width="8" stroke-linecap="round"/>
+  <circle cx="-19" cy="-229" r="7.2" fill="#b9741f"/>
+  <circle cx="23" cy="-229" r="7.2" fill="#b9741f"/>
+  <ellipse cx="2" cy="-192" rx="30" ry="24" fill="#f4c95d" stroke="#dfa93c" stroke-width="1.5" stroke-opacity="0.6"/>
+  <ellipse cx="3" cy="-180" rx="20" ry="13.5" fill="#fdf0d5"/>
+  <ellipse cx="-13" cy="-194" rx="6.4" ry="7.8" fill="#ffffff"/>
+  <ellipse cx="17" cy="-194" rx="6.4" ry="7.8" fill="#ffffff"/>
+  <circle cx="-12" cy="-193.5" r="3.8" fill="#243244"/>
+  <circle cx="18" cy="-193.5" r="3.8" fill="#243244"/>
+  <circle cx="-13.4" cy="-195.4" r="1.3" fill="#ffffff"/>
+  <circle cx="16.6" cy="-195.4" r="1.3" fill="#ffffff"/>
+  <path d="M-20 -205 q6 -3.5 11 -0.6" stroke="#b9741f" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+  <path d="M10 -205.6 q6 -3 11 0.6" stroke="#b9741f" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+  <ellipse cx="-2" cy="-183" rx="2.2" ry="1.7" fill="#b9741f"/>
+  <ellipse cx="8" cy="-183" rx="2.2" ry="1.7" fill="#b9741f"/>
+  ${mouth}
+  ${blush(-22, -184)}
+  ${blush(26, -184)}
+  <g transform="translate(31 -215) rotate(-14)">
+    <path d="M0 0 L-10 -6 L-10 7 Z" fill="#14b8a6"/>
+    <path d="M0 0 L10 -6 L10 7 Z" fill="#0d9488"/>
+    <circle cx="0" cy="0.5" r="3" fill="#0f766e"/>
+  </g>
+`;
+};
+
 /* ------------------------------------------------------------------ export */
 
 const DESIGNS: Record<
@@ -265,6 +362,8 @@ const DESIGNS: Record<
   'squirrel-scarf': (o) => squirrel({ scarf: true }, o),
   'fox-flowers': fox,
   'dog-brown': dog,
+  'dog-leo': leoDog,
+  'giraffe-gigi': giraffeGigi,
 };
 
 /**
