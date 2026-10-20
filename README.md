@@ -62,6 +62,7 @@ src/
 ├── services/
 │   ├── speechService.ts       # تشغيل المقاطع المضمّنة + صوت الجهاز + مؤثرات Web Audio
 │   ├── speechClip.ts          # أصوات المكتبة، تطبيع النص، والتجزئة (FNV-1a) ومسار المقطع
+│   ├── speechRecognition.ts   # التعرف على النطق: Web Speech API أو جسر Android الأصلي
 │   └── storageService.ts      # التخزين المحلي والتقدم والسلاسل اليومية
 ├── components/
 │   ├── video/
@@ -98,6 +99,7 @@ src/
 - الترميز بـ`ffmpeg` (`libopus`، ‏24 kbps، أحادي القناة، إعداد `voip`) وهو الأنسب للكلام البشري. يتوقع السكربت `tools/ffmpeg-tool/node_modules/ffmpeg-static/ffmpeg.exe` أو المسار في `FFMPEG_PATH`.
 - `npm run speech:check` يتحقق من وجود كل المقاطع ومن سلامة نص التوليد (لا رموز IPA تُقرأ حرفيًا)، ويعمل تلقائيًا داخل `npm run build`؛ أي نص جديد بلا مقطع يوقف البناء بدل أن يصل للمستخدم بصوت صامت.
 - لم يعد التطبيق يحمّل نموذج Kokoro أو أوزان ONNX/WASM (كانت نحو 20 ميجابايت)، فانخفض حجم الحزمة وزمن الإقلاع.
+- في Android لا يوفّر WebView واجهة Web Speech API، لذا يستخدم درس النطق إضافة `SpeechRecognitionPlugin` الأصلية (`android/app/src/main/java/com/englishtok/app/`) وخدمة `SpeechRecognizer`. يتضمن البيان إذن `RECORD_AUDIO` ويُطلب من المستخدم عند أول ضغط على الميكروفون.
 
 ### المنهج الحالي: 4 مستويات و16 درساً
 

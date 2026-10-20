@@ -1659,7 +1659,7 @@ button.journey-frame-toggle svg { color: var(--duo-blue); }
 .duo-mic:hover:not(:disabled) { background: #d4f0ff; }
 .duo-mic.is-listening { border-color: #ffd45e; color: #8a5a00; background: #fff3cd; animation: duoMicPulse 1.4s ease-in-out infinite; }
 .duo-mic.correct { border-color: #a5ed6e; color: #2f8000; background: #eafcd7; }
-.duo-mic.unsupported, .duo-mic.skipped { border-color: #e5e5e5; color: #777; background: #f7f7f7; }
+.duo-mic.unsupported, .duo-mic.error, .duo-mic.skipped { border-color: #e5e5e5; color: #777; background: #f7f7f7; }
 @keyframes duoMicPulse { 0%, 100% { box-shadow: 0 3px 0 #ffd45e, 0 0 0 0 rgb(255 200 0 / 25%); } 50% { box-shadow: 0 3px 0 #ffd45e, 0 0 0 10px rgb(255 200 0 / 0%); } }
 .duo-mic-hint { margin-top: 10px; color: #afafaf; font-size: 11px; text-align: center; }
 .duo-transcript { margin-top: 10px; color: #0b6fa4; font-size: 13px; font-weight: 800; text-align: center; }

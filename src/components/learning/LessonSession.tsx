@@ -17,30 +17,23 @@ import {
 import type { Character, DialogueLine, Lesson, QuizQuestion, UserProfile } from '../../types';
 import { getLevelExamPassingScore } from '../../services/learningPath';
 import { speechService } from '../../services/speechService';
+import {
+  isSpeechRecognitionSupported,
+  SpeechRecognitionError,
+  startSpeechRecognition,
+  type SpeechRecognitionSession,
+} from '../../services/speechRecognition';
 import { PrimaryCharacter } from '../video/PrimaryCharacterArt';
 import { getOptionEmoji, isSentenceOption } from './lessonVisuals';
 
 type SessionPhase = 'welcome' | 'story' | 'speak' | 'quiz' | 'result' | 'failed';
-type SpeakState = 'idle' | 'listening' | 'correct' | 'wrong' | 'unsupported' | 'skipped';
+type SpeakState = 'idle' | 'listening' | 'correct' | 'wrong' | 'unsupported' | 'error' | 'skipped';
 
 interface LessonSessionProps {
   lesson: Lesson;
   userProfile: UserProfile;
   onUpdateProfile: (updated: Partial<UserProfile>) => void;
   onBackToPath: () => void;
-}
-
-interface SpeechRecognitionLike {
-  lang: string;
-  interimResults: boolean;
-  maxAlternatives: number;
-  continuous: boolean;
-  start: () => void;
-  stop: () => void;
-  abort?: () => void;
-  onresult: ((event: { results: { 0: { 0: { transcript: string } } } }) => void) | null;
-  onerror: (() => void) | null;
-  onend: (() => void) | null;
 }
 
 const MAX_HEARTS = 5;
@@ -112,13 +105,14 @@ export const LessonSession: React.FC<LessonSessionProps> = ({ lesson, userProfil
   const [lives, setLives] = useState(MAX_HEARTS);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [speakState, setSpeakState] = useState<SpeakState>('idle');
+  const [speakErrorMessage, setSpeakErrorMessage] = useState('');
   const [isListening, setIsListening] = useState(false);
   const [transcript, setTranscript] = useState('');
   const [finalScore, setFinalScore] = useState(0);
   const [finalCorrect, setFinalCorrect] = useState(0);
 
   const correctCountRef = useRef(0);
-  const recognitionRef = useRef<SpeechRecognitionLike | null>(null);
+  const recognitionRef = useRef<SpeechRecognitionSession | null>(null);
 
   const questions = lesson.quiz ?? [];
   const question = questions[questionIndex];
@@ -163,7 +157,8 @@ export const LessonSession: React.FC<LessonSessionProps> = ({ lesson, userProfil
 
   useEffect(() => () => {
     speechService.stopSpeaking();
-    recognitionRef.current?.abort?.();
+    recognitionRef.current?.stop();
+    recognitionRef.current = null;
   }, []);
 
   useEffect(() => {
@@ -306,58 +301,80 @@ export const LessonSession: React.FC<LessonSessionProps> = ({ lesson, userProfil
     }
   };
 
-  const startListening = () => {
+  const startListening = async () => {
     if (isListening || speakState === 'correct') return;
-    const recognitionConstructor = (window as unknown as {
-      SpeechRecognition?: new () => SpeechRecognitionLike;
-      webkitSpeechRecognition?: new () => SpeechRecognitionLike;
-    }).SpeechRecognition
-      ?? (window as unknown as { webkitSpeechRecognition?: new () => SpeechRecognitionLike }).webkitSpeechRecognition;
 
-    if (!recognitionConstructor) {
+    if (!isSpeechRecognitionSupported()) {
+      setSpeakErrorMessage('هذا الجهاز لا يدعم التعرف على الصوت. يمكنك الاستماع والمتابعة.');
       setSpeakState('unsupported');
       return;
     }
 
+    recognitionRef.current?.stop();
+    const session = startSpeechRecognition('en-US');
+    recognitionRef.current = session;
+    setTranscript('');
+    setSpeakErrorMessage('');
+    setSpeakState('listening');
+    setIsListening(true);
+
     try {
-      const recognition = new recognitionConstructor();
-      recognition.lang = 'en-US';
-      recognition.interimResults = false;
-      recognition.maxAlternatives = 1;
-      recognition.continuous = false;
-      recognition.onresult = (event) => {
-        const spoken = event.results[0][0].transcript ?? '';
-        setTranscript(spoken);
-        setSpeakState(speechMatches(spoken, speakTarget) ? 'correct' : 'wrong');
-      };
-      recognition.onerror = () => {
-        setIsListening(false);
-        setSpeakState('unsupported');
-      };
-      recognition.onend = () => setIsListening(false);
-      recognitionRef.current = recognition;
-      setTranscript('');
-      setSpeakState('listening');
-      setIsListening(true);
-      recognition.start();
-    } catch {
+      const spoken = await session.result;
+      if (recognitionRef.current !== session) return;
+      recognitionRef.current = null;
       setIsListening(false);
-      setSpeakState('unsupported');
+      setTranscript(spoken);
+      if (speechMatches(spoken, speakTarget)) {
+        setSpeakState('correct');
+      } else {
+        setSpeakState('wrong');
+        setSpeakErrorMessage('لم نسمع الجملة بوضوح. يمكنك المحاولة مرة أخرى.');
+      }
+    } catch (error) {
+      if (recognitionRef.current !== session) return;
+      recognitionRef.current = null;
+      setIsListening(false);
+
+      const code = error instanceof SpeechRecognitionError ? error.code : 'unknown';
+      if (code === 'aborted') return;
+      if (code === 'permission-denied') {
+        setSpeakErrorMessage('لم يتم السماح باستخدام الميكروفون. افتح إعدادات التطبيق وامنح إذن الميكروفون ثم أعد المحاولة.');
+        setSpeakState('unsupported');
+        return;
+      }
+      if (code === 'unsupported') {
+        setSpeakErrorMessage('التسجيل الصوتي غير متاح على هذا الجهاز. يمكنك الاستماع والمتابعة.');
+        setSpeakState('unsupported');
+        return;
+      }
+      if (code === 'no-speech') {
+        setSpeakErrorMessage('لم نسمع الجملة بوضوح. اقترب من الميكروفون وحاول مرة أخرى.');
+        setSpeakState('wrong');
+        return;
+      }
+      setSpeakErrorMessage(
+        error instanceof SpeechRecognitionError
+          ? error.message
+          : 'تعذر تشغيل الميكروفون. حاول مرة أخرى.',
+      );
+      setSpeakState('error');
     }
   };
 
   const retrySpeaking = () => {
-    recognitionRef.current?.abort?.();
+    recognitionRef.current?.stop();
     recognitionRef.current = null;
     setTranscript('');
+    setSpeakErrorMessage('');
     setSpeakState('idle');
     setIsListening(false);
   };
 
   const skipSpeaking = () => {
-    recognitionRef.current?.abort?.();
+    recognitionRef.current?.stop();
     recognitionRef.current = null;
     setIsListening(false);
+    setSpeakErrorMessage('');
     setSpeakState('skipped');
   };
 
@@ -389,8 +406,8 @@ export const LessonSession: React.FC<LessonSessionProps> = ({ lesson, userProfil
 
   const footerTone = phase === 'quiz' && isAnswerChecked
     ? (isCorrectAnswer ? 'has-success' : 'has-error')
-    : phase === 'speak' && ['correct', 'wrong', 'unsupported', 'skipped'].includes(speakState)
-      ? speakState === 'unsupported'
+    : phase === 'speak' && ['correct', 'wrong', 'unsupported', 'error', 'skipped'].includes(speakState)
+      ? speakState === 'unsupported' || speakState === 'error'
         ? 'has-info'
         : speakState === 'correct' || speakState === 'skipped'
           ? 'has-success'
@@ -427,24 +444,28 @@ export const LessonSession: React.FC<LessonSessionProps> = ({ lesson, userProfil
     }
 
     if (phase === 'speak') {
-      const isDone = ['correct', 'wrong', 'unsupported', 'skipped'].includes(speakState);
+      const isDone = ['correct', 'wrong', 'unsupported', 'error', 'skipped'].includes(speakState);
       const isPositive = speakState === 'correct' || speakState === 'skipped';
+      const isNeutral = speakState === 'unsupported' || speakState === 'error';
       return (
-        <div className={`duo-footer-panel ${isDone ? (isPositive ? 'is-correct' : 'is-wrong') : ''}`}>
+        <div className={`duo-footer-panel ${isDone ? (isPositive || isNeutral ? 'is-correct' : 'is-wrong') : ''}`}>
           {isDone && (
             <div className="duo-feedback-copy">
               <strong>
                 {speakState === 'correct' && 'ممتاز! نطق واضح.'}
                 {speakState === 'wrong' && 'لم نسمع الجملة بوضوح.'}
-                {speakState === 'unsupported' && 'التسجيل الصوتي غير متاح هنا.'}
+                {speakState === 'unsupported' && (speakErrorMessage || 'التسجيل الصوتي غير متاح هنا.')}
+                {speakState === 'error' && (speakErrorMessage || 'تعذر تشغيل الميكروفون.')}
                 {speakState === 'skipped' && 'لا بأس، يمكنك التدرب لاحقاً.'}
               </strong>
               <span>
                 {speakState === 'wrong'
                   ? 'يمكنك المحاولة مرة أخرى أو المتابعة.'
                   : speakState === 'unsupported'
-                    ? 'استمع إلى الجملة ثم تابع الدرس.'
-                    : 'استمر، أنت تتقدم!'}
+                    ? 'يمكنك الاستماع إلى الجملة ثم المتابعة، أو المحاولة بعد السماح بالإذن.'
+                    : speakState === 'error'
+                      ? 'تحقق من إذن الميكروفون واتصال الإنترنت ثم أعد المحاولة.'
+                      : 'استمر، أنت تتقدم!'}
               </span>
             </div>
           )}
@@ -454,7 +475,7 @@ export const LessonSession: React.FC<LessonSessionProps> = ({ lesson, userProfil
                 تخطّي
               </button>
             )}
-            {speakState === 'wrong' && (
+            {(speakState === 'wrong' || speakState === 'error' || speakState === 'unsupported') && (
               <button type="button" onClick={retrySpeaking} className="duo-btn duo-btn-secondary">
                 <RotateCcw className="h-4 w-4" /> حاول مجدداً
               </button>
@@ -617,9 +638,11 @@ export const LessonSession: React.FC<LessonSessionProps> = ({ lesson, userProfil
                 {isListening ? 'أستمع إليك…' : speakState === 'correct' ? 'تم النطق' : 'اضغط للتحدث'}
               </button>
               <p className="duo-mic-hint">
-                {speakState === 'unsupported'
-                  ? 'هذا المتصفح لا يدعم التعرف على الصوت. يمكنك الاستماع والمتابعة.'
-                  : 'استمع أولاً، ثم انطق الجملة بوضوح.'}
+                {speakState === 'unsupported' || speakState === 'error'
+                  ? speakErrorMessage
+                  : isListening
+                    ? 'تحدث الآن بوضوح…'
+                    : 'استمع أولاً، ثم انطق الجملة بوضوح.'}
               </p>
               {transcript && <p className="duo-transcript" dir="ltr">“{transcript}”</p>}
               {speakState === 'wrong' && (
