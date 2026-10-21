@@ -10,6 +10,7 @@ import { ActiveTab, Lesson, UserProfile } from './types';
 import { LEARNING_PATH_LESSONS } from './data/curriculum';
 import { getLearningPathState } from './services/learningPath';
 import { getStoredProfile, saveProfile } from './services/storageService';
+import { resetGameProgress } from './services/gameProgressService';
 import { fetchLatestLearningPath, getCachedLearningPath } from './services/contentService';
 import { checkForAppUpdate, type AppUpdateManifest } from './services/appUpdateService';
 import { downloadAndInstallAppUpdate } from './services/apkInstaller';
@@ -22,6 +23,7 @@ import { TopBar } from './components/navigation/TopBar';
 import { BottomTabBar } from './components/navigation/BottomTabBar';
 import { CategoriesTab } from './components/categories/CategoriesTab';
 import { VocabTab } from './components/vocab/VocabTab';
+import { GamesTab } from './components/games/GamesTab';
 import { ProgressTab } from './components/progress/ProgressTab';
 import { SettingsTab } from './components/settings/SettingsTab';
 import { LessonSession } from './components/learning/LessonSession';
@@ -176,6 +178,7 @@ export default function App() {
 
   const handleResetProgress = () => {
     localStorage.removeItem('englishtok_user_profile_v1');
+    resetGameProgress();
     const fresh = getStoredProfile();
     setUserProfile(fresh);
     setPlacementGateOpen(lessons.length > 0);
@@ -366,6 +369,14 @@ export default function App() {
 
           {activeTab === 'vocab' && (
             <VocabTab
+              lessons={lessons}
+              userProfile={userProfile}
+              onUpdateProfile={handleUpdateProfile}
+            />
+          )}
+
+          {activeTab === 'games' && (
+            <GamesTab
               lessons={lessons}
               userProfile={userProfile}
               onUpdateProfile={handleUpdateProfile}

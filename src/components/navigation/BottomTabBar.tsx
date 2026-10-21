@@ -1,5 +1,13 @@
 import React from 'react';
-import { BookOpen, ChartNoAxesColumnIncreasing, Flame, Map, Settings2 } from 'lucide-react';
+import {
+  BookOpen,
+  ChartNoAxesColumnIncreasing,
+  Flame,
+  Gamepad2,
+  Map,
+  Settings2,
+  type LucideIcon,
+} from 'lucide-react';
 import { ActiveTab } from '../../types';
 import { speechService } from '../../services/speechService';
 
@@ -10,33 +18,48 @@ interface BottomTabBarProps {
   onChangeTab: (tab: ActiveTab) => void;
 }
 
+interface NavigationTab {
+  id: ActiveTab;
+  labelAr: string;
+  icon: LucideIcon;
+  badge: number | null;
+  center?: boolean;
+}
+
 export const BottomTabBar: React.FC<BottomTabBarProps> = ({
   activeTab,
   savedWordsCount,
   userStreak,
   onChangeTab,
 }) => {
-  const tabs = [
+  const tabs: NavigationTab[] = [
     {
-      id: 'categories' as ActiveTab,
+      id: 'categories',
       labelAr: 'المسار',
       icon: Map,
       badge: null,
     },
     {
-      id: 'vocab' as ActiveTab,
+      id: 'vocab',
       labelAr: 'الكلمات',
       icon: BookOpen,
       badge: savedWordsCount > 0 ? savedWordsCount : null,
     },
     {
-      id: 'progress' as ActiveTab,
+      id: 'games',
+      labelAr: 'الألعاب',
+      icon: Gamepad2,
+      badge: null,
+      center: true,
+    },
+    {
+      id: 'progress',
       labelAr: 'التقدم',
       icon: ChartNoAxesColumnIncreasing,
       badge: userStreak > 0 ? userStreak : null,
     },
     {
-      id: 'settings' as ActiveTab,
+      id: 'settings',
       labelAr: 'الإعدادات',
       icon: Settings2,
       badge: null,
@@ -53,22 +76,61 @@ export const BottomTabBar: React.FC<BottomTabBarProps> = ({
       className="journey-nav relative z-40 w-full shrink-0 backdrop-blur-md border-t safe-area-pb"
       aria-label="التنقل الرئيسي"
     >
-      <div className="mx-auto grid h-[68px] w-full max-w-2xl grid-cols-4 items-center px-2 sm:px-4">
+      <div className="mx-auto grid h-[68px] w-full max-w-2xl grid-cols-5 items-center px-2 sm:px-4">
         {tabs.map((tab) => {
           const isActive = activeTab === tab.id;
           const Icon = tab.icon;
+
+          if (tab.center) {
+            return (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={() => handleTabClick(tab.id)}
+                className={`journey-tab journey-tab-center group relative flex min-h-[54px] min-w-[54px] flex-col items-center justify-center gap-1 rounded-2xl px-1 py-1 transition-all active:scale-95 ${
+                  isActive ? 'is-active' : ''
+                }`}
+                aria-label={isActive ? 'الألعاب، الصفحة الحالية' : 'الألعاب، جديد'}
+                aria-current={isActive ? 'page' : undefined}
+              >
+                <span className="journey-center-wrap">
+                  <span className="journey-center-orb">
+                    <Icon
+                      className="h-7 w-7"
+                      strokeWidth={isActive ? 2.5 : 2.1}
+                      aria-hidden="true"
+                    />
+                  </span>
+                  <span className="journey-center-badge">جديد</span>
+                </span>
+                <span className="journey-center-label">{tab.labelAr}</span>
+                {isActive && <span className="sr-only">الصفحة الحالية</span>}
+              </button>
+            );
+          }
+
           return (
             <button
               key={tab.id}
+              type="button"
               onClick={() => handleTabClick(tab.id)}
-              className={`journey-tab group relative flex min-h-[54px] min-w-[54px] flex-col items-center justify-center gap-1 rounded-2xl px-2 py-1 transition-all active:scale-95 ${isActive ? 'is-active' : ''}`}
-              aria-label={tab.badge ? `${tab.labelAr}، ${tab.badge > 99 ? '99+' : tab.badge}${tab.id === 'progress' ? ' يوم' : ' كلمة محفوظة'}` : tab.labelAr}
+              className={`journey-tab group relative flex min-h-[54px] min-w-[54px] flex-col items-center justify-center gap-1 rounded-2xl px-2 py-1 transition-all active:scale-95 ${
+                isActive ? 'is-active' : ''
+              }`}
+              aria-label={
+                tab.badge
+                  ? `${tab.labelAr}، ${tab.badge > 99 ? '99+' : tab.badge}${tab.id === 'progress' ? ' يوم' : ' كلمة محفوظة'}`
+                  : tab.labelAr
+              }
               aria-current={isActive ? 'page' : undefined}
             >
               <div className="relative grid h-7 w-7 place-items-center">
-                <Icon className="journey-nav-icon h-[23px] w-[23px] transition-transform" strokeWidth={isActive ? 2.5 : 2.1} aria-hidden="true" />
+                <Icon
+                  className="journey-nav-icon h-[23px] w-[23px] transition-transform"
+                  strokeWidth={isActive ? 2.5 : 2.1}
+                  aria-hidden="true"
+                />
 
-                {/* Badge if present */}
                 {tab.badge && (
                   <span
                     className={`absolute -right-2 -top-1.5 flex h-[17px] min-w-[17px] items-center justify-center rounded-full px-1 font-mono-num text-[9px] font-black ring-2 ring-white ${
@@ -78,7 +140,7 @@ export const BottomTabBar: React.FC<BottomTabBarProps> = ({
                     {tab.id === 'progress' ? (
                       <>
                         <Flame className="mr-0.5 h-2.5 w-2.5 fill-current" aria-hidden="true" />
-                      {tab.badge > 99 ? '99+' : tab.badge}
+                        {tab.badge > 99 ? '99+' : tab.badge}
                       </>
                     ) : (
                       tab.badge
@@ -95,10 +157,7 @@ export const BottomTabBar: React.FC<BottomTabBarProps> = ({
                 {tab.labelAr}
               </span>
 
-              {/* Active dot indicator */}
-              {isActive && (
-                <span className="sr-only">الصفحة الحالية</span>
-              )}
+              {isActive && <span className="sr-only">الصفحة الحالية</span>}
             </button>
           );
         })}
