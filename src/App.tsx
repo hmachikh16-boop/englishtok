@@ -4,6 +4,7 @@
  */
 
 import React, { useEffect, useRef, useState } from 'react';
+import { Sparkles } from 'lucide-react';
 import { App as CapacitorApp } from '@capacitor/app';
 import { Capacitor } from '@capacitor/core';
 import { ActiveTab, Lesson, UserProfile } from './types';
@@ -26,6 +27,7 @@ import { VocabTab } from './components/vocab/VocabTab';
 import { GamesTab } from './components/games/GamesTab';
 import { ProgressTab } from './components/progress/ProgressTab';
 import { SettingsTab } from './components/settings/SettingsTab';
+import { ChatTab } from './components/chat/ChatTab';
 import { LessonSession } from './components/learning/LessonSession';
 import { PlacementAssessmentGate } from './components/placement/PlacementAssessmentGate';
 
@@ -316,7 +318,7 @@ export default function App() {
 
       {/* Device wrapper: Sleek mobile mock container on wide screens if isPhoneFrameView is active, or full width on mobile/tablet */}
       <div
-        className={`w-full h-full min-h-0 flex flex-col transition-all duration-300 journey-shell ${
+        className={`relative w-full h-full min-h-0 flex flex-col transition-all duration-300 journey-shell ${
           isPhoneFrameView
             ? 'max-w-[430px] sm:my-3 sm:rounded-[36px] sm:border-[5px] sm:border-slate-800 sm:shadow-2xl sm:overflow-hidden relative sm:max-h-[calc(100dvh-24px)]'
             : 'max-w-6xl'
@@ -332,7 +334,7 @@ export default function App() {
         )}
 
         {/* Top App Bar */}
-        {activeTab !== 'lesson' && (
+        {activeTab !== 'lesson' && activeTab !== 'chat' && (
           <TopBar
             userProfile={userProfile}
             isPhoneFrameView={isPhoneFrameView}
@@ -406,15 +408,37 @@ export default function App() {
               onRefreshContent={handleRefreshContent}
             />
           )}
+
+          {activeTab === 'chat' && (
+            <ChatTab
+              lessons={lessons}
+              userProfile={userProfile}
+              onBack={() => handleChangeTab('categories')}
+            />
+          )}
         </main>
 
         {/* Fixed Mobile Bottom Tab Bar */}
-        {activeTab !== 'lesson' && <BottomTabBar
+        {activeTab !== 'lesson' && activeTab !== 'chat' && <BottomTabBar
           activeTab={activeTab}
           savedWordsCount={savedWordsCount}
           userStreak={userProfile.streakDays}
           onChangeTab={handleChangeTab}
         />}
+
+        {activeTab !== 'lesson' && activeTab !== 'chat' && !placementGateOpen && (
+          <button
+            type="button"
+            onClick={() => handleChangeTab('chat')}
+            className="ai-tutor-fab"
+            aria-label="افتح المعلم الذكي للمحادثة بالإنجليزية"
+          >
+            <span className="ai-tutor-fab-icon" aria-hidden="true">
+              <Sparkles className="h-5 w-5" />
+            </span>
+            <span className="ai-tutor-fab-label" dir="rtl">المعلم AI</span>
+          </button>
+        )}
       </div>
       {placementGateOpen && lessons.length > 0 && <PlacementAssessmentGate
         lessons={lessons}

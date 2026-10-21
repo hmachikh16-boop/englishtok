@@ -28,10 +28,13 @@
         android:name="android.permission.MANAGE_EXTERNAL_STORAGE"
         tools:ignore="ScopedStorage" />
 
-    <!-- Android 11+ package visibility for the installed speech recognition service. -->
+    <!-- Android 11+ package visibility for the installed speech services. -->
     <queries>
         <intent>
             <action android:name="android.speech.RecognitionService" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.TTS_SERVICE" />
         </intent>
     </queries>
 

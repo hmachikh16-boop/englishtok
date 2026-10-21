@@ -4,6 +4,7 @@ import { resolve } from 'node:path';
 import process from 'node:process';
 import express from 'express';
 import { createServer as createViteServer } from 'vite';
+import chatHandler from './api/chat';
 import progressHandler from './api/progress';
 
 const app = express();
@@ -17,6 +18,12 @@ app.all('/api/progress', (request, response) => {
   void progressHandler(
     request as unknown as Parameters<typeof progressHandler>[0],
     response as unknown as Parameters<typeof progressHandler>[1],
+  );
+});
+app.all('/api/chat', (request, response) => {
+  void chatHandler(
+    request as unknown as Parameters<typeof chatHandler>[0],
+    response as unknown as Parameters<typeof chatHandler>[1],
   );
 });
 
