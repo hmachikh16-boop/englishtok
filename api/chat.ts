@@ -228,14 +228,54 @@ const extractJsonObject = (raw: string): unknown => {
     .trim();
   const fenced = text.match(/```(?:json)?\s*([\s\S]*?)```/i);
   if (fenced?.[1]) text = fenced[1].trim();
-  const start = text.indexOf('{');
-  const end = text.lastIndexOf('}');
-  if (start < 0 || end <= start) return null;
-  try {
-    return JSON.parse(text.slice(start, end + 1)) as unknown;
-  } catch {
-    return null;
+
+  // DeepSeek R1 can put short reasoning snippets around the final object.
+  // Scan balanced brace blocks and prefer the last object that looks like a
+  // tutor reply instead of blindly slicing from the first '{' to the last '}'.
+  const candidates: string[] = [];
+  for (let start = text.indexOf('{'); start >= 0; start = text.indexOf('{', start + 1)) {
+    let depth = 0;
+    let inString = false;
+    let escaped = false;
+    for (let index = start; index < text.length; index += 1) {
+      const character = text[index];
+      if (inString) {
+        if (escaped) {
+          escaped = false;
+        } else if (character === '\\') {
+          escaped = true;
+        } else if (character === '"') {
+          inString = false;
+        }
+        continue;
+      }
+      if (character === '"') {
+        inString = true;
+      } else if (character === '{') {
+        depth += 1;
+      } else if (character === '}') {
+        depth -= 1;
+        if (depth === 0) {
+          candidates.push(text.slice(start, index + 1));
+          break;
+        }
+      }
+    }
   }
+
+  for (const candidate of candidates.reverse()) {
+    try {
+      const parsed: unknown = JSON.parse(candidate);
+      if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+        const record = parsed as Record<string, unknown>;
+        if (typeof record.reply === 'string' || typeof record.translationAr === 'string') return parsed;
+      }
+    } catch {
+      // Keep looking; the model may have emitted an example before the reply.
+    }
+  }
+
+  return null;
 };
 
 const asText = (value: unknown, maxLength: number): string =>
