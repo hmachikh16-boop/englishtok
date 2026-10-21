@@ -1,10 +1,14 @@
 /**
- * Fail the build when a lesson text has no bundled studio clip.
+ * Report lesson texts that have no bundled studio clip.
  *
  * Run `npm run speech:generate` after changing dialogue, vocabulary examples or
  * quiz prompts. The check covers both bundled English voices because the same
  * text can be requested by a lesson character, the vocabulary bank, or
  * placement. French text is not bundled (Kokoro-82M has no French voice).
+ *
+ * Missing clips fail the check by default. Pass `--allow-missing` during the
+ * temporary period when expanded lessons rely on the device voice; unsafe TTS
+ * text is still a hard failure.
  */
 import { existsSync, statSync } from 'node:fs';
 import { LEARNING_PATH_LESSONS } from '../src/data/curriculum';
@@ -17,6 +21,7 @@ import {
   type SpeechVoice,
 } from '../src/services/speechClip';
 
+const allowMissing = process.argv.slice(2).includes('--allow-missing');
 const texts: string[] = [];
 
 for (const lesson of LEARNING_PATH_LESSONS) {
@@ -73,7 +78,13 @@ if (missing.length) {
   for (const item of missing.slice(0, 40)) console.error(`  - ${item}`);
   if (missing.length > 40) console.error(`  ... and ${missing.length - 40} more.`);
   console.error('[speech-check] Run `npm run speech:generate` and commit the new files.');
-  process.exitCode = 1;
+  if (allowMissing) {
+    console.warn(
+      `[speech-check] Continuing with ${missing.length} missing clips because --allow-missing is set; the device voice is the fallback.`,
+    );
+  } else {
+    process.exitCode = 1;
+  }
 }
 if (unsafeTtsTexts.length) {
   console.error('[speech-check] IPA notation would still be read as "slash":');

@@ -16,6 +16,22 @@ export interface PlacementQuestion {
 
 const unique = (items: string[]) => [...new Set(items.filter(Boolean))];
 
+/**
+ * Fill-in-the-blank quiz items ship without options because the lesson UI asks
+ * learners to type the answer. The placement test is multiple-choice only, so
+ * derive plausible options from the other fill answers in the same stage.
+ */
+const buildGrammarOptions = (correctAnswer: string, candidates: string[]): string[] => {
+  const distractors = unique(
+    candidates.filter((candidate) => candidate.toLowerCase() !== correctAnswer.toLowerCase()),
+  ).slice(0, 3);
+  const options = [correctAnswer, ...distractors];
+  if (options.length < 2) return [];
+  // Rotate deterministically so the correct answer does not always come first.
+  const offset = correctAnswer.length % options.length;
+  return [...options.slice(offset), ...options.slice(0, offset)];
+};
+
 export const buildPlacementQuestions = (lessons: Lesson[]): PlacementQuestion[] => {
   const questions: PlacementQuestion[] = [];
   for (const level of CURRICULUM_LEVELS) {
@@ -35,12 +51,25 @@ export const buildPlacementQuestions = (lessons: Lesson[]): PlacementQuestion[] 
 
     const grammarQuestion = fillBlank?.quiz.find((question) => question.type === 'fill_blank');
     if (grammarQuestion) {
-      questions.push({
-        id: `placement-${level.stage}-grammar`, stage: level.stage, skill: 'grammar',
-        promptAr: grammarQuestion.questionAr, promptEn: grammarQuestion.questionEn,
-        options: grammarQuestion.options, correctAnswer: grammarQuestion.correctAnswer,
-        explanationAr: grammarQuestion.explanationAr,
-      });
+      const grammarOptions = grammarQuestion.options.length >= 2
+        ? grammarQuestion.options
+        : buildGrammarOptions(
+            grammarQuestion.correctAnswer,
+            [
+              ...stageLessons.flatMap((lesson) => lesson.quiz),
+              ...lessons.flatMap((lesson) => lesson.quiz),
+            ]
+              .filter((question) => question.type === 'fill_blank')
+              .map((question) => question.correctAnswer),
+          );
+      if (grammarOptions.length >= 2) {
+        questions.push({
+          id: `placement-${level.stage}-grammar`, stage: level.stage, skill: 'grammar',
+          promptAr: grammarQuestion.questionAr, promptEn: grammarQuestion.questionEn,
+          options: grammarOptions, correctAnswer: grammarQuestion.correctAnswer,
+          explanationAr: grammarQuestion.explanationAr,
+        });
+      }
     }
 
     const readingLesson = stageLessons.find((lesson) => lesson.dialogue.length > 0);

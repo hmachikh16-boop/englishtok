@@ -8,6 +8,8 @@ import type {
   SceneType,
   VocabularyWord,
 } from '../types';
+import { EXPANSION_LESSONS } from './curriculumExpansion';
+import { buildExpansionLesson } from './expansion/buildExpansionLesson';
 
 /**
  * The four-level EnglishTok curriculum.
@@ -17,7 +19,7 @@ import type {
  * Level 3 (B2)      critical communication + idioms — Sarah & David
  * Level 4 (C1/C2)   full immersion + nuance + rhetoric — Dr. Arthur & Elena
  *
- * Each level has four lessons; every lesson carries `curriculumStage` so the
+ * Each level has fifty lessons; every lesson carries `curriculumStage` so the
  * learning path unlocks levels and lessons in order.
  */
 
@@ -905,4 +907,9 @@ const buildLesson = (spec: LessonSpec): Lesson => {
   };
 };
 
-export const CURRICULUM_LESSONS: Lesson[] = LESSON_SPECS.map(buildLesson);
+export const CURRICULUM_LESSONS: Lesson[] = [
+  ...LESSON_SPECS.map(buildLesson),
+  ...EXPANSION_LESSONS.map((spec) =>
+    buildExpansionLesson(spec, LEVEL_CHARACTERS[spec.stage]),
+  ),
+].sort((left, right) => (left.curriculumStage ?? 0) - (right.curriculumStage ?? 0));
