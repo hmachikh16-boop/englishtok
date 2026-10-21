@@ -127,7 +127,12 @@ export const GamePictureClue: React.FC<GamePictureClueProps> = ({
 
     <span className="games-picture-mascot" aria-hidden="true">
       <span className="games-picture-bubble">؟</span>
-      <span className="games-picture-panda">🐼</span>
+      <img
+        className="games-picture-panda"
+        src={twemojiUrl('🐼')}
+        alt=""
+        draggable={false}
+      />
     </span>
 
     {THEME_LABELS[category] && (

@@ -2553,8 +2553,10 @@ button.journey-frame-toggle svg { color: var(--duo-blue); }
 }
 .games-picture-panda {
   display: block;
-  font-size: 30px;
-  line-height: 1;
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+  user-select: none;
   filter: drop-shadow(0 2px 1px rgb(15 23 42 / 16%));
   transform: rotate(-4deg);
 }
