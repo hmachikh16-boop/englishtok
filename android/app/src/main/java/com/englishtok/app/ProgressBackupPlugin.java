@@ -5,7 +5,10 @@ import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
+import android.os.Environment;
 import android.provider.OpenableColumns;
+import android.provider.Settings;
 
 import androidx.activity.result.ActivityResult;
 
@@ -17,10 +20,13 @@ import com.getcapacitor.annotation.ActivityCallback;
 import com.getcapacitor.annotation.CapacitorPlugin;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Locale;
 
 /**
  * Saves and opens progress backups through Android's Storage Access Framework.
@@ -105,6 +111,126 @@ public class ProgressBackupPlugin extends Plugin {
         JSObject value = new JSObject();
         value.put("fileName", fileName);
         call.resolve(value);
+    }
+
+    /**
+     * Reports whether Android's "All files access" special permission is
+     * available and granted. Android 10 and older do not have this permission;
+     * those versions keep using the document picker.
+     */
+    @PluginMethod
+    public void getStorageAccessStatus(PluginCall call) {
+        boolean supported = Build.VERSION.SDK_INT >= Build.VERSION_CODES.R;
+        JSObject value = new JSObject();
+        value.put("supported", supported);
+        value.put("granted", supported && Environment.isExternalStorageManager());
+        value.put("androidVersion", Build.VERSION.SDK_INT);
+        call.resolve(value);
+    }
+
+    /**
+     * Opens the OS screen that grants all-files access. Android deliberately
+     * does not expose a runtime permission dialog for this setting.
+     */
+    @PluginMethod
+    public void requestAllFilesAccess(PluginCall call) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
+            call.reject("الوصول إلى جميع الملفات غير مطلوب في إصدار أندرويد هذا.", "UNSUPPORTED");
+            return;
+        }
+        if (Environment.isExternalStorageManager()) {
+            JSObject value = new JSObject();
+            value.put("granted", true);
+            value.put("opened", false);
+            call.resolve(value);
+            return;
+        }
+
+        getActivity().runOnUiThread(() -> {
+            try {
+                Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
+                intent.setData(Uri.parse("package:" + getContext().getPackageName()));
+                getActivity().startActivity(intent);
+                JSObject value = new JSObject();
+                value.put("granted", false);
+                value.put("opened", true);
+                call.resolve(value);
+            } catch (ActivityNotFoundException exception) {
+                try {
+                    Intent fallback = new Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
+                    getActivity().startActivity(fallback);
+                    JSObject value = new JSObject();
+                    value.put("granted", false);
+                    value.put("opened", true);
+                    call.resolve(value);
+                } catch (Exception fallbackError) {
+                    call.reject(
+                            "تعذر فتح إعدادات الوصول إلى الملفات: " + fallbackError.getMessage(),
+                            "SETTINGS_UNAVAILABLE"
+                    );
+                }
+            } catch (Exception exception) {
+                call.reject(
+                        "تعذر فتح إعدادات الوصول إلى الملفات: " + exception.getMessage(),
+                        "SETTINGS_UNAVAILABLE"
+                );
+            }
+        });
+    }
+
+    /**
+     * Writes a backup directly to Downloads/EnglishTok when the learner has
+     * granted all-files access. If the permission is absent, the JS layer calls
+     * {@link #save(PluginCall)} instead so the system picker stays the fallback.
+     */
+    @PluginMethod
+    public void saveToDownloads(PluginCall call) {
+        final String content = call.getString("content");
+        final String fileName = safeFileName(call.getString("fileName", "englishtok-progress.json"));
+        if (content == null || content.isEmpty()) {
+            call.reject("محتوى النسخة الاحتياطية غير متوفر.");
+            return;
+        }
+        if (content.getBytes(StandardCharsets.UTF_8).length > MAX_BACKUP_BYTES) {
+            call.reject("حجم النسخة الاحتياطية أكبر من الحد المسموح.");
+            return;
+        }
+        if (!hasAllFilesAccess()) {
+            call.reject("لم تُمنح صلاحية الوصول إلى جميع الملفات.", "PERMISSION_DENIED");
+            return;
+        }
+
+        try {
+            File downloads = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+            File directory = new File(downloads, "EnglishTok");
+            if (!directory.exists() && !directory.mkdirs()) {
+                throw new IOException("could not create the EnglishTok folder");
+            }
+            File target = new File(directory, fileName);
+            try (FileOutputStream output = new FileOutputStream(target)) {
+                output.write(content.getBytes(StandardCharsets.UTF_8));
+                output.flush();
+            }
+            JSObject value = new JSObject();
+            value.put("fileName", fileName);
+            value.put("filePath", target.getAbsolutePath());
+            call.resolve(value);
+        } catch (Exception exception) {
+            call.reject("تعذر حفظ الملف في مجلد التنزيلات: " + exception.getMessage(), "SAVE_FAILED");
+        }
+    }
+
+    private boolean hasAllFilesAccess() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.R
+                && Environment.isExternalStorageManager();
+    }
+
+    private String safeFileName(String rawName) {
+        String safe = rawName == null ? "" : rawName.trim().replaceAll("[^A-Za-z0-9._-]", "_");
+        if (safe.isEmpty()) safe = "englishtok-progress.json";
+        if (safe.length() > 120) safe = safe.substring(0, 120);
+        if (!safe.toLowerCase(Locale.US).endsWith(".json")) safe += ".json";
+        return safe;
     }
 
     @PluginMethod
