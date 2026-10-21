@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024" role="img" aria-label="EnglishTok round app icon">
+  <defs>
+    <linearGradient id="icon-bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#67D91B"/>
+      <stop offset="0.52" stop-color="#58CC02"/>
+      <stop offset="1" stop-color="#46A900"/>
+    </linearGradient>
+    <linearGradient id="icon-gloss" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.18"/>
+      <stop offset="0.46" stop-color="#FFFFFF" stop-opacity="0.035"/>
+      <stop offset="1" stop-color="#1B5E00" stop-opacity="0.10"/>
+    </linearGradient>
+    <filter id="icon-shadow" x="-25%" y="-25%" width="150%" height="150%">
+      <feDropShadow dx="0" dy="22" stdDeviation="22" flood-color="#2B7300" flood-opacity="0.30"/>
+    </filter>
+  </defs>
+
+  <circle cx="512" cy="508" r="464" fill="url(#icon-bg)" filter="url(#icon-shadow)"/>
+  <circle cx="512" cy="508" r="464" fill="url(#icon-gloss)"/>
+  <circle cx="512" cy="508" r="448" fill="none" stroke="#FFFFFF" stroke-opacity="0.16" stroke-width="8"/>
+
+  <g fill="none" stroke="#FFFFFF" stroke-width="58" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M512 366C470 330 408 310 344 310C316 310 296 330 296 358V648C296 676 316 696 344 696C408 696 470 716 512 752"/>
+    <path d="M512 366C554 330 616 310 680 310C708 310 728 330 728 358V648C728 676 708 696 680 696C616 696 554 716 512 752"/>
+    <path d="M512 366V752"/>
+  </g>
+</svg>
