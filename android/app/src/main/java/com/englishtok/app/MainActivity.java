@@ -10,6 +10,7 @@ public class MainActivity extends BridgeActivity {
     public void onCreate(Bundle savedInstanceState) {
         registerPlugin(ApkUpdaterPlugin.class);
         registerPlugin(SpeechRecognitionPlugin.class);
+        registerPlugin(ProgressBackupPlugin.class);
         super.onCreate(savedInstanceState);
 
         // Lesson audio is bundled with the app. Do not let WebView reject play()

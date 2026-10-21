@@ -21,6 +21,7 @@ import {
   KeyRound,
   Upload,
   GraduationCap,
+  Save,
 } from 'lucide-react';
 import { App } from '@capacitor/app';
 import { Capacitor } from '@capacitor/core';
@@ -37,6 +38,10 @@ import {
   saveCloudProgressBackup,
   type ProgressBackup,
 } from '../../services/storageService';
+import {
+  isProgressFileCancellation,
+  saveProgressBackupFile,
+} from '../../services/progressFileService';
 
 interface SettingsTabProps {
   userProfile: UserProfile;
@@ -83,27 +88,47 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
       });
   }, []);
 
+  const saveBackupFile = async (backup: ProgressBackup): Promise<string> => {
+    try {
+      const destination = await saveProgressBackupFile(
+        `englishtok-progress-${backup.code}.json`,
+        JSON.stringify(backup, null, 2),
+      );
+      return destination === 'native'
+        ? 'تم حفظ ملف النسخة في المكان الذي اخترته.'
+        : 'تم تنزيل ملف النسخة الاحتياطية.';
+    } catch (error) {
+      if (isProgressFileCancellation(error)) {
+        return 'لم تحفظ نسخة خارجية؛ التقدم ما زال محفوظًا داخل التطبيق.';
+      }
+      return `تعذر حفظ ملف النسخة الخارجية: ${error instanceof Error ? error.message : 'خطأ غير معروف.'}`;
+    }
+  };
+
   const handleCreateProgressBackup = async () => {
     try {
       const backup = createProgressBackup(userProfile);
       setCreatedBackup(backup);
       setProgressCode(backup.code);
-      const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const anchor = document.createElement('a');
-      anchor.href = url;
-      anchor.download = `englishtok-progress-${backup.code}.json`;
-      anchor.click();
-      window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+
+      // Ask for the destination first, while the button tap is still a fresh
+      // user gesture. Android's document picker then grants access to exactly
+      // the chosen file, with no broad storage permission.
+      const fileMessage = await saveBackupFile(backup);
       try {
         await saveCloudProgressBackup(backup);
-        setBackupMessage('تم حفظ التقدم في التخزين السحابي ويمكن استعادته على جهاز آخر بالرمز وحده خلال 90 يومًا. احتفظ بالملف أيضًا كنسخة إضافية.');
+        setBackupMessage(`${fileMessage} تم حفظ التقدم في التخزين السحابي أيضًا ويمكن استعادته بالرمز وحده خلال 90 يومًا.`);
       } catch (error) {
-        setBackupMessage(`تم إنشاء نسخة محلية وتنزيل ملفها، لكن لم تُرفع للسحابة؛ لن يعمل الرمز وحده على جهاز آخر. ${error instanceof Error ? error.message : ''}`);
+        setBackupMessage(`${fileMessage} لم تُرفع النسخة للسحابة؛ لن يعمل الرمز وحده على جهاز آخر. ${error instanceof Error ? error.message : ''}`);
       }
     } catch (error) {
       setBackupMessage(error instanceof Error ? error.message : 'تعذر إنشاء النسخة الاحتياطية.');
     }
+  };
+
+  const handleSaveCreatedBackupFile = async () => {
+    if (!createdBackup) return;
+    setBackupMessage(await saveBackupFile(createdBackup));
   };
 
   const handleCopyProgressCode = async () => {
@@ -544,12 +569,16 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
               حفظ واستعادة التقدم
             </h3>
             <p className="mt-2 text-xs leading-relaxed text-slate-300">
-              ينشئ الرمز نسخة من تقدمك. عند إعداد التخزين السحابي للموقع يمكنك إدخاله وحده على جهاز آخر؛ وإلا يلزم نقل ملف JSON يدويًا. الرمز معرّف قصير وليس كلمة مرور أو وسيلة حماية.
+              تقدمك يُحفظ تلقائيًا داخل مساحة التطبيق، ولا يحتاج صلاحية ملفات. ينشئ الزر نسخة إضافية ويحفظها عبر منتقي ملفات أندرويد في المكان الذي تختاره مثل Downloads أو Google Drive، دون منح التطبيق وصولًا إلى كل الملفات. عند إعداد التخزين السحابي يمكنك استعادتها بالرمز وحده على جهاز آخر.
             </p>
             <button type="button" onClick={handleCreateProgressBackup} className="mt-3 inline-flex min-h-10 items-center justify-center gap-2 rounded-xl bg-sky-400 px-4 py-2 text-xs font-black text-slate-950 transition hover:bg-sky-300 active:scale-[.98]">
               <Download className="h-4 w-4" />
-              إنشاء نسخة ورمز جديد
+              إنشاء نسخة وحفظ ملف
             </button>
+            <p className="mt-2 flex items-start gap-2 text-[11px] leading-relaxed text-emerald-200/80">
+              <ShieldCheck className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+              لا تمنح هذه العملية التطبيق وصولًا دائمًا لكل الملفات؛ أنت تختار ملفًا واحدًا فقط.
+            </p>
             {createdBackup && (
               <div className="mt-3 rounded-xl border border-sky-400/30 bg-slate-950/70 p-3">
                 <p className="text-[11px] text-slate-400">رمز النسخة</p>
@@ -557,6 +586,9 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
                   <code dir="ltr" className="rounded-lg bg-slate-900 px-3 py-1.5 font-mono text-lg font-black tracking-[.22em] text-sky-200">{createdBackup.code}</code>
                   <button type="button" onClick={() => void handleCopyProgressCode()} className="inline-flex min-h-9 items-center gap-1.5 rounded-lg border border-slate-700 px-3 text-xs font-bold text-slate-200 hover:bg-slate-800">
                     <Copy className="h-3.5 w-3.5" /> نسخ الرمز
+                  </button>
+                  <button type="button" onClick={() => void handleSaveCreatedBackupFile()} className="inline-flex min-h-9 items-center gap-1.5 rounded-lg border border-sky-400/40 bg-sky-500/10 px-3 text-xs font-bold text-sky-200 hover:bg-sky-500/20">
+                    <Save className="h-3.5 w-3.5" /> حفظ الملف
                   </button>
                 </div>
                 <p className="mt-2 text-[11px] text-slate-400">احفظ الرمز وملف <bdi dir="ltr">englishtok-progress-{createdBackup.code}.json</bdi> في مكان آمن.</p>
