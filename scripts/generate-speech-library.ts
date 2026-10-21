@@ -3,8 +3,11 @@
  * voice, written to public/audio/tts/<voice>/<hash>.ogg.
  *
  * Usage:
- *   npx tsx scripts/generate-speech-library.ts            # every dialogue line
- *   npx tsx scripts/generate-speech-library.ts --limit 40 # quick sample
+ *   npx tsx scripts/generate-speech-library.ts                 # every lesson
+ *   npx tsx scripts/generate-speech-library.ts --stage 1       # one 50-lesson stage
+ *   npx tsx scripts/generate-speech-library.ts --lessons 1-50  # an arbitrary slice
+ *   npx tsx scripts/generate-speech-library.ts --stage 1 --voice af_heart
+ *   npx tsx scripts/generate-speech-library.ts --limit 40      # quick sample
  *
  * Existing clips are skipped, so the script can be stopped and resumed.
  * FFMPEG_PATH may point at any ffmpeg build that includes libopus.
@@ -13,7 +16,7 @@ import { execFileSync } from 'node:child_process';
 import { existsSync, mkdirSync, statSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { KokoroTTS } from 'kokoro-js';
-import { LEARNING_PATH_LESSONS } from '../src/data/curriculum';
+import type { Lesson } from '../src/types';
 import {
   normalizeSpeechText,
   resolveSpeechLanguage,
@@ -22,6 +25,7 @@ import {
   voiceFor,
   type SpeechVoice,
 } from '../src/services/speechClip';
+import { parseSpeechSelection } from './speechSelection';
 
 const FFMPEG =
   process.env.FFMPEG_PATH ||
@@ -32,6 +36,16 @@ const LIMIT = (() => {
   if (index === -1) return Number.POSITIVE_INFINITY;
   const value = Number.parseInt(process.argv[index + 1] || '', 10);
   return Number.isFinite(value) && value > 0 ? value : Number.POSITIVE_INFINITY;
+})();
+
+const VOICE = (() => {
+  const index = process.argv.indexOf('--voice');
+  if (index === -1) return null;
+  const value = process.argv[index + 1];
+  if (value !== 'af_heart' && value !== 'am_michael') {
+    throw new Error('--voice must be af_heart or am_michael.');
+  }
+  return value as SpeechVoice;
 })();
 
 interface ClipJob {
@@ -47,8 +61,7 @@ const VOICE_PRIORITY: Record<SpeechVoice, number> = {
   ff_siwis: 2,
 };
 
-const collectJobs = (): ClipJob[] => {
-  const lessons = LEARNING_PATH_LESSONS;
+const collectJobs = (lessons: Lesson[]): ClipJob[] => {
   const jobs = new Map<string, ClipJob>();
 
   const addText = (rawText: string | undefined) => {
@@ -128,13 +141,17 @@ const formatDuration = (seconds: number) => {
 };
 
 async function main() {
+  const selection = parseSpeechSelection();
   console.log(`[speech-library] ffmpeg: ${FFMPEG}`);
   console.log(`[speech-library] bitrate: ${BITRATE}`);
+  console.log(
+    `[speech-library] scope: ${selection.label}${VOICE ? `, voice: ${VOICE}` : ', both English voices'}.`
+  );
 
-  const all = collectJobs();
+  const all = collectJobs(selection.lessons).filter((job) => !VOICE || job.voice === VOICE);
   const pending = all.filter((job) => !existsSync(job.target)).slice(0, LIMIT);
   console.log(
-    `[speech-library] ${all.length} unique clips in the library, ${pending.length} still to generate.`
+    `[speech-library] ${all.length} unique clips in scope, ${pending.length} still to generate.`
   );
   if (!pending.length) {
     console.log('[speech-library] Nothing to do.');

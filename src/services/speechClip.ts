@@ -74,7 +74,11 @@ const IPA_SOUND_LABELS: Record<string, string> = {
 
 export const speechTextForTts = (text: string): string => {
   const withExamples = text.replace(/,\s*\/([^/]{1,24})\/,\s*/g, ' as in ');
+  // Fill-in-the-blank prompts show underscores on screen. The phonemizer drops
+  // them, which would make "My ___ is tall" sound like "My is tall"; say the
+  // word "blank" instead. The clip file name still hashes the displayed text.
   return withExamples
+    .replace(/_{2,}/g, ' blank ')
     .replace(/\s*\/([^/]{1,24})\/\s*/g, (_match, rawIpa: string) => {
       const label = rawIpa.replace(/[ˈˌː]/g, '').trim();
       return ` the ${IPA_SOUND_LABELS[label] ?? label} sound `;
@@ -103,7 +107,7 @@ export const speechClipHash = (text: string): string => {
  * Bump this whenever the audio library is regenerated so phones and browsers
  * cannot keep serving an older clip from their HTTP cache for the same text.
  */
-export const SPEECH_LIBRARY_VERSION = '3';
+export const SPEECH_LIBRARY_VERSION = '4';
 
 /** Public URL of the bundled clip for a line, or null when it is not speakable. */
 export const speechClipUrl = (

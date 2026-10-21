@@ -9,9 +9,10 @@
  * Missing clips fail the check by default. Pass `--allow-missing` during the
  * temporary period when expanded lessons rely on the device voice; unsafe TTS
  * text is still a hard failure.
+ *
+ * Use `--stage 1` or `--lessons 1-50` to check one publishing batch at a time.
  */
 import { existsSync, statSync } from 'node:fs';
-import { LEARNING_PATH_LESSONS } from '../src/data/curriculum';
 import {
   normalizeSpeechText,
   resolveSpeechLanguage,
@@ -20,11 +21,13 @@ import {
   voiceFor,
   type SpeechVoice,
 } from '../src/services/speechClip';
+import { parseSpeechSelection } from './speechSelection';
 
 const allowMissing = process.argv.slice(2).includes('--allow-missing');
+const selection = parseSpeechSelection();
 const texts: string[] = [];
 
-for (const lesson of LEARNING_PATH_LESSONS) {
+for (const lesson of selection.lessons) {
   for (const line of lesson.dialogue ?? []) texts.push(line.textEn);
   for (const word of lesson.vocabulary ?? []) {
     texts.push(word.word);
@@ -74,10 +77,14 @@ for (const [key, { voice, text }] of required) {
 const checked = required.size;
 
 if (missing.length) {
-  console.error(`[speech-check] Missing ${missing.length} of ${checked} bundled clips:`);
+  console.error(
+    `[speech-check] ${selection.label}: missing ${missing.length} of ${checked} bundled clips:`
+  );
   for (const item of missing.slice(0, 40)) console.error(`  - ${item}`);
   if (missing.length > 40) console.error(`  ... and ${missing.length - 40} more.`);
-  console.error('[speech-check] Run `npm run speech:generate` and commit the new files.');
+  console.error(
+    '[speech-check] Run `npm run speech:generate -- --stage 1` (or --lessons 1-50) and commit the new files.'
+  );
   if (allowMissing) {
     console.warn(
       `[speech-check] Continuing with ${missing.length} missing clips because --allow-missing is set; the device voice is the fallback.`,
@@ -92,5 +99,7 @@ if (unsafeTtsTexts.length) {
   process.exitCode = 1;
 }
 if (!missing.length && !unsafeTtsTexts.length) {
-  console.log(`[speech-check] All ${checked} bundled clips are present and TTS-safe.`);
+  console.log(
+    `[speech-check] ${selection.label}: all ${checked} bundled clips are present and TTS-safe.`
+  );
 }
