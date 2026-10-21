@@ -19,10 +19,4 @@
             </gradient>
         </aapt:attr>
     </path>
-    <path
-        android:fillColor="#12FFFFFF"
-        android:pathData="M0,0h108v54h-108z" />
-    <path
-        android:fillColor="#0D1B5E00"
-        android:pathData="M0,54h108v54h-108z" />
 </vector>
