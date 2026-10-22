@@ -13,7 +13,7 @@ import { getStoredProfile, saveProfile } from './services/storageService';
 import { resetGameProgress } from './services/gameProgressService';
 import { fetchLatestLearningPath, getCachedLearningPath } from './services/contentService';
 import { checkForAppUpdate, type AppUpdateManifest } from './services/appUpdateService';
-import { downloadAndInstallAppUpdate } from './services/apkInstaller';
+import { openAppUpdateDownload } from './services/appUpdateLauncher';
 import {
   SPEECH_STATUS_EVENT,
   SPEECH_UNAVAILABLE_EVENT,
@@ -48,7 +48,8 @@ export default function App() {
   const speechNoticeTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [availableAppUpdate, setAvailableAppUpdate] = useState<AppUpdateManifest | null>(null);
   const [updateDownloadError, setUpdateDownloadError] = useState<string | null>(null);
-  const [updateDownloadPercent, setUpdateDownloadPercent] = useState<number | null>(null);
+  const [updateOpenMessage, setUpdateOpenMessage] = useState<string | null>(null);
+  const [isOpeningAppUpdate, setIsOpeningAppUpdate] = useState(false);
   const notificationTop = activeTab === 'lesson'
     ? 'calc(env(safe-area-inset-top, 0px) + 12px)'
     : isPhoneFrameView
@@ -79,21 +80,25 @@ export default function App() {
     };
   }, []);
 
-  const handleDownloadAppUpdate = async () => {
+  const handleOpenAppUpdate = async () => {
     if (!availableAppUpdate) return;
     setUpdateDownloadError(null);
-    setUpdateDownloadPercent(0);
+    setUpdateOpenMessage(null);
+    setIsOpeningAppUpdate(true);
     try {
-      await downloadAndInstallAppUpdate(availableAppUpdate, setUpdateDownloadPercent);
+      await openAppUpdateDownload(availableAppUpdate);
+      setUpdateOpenMessage(
+        'فُتح رابط التنزيل في المتصفح. بعد اكتمال التنزيل، افتح ملف APK ووافق على التثبيت.',
+      );
     } catch (error) {
-      console.error('Failed to install the EnglishTok update:', error);
+      console.error('Failed to open the EnglishTok update download:', error);
       setUpdateDownloadError(
         error instanceof Error
           ? error.message
-          : 'تعذر تنزيل التحديث. تحقق من اتصال الإنترنت وحاول مرة أخرى.',
+          : 'تعذر فتح رابط التحديث. تحقق من اتصال الإنترنت وحاول مرة أخرى.',
       );
     } finally {
-      setUpdateDownloadPercent(null);
+      setIsOpeningAppUpdate(false);
     }
   };
 
@@ -282,31 +287,31 @@ export default function App() {
                 {updateDownloadError}
               </p>
             )}
+            {updateOpenMessage && (
+              <p role="status" className="mt-2 text-xs text-emerald-300">
+                {updateOpenMessage}
+              </p>
+            )}
             <button
               type="button"
-              onClick={handleDownloadAppUpdate}
-              disabled={updateDownloadPercent !== null}
+              onClick={handleOpenAppUpdate}
+              disabled={isOpeningAppUpdate}
               className="mt-3 rounded-lg bg-emerald-400 px-3 py-2 text-xs font-bold text-slate-950 hover:bg-emerald-300 disabled:cursor-wait disabled:opacity-70"
             >
-              {updateDownloadPercent !== null
-                ? `جارٍ التنزيل… ${updateDownloadPercent}%`
-                : 'تنزيل وتثبيت التحديث'}
+              {isOpeningAppUpdate ? 'جارٍ فتح المتصفح…' : 'فتح رابط تنزيل التحديث'}
             </button>
-            {updateDownloadPercent !== null && (
-              <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-slate-800">
-                <div
-                  className="h-full rounded-full bg-emerald-400 transition-[width]"
-                  style={{ width: `${updateDownloadPercent}%` }}
-                />
-              </div>
-            )}
             <p className="mt-2 text-[10px] text-slate-400">
-              يُنزّل التطبيق الملف بنفسه مع عرض التقدّم، ثم يفتح مثبّت Android لمراجعة التوقيع وطلب موافقتك.
+              سيفتح المتصفح صفحة التنزيل الرسمية. بعد اكتمال التنزيل، اضغط على ملف APK ووافق على التثبيت؛
+              يتحقق Android من التوقيع والتوافق قبل التثبيت.
             </p>
           </div>
           <button
             type="button"
-            onClick={() => setAvailableAppUpdate(null)}
+            onClick={() => {
+              setAvailableAppUpdate(null);
+              setUpdateDownloadError(null);
+              setUpdateOpenMessage(null);
+            }}
             className="shrink-0 rounded-lg px-2 py-1 text-xs font-bold text-slate-300 hover:bg-slate-800"
             aria-label="إغلاق إشعار التحديث"
           >

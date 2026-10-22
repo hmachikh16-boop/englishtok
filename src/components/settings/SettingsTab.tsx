@@ -8,7 +8,6 @@ import {
   Check, 
   Copy, 
   HelpCircle,
-  ExternalLink,
   ShieldCheck,
   Zap,
   Download,
@@ -28,7 +27,7 @@ import { Capacitor } from '@capacitor/core';
 import { UserProfile, UserSettings } from '../../types';
 import { speechService } from '../../services/speechService';
 import { checkForAppUpdate, type AppUpdateManifest } from '../../services/appUpdateService';
-import { downloadAndInstallAppUpdate } from '../../services/apkInstaller';
+import { openAppUpdateDownload } from '../../services/appUpdateLauncher';
 import {
   createProgressBackup,
   getLocalProgressBackup,
@@ -39,12 +38,8 @@ import {
   type ProgressBackup,
 } from '../../services/storageService';
 import {
-  getStorageAccessStatus,
-  isNativeProgressFilePickerAvailable,
   isProgressFileCancellation,
-  requestAllFilesAccess,
   saveProgressBackupFile,
-  type StorageAccessStatus,
 } from '../../services/progressFileService';
 
 interface SettingsTabProps {
@@ -72,15 +67,13 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
   const [isCheckingUpdate, setIsCheckingUpdate] = useState(false);
   const [availableUpdate, setAvailableUpdate] = useState<AppUpdateManifest | null>(null);
   const [updateMessage, setUpdateMessage] = useState<string | null>(null);
-  const [downloadPercent, setDownloadPercent] = useState<number | null>(null);
+  const [isOpeningUpdate, setIsOpeningUpdate] = useState(false);
   const [isRefreshingContent, setIsRefreshingContent] = useState(false);
   const [contentMessage, setContentMessage] = useState<string | null>(null);
   const [progressCode, setProgressCode] = useState('');
   const [createdBackup, setCreatedBackup] = useState<ProgressBackup | null>(null);
   const [backupFile, setBackupFile] = useState<File | null>(null);
   const [backupMessage, setBackupMessage] = useState<string | null>(null);
-  const [storageAccess, setStorageAccess] = useState<StorageAccessStatus | null>(null);
-  const [storageMessage, setStorageMessage] = useState<string | null>(null);
   const [isUpdatingAll, setIsUpdatingAll] = useState(false);
   const [updateAllMessage, setUpdateAllMessage] = useState<string | null>(null);
   const [appVersion, setAppVersion] = useState<string | null>(null);
@@ -94,70 +87,12 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
       });
   }, []);
 
-  useEffect(() => {
-    if (!isNativeProgressFilePickerAvailable()) return;
-    let active = true;
-    let removeListener: (() => Promise<void>) | null = null;
-
-    const refresh = () => {
-      void getStorageAccessStatus()
-        .then((status) => {
-          if (active) setStorageAccess(status);
-        })
-        .catch(() => {
-          if (active) {
-            setStorageAccess({ supported: false, granted: false, androidVersion: 0 });
-          }
-        });
-    };
-
-    refresh();
-    void App.addListener('appStateChange', ({ isActive }) => {
-      if (isActive) refresh();
-    }).then((handle) => {
-      if (!active) {
-        void handle.remove();
-        return;
-      }
-      removeListener = () => handle.remove();
-    });
-
-    return () => {
-      active = false;
-      if (removeListener) void removeListener();
-    };
-  }, []);
-
-  const handleRequestStorageAccess = async () => {
-    setStorageMessage(null);
-    try {
-      const result = await requestAllFilesAccess();
-      if (result.granted) {
-        setStorageAccess((current) => ({
-          supported: current?.supported ?? true,
-          granted: true,
-          androidVersion: current?.androidVersion ?? 0,
-        }));
-        setStorageMessage('تم منح صلاحية الوصول إلى جميع الملفات. ستُحفظ النسخ الجديدة مباشرة في Downloads/EnglishTok.');
-      } else if (result.opened) {
-        setStorageMessage('افتح الإعدادات، اختر EnglishTok، ثم فعّل «السماح بإدارة جميع الملفات» وعد إلى التطبيق.');
-      }
-    } catch (error) {
-      setStorageMessage(
-        error instanceof Error ? error.message : 'تعذر فتح إعدادات صلاحية الملفات.',
-      );
-    }
-  };
-
   const saveBackupFile = async (backup: ProgressBackup): Promise<string> => {
     try {
       const destination = await saveProgressBackupFile(
         `englishtok-progress-${backup.code}.json`,
         JSON.stringify(backup, null, 2),
       );
-      if (destination === 'downloads') {
-        return 'تم حفظ ملف النسخة مباشرة في مجلد Downloads/EnglishTok.';
-      }
       return destination === 'native'
         ? 'تم حفظ ملف النسخة في المكان الذي اخترته.'
         : 'تم تنزيل ملف النسخة الاحتياطية.';
@@ -305,19 +240,22 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
     }
   };
 
-  const handleDownloadUpdate = async () => {
+  const handleOpenUpdate = async () => {
     if (!availableUpdate) return;
-    setDownloadPercent(0);
+    setIsOpeningUpdate(true);
+    setUpdateMessage(null);
     try {
-      await downloadAndInstallAppUpdate(availableUpdate, setDownloadPercent);
-      setUpdateMessage('اكتمل التنزيل؛ أكمل التثبيت من نافذة النظام.');
-    } catch (error) {
-      console.error('Failed to install the EnglishTok update:', error);
+      await openAppUpdateDownload(availableUpdate);
       setUpdateMessage(
-        error instanceof Error ? error.message : 'تعذر تنزيل التحديث. حاول مرة أخرى.',
+        'فُتح رابط التنزيل في المتصفح. بعد اكتمال التنزيل، افتح ملف APK ووافق على التثبيت.',
+      );
+    } catch (error) {
+      console.error('Failed to open the EnglishTok update download:', error);
+      setUpdateMessage(
+        error instanceof Error ? error.message : 'تعذر فتح رابط التحديث. حاول مرة أخرى.',
       );
     } finally {
-      setDownloadPercent(null);
+      setIsOpeningUpdate(false);
     }
   };
 
@@ -482,15 +420,19 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
                         {availableUpdate.notes || 'لا توجد ملاحظات إصدار إضافية.'}
                       </p>
                       <p className="mt-2 text-slate-400">
-                        بعد التنزيل يتحقق Android من التوقيع والتوافق ويطلب موافقتك قبل التثبيت.
+                        سيفتح المتصفح صفحة التنزيل الرسمية. بعد اكتمال التنزيل، اضغط على ملف APK
+                        ووافق على التثبيت؛ يتحقق Android من التوقيع والتوافق.
                       </p>
                       <button
                         type="button"
-                        onClick={handleDownloadUpdate}
-                        className="mt-3 flex min-h-10 items-center justify-center gap-2 rounded-xl bg-emerald-500 px-4 py-2 font-bold text-slate-950 transition-colors hover:bg-emerald-400"
+                        onClick={handleOpenUpdate}
+                        disabled={isOpeningUpdate}
+                        className="mt-3 flex min-h-10 items-center justify-center gap-2 rounded-xl bg-emerald-500 px-4 py-2 font-bold text-slate-950 transition-colors hover:bg-emerald-400 disabled:cursor-wait disabled:opacity-70"
                       >
                         <Download className="h-4 w-4" />
-                        تنزيل إصدار {availableUpdate.version}
+                        {isOpeningUpdate
+                          ? 'جارٍ فتح المتصفح…'
+                          : `فتح رابط تنزيل ${availableUpdate.version}`}
                       </button>
                     </>
                   )}
@@ -673,53 +615,6 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
             {backupMessage && <p role="status" className="mt-3 rounded-xl bg-slate-950/70 p-3 text-xs leading-relaxed text-slate-200">{backupMessage}</p>}
           </section>
 
-          {isNativeProgressFilePickerAvailable() && storageAccess && (
-            <section className="rounded-2xl border border-amber-500/25 bg-gradient-to-br from-slate-900 to-amber-950/20 p-4 shadow-lg" aria-labelledby="file-access-title">
-              <h3 id="file-access-title" className="flex items-center gap-2 text-sm font-black text-white">
-                <ShieldCheck className="h-4 w-4 text-amber-300" />
-                الوصول إلى الملفات
-              </h3>
-              <p className="mt-2 text-xs leading-relaxed text-slate-300">
-                تقدمك محفوظ دائمًا داخل التطبيق. عند منح صلاحية «الوصول إلى جميع الملفات» تُحفظ النسخ الاحتياطية الجديدة مباشرة في مجلد <bdi dir="ltr">Downloads/EnglishTok</bdi> بدل اختيار مكان لكل نسخة.
-              </p>
-              <div className="mt-3 flex flex-wrap items-center gap-2">
-                <span className={`rounded-full border px-2.5 py-1 text-[11px] font-bold ${
-                  storageAccess.granted
-                    ? 'border-emerald-500/30 bg-emerald-500/15 text-emerald-300'
-                    : storageAccess.supported
-                      ? 'border-amber-500/30 bg-amber-500/15 text-amber-300'
-                      : 'border-slate-700 bg-slate-800/70 text-slate-300'
-                }`}>
-                  {storageAccess.granted
-                    ? 'الصلاحية ممنوحة'
-                    : storageAccess.supported
-                      ? 'الصلاحية غير ممنوحة'
-                      : 'غير مطلوبة في إصدار أندرويد هذا'}
-                </span>
-                {storageAccess.supported && !storageAccess.granted && (
-                  <button
-                    type="button"
-                    onClick={() => void handleRequestStorageAccess()}
-                    className="inline-flex min-h-9 items-center justify-center gap-2 rounded-xl border border-amber-400/40 bg-amber-500/15 px-3 text-xs font-black text-amber-200 transition hover:bg-amber-500/25"
-                  >
-                    <ExternalLink className="h-3.5 w-3.5" />
-                    فتح إعدادات الصلاحية
-                  </button>
-                )}
-              </div>
-              {storageAccess.supported && !storageAccess.granted && (
-                <p className="mt-2 text-[11px] leading-relaxed text-slate-400">
-                  ستنتقل إلى شاشة أندرويد؛ اختر EnglishTok ثم فعّل «السماح بإدارة جميع الملفات». هذه صلاحية واسعة واختيارية.
-                </p>
-              )}
-              {storageMessage && (
-                <p role="status" className="mt-3 rounded-xl bg-slate-950/70 p-3 text-xs leading-relaxed text-slate-200">
-                  {storageMessage}
-                </p>
-              )}
-            </section>
-          )}
-
           {/* Danger zone / Reset */}
           <div className="bg-slate-900 border border-rose-900/40 rounded-2xl p-4 flex flex-col gap-3 shadow-lg">
             <h3 className="text-xs font-bold text-rose-400 flex items-center gap-2">
@@ -809,7 +704,10 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
               <h3 className="text-xs font-bold text-white">تحديث إصدار التطبيق</h3>
             </div>
             <p className="text-[11px] leading-relaxed text-slate-400">
-              يتحقق التطبيق من آخر إصدار منشور في مستودع GitHub الموثوق، ويعرض ملاحظات الإصدار ورقم الحزمة والبصمة المنشورة. يُنزّل التطبيق ملف APK بنفسه مع عرض التقدّم، ثم يتحقق من بصمة SHA-256 ويفتح مثبّت Android لمراجعة التوقيع وطلب موافقتك.
+              يتحقق التطبيق من آخر إصدار منشور في مستودع GitHub الموثوق، ويعرض ملاحظات الإصدار
+              وبصمة SHA-256 المنشورة. يفتح زر التحديث رابط APK الرسمي في المتصفح؛ يتولى المتصفح
+              التنزيل، ثم يتحقق Android من التوقيع والتوافق ويطلب موافقتك قبل التثبيت. لا يطلب
+              EnglishTok صلاحية تثبيت التطبيقات ولا صلاحية الوصول إلى جميع الملفات.
             </p>
             <button
               type="button"
@@ -850,27 +748,17 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
                       </p>
                       <p className="mt-2 text-slate-400">
                         يتطلب Android SDK API {availableUpdate.minimumAndroidSdk} أو أحدث.
-                        لن يبدأ التثبيت دون موافقتك.
+                        سيفتح المتصفح صفحة التنزيل؛ لن يبدأ التثبيت دون موافقتك.
                       </p>
                       <button
                         type="button"
-                        onClick={handleDownloadUpdate}
-                        disabled={downloadPercent !== null}
+                        onClick={handleOpenUpdate}
+                        disabled={isOpeningUpdate}
                         className="mt-3 flex min-h-10 items-center justify-center gap-2 rounded-xl bg-emerald-500 px-4 py-2 font-bold text-slate-950 transition-colors hover:bg-emerald-400 disabled:cursor-wait disabled:opacity-70"
                       >
                         <Download className="h-4 w-4" />
-                        {downloadPercent !== null
-                          ? `جارٍ التنزيل… ${downloadPercent}%`
-                          : 'تنزيل وتثبيت تحديث Android'}
+                        {isOpeningUpdate ? 'جارٍ فتح المتصفح…' : 'فتح رابط تنزيل تحديث Android'}
                       </button>
-                      {downloadPercent !== null && (
-                        <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-slate-800">
-                          <div
-                            className="h-full rounded-full bg-emerald-400 transition-[width]"
-                            style={{ width: `${downloadPercent}%` }}
-                          />
-                        </div>
-                      )}
                     </>
                   )}
                 </div>

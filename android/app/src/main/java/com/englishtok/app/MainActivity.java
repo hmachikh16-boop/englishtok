@@ -8,7 +8,6 @@ public class MainActivity extends BridgeActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        registerPlugin(ApkUpdaterPlugin.class);
         registerPlugin(SpeechRecognitionPlugin.class);
         registerPlugin(TextToSpeechPlugin.class);
         registerPlugin(ProgressBackupPlugin.class);

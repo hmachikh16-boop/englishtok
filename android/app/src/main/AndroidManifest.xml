@@ -1,32 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <!--
+        EnglishTok keeps lesson audio and learner progress inside its private
+        storage. Progress backups use the Storage Access Framework (the user
+        picks one file), and app updates open in the browser. As a result the
+        app does not request storage, all-files, or package-install permissions.
+    -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
-    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
-
-    <!--
-        Lesson content and downloaded updates live in the app's private cache,
-        so modern Android does not require storage access for them. These
-        legacy permissions keep shared-file access working on Android 10 and
-        older without requesting broad "all files" access on newer devices.
-    -->
-    <uses-permission
-        android:name="android.permission.READ_EXTERNAL_STORAGE"
-        android:maxSdkVersion="32" />
-    <uses-permission
-        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-        android:maxSdkVersion="29" />
-
-    <!--
-        Optional broad access for learners who want backups written directly
-        to Downloads/EnglishTok. The app still works without it by using the
-        system document picker, which grants access to one chosen file only.
-    -->
-    <uses-permission
-        android:name="android.permission.MANAGE_EXTERNAL_STORAGE"
-        tools:ignore="ScopedStorage" />
 
     <!-- Android 11+ package visibility for the installed speech services. -->
     <queries>
@@ -42,7 +24,6 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
@@ -61,15 +42,5 @@
             </intent-filter>
 
         </activity>
-
-        <provider
-            android:name="androidx.core.content.FileProvider"
-            android:authorities="${applicationId}.fileprovider"
-            android:exported="false"
-            android:grantUriPermissions="true">
-            <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths"></meta-data>
-        </provider>
     </application>
 </manifest>

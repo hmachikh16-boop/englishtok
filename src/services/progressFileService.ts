@@ -3,22 +3,6 @@ import { Capacitor, registerPlugin } from '@capacitor/core';
 interface NativeProgressBackupPlugin {
   save(options: { fileName: string; content: string }): Promise<{ fileName?: string }>;
   open(): Promise<{ fileName?: string; content: string }>;
-  getStorageAccessStatus(): Promise<{
-    supported?: boolean;
-    granted?: boolean;
-    androidVersion?: number;
-  }>;
-  requestAllFilesAccess(): Promise<{ granted?: boolean; opened?: boolean }>;
-  saveToDownloads(options: {
-    fileName: string;
-    content: string;
-  }): Promise<{ fileName?: string; filePath?: string }>;
-}
-
-export interface StorageAccessStatus {
-  supported: boolean;
-  granted: boolean;
-  androidVersion: number;
 }
 
 const NativeProgressBackup = registerPlugin<NativeProgressBackupPlugin>('ProgressBackup');
@@ -60,55 +44,16 @@ const downloadInBrowser = (fileName: string, content: string) => {
   window.setTimeout(() => URL.revokeObjectURL(url), 1000);
 };
 
-export const getStorageAccessStatus = async (): Promise<StorageAccessStatus> => {
-  if (!nativeProgressFilePickerAvailable()) {
-    return { supported: false, granted: false, androidVersion: 0 };
-  }
-  try {
-    const status = await NativeProgressBackup.getStorageAccessStatus();
-    return {
-      supported: status.supported === true,
-      granted: status.granted === true,
-      androidVersion: typeof status.androidVersion === 'number' ? status.androidVersion : 0,
-    };
-  } catch (error) {
-    throw asProgressFileError(error);
-  }
-};
-
-export const requestAllFilesAccess = async (): Promise<{ granted: boolean; opened: boolean }> => {
-  if (!nativeProgressFilePickerAvailable()) {
-    throw new ProgressFileError('UNSUPPORTED', 'إعدادات الملفات متاحة داخل تطبيق Android فقط.');
-  }
-  try {
-    const result = await NativeProgressBackup.requestAllFilesAccess();
-    return { granted: result.granted === true, opened: result.opened === true };
-  } catch (error) {
-    throw asProgressFileError(error);
-  }
-};
-
 /**
- * Saves a progress backup. When "All files access" is granted, the file goes
- * directly to Downloads/EnglishTok. Otherwise Android uses the system document
- * picker (SAF), so the learner still chooses one destination without granting
- * broad access. Browsers keep using a normal download.
+ * Saves a progress backup through the system document picker on Android, so
+ * the learner chooses one destination without granting broad storage access.
+ * Browsers keep using a normal download.
  */
 export const saveProgressBackupFile = async (
   fileName: string,
   content: string,
-): Promise<'downloads' | 'native' | 'download'> => {
+): Promise<'native' | 'download'> => {
   if (nativeProgressFilePickerAvailable()) {
-    try {
-      const status = await getStorageAccessStatus();
-      if (status.granted) {
-        await NativeProgressBackup.saveToDownloads({ fileName, content });
-        return 'downloads';
-      }
-    } catch {
-      // Permission check or direct write failed; the document picker is the
-      // safe fallback and still saves the learner's backup.
-    }
     try {
       await NativeProgressBackup.save({ fileName, content });
       return 'native';

@@ -46,7 +46,7 @@ The Vercel workflow always type-checks and builds pushes to `main`/`master`. Pro
 
 ## Android APK signing and releases
 
-Capacitor Android project files are checked in under `android/`. Local Android builds need Android Studio/SDK and JDK 21 or newer. Release APKs are built by GitHub Actions when a `v*` tag is pushed; a release tag must match the stable semantic version in `package.json` (currently `1.0.0`).
+Capacitor Android project files are checked in under `android/`. Local Android builds need Android Studio/SDK and JDK 21 or newer. Release APKs are built by GitHub Actions when a `v*` tag is pushed; a release tag must match the stable semantic version in `package.json` (currently `1.7.1`).
 
 Create a dedicated Android upload/release keystore with Android Studio or `keytool`, and keep a second offline backup. Convert its bytes to Base64 in PowerShell to populate the GitHub secret:
 
@@ -61,15 +61,29 @@ Configure these GitHub Actions secrets; never commit the keystore or passwords:
 - `ANDROID_KEY_ALIAS`
 - `ANDROID_KEY_PASSWORD`
 
-For a later app release, increment `package.json`'s version, commit that change, and push the matching tag (for example, version `1.0.1` with tag `v1.0.1`). The workflow verifies the match, maps the version to Android's increasing `versionCode`, signs the APK, verifies the APK signature, and publishes the APK plus `update-manifest.json` to GitHub Releases.
+For a later app release, increment `package.json`'s version, commit that change, and push the matching tag (for example, version `1.7.2` with tag `v1.7.2`). The workflow verifies the match, maps the version to Android's increasing `versionCode`, signs the APK, verifies the APK signature, and publishes the APK plus `update-manifest.json` to GitHub Releases.
 
-Keep the same signing key for every APK update. Android rejects an update signed with a different key; losing the key means existing installs cannot be updated in place. The installer also checks package identity, version, SDK compatibility, and APK signature. Updates are never silently installed.
+Keep the same signing key for every APK update. Android rejects an update signed with a different key; losing the key means existing installs cannot be updated in place. The app checks package identity, version, SDK compatibility, and the expected official APK URL before opening the browser. Android verifies package identity and the APK signature during installation. Updates are never silently installed.
 
 ## In-app update checks
 
-On Android, the app checks the latest stable GitHub Release at launch and shows a dismissible notice when a newer version is available. The Settings → Export APK screen also supports a manual check. Both flows validate the manifest version, package ID, official APK URL, and SHA-256 format before opening the published APK download. The user downloads the APK and confirms installation using Android's package installer. Android checks package compatibility and the APK signature during installation; the published SHA-256 is release metadata and is not independently recalculated by the app because the download is handled outside the app.
+On Android, the app checks the latest stable GitHub Release at launch and shows a dismissible notice when a newer version is available. The Settings → Export APK screen also supports a manual check. Both flows validate the release version, package ID, expected official APK URL, and SHA-256 format before opening the published APK download in the browser. The user downloads the APK and confirms installation using Android's package installer. Android checks package compatibility and the APK signature during installation; the published SHA-256 is release metadata and is not independently recalculated by the app because the download is handled outside the app.
 
 An app build without `VITE_GITHUB_REPOSITORY` can still run normally, but cannot discover GitHub releases or remote content. Set the variable to `owner/repository` for Vercel builds; GitHub workflows inject their own repository automatically.
+
+## Android permissions
+
+The released APK declares only two permissions:
+
+- `android.permission.INTERNET` — GitHub release checks and the optional AI tutor.
+- `android.permission.RECORD_AUDIO` — pronunciation practice, requested at runtime when the learner uses the microphone.
+
+It intentionally does **not** request:
+
+- `REQUEST_INSTALL_PACKAGES` — app updates open in the browser; the app never installs packages itself.
+- `MANAGE_EXTERNAL_STORAGE`, `READ_EXTERNAL_STORAGE`, or `WRITE_EXTERNAL_STORAGE` — learner data stays in private app storage, and manual backups use Android's Storage Access Framework one-file picker.
+
+Do not reintroduce these permissions for convenience. They materially increase the chance of a Play Protect warning. Even a clean, self-signed APK distributed outside Google Play can still be flagged on some devices depending on reputation and device settings; publishing through Google Play is the only reliable way to guarantee a standard, warning-free install experience. Users who trust the official release can review the APK signature and SHA-256 before choosing to install.
 
 ## Content-only updates
 
