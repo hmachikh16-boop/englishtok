@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { App as CapacitorApp } from '@capacitor/app';
 import { Capacitor } from '@capacitor/core';
 import { ActiveTab, Lesson, UserProfile } from './types';
@@ -36,9 +36,23 @@ export default function App() {
     () => getCachedLearningPath() ?? LEARNING_PATH_LESSONS,
   );
   const [placementGateOpen, setPlacementGateOpen] = useState(() => lessons.length > 0 && !userProfile.placementAssessment?.result);
-  const learningPath = getLearningPathState(lessons, userProfile);
-  const vocabularyIds = new Set(lessons.flatMap((lesson) => lesson.vocabulary.map((word) => word.id)));
-  const savedWordsCount = userProfile.savedWordIds.filter((id) => vocabularyIds.has(id)).length;
+  const learningPath = useMemo(
+    () => getLearningPathState(lessons, userProfile),
+    [
+      lessons,
+      userProfile.completedLessonIds,
+      userProfile.levelExamResults,
+      userProfile.placementAssessment?.result?.suggestedStage,
+    ],
+  );
+  const vocabularyIds = useMemo(
+    () => new Set(lessons.flatMap((lesson) => lesson.vocabulary.map((word) => word.id))),
+    [lessons],
+  );
+  const savedWordsCount = useMemo(
+    () => userProfile.savedWordIds.filter((id) => vocabularyIds.has(id)).length,
+    [userProfile.savedWordIds, vocabularyIds],
+  );
   const [activeTab, setActiveTab] = useState<ActiveTab>('categories');
   const [selectedLessonId, setSelectedLessonId] = useState<string | null>(learningPath.nextLessonId);
   const [isPhoneFrameView, setIsPhoneFrameView] = useState<boolean>(false);
@@ -174,13 +188,13 @@ export default function App() {
   };
 
   // Sync to local storage
-  const handleUpdateProfile = (updated: Partial<UserProfile>) => {
+  const handleUpdateProfile = useCallback((updated: Partial<UserProfile>) => {
     setUserProfile((prev) => {
       const next = { ...prev, ...updated };
       saveProfile(next);
       return next;
     });
-  };
+  }, []);
 
   const handleResetProgress = () => {
     localStorage.removeItem('englishtok_user_profile_v1');
@@ -198,7 +212,7 @@ export default function App() {
 
   const handleRetakePlacement = () => {
     if (lessons.length === 0) return;
-    if (!window.confirm('سيُعاد اختبار تحديد المستوى ويُغيّر مستوى البداية المقترح. لن يُحذف XP أو سجل الدروس والاختبارات. هل تريد المتابعة؟')) return;
+    if (!window.confirm('سيُعاد اختيار نقطة البداية: يمكنك البدء من المرحلة الأولى أو إجراء اختبار المستوى من جديد. لن يُحذف XP أو سجل الدروس والاختبارات. هل تريد المتابعة؟')) return;
     handleUpdateProfile({ placementAssessment: undefined });
     setActiveTab('categories');
     setPlacementGateOpen(true);
@@ -211,10 +225,10 @@ export default function App() {
     return true;
   };
 
-  const handleSelectLessonFromCategories = (lessonId: string) => {
+  const handleSelectLessonFromCategories = useCallback((lessonId: string) => {
     setSelectedLessonId(lessonId);
     setActiveTab('lesson');
-  };
+  }, []);
 
   return (
     <div className="app-shell min-h-0 text-slate-100 flex flex-col items-center justify-start overflow-hidden journey-shell">
@@ -353,6 +367,7 @@ export default function App() {
           {activeTab === 'categories' && (
             <CategoriesTab
               lessons={lessons}
+              learningPath={learningPath}
               userProfile={userProfile}
               onUpdateProfile={handleUpdateProfile}
               onSelectLesson={handleSelectLessonFromCategories}
@@ -433,7 +448,6 @@ export default function App() {
 
       </div>
       {placementGateOpen && lessons.length > 0 && <PlacementAssessmentGate
-        lessons={lessons}
         profile={userProfile}
         onUpdateProfile={handleUpdateProfile}
         onContinue={() => setPlacementGateOpen(false)}

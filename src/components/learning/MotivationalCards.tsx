@@ -273,10 +273,10 @@ interface SpotlightProps {
   onBrowse: () => void;
 }
 
-export const MotivationalGoalSpotlight: React.FC<SpotlightProps> = ({
+export const MotivationalGoalSpotlight = React.memo(function MotivationalGoalSpotlight({
   progressByStage,
   onBrowse,
-}) => {
+}: SpotlightProps) {
   const nextCard = getNextMotivationalCard(progressByStage);
   const nextCardUnlocked = isMotivationalCardUnlocked(nextCard, progressByStage);
   const nextCardCompleted = getStageCardProgress(nextCard, progressByStage);
@@ -376,7 +376,7 @@ export const MotivationalGoalSpotlight: React.FC<SpotlightProps> = ({
       </div>
     </section>
   );
-};
+});
 
 interface StageCardsProps {
   stage: number;
@@ -385,12 +385,12 @@ interface StageCardsProps {
   onOpenGallery: (stage: number) => void;
 }
 
-export const StageMotivationalCards: React.FC<StageCardsProps> = ({
+export const StageMotivationalCards = React.memo(function StageMotivationalCards({
   stage,
   completedLessons,
   onOpenCard,
   onOpenGallery,
-}) => {
+}: StageCardsProps) {
   const cards = getMotivationalCardsForStage(stage);
   if (cards.length === 0) return null;
   const unlockedCount = cards.filter(
@@ -449,7 +449,7 @@ export const StageMotivationalCards: React.FC<StageCardsProps> = ({
       </p>
     </section>
   );
-};
+});
 
 type GalleryFilter = 'all' | number;
 type GalleryView = 'gallery' | 'detail';

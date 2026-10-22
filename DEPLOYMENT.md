@@ -46,7 +46,7 @@ The Vercel workflow always type-checks and builds pushes to `main`/`master`. Pro
 
 ## Android APK signing and releases
 
-Capacitor Android project files are checked in under `android/`. Local Android builds need Android Studio/SDK and JDK 21 or newer. Release APKs are built by GitHub Actions when a `v*` tag is pushed; a release tag must match the stable semantic version in `package.json` (currently `1.7.1`).
+Capacitor Android project files are checked in under `android/`. Local Android builds need Android Studio/SDK and JDK 21 or newer. Release APKs are built by GitHub Actions when a `v*` tag is pushed; a release tag must match the stable semantic version in `package.json` (currently `1.7.2`).
 
 Create a dedicated Android upload/release keystore with Android Studio or `keytool`, and keep a second offline backup. Convert its bytes to Base64 in PowerShell to populate the GitHub secret:
 

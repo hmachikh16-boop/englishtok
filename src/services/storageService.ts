@@ -208,7 +208,7 @@ const sanitizePlacementAssessment = (value: unknown): UserProfile['placementAsse
   const result = raw.result as Record<string, unknown>;
   if (typeof result.completedAt !== 'string' || !Number.isFinite(Date.parse(result.completedAt)) ||
       !Number.isSafeInteger(result.correctCount) || (result.correctCount as number) < 0 ||
-      !Number.isSafeInteger(result.answeredCount) || (result.answeredCount as number) < 1 ||
+      !Number.isSafeInteger(result.answeredCount) || (result.answeredCount as number) < 0 ||
       typeof result.scorePercent !== 'number' || result.scorePercent < 0 || result.scorePercent > 100 ||
       !Number.isSafeInteger(result.suggestedStage) || (result.suggestedStage as number) < 1 || (result.suggestedStage as number) > 10 ||
       !Array.isArray(result.skillCoverage) || result.skillCoverage.length > 20 || result.skillCoverage.some((skill) => typeof skill !== 'string' || skill.length > 80) ||
@@ -223,6 +223,7 @@ const sanitizePlacementAssessment = (value: unknown): UserProfile['placementAsse
         typeof stage.passed !== 'boolean') return null;
     stages.push({ stage: stage.stage as number, correct: stage.correct as number, total: stage.total as number, passed: stage.passed });
   }
+  const method = result.method === 'first_stage' || result.method === 'test' ? result.method : undefined;
   return {
     schemaVersion: 1,
     startedAt: raw.startedAt,
@@ -235,6 +236,7 @@ const sanitizePlacementAssessment = (value: unknown): UserProfile['placementAsse
       suggestedStage: result.suggestedStage as number,
       skillCoverage: result.skillCoverage as string[],
       stages,
+      ...(method ? { method } : {}),
     },
   };
 };

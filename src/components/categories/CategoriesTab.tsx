@@ -1,10 +1,10 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useDeferredValue, useEffect, useMemo, useRef, useState, useTransition } from 'react';
 import { Search, Sparkles, Play, BookOpen, Clock, Heart, Lock, CheckCircle2, Trophy, Star, ArrowDown, Footprints } from 'lucide-react';
 import { Lesson, CategoryKey, UserProfile } from '../../types';
 import { CATEGORIES } from '../../data/lessons';
 import { CURRICULUM_CONFIG, CURRICULUM_LEVELS } from '../../data/curriculum';
 import { speechService } from '../../services/speechService';
-import { getLearningPathState } from '../../services/learningPath';
+import type { LearningPathState, LessonPathStatus } from '../../services/learningPath';
 import { LevelFinalExam } from '../quiz/LevelFinalExam';
 import { PremiumIcon } from '../icons/PremiumIcon';
 import { LearningBuddy } from '../learning/LearningBuddy';
@@ -15,6 +15,8 @@ import {
 } from '../learning/MotivationalCards';
 import { PrimaryAvatar } from '../video/PrimaryCharacterArt';
 import { EDUCATIONAL_PHASES, findSchoolYearRoute, SCHOOL_YEAR_ALIGNMENT_NOTE } from '../../data/educationalStructure';
+
+const ROUTE_SHIFTS = [0, 30, 44, 30, 0, -30, -44, -30, 0, 30];
 
 const StageChest: React.FC<{ earned: boolean }> = ({ earned }) => (
   <svg viewBox="0 0 48 48" className={`path-chest-art ${earned ? 'is-earned' : ''}`} aria-hidden="true">
@@ -27,8 +29,54 @@ const StageChest: React.FC<{ earned: boolean }> = ({ earned }) => (
   </svg>
 );
 
+interface PathLessonNodeProps {
+  lesson: Lesson;
+  index: number;
+  status: LessonPathStatus;
+  bestScore: number;
+  shiftPercent: number;
+  onSelect: (lessonId: string) => void;
+}
+
+const PathLessonNode = React.memo(function PathLessonNode({
+  lesson,
+  index,
+  status,
+  bestScore,
+  shiftPercent,
+  onSelect,
+}: PathLessonNodeProps) {
+  const complete = status === 'completed';
+  const current = status === 'current';
+  const unavailable = status === 'locked';
+  const NodeIcon = CATEGORIES.find((category) => category.key === lesson.category)?.icon ?? BookOpen;
+  const starCount = bestScore >= 90 ? 3 : bestScore >= 70 ? 2 : complete ? 1 : 0;
+
+  return (
+    <button
+      type="button"
+      disabled={unavailable}
+      onClick={() => onSelect(lesson.id)}
+      style={{ transform: `translateX(${shiftPercent}%)` }}
+      className={`path-node group ${complete ? 'is-complete' : current ? 'is-current' : unavailable ? 'is-locked' : 'is-open'}`}
+      aria-label={`${lesson.titleAr}، ${complete ? 'مكتمل' : current ? 'الدرس الحالي' : unavailable ? 'مقفل' : 'متاح'}`}
+    >
+      <span className="path-node-orb">
+        {complete ? <CheckCircle2 className="path-node-icon path-star h-7 w-7" strokeWidth={3} /> : unavailable ? <Lock className="path-node-icon h-5 w-5" /> : current ? <Footprints className="path-node-icon h-7 w-7" strokeWidth={2.8} /> : <NodeIcon className="path-node-icon h-6 w-6" aria-hidden="true" />}
+        <span className="path-node-number">{index + 1}</span>
+      </span>
+      <span className="path-node-title">{lesson.titleAr}</span>
+      {complete && <span className="path-node-stars" aria-label={`${starCount} نجوم`} dir="ltr">{[0, 1, 2].map((star) => <Star key={star} className={star < starCount ? 'earned' : ''} />)}</span>}
+      {current && <span className="path-node-hint"><Play className="h-3 w-3 fill-current" /> ابدأ هنا</span>}
+      {current && <span className="path-node-guide" aria-hidden="true"><LearningBuddy compact /></span>}
+    </button>
+  );
+});
+
+
 interface CategoriesTabProps {
   lessons: Lesson[];
+  learningPath: LearningPathState;
   userProfile: UserProfile;
   onUpdateProfile: (updated: Partial<UserProfile>) => void;
   onSelectLesson: (lessonId: string) => void;
@@ -37,6 +85,7 @@ interface CategoriesTabProps {
 
 export const CategoriesTab: React.FC<CategoriesTabProps> = ({
   lessons,
+  learningPath,
   userProfile,
   onUpdateProfile,
   onSelectLesson,
@@ -47,6 +96,7 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
   const [selectedCategory, setSelectedCategory] = useState<CategoryKey | 'all'>('all');
   const [selectedLevel, setSelectedLevel] = useState<number | 'all'>('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const deferredSearchQuery = useDeferredValue(searchQuery);
   const [examStage, setExamStage] = useState<number | null>(null);
   const [selectedPhaseId, setSelectedPhaseId] = useState<string | null>(null);
   const [selectedSchoolYearId, setSelectedSchoolYearId] = useState<string | null>(null);
@@ -54,12 +104,16 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
     cardId: string | null;
     stage: number | null;
   } | null>(null);
-  const path = getLearningPathState(lessons, userProfile);
-  const currentStageNumber = path.levels.find((level) =>
-    level.lessons.some((entry) => entry.lesson.id === path.nextLessonId)
-  )?.stage ?? 1;
+  const path = learningPath;
+  const currentStageNumber = useMemo(
+    () => path.levels.find((level) => level.lessons.some((entry) => entry.lesson.id === path.nextLessonId))?.stage
+      ?? path.levels[path.levels.length - 1]?.stage
+      ?? 1,
+    [path.levels, path.nextLessonId],
+  );
   const [selectedPathStage, setSelectedPathStage] = useState<number | 'all'>(currentStageNumber);
   const [libraryPageSize, setLibraryPageSize] = useState(24);
+  const [isPending, startTransition] = useTransition();
   const selectedPhase = EDUCATIONAL_PHASES.find((phase) => phase.id === selectedPhaseId);
   const selectedSchoolYear = findSchoolYearRoute(selectedSchoolYearId);
   useEffect(() => {
@@ -68,29 +122,64 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
   }, [selectedSchoolYearId]);
   useEffect(() => {
     setLibraryPageSize(24);
-  }, [selectedCategory, selectedLevel, searchQuery]);
-  const completedLessonIds = new Set(userProfile.completedLessonIds);
-  const getSchoolYearProgress = (yearId: string) => {
-    const yearLessons = lessons.filter((lesson) => lesson.schoolYearId === yearId);
-    const completed = yearLessons.filter((lesson) => completedLessonIds.has(lesson.id)).length;
-    const phase = EDUCATIONAL_PHASES.find((entry) => entry.years.some((year) => year.id === yearId));
-    const phaseYears = phase?.years ?? [];
-    const yearIndex = phaseYears.findIndex((year) => year.id === yearId);
-    const priorYearsComplete = yearIndex <= 0 || phaseYears.slice(0, yearIndex).every((year) => {
-      const priorLessons = lessons.filter((lesson) => lesson.schoolYearId === year.id);
-      return priorLessons.length === 50 && priorLessons.every((lesson) => completedLessonIds.has(lesson.id));
-    });
-    return { yearLessons, completed, priorYearsComplete };
-  };
-  const getLessonStatus = (lesson: Lesson) => {
+  }, [selectedCategory, selectedLevel, deferredSearchQuery]);
+  const previousCurrentStage = useRef(currentStageNumber);
+  useEffect(() => {
+    if (selectedPathStage === previousCurrentStage.current) {
+      setSelectedPathStage(currentStageNumber);
+    }
+    previousCurrentStage.current = currentStageNumber;
+  }, [currentStageNumber, selectedPathStage]);
+
+  const completedLessonIds = useMemo(
+    () => new Set(userProfile.completedLessonIds),
+    [userProfile.completedLessonIds],
+  );
+
+  const lessonsBySchoolYear = useMemo(() => {
+    const map = new Map<string, Lesson[]>();
+    for (const lesson of lessons) {
+      if (!lesson.schoolYearId) continue;
+      const bucket = map.get(lesson.schoolYearId);
+      if (bucket) bucket.push(lesson);
+      else map.set(lesson.schoolYearId, [lesson]);
+    }
+    return map;
+  }, [lessons]);
+
+  const schoolYearProgressById = useMemo(() => {
+    const progressById = new Map<string, { yearLessons: Lesson[]; completed: number; priorYearsComplete: boolean }>();
+    for (const phase of EDUCATIONAL_PHASES) {
+      phase.years.forEach((year, yearIndex) => {
+        const yearLessons = lessonsBySchoolYear.get(year.id) ?? [];
+        const completed = yearLessons.reduce(
+          (count, lesson) => count + (completedLessonIds.has(lesson.id) ? 1 : 0),
+          0,
+        );
+        const priorYearsComplete = yearIndex === 0 || phase.years.slice(0, yearIndex).every((priorYear) => {
+          const priorLessons = lessonsBySchoolYear.get(priorYear.id) ?? [];
+          return priorLessons.length === 50 && priorLessons.every((lesson) => completedLessonIds.has(lesson.id));
+        });
+        progressById.set(year.id, { yearLessons, completed, priorYearsComplete });
+      });
+    }
+    return progressById;
+  }, [completedLessonIds, lessonsBySchoolYear]);
+
+  const getSchoolYearProgress = useCallback((yearId: string) =>
+    schoolYearProgressById.get(yearId) ?? { yearLessons: [], completed: 0, priorYearsComplete: true },
+  [schoolYearProgressById]);
+
+  const getLessonStatus = useCallback((lesson: Lesson) => {
     if (!lesson.schoolYearId) return path.lessonStatusById.get(lesson.id);
     const { yearLessons, priorYearsComplete } = getSchoolYearProgress(lesson.schoolYearId);
     if (completedLessonIds.has(lesson.id)) return 'completed';
     if (!priorYearsComplete) return 'locked';
     const lessonIndex = yearLessons.findIndex((entry) => entry.id === lesson.id);
     return yearLessons.slice(0, lessonIndex).every((entry) => completedLessonIds.has(entry.id)) ? 'current' : 'locked';
-  };
-  const visibleLevels = (() => {
+  }, [completedLessonIds, getSchoolYearProgress, path.lessonStatusById]);
+
+  const visibleLevels = useMemo(() => {
     if (selectedSchoolYear?.grade) {
       const { yearLessons, completed, priorYearsComplete } = getSchoolYearProgress(selectedSchoolYear.id);
       let foundCurrent = false;
@@ -117,90 +206,113 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
       : selectedPathStage === 'all'
         ? path.levels
         : path.levels.filter((level) => level.stage === selectedPathStage);
-  })();
+  }, [completedLessonIds, getSchoolYearProgress, path.levels, selectedPathStage, selectedSchoolYear]);
+
   const isSchoolYearCourse = Boolean(selectedSchoolYear?.grade);
-  const schoolYearLessonCount = lessons.filter((lesson) => Boolean(lesson.schoolYearId)).length;
+  const schoolYearLessonCount = useMemo(
+    () => lessons.reduce((count, lesson) => count + (lesson.schoolYearId ? 1 : 0), 0),
+    [lessons],
+  );
   const today = new Date().toISOString().slice(0, 10);
   const dailyLessonCount = userProfile.dailyProgress.date === today ? userProfile.dailyProgress.completedLessonIds.length : 0;
   const dailyGoal = Math.max(1, userProfile.dailyGoalLessons);
-  const cardProgressByStage = Object.fromEntries(
-    path.levels.map((level) => [level.stage, level.completedCount]),
-  ) as Record<number, number>;
-  const nextLessonId = selectedSchoolYear?.grade
-    ? (() => {
-        const { yearLessons, priorYearsComplete } = getSchoolYearProgress(selectedSchoolYear.id);
-        return priorYearsComplete
-          ? yearLessons.find((lesson) => !completedLessonIds.has(lesson.id))?.id ?? path.nextLessonId
-          : path.nextLessonId;
-      })()
-    : path.nextLessonId;
-  const routeRows = visibleLevels.flatMap((level) => [
-    { type: 'unit' as const, level },
-    ...level.lessons.map((entry, index) => ({ type: 'lesson' as const, level, entry, index })),
-    ...(!isSchoolYearCourse ? [{ type: 'exam' as const, level }] : []),
-  ]);
-  let routeCursor = 0;
-  const routeNodes = routeRows.flatMap((row) => {
-    if (row.type === 'unit') {
-      routeCursor += 82;
-      return [];
+  const cardProgressByStage = useMemo(
+    () => Object.fromEntries(path.levels.map((level) => [level.stage, level.completedCount])) as Record<number, number>,
+    [path.levels],
+  );
+  const nextLessonId = useMemo(() => {
+    if (!selectedSchoolYear?.grade) return path.nextLessonId;
+    const { yearLessons, priorYearsComplete } = getSchoolYearProgress(selectedSchoolYear.id);
+    return priorYearsComplete
+      ? yearLessons.find((lesson) => !completedLessonIds.has(lesson.id))?.id ?? path.nextLessonId
+      : path.nextLessonId;
+  }, [completedLessonIds, getSchoolYearProgress, path.nextLessonId, selectedSchoolYear]);
+
+  const routeLayout = useMemo(() => {
+    const rows = visibleLevels.flatMap((level) => [
+      { type: 'unit' as const, level },
+      ...level.lessons.map((entry, index) => ({ type: 'lesson' as const, level, entry, index })),
+      ...(!isSchoolYearCourse ? [{ type: 'exam' as const, level }] : []),
+    ]);
+    let nodeIndex = 0;
+    const shiftByLessonId = new Map<string, number>();
+    const shiftByExamStage = new Map<number, number>();
+    const pointsByStage = new Map<number, Array<{ x: number; y: number }>>();
+
+    for (const row of rows) {
+      if (row.type === 'unit') continue;
+      const shift = ROUTE_SHIFTS[nodeIndex % ROUTE_SHIFTS.length];
+      const shiftPercent = (shift * 100) / 470;
+      if (row.type === 'lesson') shiftByLessonId.set(row.entry.lesson.id, shiftPercent);
+      else shiftByExamStage.set(row.level.stage, shiftPercent);
+      const points = pointsByStage.get(row.level.stage) ?? [];
+      points.push({ x: 50 + shiftPercent, y: points.length * 112 + 56 });
+      pointsByStage.set(row.level.stage, points);
+      nodeIndex += 1;
     }
-    const positioned = { row, y: routeCursor + 56 };
-    routeCursor += 112;
-    return [positioned];
-  });
-  const routeShifts = [0, 30, 44, 30, 0, -30, -44, -30, 0, 30];
-  const getStageRoute = (stage: number) => {
-    const points = routeNodes
-      .map((node, index) => ({ node, index }))
-      .filter(({ node }) => node.row.level.stage === stage)
-      .map(({ index }, localIndex) => ({
-        x: 50 + (routeShifts[index % routeShifts.length] * 100) / 470,
-        y: localIndex * 112 + 56,
-      }));
-    const first = points[0];
-    if (!first) return { path: '', height: 0 };
-    let path = `M 50 0 C 50 26, ${first.x} 30, ${first.x} ${first.y}`;
-    for (let index = 1; index < points.length; index += 1) {
-      const previous = points[index - 1];
-      const current = points[index];
-      path += ` C ${previous.x} ${previous.y + 38}, ${current.x} ${current.y - 38}, ${current.x} ${current.y}`;
+
+    const stageRoutes = new Map<number, { path: string; height: number }>();
+    for (const level of visibleLevels) {
+      const points = pointsByStage.get(level.stage) ?? [];
+      const first = points[0];
+      if (!first) {
+        stageRoutes.set(level.stage, { path: '', height: 0 });
+        continue;
+      }
+      let path = `M 50 0 C 50 26, ${first.x} 30, ${first.x} ${first.y}`;
+      for (let index = 1; index < points.length; index += 1) {
+        const previous = points[index - 1];
+        const current = points[index];
+        path += ` C ${previous.x} ${previous.y + 38}, ${current.x} ${current.y - 38}, ${current.x} ${current.y}`;
+      }
+      stageRoutes.set(level.stage, { path, height: points.length * 112 });
     }
-    return { path, height: points.length * 112 };
-  };
 
-  const filteredLessons = lessons.filter((lesson) => {
-    const matchesCategory = selectedCategory === 'all' || lesson.category === selectedCategory;
-    const matchesLevel = selectedLevel === 'all' || lesson.curriculumStage === selectedLevel;
-    const query = searchQuery.trim().toLowerCase();
-    const matchesSearch =
-      query === '' ||
-      lesson.title.toLowerCase().includes(query) ||
-      lesson.titleAr.includes(query) ||
-      lesson.descriptionAr.includes(query) ||
-      lesson.vocabulary.some((v) => v.word.toLowerCase().includes(query) || v.translationAr.includes(query));
+    return { shiftByLessonId, shiftByExamStage, stageRoutes };
+  }, [isSchoolYearCourse, visibleLevels]);
 
-    return matchesCategory && matchesLevel && matchesSearch;
-  });
-  const visibleLibraryLessons = filteredLessons.slice(0, libraryPageSize);
+  const filteredLessons = useMemo(() => {
+    const query = deferredSearchQuery.trim().toLowerCase();
+    return lessons.filter((lesson) => {
+      const matchesCategory = selectedCategory === 'all' || lesson.category === selectedCategory;
+      const matchesLevel = selectedLevel === 'all' || lesson.curriculumStage === selectedLevel;
+      const matchesSearch =
+        query === '' ||
+        lesson.title.toLowerCase().includes(query) ||
+        lesson.titleAr.includes(query) ||
+        lesson.descriptionAr.includes(query) ||
+        lesson.vocabulary.some((v) => v.word.toLowerCase().includes(query) || v.translationAr.includes(query));
 
-  const handleCardClick = (id: string) => {
+      return matchesCategory && matchesLevel && matchesSearch;
+    });
+  }, [deferredSearchQuery, lessons, selectedCategory, selectedLevel]);
+  const visibleLibraryLessons = useMemo(
+    () => filteredLessons.slice(0, libraryPageSize),
+    [filteredLessons, libraryPageSize],
+  );
+
+  const handleCardClick = useCallback((id: string) => {
     const lesson = lessons.find((entry) => entry.id === id);
     if (lesson && getLessonStatus(lesson) === 'locked') return;
     speechService.playPop();
     onSelectLesson(id);
-  };
+  }, [getLessonStatus, lessons, onSelectLesson]);
 
-  const handleSelectPathStage = (stage: number | 'all') => {
+  const handlePathLessonClick = useCallback((id: string) => {
+    speechService.playPop();
+    onSelectLesson(id);
+  }, [onSelectLesson]);
+
+  const handleSelectPathStage = useCallback((stage: number | 'all') => {
     const home = document.querySelector<HTMLElement>('.journey-home');
     setSelectedPhaseId(null);
     setSelectedSchoolYearId(null);
-    setSelectedPathStage(stage);
+    startTransition(() => setSelectedPathStage(stage));
     speechService.playPop();
     if (home && home.scrollTop > 120) {
       routeRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
-  };
+  }, [startTransition]);
 
   const handleOpenLibrary = () => {
     const library = libraryRef.current;
@@ -209,6 +321,18 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
     library.scrollIntoView({ behavior: 'smooth', block: 'start' });
     speechService.playPop();
   };
+
+  const openGoalCard = useCallback((cardId: string) => {
+    setGoalCardDialog({ cardId, stage: null });
+  }, []);
+
+  const openGoalGallery = useCallback((stage: number) => {
+    setGoalCardDialog({ cardId: null, stage });
+  }, []);
+
+  const openGoalBrowser = useCallback(() => {
+    setGoalCardDialog({ cardId: null, stage: null });
+  }, []);
 
   const saveLevelExamResult = (
     stage: number,
@@ -305,7 +429,7 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
         {!isSchoolYearCourse && path.levels.length > 0 && (
           <MotivationalGoalSpotlight
             progressByStage={cardProgressByStage}
-            onBrowse={() => setGoalCardDialog({ cardId: null, stage: null })}
+            onBrowse={openGoalBrowser}
           />
         )}
         {EDUCATIONAL_PHASES.length > 0 && <section className="school-phase-explorer mt-5" aria-labelledby="school-phase-title">
@@ -352,7 +476,7 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
             <p className="mx-auto mt-2 max-w-md text-xs leading-6 text-slate-400">حُذفت جميع الدروس والمستويات السابقة. سيُضاف المنهج الجديد هنا فور اعتماده وإدخاله، وستظهر الدروس بالترتيب مع الاختبارات والتقدم.</p>
           </div>
         ) : (<>
-        <div ref={routeRef} className="continuous-route relative mt-6" aria-label="مسار التعلم الكامل">
+        <div ref={routeRef} className="continuous-route relative mt-6" aria-label="مسار التعلم الكامل" aria-busy={isPending}>
           {visibleLevels.map((level) => {
             const locked = !level.isUnlocked;
             const color = [
@@ -361,7 +485,7 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
               'from-teal-300 to-emerald-300',
             ][(level.stage - 1) % 5];
             const examNodeClass = level.examPassed ? 'is-complete' : level.canTakeExam ? 'is-current' : 'is-locked';
-            const stageRoute = getStageRoute(level.stage);
+            const stageRoute = routeLayout.stageRoutes.get(level.stage) ?? { path: '', height: 0 };
             return <div key={level.stage} data-stage={level.stage} className={`path-stage continuous-route-unit ${locked ? 'is-stage-locked' : ''}`}>
               <div className="path-stage-heading flex flex-wrap items-center justify-between gap-2">
                 <div><div className="flex items-center gap-2 text-sm font-black text-white"><span className={`flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br ${color} text-slate-950`}>{locked ? <Lock className="h-4 w-4" /> : level.stage}</span>{isSchoolYearCourse ? level.titleAr : <>المرحلة {level.stage} <span className="text-teal-100">· {level.titleAr}</span></>}</div><p className="mt-1 text-[10px] text-slate-400">{level.subtitleAr}</p></div>
@@ -371,8 +495,8 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
                 <StageMotivationalCards
                   stage={level.stage}
                   completedLessons={level.completedCount}
-                  onOpenCard={(cardId) => setGoalCardDialog({ cardId, stage: null })}
-                  onOpenGallery={(stage) => setGoalCardDialog({ cardId: null, stage })}
+                  onOpenCard={openGoalCard}
+                  onOpenGallery={openGoalGallery}
                 />
               )}
               <div className="path-nodes continuous-route-nodes" aria-label={`دروس المرحلة ${level.stage}`}>
@@ -388,27 +512,23 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
                 )}
                 {level.lessons.map((entry, index) => {
                   const { lesson, status } = entry;
-                  const complete = status === 'completed';
-                  const current = status === 'current';
-                  const unavailable = status === 'locked';
-                  const NodeIcon = CATEGORIES.find((category) => category.key === lesson.category)?.icon ?? BookOpen;
-                  const bestScore = userProfile.quizScores[lesson.id] ?? 0;
-                  const starCount = bestScore >= 90 ? 3 : bestScore >= 70 ? 2 : complete ? 1 : 0;
-                  return <React.Fragment key={lesson.id}>
-                    <button type="button" disabled={unavailable} onClick={() => handleCardClick(lesson.id)} style={{ transform: `translateX(${(routeShifts[routeNodes.findIndex((node) => node.row.type === 'lesson' && node.row.entry.lesson.id === lesson.id) % routeShifts.length] / 470) * 100}%)` }} className={`path-node group ${complete ? 'is-complete' : current ? 'is-current' : unavailable ? 'is-locked' : 'is-open'}`} aria-label={`${lesson.titleAr}، ${complete ? 'مكتمل' : current ? 'الدرس الحالي' : unavailable ? 'مقفل' : 'متاح'}`}>
-                      <span className="path-node-orb">{complete ? <CheckCircle2 className="path-node-icon path-star h-7 w-7" strokeWidth={3} /> : unavailable ? <Lock className="path-node-icon h-5 w-5" /> : current ? <Footprints className="path-node-icon h-7 w-7" strokeWidth={2.8} /> : <NodeIcon className="path-node-icon h-6 w-6" aria-hidden="true" />}<span className="path-node-number">{index + 1}</span></span>
-                      <span className="path-node-title">{lesson.titleAr}</span>
-                      {complete && <span className="path-node-stars" aria-label={`${starCount} نجوم`} dir="ltr">{[0, 1, 2].map((star) => <Star key={star} className={star < starCount ? 'earned' : ''} />)}</span>}
-                      {current && <span className="path-node-hint"><Play className="h-3 w-3 fill-current" /> ابدأ هنا</span>}
-                      {current && <span className="path-node-guide" aria-hidden="true"><LearningBuddy compact /></span>}
-                    </button>
-                  </React.Fragment>;
+                  return (
+                    <PathLessonNode
+                      key={lesson.id}
+                      lesson={lesson}
+                      index={index}
+                      status={status}
+                      bestScore={userProfile.quizScores[lesson.id] ?? 0}
+                      shiftPercent={routeLayout.shiftByLessonId.get(lesson.id) ?? 0}
+                      onSelect={handlePathLessonClick}
+                    />
+                  );
                 })}
                 {!isSchoolYearCourse && <button
                   type="button"
                   disabled={!level.canTakeExam}
                   onClick={() => setExamStage(level.stage)}
-                  style={{ transform: `translateX(${(routeShifts[routeNodes.findIndex((node) => node.row.type === 'exam' && node.row.level.stage === level.stage) % routeShifts.length] / 470) * 100}%)` }}
+                  style={{ transform: `translateX(${routeLayout.shiftByExamStage.get(level.stage) ?? 0}%)` }}
                   className={`path-node path-exam-node ${examNodeClass}`}
                   aria-label={`اختبار المرحلة ${level.stage}${level.examPassed ? '، مكتمل' : level.canTakeExam ? '، متاح' : '، أكمل الدروس أولًا'}`}
                 >

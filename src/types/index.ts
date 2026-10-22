@@ -167,6 +167,8 @@ export interface PlacementAssessmentResult {
   suggestedStage: number;
   skillCoverage: string[];
   stages: PlacementStageResult[];
+  /** Distinguishes a real assessment from deliberately starting at stage 1. */
+  method?: 'test' | 'first_stage';
 }
 
 export interface PlacementAssessmentState {
