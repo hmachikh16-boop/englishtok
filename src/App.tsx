@@ -13,7 +13,7 @@ import { getStoredProfile, saveProfile } from './services/storageService';
 import { resetGameProgress } from './services/gameProgressService';
 import { fetchLatestLearningPath, getCachedLearningPath } from './services/contentService';
 import { checkForAppUpdate, type AppUpdateManifest } from './services/appUpdateService';
-import { openAppUpdateDownload } from './services/appUpdateLauncher';
+import { downloadAndInstallAppUpdate } from './services/appUpdateLauncher';
 import {
   SPEECH_STATUS_EVENT,
   SPEECH_UNAVAILABLE_EVENT,
@@ -63,6 +63,7 @@ export default function App() {
   const [availableAppUpdate, setAvailableAppUpdate] = useState<AppUpdateManifest | null>(null);
   const [updateDownloadError, setUpdateDownloadError] = useState<string | null>(null);
   const [updateOpenMessage, setUpdateOpenMessage] = useState<string | null>(null);
+  const [updateDownloadProgress, setUpdateDownloadProgress] = useState<number | null>(null);
   const [isOpeningAppUpdate, setIsOpeningAppUpdate] = useState(false);
   const notificationTop = activeTab === 'lesson'
     ? 'calc(env(safe-area-inset-top, 0px) + 12px)'
@@ -98,21 +99,25 @@ export default function App() {
     if (!availableAppUpdate) return;
     setUpdateDownloadError(null);
     setUpdateOpenMessage(null);
+    setUpdateDownloadProgress(0);
     setIsOpeningAppUpdate(true);
     try {
-      await openAppUpdateDownload(availableAppUpdate);
+      await downloadAndInstallAppUpdate(availableAppUpdate, (progress) => {
+        setUpdateDownloadProgress(progress.percent);
+      });
       setUpdateOpenMessage(
-        'فُتح رابط التنزيل في المتصفح. بعد اكتمال التنزيل، افتح ملف APK ووافق على التثبيت.',
+        'اكتمل تنزيل التحديث. أكمل خطوات التثبيت التي يعرضها Android؛ لن يبدأ التثبيت دون موافقتك.',
       );
     } catch (error) {
-      console.error('Failed to open the EnglishTok update download:', error);
+      console.error('Failed to download the EnglishTok update:', error);
       setUpdateDownloadError(
         error instanceof Error
           ? error.message
-          : 'تعذر فتح رابط التحديث. تحقق من اتصال الإنترنت وحاول مرة أخرى.',
+          : 'تعذر تنزيل التحديث. تحقق من اتصال الإنترنت وحاول مرة أخرى.',
       );
     } finally {
       setIsOpeningAppUpdate(false);
+      setUpdateDownloadProgress(null);
     }
   };
 
@@ -312,11 +317,23 @@ export default function App() {
               disabled={isOpeningAppUpdate}
               className="mt-3 rounded-lg bg-emerald-400 px-3 py-2 text-xs font-bold text-slate-950 hover:bg-emerald-300 disabled:cursor-wait disabled:opacity-70"
             >
-              {isOpeningAppUpdate ? 'جارٍ فتح المتصفح…' : 'فتح رابط تنزيل التحديث'}
+              {isOpeningAppUpdate
+                ? updateDownloadProgress !== null
+                  ? `جارٍ تنزيل التحديث… ${updateDownloadProgress}%`
+                  : 'جارٍ بدء التنزيل…'
+                : 'تنزيل التحديث من التطبيق'}
             </button>
+            {isOpeningAppUpdate && updateDownloadProgress !== null && (
+              <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-slate-800" aria-hidden="true">
+                <div
+                  className="h-full rounded-full bg-emerald-400 transition-[width] duration-200"
+                  style={{ width: `${Math.max(4, updateDownloadProgress)}%` }}
+                />
+              </div>
+            )}
             <p className="mt-2 text-[10px] text-slate-400">
-              سيفتح المتصفح صفحة التنزيل الرسمية. بعد اكتمال التنزيل، اضغط على ملف APK ووافق على التثبيت؛
-              يتحقق Android من التوقيع والتوافق قبل التثبيت.
+              سينزّل التطبيق حزمة APK الرسمية داخليًا، ثم يفتح مثبّت Android لتأكيد التثبيت.
+              قد يطلب Android السماح بالتثبيت من هذا المصدر مرة واحدة، ويتحقق من التوقيع والتوافق قبل التثبيت.
             </p>
           </div>
           <button
@@ -325,8 +342,10 @@ export default function App() {
               setAvailableAppUpdate(null);
               setUpdateDownloadError(null);
               setUpdateOpenMessage(null);
+              setUpdateDownloadProgress(null);
             }}
-            className="shrink-0 rounded-lg px-2 py-1 text-xs font-bold text-slate-300 hover:bg-slate-800"
+            disabled={isOpeningAppUpdate}
+            className="shrink-0 rounded-lg px-2 py-1 text-xs font-bold text-slate-300 hover:bg-slate-800 disabled:cursor-wait disabled:opacity-50"
             aria-label="إغلاق إشعار التحديث"
           >
             إغلاق

@@ -4,11 +4,14 @@
     <!--
         EnglishTok keeps lesson audio and learner progress inside its private
         storage. Progress backups use the Storage Access Framework (the user
-        picks one file), and app updates open in the browser. As a result the
-        app does not request storage, all-files, or package-install permissions.
+        picks one file). In-app APK updates are downloaded by Android's
+        DownloadManager and always require the user's confirmation in the
+        system package installer.
     -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <!-- Only used for user-initiated updates of EnglishTok; never for silent installs. -->
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
 
     <!-- Android 11+ package visibility for the installed speech services. -->
     <queries>
@@ -42,5 +45,15 @@
             </intent-filter>
 
         </activity>
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
     </application>
 </manifest>

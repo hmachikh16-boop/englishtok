@@ -65,7 +65,7 @@ const assetDigest = (asset: Record<string, unknown>): string => {
  * GitHub redirects asset downloads to release-assets.githubusercontent.com,
  * which does not send CORS headers, so a WebView fetch is blocked. The
  * releases/latest payload itself is CORS-enabled and already carries
- * everything we need (version tag, APK browser URL, digest and release notes).
+ * everything we need (version tag, official APK URL, digest and release notes).
  */
 export const checkForAppUpdate = async (
   installedVersion: string,

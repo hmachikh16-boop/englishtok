@@ -27,7 +27,7 @@ import { Capacitor } from '@capacitor/core';
 import { UserProfile, UserSettings } from '../../types';
 import { speechService } from '../../services/speechService';
 import { checkForAppUpdate, type AppUpdateManifest } from '../../services/appUpdateService';
-import { openAppUpdateDownload } from '../../services/appUpdateLauncher';
+import { downloadAndInstallAppUpdate } from '../../services/appUpdateLauncher';
 import {
   createProgressBackup,
   getLocalProgressBackup,
@@ -67,6 +67,7 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
   const [isCheckingUpdate, setIsCheckingUpdate] = useState(false);
   const [availableUpdate, setAvailableUpdate] = useState<AppUpdateManifest | null>(null);
   const [updateMessage, setUpdateMessage] = useState<string | null>(null);
+  const [updateDownloadProgress, setUpdateDownloadProgress] = useState<number | null>(null);
   const [isOpeningUpdate, setIsOpeningUpdate] = useState(false);
   const [isRefreshingContent, setIsRefreshingContent] = useState(false);
   const [contentMessage, setContentMessage] = useState<string | null>(null);
@@ -244,18 +245,22 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
     if (!availableUpdate) return;
     setIsOpeningUpdate(true);
     setUpdateMessage(null);
+    setUpdateDownloadProgress(0);
     try {
-      await openAppUpdateDownload(availableUpdate);
+      await downloadAndInstallAppUpdate(availableUpdate, (progress) => {
+        setUpdateDownloadProgress(progress.percent);
+      });
       setUpdateMessage(
-        'فُتح رابط التنزيل في المتصفح. بعد اكتمال التنزيل، افتح ملف APK ووافق على التثبيت.',
+        'اكتمل تنزيل التحديث. أكمل خطوات التثبيت التي يعرضها Android؛ لن يبدأ التثبيت دون موافقتك.',
       );
     } catch (error) {
-      console.error('Failed to open the EnglishTok update download:', error);
+      console.error('Failed to download the EnglishTok update:', error);
       setUpdateMessage(
-        error instanceof Error ? error.message : 'تعذر فتح رابط التحديث. حاول مرة أخرى.',
+        error instanceof Error ? error.message : 'تعذر تنزيل التحديث. حاول مرة أخرى.',
       );
     } finally {
       setIsOpeningUpdate(false);
+      setUpdateDownloadProgress(null);
     }
   };
 
@@ -420,8 +425,8 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
                         {availableUpdate.notes || 'لا توجد ملاحظات إصدار إضافية.'}
                       </p>
                       <p className="mt-2 text-slate-400">
-                        سيفتح المتصفح صفحة التنزيل الرسمية. بعد اكتمال التنزيل، اضغط على ملف APK
-                        ووافق على التثبيت؛ يتحقق Android من التوقيع والتوافق.
+                        سينزّل التطبيق ملف APK الرسمي داخليًا، ثم يفتح مثبّت Android. قد يطلب
+                        Android السماح بالتثبيت من هذا المصدر مرة واحدة؛ ويظل التثبيت بموافقتك.
                       </p>
                       <button
                         type="button"
@@ -431,9 +436,19 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
                       >
                         <Download className="h-4 w-4" />
                         {isOpeningUpdate
-                          ? 'جارٍ فتح المتصفح…'
-                          : `فتح رابط تنزيل ${availableUpdate.version}`}
+                          ? updateDownloadProgress !== null
+                            ? `جارٍ تنزيل التحديث… ${updateDownloadProgress}%`
+                            : 'جارٍ بدء التنزيل…'
+                          : `تنزيل تحديث ${availableUpdate.version} من التطبيق`}
                       </button>
+                      {isOpeningUpdate && updateDownloadProgress !== null && (
+                        <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-slate-800" aria-hidden="true">
+                          <div
+                            className="h-full rounded-full bg-emerald-400 transition-[width] duration-200"
+                            style={{ width: `${Math.max(4, updateDownloadProgress)}%` }}
+                          />
+                        </div>
+                      )}
                     </>
                   )}
                 </div>
@@ -707,9 +722,10 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
             </div>
             <p className="text-[11px] leading-relaxed text-slate-400">
               يتحقق التطبيق من آخر إصدار منشور في مستودع GitHub الموثوق، ويعرض ملاحظات الإصدار
-              وبصمة SHA-256 المنشورة. يفتح زر التحديث رابط APK الرسمي في المتصفح؛ يتولى المتصفح
-              التنزيل، ثم يتحقق Android من التوقيع والتوافق ويطلب موافقتك قبل التثبيت. لا يطلب
-              EnglishTok صلاحية تثبيت التطبيقات ولا صلاحية الوصول إلى جميع الملفات.
+              وبصمة SHA-256 المنشورة. ينزّل زر التحديث حزمة APK الرسمية داخل التطبيق باستخدام
+              مدير التنزيلات، ثم يفتح مثبّت Android لتأكيد التثبيت. قد يطلب Android السماح
+              بالتثبيت من هذا المصدر مرة واحدة، ويتحقق من بصمة الملف والتوقيع قبل التثبيت.
+              لا يثبّت EnglishTok أي ملف بصمت، ولا يطلب صلاحية الوصول إلى جميع الملفات.
             </p>
             <button
               type="button"
@@ -750,7 +766,7 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
                       </p>
                       <p className="mt-2 text-slate-400">
                         يتطلب Android SDK API {availableUpdate.minimumAndroidSdk} أو أحدث.
-                        سيفتح المتصفح صفحة التنزيل؛ لن يبدأ التثبيت دون موافقتك.
+                        سيُحفظ ملف APK داخل التطبيق ثم يفتح مثبّت Android؛ لن يبدأ التثبيت دون موافقتك.
                       </p>
                       <button
                         type="button"
@@ -759,8 +775,20 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
                         className="mt-3 flex min-h-10 items-center justify-center gap-2 rounded-xl bg-emerald-500 px-4 py-2 font-bold text-slate-950 transition-colors hover:bg-emerald-400 disabled:cursor-wait disabled:opacity-70"
                       >
                         <Download className="h-4 w-4" />
-                        {isOpeningUpdate ? 'جارٍ فتح المتصفح…' : 'فتح رابط تنزيل تحديث Android'}
+                        {isOpeningUpdate
+                          ? updateDownloadProgress !== null
+                            ? `جارٍ تنزيل التحديث… ${updateDownloadProgress}%`
+                            : 'جارٍ بدء التنزيل…'
+                          : 'تنزيل تحديث Android من التطبيق'}
                       </button>
+                      {isOpeningUpdate && updateDownloadProgress !== null && (
+                        <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-slate-800" aria-hidden="true">
+                          <div
+                            className="h-full rounded-full bg-emerald-400 transition-[width] duration-200"
+                            style={{ width: `${Math.max(4, updateDownloadProgress)}%` }}
+                          />
+                        </div>
+                      )}
                     </>
                   )}
                 </div>
