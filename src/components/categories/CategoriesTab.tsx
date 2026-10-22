@@ -8,6 +8,11 @@ import { getLearningPathState } from '../../services/learningPath';
 import { LevelFinalExam } from '../quiz/LevelFinalExam';
 import { PremiumIcon } from '../icons/PremiumIcon';
 import { LearningBuddy } from '../learning/LearningBuddy';
+import {
+  MotivationalCardModal,
+  MotivationalGoalSpotlight,
+  StageMotivationalCards,
+} from '../learning/MotivationalCards';
 import { PrimaryAvatar } from '../video/PrimaryCharacterArt';
 import { EDUCATIONAL_PHASES, findSchoolYearRoute, SCHOOL_YEAR_ALIGNMENT_NOTE } from '../../data/educationalStructure';
 
@@ -45,6 +50,10 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
   const [examStage, setExamStage] = useState<number | null>(null);
   const [selectedPhaseId, setSelectedPhaseId] = useState<string | null>(null);
   const [selectedSchoolYearId, setSelectedSchoolYearId] = useState<string | null>(null);
+  const [goalCardDialog, setGoalCardDialog] = useState<{
+    cardId: string | null;
+    stage: number | null;
+  } | null>(null);
   const path = getLearningPathState(lessons, userProfile);
   const currentStageNumber = path.levels.find((level) =>
     level.lessons.some((entry) => entry.lesson.id === path.nextLessonId)
@@ -114,6 +123,9 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
   const today = new Date().toISOString().slice(0, 10);
   const dailyLessonCount = userProfile.dailyProgress.date === today ? userProfile.dailyProgress.completedLessonIds.length : 0;
   const dailyGoal = Math.max(1, userProfile.dailyGoalLessons);
+  const cardProgressByStage = Object.fromEntries(
+    path.levels.map((level) => [level.stage, level.completedCount]),
+  ) as Record<number, number>;
   const nextLessonId = selectedSchoolYear?.grade
     ? (() => {
         const { yearLessons, priorYearsComplete } = getSchoolYearProgress(selectedSchoolYear.id);
@@ -137,17 +149,25 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
     routeCursor += 112;
     return [positioned];
   });
-  const routeHeight = visibleLevels.reduce((height, level) => height + 82 + (level.lessons.length + (isSchoolYearCourse ? 0 : 1)) * 112, 0);
   const routeShifts = [0, 30, 44, 30, 0, -30, -44, -30, 0, 30];
-  const routePath = routeNodes.map((node, nodeIndex) => {
-    const x = 50 + (routeShifts[nodeIndex % routeShifts.length] * 100) / 470;
-    const y = node.y;
-    if (nodeIndex === 0) return `M ${x} ${y}`;
-    const previousIndex = nodeIndex - 1;
-    const previousX = 50 + (routeShifts[previousIndex % routeShifts.length] * 100) / 470;
-    const previousY = routeNodes[previousIndex].y;
-    return `C ${previousX} ${previousY + 38}, ${x} ${y - 38}, ${x} ${y}`;
-  }).join(' ');
+  const getStageRoute = (stage: number) => {
+    const points = routeNodes
+      .map((node, index) => ({ node, index }))
+      .filter(({ node }) => node.row.level.stage === stage)
+      .map(({ index }, localIndex) => ({
+        x: 50 + (routeShifts[index % routeShifts.length] * 100) / 470,
+        y: localIndex * 112 + 56,
+      }));
+    const first = points[0];
+    if (!first) return { path: '', height: 0 };
+    let path = `M 50 0 C 50 26, ${first.x} 30, ${first.x} ${first.y}`;
+    for (let index = 1; index < points.length; index += 1) {
+      const previous = points[index - 1];
+      const current = points[index];
+      path += ` C ${previous.x} ${previous.y + 38}, ${current.x} ${current.y - 38}, ${current.x} ${current.y}`;
+    }
+    return { path, height: points.length * 112 };
+  };
 
   const filteredLessons = lessons.filter((lesson) => {
     const matchesCategory = selectedCategory === 'all' || lesson.category === selectedCategory;
@@ -282,6 +302,12 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
           <div className="min-w-0 flex-1"><div className="flex justify-between gap-2 text-[11px] font-black"><span>هدف اليوم</span><span>{dailyLessonCount}/{dailyGoal} دروس</span></div><div className="daily-goal-track mt-1.5 h-1.5 overflow-hidden rounded-full"><div className="daily-goal-fill h-full rounded-full transition-[width] duration-500" style={{ width: `${Math.min(100, (dailyLessonCount / dailyGoal) * 100)}%` }} /></div></div>
           {dailyLessonCount >= dailyGoal && <span className="daily-goal-done"><CheckCircle2 className="h-4 w-4" /> اكتمل</span>}
         </div>
+        {!isSchoolYearCourse && path.levels.length > 0 && (
+          <MotivationalGoalSpotlight
+            progressByStage={cardProgressByStage}
+            onBrowse={() => setGoalCardDialog({ cardId: null, stage: null })}
+          />
+        )}
         {EDUCATIONAL_PHASES.length > 0 && <section className="school-phase-explorer mt-5" aria-labelledby="school-phase-title">
           <div className="mb-3 flex items-start justify-between gap-3">
             <div><h3 id="school-phase-title" className="text-sm font-black text-slate-800">التعلّم حسب الطور الدراسي أو المستوى</h3><p className="mt-1 text-[11px] leading-5 text-slate-500">اختر طورًا أو مستوى، ثم السنة أو الوحدة، لعرض وحدات المحتوى المرتبطة بها.</p></div>
@@ -327,9 +353,6 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
           </div>
         ) : (<>
         <div ref={routeRef} className="continuous-route relative mt-6" aria-label="مسار التعلم الكامل">
-          <svg className="continuous-route-ribbon" viewBox={`0 0 100 ${routeHeight}`} preserveAspectRatio="none" aria-hidden="true">
-            <path d={routePath} />
-          </svg>
           {visibleLevels.map((level) => {
             const locked = !level.isUnlocked;
             const color = [
@@ -338,12 +361,31 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
               'from-teal-300 to-emerald-300',
             ][(level.stage - 1) % 5];
             const examNodeClass = level.examPassed ? 'is-complete' : level.canTakeExam ? 'is-current' : 'is-locked';
+            const stageRoute = getStageRoute(level.stage);
             return <div key={level.stage} data-stage={level.stage} className={`path-stage continuous-route-unit ${locked ? 'is-stage-locked' : ''}`}>
               <div className="path-stage-heading flex flex-wrap items-center justify-between gap-2">
                 <div><div className="flex items-center gap-2 text-sm font-black text-white"><span className={`flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br ${color} text-slate-950`}>{locked ? <Lock className="h-4 w-4" /> : level.stage}</span>{isSchoolYearCourse ? level.titleAr : <>المرحلة {level.stage} <span className="text-teal-100">· {level.titleAr}</span></>}</div><p className="mt-1 text-[10px] text-slate-400">{level.subtitleAr}</p></div>
                 <span className="rounded-full bg-white/[0.06] px-3 py-1 text-[10px] font-bold text-slate-300">{level.completedCount}/{level.lessons.length} درس</span>
               </div>
+              {!isSchoolYearCourse && (
+                <StageMotivationalCards
+                  stage={level.stage}
+                  completedLessons={level.completedCount}
+                  onOpenCard={(cardId) => setGoalCardDialog({ cardId, stage: null })}
+                  onOpenGallery={(stage) => setGoalCardDialog({ cardId: null, stage })}
+                />
+              )}
               <div className="path-nodes continuous-route-nodes" aria-label={`دروس المرحلة ${level.stage}`}>
+                {stageRoute.path && (
+                  <svg
+                    className="continuous-route-ribbon stage-route-ribbon"
+                    viewBox={`0 0 100 ${stageRoute.height}`}
+                    preserveAspectRatio="none"
+                    aria-hidden="true"
+                  >
+                    <path d={stageRoute.path} />
+                  </svg>
+                )}
                 {level.lessons.map((entry, index) => {
                   const { lesson, status } = entry;
                   const complete = status === 'completed';
@@ -591,6 +633,15 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
           />
         );
       })()}
+      {goalCardDialog && (
+        <MotivationalCardModal
+          key={`${goalCardDialog.cardId ?? 'gallery'}-${goalCardDialog.stage ?? 'all'}`}
+          initialCardId={goalCardDialog.cardId}
+          initialStage={goalCardDialog.stage}
+          progressByStage={cardProgressByStage}
+          onClose={() => setGoalCardDialog(null)}
+        />
+      )}
     </div>
   );
 };
