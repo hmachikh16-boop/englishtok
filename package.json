@@ -1,7 +1,7 @@
 {
   "name": "english-tok",
   "private": true,
-  "version": "1.5.0",
+  "version": "1.6.0",
   "type": "module",
   "scripts": {
     "dev": "tsx server.ts",
@@ -13,7 +13,7 @@
     "speech:generate": "tsx scripts/generate-speech-library.ts",
     "generate:lesson-illustrations": "tsx scripts/generate-lesson-illustrations.ts",
     "icons:generate": "node scripts/generate-app-icons.mjs",
-    "build": "npm run content:export && npm run speech:audit && npm run generate:lesson-illustrations && node scripts/stage-latest-apk.mjs && vite build",
+    "build": "npm run content:export && npm run speech:check && npm run generate:lesson-illustrations && node scripts/stage-latest-apk.mjs && vite build",
     "android:sync": "npm run build && cap sync android",
     "android:apk": "node scripts/build-android-apk.mjs",
     "serve:releases": "node scripts/serve-releases.mjs",
