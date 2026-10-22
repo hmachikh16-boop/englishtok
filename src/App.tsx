@@ -4,7 +4,6 @@
  */
 
 import React, { useEffect, useRef, useState } from 'react';
-import { Sparkles } from 'lucide-react';
 import { App as CapacitorApp } from '@capacitor/app';
 import { Capacitor } from '@capacitor/core';
 import { ActiveTab, Lesson, UserProfile } from './types';
@@ -340,6 +339,7 @@ export default function App() {
             isPhoneFrameView={isPhoneFrameView}
             onToggleFrameView={() => setIsPhoneFrameView(!isPhoneFrameView)}
             onGoToProgress={() => handleChangeTab('progress')}
+            onOpenAiTutor={() => handleChangeTab('chat')}
           />
         )}
 
@@ -426,19 +426,6 @@ export default function App() {
           onChangeTab={handleChangeTab}
         />}
 
-        {activeTab !== 'lesson' && activeTab !== 'chat' && !placementGateOpen && (
-          <button
-            type="button"
-            onClick={() => handleChangeTab('chat')}
-            className="ai-tutor-fab"
-            aria-label="افتح المعلم الذكي للمحادثة بالإنجليزية"
-          >
-            <span className="ai-tutor-fab-icon" aria-hidden="true">
-              <Sparkles className="h-5 w-5" />
-            </span>
-            <span className="ai-tutor-fab-label" dir="rtl">المعلم AI</span>
-          </button>
-        )}
       </div>
       {placementGateOpen && lessons.length > 0 && <PlacementAssessmentGate
         lessons={lessons}

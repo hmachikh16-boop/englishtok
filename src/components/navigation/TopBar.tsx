@@ -1,5 +1,5 @@
 import React from 'react';
-import { BookOpen, Flame, Gem, Smartphone, Monitor, ShieldCheck } from 'lucide-react';
+import { BookOpen, Flame, Gem, Smartphone, Monitor, ShieldCheck, Sparkles } from 'lucide-react';
 import { UserProfile } from '../../types';
 import { speechService } from '../../services/speechService';
 import { getUserRank } from '../../services/storageService';
@@ -9,6 +9,7 @@ interface TopBarProps {
   isPhoneFrameView: boolean;
   onToggleFrameView: () => void;
   onGoToProgress: () => void;
+  onOpenAiTutor: () => void;
 }
 
 export const TopBar: React.FC<TopBarProps> = ({
@@ -16,6 +17,7 @@ export const TopBar: React.FC<TopBarProps> = ({
   isPhoneFrameView,
   onToggleFrameView,
   onGoToProgress,
+  onOpenAiTutor,
 }) => {
   const rank = getUserRank(userProfile.xp);
   const isFrench = userProfile.settings.voiceLanguage === 'fr';
@@ -68,8 +70,29 @@ export const TopBar: React.FC<TopBarProps> = ({
           </div>
         </button>
 
-        {/* Zone 3: Device Frame Mode Toggle (Smartphone vs Tablet/Wide) */}
-        <div className="journey-frame-toggle hidden md:flex items-center gap-2 shrink-0">
+        {/* Zone 3: AI tutor entry + device frame mode toggle */}
+        <div className="flex shrink-0 items-center gap-2">
+          <button
+            type="button"
+            onClick={() => {
+              speechService.playPop();
+              onOpenAiTutor();
+            }}
+            className="ai-topbar-entry group"
+            aria-label="افتح المعلم الذكي للمحادثة والتصحيح"
+            title="المعلم الذكي — محادثة وتصحيح ونطق"
+          >
+            <span className="ai-topbar-mark" aria-hidden="true">
+              <Sparkles className="ai-topbar-sparkle" strokeWidth={2.35} />
+              <span className="ai-topbar-mini">AI</span>
+              <span className="ai-topbar-live" />
+            </span>
+            <span className="ai-topbar-copy" dir="rtl">
+              <span className="ai-topbar-title">المعلم الذكي</span>
+              <span className="ai-topbar-subtitle">AI TUTOR</span>
+            </span>
+          </button>
+
           <button
             onClick={() => {
               speechService.playPop();

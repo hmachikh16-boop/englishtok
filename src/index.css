@@ -2991,45 +2991,144 @@ button.journey-frame-toggle svg { color: var(--duo-blue); }
 .ai-tutor-send-button:hover:not(:disabled) { background: linear-gradient(145deg, #1bb49c, #087f72); }
 .ai-tutor-send-button:active:not(:disabled) { transform: translateY(1px); box-shadow: 0 2px 0 #075f57; }
 .ai-tutor-send-button:disabled { cursor: not-allowed; opacity: .45; box-shadow: none; }
-.ai-tutor-fab {
-  position: absolute;
-  right: 13px;
-  bottom: calc(82px + env(safe-area-inset-bottom, 0px));
-  z-index: 45;
+/* The tutor is a first-class destination of the app, so it lives in the
+   top bar instead of floating over lesson content. The white surface and
+   gradient edge keep it premium without competing with the stats capsule. */
+.ai-topbar-entry {
+  position: relative;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  min-height: 45px;
-  padding: 5px 11px 5px 7px;
+  justify-content: center;
+  gap: 8px;
+  min-height: 40px;
+  flex: 0 0 auto;
+  padding: 4px 10px 4px 5px;
+  border: 1px solid transparent;
+  border-radius: 14px;
+  background:
+    linear-gradient(#fff, #fff) padding-box,
+    linear-gradient(135deg, #0f766e 0%, #2dd4bf 54%, #a3e635 100%) border-box;
+  box-shadow: 0 3px 0 #dfeae2, 0 7px 16px rgb(15 118 110 / 9%);
+  color: #134e4a;
+  transition: transform 160ms ease, box-shadow 160ms ease, filter 160ms ease;
+}
+.ai-topbar-entry:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 0 #d6e7dd, 0 10px 22px rgb(15 118 110 / 14%);
+  filter: saturate(1.06);
+}
+.ai-topbar-entry:active { transform: translateY(1px); box-shadow: 0 2px 0 #d6e7dd; }
+.ai-topbar-entry:focus-visible { outline: 3px solid #23aa98; outline-offset: 3px; }
+.ai-topbar-mark {
+  position: relative;
+  display: grid;
+  width: 31px;
+  height: 31px;
+  flex: 0 0 31px;
+  place-items: center;
+  border-radius: 10px;
+  color: #f0fdfa;
+  background: linear-gradient(145deg, #0f766e 0%, #0b5f58 65%, #134e4a 100%);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 24%), 0 2px 5px rgb(15 118 110 / 25%);
+  overflow: hidden;
+}
+.ai-topbar-mark::before {
+  content: "";
+  position: absolute;
+  inset: -45% -15% auto auto;
+  width: 26px;
+  height: 26px;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgb(190 242 100 / 45%), transparent 68%);
+  pointer-events: none;
+}
+.ai-topbar-sparkle { position: relative; z-index: 1; width: 17px; height: 17px; }
+.ai-topbar-entry:hover .ai-topbar-sparkle { animation: aiTutorTwinkle 900ms ease-in-out infinite; }
+.ai-topbar-mini {
+  display: none;
+  position: relative;
+  z-index: 1;
+  margin-top: -2px;
+  color: #d9f99d;
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  font-size: 6.5px;
+  font-weight: 1000;
+  letter-spacing: .12em;
+  line-height: 1;
+  text-indent: .12em;
+}
+.ai-topbar-live {
+  position: absolute;
+  z-index: 2;
+  top: -1px;
+  right: -1px;
+  width: 9px;
+  height: 9px;
   border: 2px solid #fff;
   border-radius: 999px;
-  color: #0b4e45;
-  background: linear-gradient(135deg, #c9f8e9 0%, #9cebd6 48%, #d7f6a8 100%);
-  box-shadow: 0 5px 0 #7bc7b2, 0 10px 22px rgb(13 107 93 / 22%);
-  font-size: 11px;
-  font-weight: 1000;
-  transition: transform 160ms ease, box-shadow 160ms ease;
+  background: #84cc16;
+  animation: aiTutorPulse 2.8s ease-in-out infinite;
 }
-.ai-tutor-fab:hover { transform: translateY(-2px); box-shadow: 0 7px 0 #7bc7b2, 0 13px 25px rgb(13 107 93 / 25%); }
-.ai-tutor-fab:active { transform: translateY(1px); box-shadow: 0 3px 0 #7bc7b2; }
-.ai-tutor-fab-icon {
-  display: grid;
-  width: 33px;
-  height: 33px;
-  place-items: center;
-  border-radius: 999px;
-  color: #fff;
-  background: linear-gradient(145deg, #1aa991, #08776c);
-  box-shadow: 0 2px 0 #075e57;
+.ai-topbar-copy {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  line-height: 1;
 }
-.ai-tutor-fab-label { padding-inline: 1px 4px; white-space: nowrap; }
+.ai-topbar-title { color: #134e4a; font-size: 11px; font-weight: 1000; line-height: 1.1; white-space: nowrap; }
+.ai-topbar-subtitle { color: #0f8a7c; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; font-size: 7px; font-weight: 1000; letter-spacing: .16em; line-height: 1.1; white-space: nowrap; }
 
-@keyframes aiTutorTwinkle { 0%, 100% { opacity: .45; transform: scale(.86) rotate(0); } 50% { opacity: 1; transform: scale(1.15) rotate(18deg); } }
-@keyframes aiTutorPulse { 0%, 100% { box-shadow: 0 0 0 0 rgb(22 157 137 / 28%); } 50% { box-shadow: 0 0 0 5px rgb(22 157 137 / 0%); } }
+@keyframes aiTutorTwinkle { 0%, 100% { opacity: .55; transform: scale(.88) rotate(0); } 50% { opacity: 1; transform: scale(1.12) rotate(16deg); } }
+@keyframes aiTutorPulse { 0%, 100% { box-shadow: 0 0 0 0 rgb(132 204 22 / 38%); } 55% { box-shadow: 0 0 0 4px rgb(132 204 22 / 0%); } }
+
+@media (max-width: 639px) {
+  .ai-topbar-entry {
+    width: 40px;
+    height: 40px;
+    min-height: 40px;
+    padding: 4px;
+    border-radius: 13px;
+  }
+  .ai-topbar-mark {
+    width: 30px;
+    height: 30px;
+    flex-basis: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    padding-top: 1px;
+    border-radius: 9px;
+  }
+  .ai-topbar-sparkle { width: 14px; height: 14px; }
+  .ai-topbar-mini { display: block; }
+  .ai-topbar-copy { display: none; }
+}
+
+.journey-topbar.is-phone-frame .ai-topbar-entry {
+  width: 36px;
+  height: 36px;
+  min-height: 36px;
+  padding: 3px;
+  border-radius: 12px;
+}
+.journey-topbar.is-phone-frame .ai-topbar-mark {
+  width: 28px;
+  height: 28px;
+  flex-basis: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding-top: 1px;
+  border-radius: 8px;
+}
+.journey-topbar.is-phone-frame .ai-topbar-sparkle { width: 13px; height: 13px; }
+.journey-topbar.is-phone-frame .ai-topbar-mini { display: block; margin-top: -1px; font-size: 6px; }
+.journey-topbar.is-phone-frame .ai-topbar-copy { display: none; }
+.journey-topbar.is-phone-frame .ai-topbar-live { width: 8px; height: 8px; }
 
 @media (max-width: 380px) {
-  .ai-tutor-fab-label { display: none; }
-  .ai-tutor-fab { padding-right: 6px; }
   .ai-tutor-bubble { padding: 10px 11px; }
   .ai-tutor-header .ai-tutor-icon-button:nth-last-child(1) { display: none; }
 }
