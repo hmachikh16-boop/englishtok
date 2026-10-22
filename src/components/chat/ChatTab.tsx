@@ -339,7 +339,7 @@ export const ChatTab: React.FC<ChatTabProps> = ({ lessons, userProfile, onBack }
             className="ai-tutor-icon-button shrink-0"
             aria-label="مسح المحادثة"
             title="مسح المحادثة"
-            disabled={messages.length === 0}
+            disabled={messages.length === 0 || isSending}
           >
             <Trash2 className="h-4 w-4" />
           </button>
