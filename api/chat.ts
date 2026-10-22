@@ -416,6 +416,17 @@ const resolveProvider = () => {
     };
   }
 
+  // Keep the tutor usable out of the box when no paid/account key is present.
+  // This is an anonymous, best-effort free endpoint; a configured Cloudflare,
+  // DeepSeek, or OpenRouter provider always takes precedence.
+  const allowFreeFallback = process.env.AI_FREE_FALLBACK?.trim().toLowerCase() !== 'false';
+  if (allowFreeFallback) {
+    return {
+      name: 'pollinations' as const,
+      model: process.env.POLLINATIONS_MODEL?.trim() || 'openai-fast',
+    };
+  }
+
   return null;
 };
 
@@ -454,6 +465,26 @@ const callProvider = async (
       : result;
     return {
       text: typeof text === 'string' ? text : '',
+      model: provider.model,
+    };
+  }
+
+  if (provider.name === 'pollinations') {
+    const response = await withTimeout('https://text.pollinations.ai/openai', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: provider.model,
+        messages,
+        max_tokens: maxTokens,
+        temperature: 0.55,
+        stream: false,
+      }),
+    });
+    if (!response.ok) throw new Error(`AI_UPSTREAM_${response.status}`);
+    const payload: unknown = await response.json();
+    return {
+      text: readOpenAiContent(payload),
       model: provider.model,
     };
   }
