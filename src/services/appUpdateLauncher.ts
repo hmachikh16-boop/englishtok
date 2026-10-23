@@ -13,14 +13,14 @@ interface AppUpdateInstallerPlugin {
     url: string;
     fileName: string;
     expectedSha256: string;
-  }): Promise<{ downloadId: number }>;
-  getDownloadStatus(options: { downloadId: number }): Promise<NativeDownloadStatus>;
+  }): Promise<{ downloadId: number | string }>;
+  getDownloadStatus(options: { downloadId: string }): Promise<NativeDownloadStatus>;
   installUpdate(options: {
     fileName: string;
     expectedSha256: string;
   }): Promise<{ started: boolean }>;
   openInstallSettings(): Promise<void>;
-  cancelDownload(options: { downloadId: number }): Promise<void>;
+  cancelDownload(options: { downloadId: string }): Promise<void>;
 }
 
 const AppUpdateInstaller = registerPlugin<AppUpdateInstallerPlugin>('AppUpdateInstaller');
@@ -99,7 +99,7 @@ export const downloadAndInstallAppUpdate = async (
   }
 
   const fileName = `english-tok-${update.version}.apk`;
-  let downloadId: number | null = null;
+  let downloadId: string | null = null;
   const startedAt = Date.now();
   let unknownSince: number | null = null;
 
@@ -109,7 +109,13 @@ export const downloadAndInstallAppUpdate = async (
       fileName,
       expectedSha256: update.sha256.toLowerCase(),
     });
-    downloadId = download.downloadId;
+    const numericDownloadId = Number(download.downloadId);
+    if (!Number.isSafeInteger(numericDownloadId) || numericDownloadId <= 0) {
+      throw new Error('تعذر بدء التنزيل: لم يُرجع Android معرّف تنزيل صالحًا.');
+    }
+    // Send the id as a string so the native bridge never turns it into a
+    // small Integer that Capacitor's getLong() cannot read back.
+    downloadId = String(numericDownloadId);
     onProgress?.({ bytesDownloaded: 0, totalBytes: 0, percent: 0 });
 
     while (Date.now() - startedAt < DOWNLOAD_TIMEOUT_MS) {

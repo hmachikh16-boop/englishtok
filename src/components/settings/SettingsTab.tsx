@@ -451,6 +451,18 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
                           />
                         </div>
                       )}
+                      <a
+                        href={availableUpdate.apkUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="mt-2 flex min-h-10 items-center justify-center gap-2 rounded-xl border border-slate-600 bg-slate-900/70 px-4 py-2 font-bold text-slate-100 transition-colors hover:border-sky-400 hover:text-sky-200"
+                      >
+                        <Download className="h-4 w-4" />
+                        تنزيل APK من المتصفح
+                      </a>
+                      <p className="mt-2 text-[10px] leading-5 text-slate-500">
+                        استخدم رابط المتصفح إذا تعذّر بدء التنزيل داخل التطبيق.
+                      </p>
                     </>
                   )}
                 </div>

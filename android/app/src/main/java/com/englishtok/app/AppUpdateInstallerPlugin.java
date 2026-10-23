@@ -103,7 +103,7 @@ public class AppUpdateInstallerPlugin extends Plugin {
 
     @PluginMethod
     public void getDownloadStatus(PluginCall call) {
-        final Long downloadId = call.getLong("downloadId");
+        final Long downloadId = readDownloadId(call);
         if (downloadId == null) {
             call.reject("معرّف التنزيل غير صالح.", "INVALID_DOWNLOAD_ID");
             return;
@@ -244,7 +244,7 @@ public class AppUpdateInstallerPlugin extends Plugin {
 
     @PluginMethod
     public void cancelDownload(PluginCall call) {
-        final Long downloadId = call.getLong("downloadId");
+        final Long downloadId = readDownloadId(call);
         if (downloadId == null) {
             call.reject("معرّف التنزيل غير صالح.", "INVALID_DOWNLOAD_ID");
             return;
@@ -252,6 +252,29 @@ public class AppUpdateInstallerPlugin extends Plugin {
         DownloadManager manager = (DownloadManager) getContext().getSystemService(Context.DOWNLOAD_SERVICE);
         if (manager != null) manager.remove(downloadId);
         call.resolve();
+    }
+
+    /**
+     * Capacitor's PluginCall#getLong only accepts a Long. Small JSON integers
+     * are decoded as Integer, so a DownloadManager id returned to JavaScript
+     * and sent back would otherwise fail with INVALID_DOWNLOAD_ID. Accept every
+     * numeric representation and the string form used by the web layer.
+     */
+    private Long readDownloadId(PluginCall call) {
+        final Object value = call.getData().opt("downloadId");
+        if (value instanceof Number) {
+            final long id = ((Number) value).longValue();
+            return id > 0 ? id : null;
+        }
+        if (value instanceof String) {
+            try {
+                final long id = Long.parseLong(((String) value).trim());
+                return id > 0 ? id : null;
+            } catch (NumberFormatException ignored) {
+                return null;
+            }
+        }
+        return null;
     }
 
     private boolean canInstallPackages() {
