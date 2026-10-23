@@ -407,6 +407,7 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
       )}
       <section className="path-hero relative overflow-hidden rounded-[2rem] border border-teal-200/10 p-5 shadow-2xl sm:p-7" dir="rtl">
         <div className="pointer-events-none absolute -left-16 -top-20 h-64 w-64 rounded-full bg-cyan-300/10 blur-3xl" />
+        <div className="path-hero-intro-zone">
         <div className="path-hero-intro relative flex flex-wrap items-center justify-between gap-4">
           <div className="path-hero-copy">
             <p className="flex items-center gap-2 text-xs font-black text-teal-200"><span className="h-2 w-2 rounded-full bg-lime-300 shadow-[0_0_14px_#bef264]" /> رحلتك في EnglishTok</p>
@@ -425,6 +426,7 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
           <span className="daily-goal-icon"><Sparkles className="h-4 w-4" /></span>
           <div className="min-w-0 flex-1"><div className="flex justify-between gap-2 text-[11px] font-black"><span>هدف اليوم</span><span>{dailyLessonCount}/{dailyGoal} دروس</span></div><div className="daily-goal-track mt-1.5 h-1.5 overflow-hidden rounded-full"><div className="daily-goal-fill h-full rounded-full transition-[width] duration-500" style={{ width: `${Math.min(100, (dailyLessonCount / dailyGoal) * 100)}%` }} /></div></div>
           {dailyLessonCount >= dailyGoal && <span className="daily-goal-done"><CheckCircle2 className="h-4 w-4" /> اكتمل</span>}
+        </div>
         </div>
         {!isSchoolYearCourse && path.levels.length > 0 && (
           <MotivationalGoalSpotlight
