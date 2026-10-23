@@ -25,6 +25,7 @@ import {
 import { App } from '@capacitor/app';
 import { Capacitor } from '@capacitor/core';
 import { UserProfile, UserSettings } from '../../types';
+import { ProfileCard } from './ProfileCard';
 import { speechService } from '../../services/speechService';
 import { checkForAppUpdate, type AppUpdateManifest } from '../../services/appUpdateService';
 import { downloadAndInstallAppUpdate } from '../../services/appUpdateLauncher';
@@ -374,6 +375,7 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
       {/* Subtab 1: App Settings */}
       {activeSubTab === 'app' && (
         <div className="flex flex-col gap-4">
+          <ProfileCard profile={userProfile} onUpdateProfile={onUpdateProfile} />
           <section
             className="bg-gradient-to-br from-sky-950 via-slate-900 to-emerald-950/40 border border-sky-500/30 rounded-2xl p-4 flex flex-col gap-3 shadow-xl"
             aria-labelledby="updates-title"

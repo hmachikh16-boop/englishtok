@@ -131,6 +131,11 @@ export interface UserSettings {
 }
 
 export interface UserProfile {
+  /** Optional public identity shown in the Settings profile card. */
+  displayName?: string;
+  profileTagline?: string;
+  joinedAt?: string;
+  avatarDataUrl?: string;
   xp: number;
   streakDays: number;
   lastActiveDate: string;

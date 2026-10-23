@@ -25,6 +25,9 @@ const DEFAULT_SETTINGS: UserSettings = {
 };
 
 const DEFAULT_PROFILE: UserProfile = {
+  displayName: 'متعلّم EnglishTok',
+  profileTagline: 'رحلتي اليومية نحو الطلاقة',
+  joinedAt: new Date().toISOString(),
   xp: 120,
   streakDays: 3,
   lastActiveDate: new Date().toISOString().split('T')[0],
@@ -67,9 +70,13 @@ export const getStoredProfile = (): UserProfile => {
       parsed.lastActiveDate = today;
       saveProfile(parsed);
     }
-    return {
+    const joinedAt = typeof parsed.joinedAt === 'string' && Number.isFinite(Date.parse(parsed.joinedAt))
+      ? parsed.joinedAt
+      : new Date().toISOString();
+    const profile: UserProfile = {
       ...DEFAULT_PROFILE,
       ...parsed,
+      joinedAt,
       ...(sanitizePlacementAssessment((parsed as UserProfile).placementAssessment)
         ? { placementAssessment: sanitizePlacementAssessment((parsed as UserProfile).placementAssessment)! }
         : { placementAssessment: undefined }),
@@ -82,6 +89,10 @@ export const getStoredProfile = (): UserProfile => {
           : { date: today, completedLessonIds: [] },
       settings: { ...DEFAULT_SETTINGS, ...parsed.settings },
     };
+    // Save the generated identity once so the join date and default name stay
+    // stable for profiles created before the profile card existed.
+    if (!parsed.displayName || !parsed.joinedAt) saveProfile(profile);
+    return profile;
   } catch (e) {
     console.error('Failed to load EnglishTok profile:', e);
     return DEFAULT_PROFILE;
@@ -293,7 +304,26 @@ const sanitizeProfile = (value: unknown): UserProfile | null => {
   const placementAssessment = sanitizePlacementAssessment(raw.placementAssessment);
   if (placementAssessment === null) return null;
 
+  const displayName = typeof raw.displayName === 'string'
+    ? raw.displayName.trim().slice(0, 40)
+    : undefined;
+  const profileTagline = typeof raw.profileTagline === 'string'
+    ? raw.profileTagline.trim().slice(0, 80)
+    : undefined;
+  const joinedAt = typeof raw.joinedAt === 'string' && Number.isFinite(Date.parse(raw.joinedAt))
+    ? raw.joinedAt
+    : undefined;
+  const avatarDataUrl = typeof raw.avatarDataUrl === 'string' &&
+    raw.avatarDataUrl.length <= 200_000 &&
+    /^data:image\/(?:png|jpeg|webp);base64,/i.test(raw.avatarDataUrl)
+    ? raw.avatarDataUrl
+    : undefined;
+
   return {
+    ...(displayName ? { displayName } : {}),
+    ...(profileTagline ? { profileTagline } : {}),
+    ...(joinedAt ? { joinedAt } : {}),
+    ...(avatarDataUrl ? { avatarDataUrl } : {}),
     xp: raw.xp as number,
     streakDays: raw.streakDays as number,
     lastActiveDate: raw.lastActiveDate,

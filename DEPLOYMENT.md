@@ -46,7 +46,7 @@ The Vercel workflow always type-checks and builds pushes to `main`/`master`. Pro
 
 ## Android APK signing and releases
 
-Capacitor Android project files are checked in under `android/`. Local Android builds need Android Studio/SDK and JDK 21 or newer. Release APKs are built by GitHub Actions when a `v*` tag is pushed; a release tag must match the stable semantic version in `package.json` (currently `1.7.3`).
+Capacitor Android project files are checked in under `android/`. Local Android builds need Android Studio/SDK and JDK 21 or newer. Release APKs are built by GitHub Actions when a `v*` tag is pushed; a release tag must match the stable semantic version in `package.json` (currently `1.7.4`).
 
 Create a dedicated Android upload/release keystore with Android Studio or `keytool`, and keep a second offline backup. Convert its bytes to Base64 in PowerShell to populate the GitHub secret:
 
@@ -61,7 +61,7 @@ Configure these GitHub Actions secrets; never commit the keystore or passwords:
 - `ANDROID_KEY_ALIAS`
 - `ANDROID_KEY_PASSWORD`
 
-For a later app release, increment `package.json`'s version, commit that change, and push the matching tag (for example, version `1.7.3` with tag `v1.7.3`). The workflow verifies the match, maps the version to Android's increasing `versionCode`, signs the APK, verifies the APK signature, and publishes the APK plus `update-manifest.json` to GitHub Releases.
+For a later app release, increment `package.json`'s version, commit that change, and push the matching tag (for example, version `1.7.4` with tag `v1.7.4`). The workflow verifies the match, maps the version to Android's increasing `versionCode`, signs the APK, verifies the APK signature, and publishes the APK plus `update-manifest.json` to GitHub Releases.
 
 Keep the same signing key for every APK update. Android rejects an update signed with a different key; losing the key means existing installs cannot be updated in place. The app checks package identity, version, SDK compatibility, the expected official APK URL, and the published SHA-256 before starting the installer. Android verifies package identity and the APK signature during installation. Updates are never silently installed.
 
