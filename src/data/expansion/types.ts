@@ -23,6 +23,8 @@ export type ExpansionWordTuple = readonly [
   exampleSentence: string,
   /** Arabic translation of the example sentence. */
   exampleSentenceAr: string,
+  /** Optional IPA carried over from an existing vocabulary row. */
+  phonetic?: string,
 ];
 
 export interface ExpansionLessonSpec {
@@ -52,6 +54,12 @@ export interface ExpansionLessonSpec {
   /** Last dialogue line (character A). */
   closingEn: string;
   closingAr: string;
+  /**
+   * Extension lessons reuse existing vocabulary and audio. Their fill-in
+   * prompt is visible on screen but not spoken, so the build does not need a
+   * new clip for every generated blank sentence.
+   */
+  skipFillAudio?: boolean;
 }
 
 export const expansionLesson = (spec: ExpansionLessonSpec): ExpansionLessonSpec => spec;

@@ -71,7 +71,9 @@ export const getLearningPathState = (
       return { lesson, status };
     });
 
-    previousStagePassed = isBeforeRecommendedStart || (canTakeExam && examPassed);
+    // A passed exam keeps the next stage open even after a content expansion
+    // adds new lessons to the stage the learner already passed.
+    previousStagePassed = isBeforeRecommendedStart || examPassed;
     return {
       stage: level.stage,
       titleAr: level.titleAr,

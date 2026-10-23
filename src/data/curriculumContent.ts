@@ -19,7 +19,7 @@ import { buildExpansionLesson } from './expansion/buildExpansionLesson';
  * Level 3 (B2)      critical communication + idioms — Sarah & David
  * Level 4 (C1/C2)   full immersion + nuance + rhetoric — Dr. Arthur & Elena
  *
- * Each level has fifty lessons; every lesson carries `curriculumStage` so the
+ * Each level has one hundred lessons; every lesson carries `curriculumStage` so the
  * learning path unlocks levels and lessons in order.
  */
 

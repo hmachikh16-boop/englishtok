@@ -10,7 +10,7 @@
  * temporary period when expanded lessons rely on the device voice; unsafe TTS
  * text is still a hard failure.
  *
- * Use `--stage 1` or `--lessons 1-50` to check one publishing batch at a time.
+ * Use `--stage 1` or `--lessons 1-100` to check one publishing batch at a time.
  */
 import { existsSync, statSync } from 'node:fs';
 import {
@@ -83,7 +83,7 @@ if (missing.length) {
   for (const item of missing.slice(0, 40)) console.error(`  - ${item}`);
   if (missing.length > 40) console.error(`  ... and ${missing.length - 40} more.`);
   console.error(
-    '[speech-check] Run `npm run speech:generate -- --stage 1` (or --lessons 1-50) and commit the new files.'
+    '[speech-check] Run `npm run speech:generate -- --stage 1` (or --lessons 1-100) and commit the new files.'
   );
   if (allowMissing) {
     console.warn(

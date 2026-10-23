@@ -5,7 +5,8 @@
  *
  * The vector artwork lives in public/animals and is derived from Twemoji
  * (CC-BY 4.0). Keeping the species metadata here makes the collection easy to
- * audit: there are exactly 100 unique ids and 100 unique cards.
+ * audit: there are exactly 100 unique ids. The 200 collectible cards use these
+ * 100 species for both the classic and golden editions.
  */
 
 export type AnimalGroup = 'home' | 'safari' | 'ocean' | 'legend';

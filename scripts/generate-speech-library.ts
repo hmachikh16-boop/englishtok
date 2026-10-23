@@ -4,8 +4,8 @@
  *
  * Usage:
  *   npx tsx scripts/generate-speech-library.ts                 # every lesson
- *   npx tsx scripts/generate-speech-library.ts --stage 1       # one 50-lesson stage
- *   npx tsx scripts/generate-speech-library.ts --lessons 1-50  # an arbitrary slice
+ *   npx tsx scripts/generate-speech-library.ts --stage 1        # one 100-lesson stage
+ *   npx tsx scripts/generate-speech-library.ts --lessons 1-100  # an arbitrary slice
  *   npx tsx scripts/generate-speech-library.ts --stage 1 --voice af_heart
  *   npx tsx scripts/generate-speech-library.ts --limit 40      # quick sample
  *

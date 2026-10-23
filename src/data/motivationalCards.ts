@@ -3,16 +3,18 @@ import { ANIMALS_BY_STAGE, type AnimalProfile } from './animals';
 /**
  * Collectible motivation cards that live directly inside the learning path.
  *
- * There are 100 cards: 25 per CEFR stage, unlocking every two lessons. This
- * makes the collection a steady reward loop without adding another saved
- * progress field — every unlock is derived from completed lessons.
+ * There are 200 cards: 50 per CEFR stage, unlocking every two lessons. The
+ * first 25 cards in each stage are the classic animal cards; the next 25 are
+ * golden editions of the same animals, unlocked across the second half of the
+ * stage. This makes the collection a steady reward loop without adding another
+ * saved progress field — every unlock is derived from completed lessons.
  *
- * Each card introduces a different animal. The 100 species are split across
- * four habitats so unlocking a new stage also reveals a new part of the
- * collection, and the artwork stays distinct from the lesson characters.
+ * The golden editions reuse the four habitat artworks and add a distinct
+ * royal-gold frame, title, rarity and XP value.
  */
 
 export type MotivationalCardRarity = 'hero' | 'epic' | 'legend';
+export type MotivationalCardEdition = 'classic' | 'gold';
 
 export interface MotivationalCardPalette {
   start: string;
@@ -35,6 +37,7 @@ export interface MotivationalCard {
   challengeAr: string;
   animal: AnimalProfile;
   rarity: MotivationalCardRarity;
+  edition: MotivationalCardEdition;
   xp: number;
   palette: MotivationalCardPalette;
 }
@@ -75,7 +78,31 @@ const STAGE_PALETTES: Record<number, readonly MotivationalCardPalette[]> = {
   ],
 };
 
+const GOLD_PALETTES: Record<number, readonly MotivationalCardPalette[]> = {
+  1: [
+    { start: '#201507', mid: '#a16207', deep: '#052f52', glow: '#fde68a', accent: '#fff7d6' },
+    { start: '#1b2a12', mid: '#b7791f', deep: '#052e16', glow: '#fef08a', accent: '#ecfccb' },
+    { start: '#2a1a05', mid: '#d97706', deep: '#082f49', glow: '#fcd34d', accent: '#fffbeb' },
+  ],
+  2: [
+    { start: '#241604', mid: '#b45309', deep: '#052e16', glow: '#fde68a', accent: '#fef3c7' },
+    { start: '#2a1d08', mid: '#ca8a04', deep: '#14532d', glow: '#fef08a', accent: '#ecfccb' },
+    { start: '#1e1a05', mid: '#a16207', deep: '#134e4a', glow: '#fcd34d', accent: '#fff7d6' },
+  ],
+  3: [
+    { start: '#1f1535', mid: '#7c3aed', deep: '#052f52', glow: '#fde68a', accent: '#fef3c7' },
+    { start: '#2a1438', mid: '#a21caf', deep: '#312e81', glow: '#fcd34d', accent: '#fffbeb' },
+    { start: '#1b123d', mid: '#4f46e5', deep: '#3b0764', glow: '#fef08a', accent: '#fef3c7' },
+  ],
+  4: [
+    { start: '#071b3c', mid: '#1d4ed8', deep: '#2a1a05', glow: '#fcd34d', accent: '#fffbeb' },
+    { start: '#17123b', mid: '#6d28d9', deep: '#1e1b4b', glow: '#fde68a', accent: '#fef3c7' },
+    { start: '#052f52', mid: '#0f766e', deep: '#3b2504', glow: '#fcd34d', accent: '#ecfccb' },
+  ],
+};
+
 const DEFAULT_PALETTE: MotivationalCardPalette = STAGE_PALETTES[1][0];
+const GOLD_DEFAULT_PALETTE: MotivationalCardPalette = GOLD_PALETTES[1][0];
 const DEFAULT_TITLE = { ar: 'شرارة البداية', en: 'First Spark' };
 
 interface CardTitle {
@@ -357,23 +384,44 @@ const CARD_MESSAGES: readonly CardMessage[] = [
 const DEFAULT_MESSAGE = CARD_MESSAGES[0];
 const FALLBACK_ANIMAL = ANIMALS_BY_STAGE[1][0];
 
-const cards: MotivationalCard[] = Array.from({ length: 100 }, (_, globalIndex) => {
-  const stage = Math.floor(globalIndex / 25) + 1;
-  const withinStage = globalIndex % 25;
-  const requiredLessons = (withinStage + 1) * 2;
-  const title = STAGE_TITLES[stage]?.[withinStage] ?? DEFAULT_TITLE;
-  const message = CARD_MESSAGES[globalIndex % CARD_MESSAGES.length] ?? DEFAULT_MESSAGE;
-  const palette = STAGE_PALETTES[stage]?.[withinStage % 3] ?? DEFAULT_PALETTE;
-  const animal = ANIMALS_BY_STAGE[stage]?.[withinStage] ?? FALLBACK_ANIMAL;
-  const rarity: MotivationalCardRarity = withinStage === 24
-    ? 'legend'
-    : withinStage % 5 === 4
-      ? 'epic'
-      : 'hero';
-  const xp = 40 + requiredLessons * 5 + (rarity === 'legend' ? 160 : rarity === 'epic' ? 40 : 0);
+const cards: MotivationalCard[] = Array.from({ length: 200 }, (_, globalIndex) => {
+  const stage = Math.floor(globalIndex / 50) + 1;
+  const withinStage = globalIndex % 50;
+  const edition: MotivationalCardEdition = withinStage >= 25 ? 'gold' : 'classic';
+  const editionIndex = withinStage % 25;
+  const requiredLessons = edition === 'gold'
+    ? 50 + (editionIndex + 1) * 2
+    : (editionIndex + 1) * 2;
+  const baseTitle = STAGE_TITLES[stage]?.[editionIndex] ?? DEFAULT_TITLE;
+  const title = edition === 'gold'
+    ? { ar: `النسخة الذهبية · ${baseTitle.ar}`, en: `Golden ${baseTitle.en}` }
+    : baseTitle;
+  const messageIndex = edition === 'gold'
+    ? (globalIndex + 11) % CARD_MESSAGES.length
+    : globalIndex % CARD_MESSAGES.length;
+  const message = CARD_MESSAGES[messageIndex] ?? DEFAULT_MESSAGE;
+  const goldPalettes = GOLD_PALETTES[stage] ?? GOLD_PALETTES[1];
+  const palette = edition === 'gold'
+    ? goldPalettes[editionIndex % goldPalettes.length] ?? GOLD_DEFAULT_PALETTE
+    : STAGE_PALETTES[stage]?.[editionIndex % 3] ?? DEFAULT_PALETTE;
+  const animal = ANIMALS_BY_STAGE[stage]?.[editionIndex] ?? FALLBACK_ANIMAL;
+  const rarity: MotivationalCardRarity = edition === 'gold'
+    ? editionIndex === 24
+      ? 'legend'
+      : 'epic'
+    : editionIndex === 24
+      ? 'legend'
+      : editionIndex % 5 === 4
+        ? 'epic'
+        : 'hero';
+  const xp = 40 + requiredLessons * 5
+    + (rarity === 'legend' ? 160 : rarity === 'epic' ? 40 : 0)
+    + (edition === 'gold' ? 120 : 0);
 
   return {
-    id: `et-s${stage}-${String(withinStage + 1).padStart(2, '0')}`,
+    id: edition === 'gold'
+      ? `et-s${stage}-g${String(editionIndex + 1).padStart(2, '0')}`
+      : `et-s${stage}-${String(editionIndex + 1).padStart(2, '0')}`,
     serial: `ET-${String(globalIndex + 1).padStart(3, '0')}`,
     stage,
     requiredLessons,
@@ -385,6 +433,7 @@ const cards: MotivationalCard[] = Array.from({ length: 100 }, (_, globalIndex) =
     challengeAr: message.challengeAr,
     animal,
     rarity,
+    edition,
     xp,
     palette,
   };

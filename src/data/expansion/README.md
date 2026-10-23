@@ -1,7 +1,9 @@
 # Expanded curriculum — authoring guide
 
-This folder holds the 184 new lessons that bring every stage to **50 lessons**
-(the repository already ships 4 lessons per stage).
+This folder holds the first 184 expansion lessons (46 per stage). Together with
+the four original lessons per stage they cover **lessons 1–50**. Lessons 51–100
+are generated in `../expansionPlus/`, bringing each stage to **100 lessons** and
+the curriculum to **400 lessons**.
 
 Each stage is split into two files so a single file stays reviewable:
 

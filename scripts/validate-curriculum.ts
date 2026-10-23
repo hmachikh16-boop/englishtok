@@ -1,5 +1,5 @@
 /**
- * Structural checks for the 200-lesson curriculum.
+ * Structural checks for the 400-lesson curriculum.
  *
  *   npx tsx scripts/validate-curriculum.ts
  *
@@ -107,11 +107,11 @@ for (const lesson of LEARNING_PATH_LESSONS) {
 const expectedStages = [1, 2, 3, 4];
 for (const stage of expectedStages) {
   const count = byStage.get(stage) ?? 0;
-  if (count !== 50) errors.push(`stage ${stage}: expected 50 lessons, found ${count}`);
+  if (count !== 100) errors.push(`stage ${stage}: expected 100 lessons, found ${count}`);
 }
 
-if (LEARNING_PATH_LESSONS.length !== 200) {
-  errors.push(`expected 200 lessons, found ${LEARNING_PATH_LESSONS.length}`);
+if (LEARNING_PATH_LESSONS.length !== 400) {
+  errors.push(`expected 400 lessons, found ${LEARNING_PATH_LESSONS.length}`);
 }
 
 if (errors.length) {

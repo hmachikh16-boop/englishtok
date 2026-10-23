@@ -99,17 +99,18 @@ const GoalCardFront: React.FC<GoalCardFrontProps> = ({ entry, completed, unlocke
     : 0;
 
   return (
-    <div className={`goal-card-face goal-card-front rarity-${entry.rarity}`}>
+    <div className={`goal-card-face goal-card-front rarity-${entry.rarity} edition-${entry.edition}`}>
       <span className="goal-card-holo" aria-hidden="true" />
       <span className="goal-card-shine" aria-hidden="true" />
       <header className="goal-card-head">
         <span className="goal-card-brand">EnglishTok <b>Legends</b></span>
         <span className="goal-card-stage">STAGE {pad(entry.stage)}</span>
       </header>
-      <div className="goal-card-art">
+      <div className={`goal-card-art ${unlocked ? '' : 'is-secret'}`}>
         <span className="goal-card-rays" aria-hidden="true" />
         <span className="goal-card-dots" aria-hidden="true" />
         <GoalAnimalArt animal={entry.animal} className="goal-card-animal" />
+        {entry.edition === 'gold' && <span className="goal-card-edition-badge">GOLD</span>}
         <span className="goal-card-serial">{entry.serial}</span>
         <span className={`goal-card-state ${unlocked ? 'is-unlocked' : 'is-locked'}`}>
           {unlocked ? (
@@ -124,23 +125,31 @@ const GoalCardFront: React.FC<GoalCardFrontProps> = ({ entry, completed, unlocke
         </span>
       </div>
       <footer className="goal-card-copy">
-        <p className="goal-card-animal-name">
-          <strong>{entry.animal.nameAr}</strong>
-          <span className="goal-card-animal-en" dir="ltr">{entry.animal.nameEn}</span>
-        </p>
-        <p className="goal-card-title-ar">{entry.titleAr}</p>
-        <p className="goal-card-title-en" dir="ltr">{entry.titleEn}</p>
-        <div className="goal-card-meta">
-          <span className={`goal-card-rarity rarity-${entry.rarity}`}>
-            <span aria-hidden="true">{RARITY_STARS[entry.rarity]}</span>
-            {RARITY_LABEL[entry.rarity]}
-          </span>
-          <span className="goal-card-xp">+{entry.xp} XP</span>
-        </div>
-        {!unlocked && (
-          <span className="goal-card-progress" aria-hidden="true">
-            <i style={{ width: `${progress}%` }} />
-          </span>
+        {unlocked ? (
+          <>
+            <p className="goal-card-animal-name">
+              <strong>{entry.animal.nameAr}</strong>
+              <span className="goal-card-animal-en" dir="ltr">{entry.animal.nameEn}</span>
+            </p>
+            <p className="goal-card-title-ar">{entry.titleAr}</p>
+            <p className="goal-card-title-en" dir="ltr">{entry.titleEn}</p>
+            <div className="goal-card-meta">
+              <span className={`goal-card-rarity rarity-${entry.rarity}`}>
+                <span aria-hidden="true">{RARITY_STARS[entry.rarity]}</span>
+                {RARITY_LABEL[entry.rarity]}
+              </span>
+              <span className="goal-card-xp">+{entry.xp} XP</span>
+            </div>
+          </>
+        ) : (
+          <div className="goal-card-locked-copy">
+            <p className="goal-card-animal-name"><strong>بطاقة مقفلة</strong></p>
+            <p className="goal-card-title-ar">تُفتح بعد {lessonCountAr(Math.max(0, entry.requiredLessons - completed))}</p>
+            <p className="goal-card-title-en" dir="ltr">LOCKED CARD</p>
+            <span className="goal-card-progress" aria-hidden="true">
+              <i style={{ width: `${progress}%` }} />
+            </span>
+          </div>
         )}
       </footer>
     </div>
@@ -156,10 +165,10 @@ const GoalCardBack: React.FC<GoalCardBackProps> = ({ entry, unlocked }) => {
   const stage = getStageName(entry.stage);
 
   return (
-    <div className={`goal-card-face goal-card-back rarity-${entry.rarity}`}>
+    <div className={`goal-card-face goal-card-back rarity-${entry.rarity} edition-${entry.edition}`}>
       <span className="goal-card-back-grid" aria-hidden="true" />
       <header className="goal-card-back-head">
-        <span>رسالة {entry.animal.nameAr}</span>
+        <span>{entry.edition === 'gold' ? 'رسالة ذهبية · ' : 'رسالة '}{entry.animal.nameAr}</span>
         <span className="font-en" dir="ltr">{entry.serial}</span>
       </header>
       <div className="goal-card-back-quote">
@@ -201,18 +210,22 @@ const GoalFlipCard: React.FC<GoalFlipCardProps> = ({
 }) => (
   <button
     type="button"
-    className={`goal-flip-card rarity-${entry.rarity} ${unlocked ? 'is-unlocked' : 'is-locked'} ${flipped ? 'is-flipped' : ''} ${className}`}
+    disabled={!unlocked}
+    className={`goal-flip-card rarity-${entry.rarity} edition-${entry.edition} ${unlocked ? 'is-unlocked' : 'is-locked'} ${unlocked && flipped ? 'is-flipped' : ''} ${className}`}
     style={cardStyle(entry)}
     onClick={() => {
+      if (!unlocked) return;
       speechService.playPop();
       onFlip();
     }}
-    aria-label={`${entry.animal.nameAr}، ${entry.titleAr}. ${unlocked ? 'بطاقة مفتوحة. ' : `هدف قادم، أكملت ${completed} من ${lessonCountAr(entry.requiredLessons)}. `}اضغط لقلب البطاقة.`}
-    aria-pressed={flipped}
+    aria-label={unlocked
+      ? `${entry.animal.nameAr}، ${entry.titleAr}. بطاقة مفتوحة. اضغط لقلب البطاقة.`
+      : `بطاقة مقفلة. أكملت ${completed} من ${lessonCountAr(entry.requiredLessons)}. تُفتح بعد إكمال الدروس المطلوبة.`}
+    aria-pressed={unlocked ? flipped : undefined}
   >
     <span className="goal-card-inner">
       <GoalCardFront entry={entry} completed={completed} unlocked={unlocked} />
-      <GoalCardBack entry={entry} unlocked={unlocked} />
+      {unlocked && <GoalCardBack entry={entry} unlocked={unlocked} />}
     </span>
   </button>
 );
@@ -224,7 +237,7 @@ interface GoalCardTileProps {
   className?: string;
 }
 
-/** Compact animal poster reused by the stage checkpoints and the 100-card album. */
+/** Compact animal poster reused by the stage checkpoints and the 200-card album. */
 const GoalCardTile: React.FC<GoalCardTileProps> = ({
   entry,
   completedLessons,
@@ -240,17 +253,22 @@ const GoalCardTile: React.FC<GoalCardTileProps> = ({
   return (
     <button
       type="button"
-      className={`stage-goal-card ${unlocked ? 'is-unlocked' : 'is-locked'} ${className}`}
+      disabled={!unlocked}
+      className={`stage-goal-card edition-${entry.edition} ${unlocked ? 'is-unlocked' : 'is-locked'} ${className}`}
       style={cardStyle(entry)}
       onClick={() => {
+        if (!unlocked) return;
         speechService.playPop();
         onClick();
       }}
-      aria-label={`${entry.animal.nameAr}، ${entry.titleAr}، ${unlocked ? 'مفتوحة' : `أكملت ${completed} من ${lessonCountAr(entry.requiredLessons)}`}`}
+      aria-label={unlocked
+        ? `${entry.animal.nameAr}، ${entry.titleAr}، مفتوحة`
+        : `بطاقة مقفلة. أكملت ${completed} من ${lessonCountAr(entry.requiredLessons)}`}
     >
-      <span className="stage-goal-art">
+      <span className={`stage-goal-art ${unlocked ? '' : 'is-secret'}`}>
         <GoalAnimalArt animal={entry.animal} className="stage-goal-animal" />
         <span className="stage-goal-card-number">{entry.serial}</span>
+        {entry.edition === 'gold' && <span className="stage-goal-edition-badge">GOLD</span>}
         {unlocked ? (
           <span className="stage-goal-open-mark"><Sparkles aria-hidden="true" /></span>
         ) : (
@@ -258,7 +276,7 @@ const GoalCardTile: React.FC<GoalCardTileProps> = ({
         )}
       </span>
       <span className="stage-goal-copy">
-        <strong>{entry.animal.nameAr}</strong>
+        <strong>{unlocked ? entry.animal.nameAr : 'بطاقة مقفلة'}</strong>
         <small>{unlocked ? entry.titleAr : `مقفلة · ${completed}/${entry.requiredLessons}`}</small>
       </span>
       <span className="stage-goal-progress" aria-hidden="true">
@@ -301,10 +319,10 @@ export const MotivationalGoalSpotlight = React.memo(function MotivationalGoalSpo
           <span className="goal-quest-eyebrow-icon"><Trophy aria-hidden="true" /></span>
           أهدافك البطولية
         </p>
-        <h3 id="goal-quest-title">100 حيوان في 100 بطاقة</h3>
+        <h3 id="goal-quest-title">200 بطاقة في أربع مراحل</h3>
         <p className="goal-quest-description">
-          كل درسين يفتحان بطاقة لحيوان جديد: من الكلب والفيل إلى التنين والفينيق.
-          اقلب البطاقة، اقرأ رسالتها، واجمع مملكة الحيوانات كاملة.
+          كل مرحلة تضم 25 بطاقة أساسية و25 نسخة ذهبية. كل درسين يفتحان بطاقة،
+          والبطاقات المقفلة لا تُقلب ولا تُقرأ قبل فتحها.
         </p>
 
         <div className="goal-quest-summary">
@@ -312,7 +330,7 @@ export const MotivationalGoalSpotlight = React.memo(function MotivationalGoalSpo
             <span className="goal-quest-count-number font-mono-num" dir="ltr">
               {unlockedCount}<small>/{MOTIVATIONAL_CARDS.length}</small>
             </span>
-            <span className="goal-quest-count-label">حيوان في مجموعتك</span>
+            <span className="goal-quest-count-label">بطاقة في مجموعتك</span>
           </div>
           <div className="goal-quest-meter" aria-hidden="true">
             <span style={{ width: `${collectionProgress}%` }} />
@@ -321,18 +339,20 @@ export const MotivationalGoalSpotlight = React.memo(function MotivationalGoalSpo
 
         <div className="goal-quest-next">
           <span className="goal-quest-next-kicker">
-            {allCollected ? 'اكتملت المملكة' : nextCardUnlocked ? 'آخر حيوان في المجموعة' : 'حيوانك القادم'}
+            {allCollected ? 'اكتملت المملكة' : nextCardUnlocked ? 'آخر بطاقة في المجموعة' : 'بطاقتك القادمة'}
           </span>
           <div className="goal-quest-next-line">
-            <strong>{nextCard.animal.nameAr}</strong>
-            <span className="font-en" dir="ltr">{nextCard.animal.nameEn} · {nextCard.titleEn}</span>
+            <strong>{nextCardUnlocked ? nextCard.animal.nameAr : 'بطاقة سرية'}</strong>
+            <span className="font-en" dir="ltr">
+              {nextCardUnlocked ? `${nextCard.animal.nameEn} · ${nextCard.titleEn}` : 'LOCKED · COMPLETE LESSONS TO REVEAL'}
+            </span>
           </div>
           <p>
             {allCollected
-              ? 'أنت الآن أسطورة الطلاقة — كل حيوانات المملكة في مجموعتك.'
+              ? 'أنت الآن أسطورة الطلاقة — كل بطاقات المملكة في مجموعتك.'
               : nextCardUnlocked
-                ? 'جاهز الآن — اقلب البطاقة واقرأ رسالته.'
-                : `أكمل ${lessonCountAr(nextCardRemaining)} في المرحلة ${nextCard.stage} لفتحه.`}
+                ? 'جاهزة الآن — اقلب البطاقة واقرأ رسالتها.'
+                : `أكمل ${lessonCountAr(nextCardRemaining)} في المرحلة ${nextCard.stage} لفتحها.`}
           </p>
           <div className="goal-quest-next-progress" aria-hidden="true">
             <span
@@ -353,10 +373,12 @@ export const MotivationalGoalSpotlight = React.memo(function MotivationalGoalSpo
             className="goal-quest-browse"
           >
             <LayoutGrid aria-hidden="true" />
-            <span>تصفّح {MOTIVATIONAL_CARDS.length} حيوان</span>
+            <span>تصفّح {MOTIVATIONAL_CARDS.length} بطاقة</span>
             <ChevronLeft aria-hidden="true" />
           </button>
-          <span className="goal-quest-whisper">اضغط البطاقة لقلبها</span>
+          <span className="goal-quest-whisper">
+            {nextCardUnlocked ? 'اضغط البطاقة لقلبها' : 'تُفتح البطاقة بعد إكمال الدروس'}
+          </span>
         </div>
       </div>
 
@@ -371,7 +393,7 @@ export const MotivationalGoalSpotlight = React.memo(function MotivationalGoalSpo
           className="goal-flip-card--spotlight"
         />
         <span className="goal-quest-card-caption">
-          <RotateCcw aria-hidden="true" /> بطاقة الحيوان
+          <RotateCcw aria-hidden="true" /> بطاقة المجموعة
         </span>
       </div>
     </section>
@@ -408,11 +430,11 @@ export const StageMotivationalCards = React.memo(function StageMotivationalCards
   const stageInfo = getStageName(stage);
 
   return (
-    <section className="stage-goal-panel" dir="rtl" aria-label={`حيوانات ${stageInfo.nameAr}`}>
+    <section className="stage-goal-panel" dir="rtl" aria-label={`بطاقات ${stageInfo.nameAr}`}>
       <header className="stage-goal-head">
         <span className="stage-goal-title">
           <Trophy aria-hidden="true" />
-          حيوانات المرحلة
+          بطاقات المرحلة
         </span>
         <span className="stage-goal-head-actions">
           <span className="stage-goal-count">{unlockedCount}/{cards.length} مفتوحة</span>
@@ -423,7 +445,7 @@ export const StageMotivationalCards = React.memo(function StageMotivationalCards
               speechService.playPop();
               onOpenGallery(stage);
             }}
-            aria-label={`عرض جميع حيوانات المرحلة ${stage}`}
+            aria-label={`عرض جميع بطاقات المرحلة ${stage}`}
           >
             <LayoutGrid aria-hidden="true" />
             عرض الكل
@@ -445,7 +467,7 @@ export const StageMotivationalCards = React.memo(function StageMotivationalCards
           ? nextLockedRemaining === 1
             ? 'البطاقة القادمة بعد درس واحد'
             : `البطاقة القادمة بعد ${lessonCountAr(nextLockedRemaining)}`
-          : 'اكتملت حيوانات هذه المرحلة — افتح المجموعة لمراجعتها.'}
+          : 'اكتملت بطاقات هذه المرحلة — افتح المجموعة لمراجعتها.'}
       </p>
     </section>
   );
@@ -594,9 +616,9 @@ export const MotivationalCardModal: React.FC<ModalProps> = ({
       >
         <header className="goal-card-modal-head">
           <div>
-            <p>EnglishTok Legends · 100 حيوان</p>
+            <p>EnglishTok Legends · {MOTIVATIONAL_CARDS.length} بطاقة</p>
             <h2 id="goal-card-modal-title">
-              {view === 'gallery' ? 'مملكة الحيوانات' : 'بطاقة الحيوان'}
+              {view === 'gallery' ? 'مملكة البطاقات' : 'بطاقة المجموعة'}
             </h2>
           </div>
           <button
@@ -604,7 +626,7 @@ export const MotivationalCardModal: React.FC<ModalProps> = ({
             type="button"
             className="goal-card-modal-close"
             onClick={onClose}
-            aria-label="إغلاق مجموعة الحيوانات"
+            aria-label="إغلاق مجموعة البطاقات"
           >
             <X aria-hidden="true" />
           </button>
@@ -617,18 +639,18 @@ export const MotivationalCardModal: React.FC<ModalProps> = ({
                 <strong className="font-mono-num" dir="ltr">
                   {unlockedCount}<span>/{MOTIVATIONAL_CARDS.length}</span>
                 </strong>
-                <small>حيوان مفتوح</small>
+                <small>بطاقة مفتوحة</small>
               </div>
               <div className="goal-card-modal-summary-meter" aria-hidden="true">
                 <span style={{ width: `${collectionProgress}%` }} />
               </div>
-              <span className="goal-card-modal-summary-hint">كل درسين = حيوان جديد</span>
+              <span className="goal-card-modal-summary-hint">كل درسين = بطاقة · 25 أساسية + 25 ذهبية لكل مرحلة</span>
             </div>
 
             <div
               className="goal-card-modal-filters"
               role="tablist"
-              aria-label="تصفية الحيوانات حسب المرحلة"
+              aria-label="تصفية البطاقات حسب المرحلة"
             >
               <button
                 type="button"
@@ -661,7 +683,7 @@ export const MotivationalCardModal: React.FC<ModalProps> = ({
               })}
             </div>
 
-            <div className="goal-card-modal-pager" aria-label="التنقل بين صفحات الحيوانات">
+            <div className="goal-card-modal-pager" aria-label="التنقل بين صفحات البطاقات">
               <button
                 type="button"
                 disabled={safePage === 0}
@@ -685,7 +707,7 @@ export const MotivationalCardModal: React.FC<ModalProps> = ({
               </button>
             </div>
 
-            <div className="goal-card-modal-grid" aria-label="حيوانات المجموعة">
+            <div className="goal-card-modal-grid" aria-label="بطاقات المجموعة">
               {visibleCards.map((entry) => (
                 <GoalCardTile
                   key={entry.id}
@@ -717,7 +739,9 @@ export const MotivationalCardModal: React.FC<ModalProps> = ({
                 المجموعة
               </button>
               <span className={`goal-card-modal-detail-badge ${activeUnlocked ? 'is-unlocked' : 'is-locked'}`}>
-                {activeUnlocked ? 'مفتوحة' : 'هدف قادم'} · {stage.nameAr} · {activeCard.serial}
+                {activeUnlocked
+                  ? activeCard.edition === 'gold' ? 'ذهبية مفتوحة' : 'مفتوحة'
+                  : 'مقفلة'} · {stage.nameAr} · {activeCard.serial}
               </span>
             </div>
 
@@ -761,27 +785,35 @@ export const MotivationalCardModal: React.FC<ModalProps> = ({
                 <span>{activePosition >= 0 ? activePosition + 1 : 1} من {filteredCards.length}</span>
                 <span>{stage.nameAr} · STAGE {pad(activeCard.stage)}</span>
               </div>
-              <h3>{activeCard.animal.nameAr}</h3>
-              <p className="goal-card-modal-en font-en" dir="ltr">{activeCard.animal.nameEn}</p>
-              <p className="goal-card-modal-card-title">
-                «{activeCard.titleAr}» · <span className="font-en" dir="ltr">{activeCard.titleEn}</span>
+              <h3>{activeUnlocked ? activeCard.animal.nameAr : 'بطاقة سرية'}</h3>
+              <p className="goal-card-modal-en font-en" dir="ltr">
+                {activeUnlocked ? activeCard.animal.nameEn : 'LOCKED CARD'}
               </p>
+              {activeUnlocked ? (
+                <p className="goal-card-modal-card-title">
+                  «{activeCard.titleAr}» · <span className="font-en" dir="ltr">{activeCard.titleEn}</span>
+                </p>
+              ) : (
+                <p className="goal-card-modal-card-title">تفاصيل البطاقة تُكشف بعد فتحها.</p>
+              )}
               <p className={`goal-card-modal-status ${activeUnlocked ? 'is-unlocked' : 'is-locked'}`}>
                 {activeUnlocked
                   ? 'البطاقة مفتوحة — اقلبها لتقرأ رسالة حيوانك وتحديه اليومي.'
-                  : `هدف قادم — أكمل ${lessonCountAr(activeRemaining)} في المرحلة ${activeCard.stage}. يمكنك قراءة الرسالة الآن.`}
+                  : `مقفلة — أكمل ${lessonCountAr(activeRemaining)} في المرحلة ${activeCard.stage}. لا يمكن قلب البطاقة أو قراءتها قبل فتحها.`}
               </p>
-              <button
-                type="button"
-                className="goal-card-modal-flip"
-                onClick={() => {
-                  speechService.playPop();
-                  setFlipped((value) => !value);
-                }}
-              >
-                <RotateCcw aria-hidden="true" />
-                {flipped ? 'عرض وجه البطاقة' : 'اقلب البطاقة واقرأ الرسالة'}
-              </button>
+              {activeUnlocked && (
+                <button
+                  type="button"
+                  className="goal-card-modal-flip"
+                  onClick={() => {
+                    speechService.playPop();
+                    setFlipped((value) => !value);
+                  }}
+                >
+                  <RotateCcw aria-hidden="true" />
+                  {flipped ? 'عرض وجه البطاقة' : 'اقلب البطاقة واقرأ الرسالة'}
+                </button>
+              )}
             </div>
           </>
         )}

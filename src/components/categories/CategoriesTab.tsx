@@ -158,7 +158,7 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
         );
         const priorYearsComplete = yearIndex === 0 || phase.years.slice(0, yearIndex).every((priorYear) => {
           const priorLessons = lessonsBySchoolYear.get(priorYear.id) ?? [];
-          return priorLessons.length === 50 && priorLessons.every((lesson) => completedLessonIds.has(lesson.id));
+          return priorLessons.length > 0 && priorLessons.every((lesson) => completedLessonIds.has(lesson.id));
         });
         progressById.set(year.id, { yearLessons, completed, priorYearsComplete });
       });

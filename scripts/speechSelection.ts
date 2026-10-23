@@ -4,8 +4,8 @@ import type { Lesson } from '../src/types';
 /**
  * Select the lessons whose speech clips a script should inspect or generate.
  *
- * The expanded curriculum has exactly 50 lessons per CEFR stage, so a stage is
- * the natural publishing batch. `--lessons 1-50` exists for arbitrary slices
+ * The expanded curriculum has exactly 100 lessons per CEFR stage, so a stage is
+ * the natural publishing batch. `--lessons 1-100` exists for arbitrary slices
  * (for example after editing a smaller group of lessons).
  */
 export interface SpeechSelection {

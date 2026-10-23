@@ -110,7 +110,7 @@ export const buildExpansionLesson = (
   const vocabulary: VocabularyWord[] = spec.words.map((word, index) => ({
     id: `${spec.id}-v${index + 1}`,
     word: word[0],
-    phonetic: PRONUNCIATIONS[normalizeKey(word[0])] ?? '',
+    phonetic: word[5] ?? PRONUNCIATIONS[normalizeKey(word[0])] ?? '',
     partOfSpeech: word[1],
     translationAr: word[2],
     exampleSentence: word[3],
@@ -135,7 +135,7 @@ export const buildExpansionLesson = (
     id: `${spec.id}-q2`,
     type: 'fill_blank',
     questionAr: `أكمل الجملة: ${blanked}`,
-    questionEn: blanked,
+    ...(spec.skipFillAudio ? {} : { questionEn: blanked }),
     options: [],
     correctAnswer: secondWord[0],
     explanationAr: `الإجابة الصحيحة: ${secondWord[0]}. ${secondWord[4]}`,
