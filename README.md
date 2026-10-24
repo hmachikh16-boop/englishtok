@@ -2,6 +2,8 @@
 
 تطبيق تعليمي متكامل للغة الإنجليزية مستوحى من أسلوب تيك توك في عرض الفيديوهات العمودية القصيرة، ومصمم خصيصاً لهواتف وتابلت Android مع دعم كامل للويب وتصدير APK عبر Capacitor.
 
+**⬇️ [تحميل أحدث إصدار APK](https://englishtok-eight.vercel.app/download)** · [الموقع الرسمي](https://englishtok-eight.vercel.app/) · [سياسة الخصوصية](https://englishtok-eight.vercel.app/legal/privacy.html)
+
 لإعداد النشر التلقائي، توقيع إصدارات Android، تحديث APK والمحتوى دون مسح تقدم المتعلم، راجع [دليل النشر والتحديث](./DEPLOYMENT.md).
 
 ---
