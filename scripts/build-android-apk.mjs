@@ -58,6 +58,7 @@ if (!process.env.VITE_GITHUB_REPOSITORY) {
   process.env.VITE_GITHUB_REPOSITORY = 'hmachikh16-boop/englishtok';
   console.log(`Using the release repository ${process.env.VITE_GITHUB_REPOSITORY} for in-app updates.`);
 }
+process.env.VITE_STORE_BUILD = 'false';
 
 console.log('1/3  Building web assets and syncing Capacitor…');
 run('npm', ['run', 'android:sync'], root);
@@ -72,7 +73,7 @@ const gradleProperty = (name, value) => `-P${name}="${value}"`;
 run(
   gradlew,
   [
-    'assembleRelease',
+    'assembleDirectRelease',
     '-Pandroid.overridePathCheck=true',
     gradleProperty('android.injected.signing.store.file', keystore),
     gradleProperty('android.injected.signing.store.password', props.storePassword),
@@ -82,7 +83,7 @@ run(
   androidDir,
 );
 
-const apk = resolve(androidDir, 'app/build/outputs/apk/release/app-release.apk');
+const apk = resolve(androidDir, 'app/build/outputs/apk/direct/release/app-direct-release.apk');
 if (!existsSync(apk)) {
   console.error('The release APK was not produced.');
   process.exit(1);
@@ -93,5 +94,5 @@ await mkdir(resolve(root, 'releases'), { recursive: true });
 const output = resolve(root, 'releases', `english-tok-${version}.apk`);
 await copyFile(apk, output);
 
-console.log(`3/3  Done. Installable APK: ${output}`);
+console.log(`3/3  Done. Direct-download APK: ${output}`);
 console.log('Keep using the same keystore for every future version.');

@@ -1,13 +1,21 @@
 
 @import "tailwindcss";
 
+@font-face {
+  font-family: 'CairoLocal';
+  src: url('/fonts/cairo-arabic.woff2') format('woff2');
+  font-weight: 200 900;
+  font-style: normal;
+  font-display: block;
+}
+
 @theme {
   --color-ink: #152a35;
   --color-paper: #f3f8f5;
 }
 
 @theme {
-  --font-arabic: 'Cairo', 'Noto Sans Arabic', system-ui, sans-serif;
+  --font-arabic: 'CairoLocal', 'Cairo', 'Noto Sans Arabic', system-ui, sans-serif;
   --font-english: 'Plus Jakarta Sans', system-ui, sans-serif;
   --color-brand-mint: #bef264;
   --color-brand-teal: #5eead4;
@@ -2864,7 +2872,7 @@ button.journey-frame-toggle svg { color: var(--duo-blue); }
 }
 .ai-tutor-translation p {
   color: #536d60;
-  font-family: 'Cairo', 'Noto Sans Arabic', system-ui, sans-serif;
+  font-family: 'CairoLocal', 'Cairo', 'Noto Sans Arabic', system-ui, sans-serif;
   font-size: 11px;
   font-weight: 600;
   line-height: 1.9;

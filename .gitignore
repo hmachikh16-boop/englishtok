@@ -27,6 +27,7 @@ public/english-tok.apk
 backups/
 .git-upload-staging/
 tmp-placement-browser/
+store/raw/
 
 # Local preview tooling (cloudflared binary for phone previews).
 tools/

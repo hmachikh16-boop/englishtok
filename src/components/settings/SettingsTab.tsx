@@ -29,6 +29,7 @@ import { ProfileCard } from './ProfileCard';
 import { speechService } from '../../services/speechService';
 import { checkForAppUpdate, type AppUpdateManifest } from '../../services/appUpdateService';
 import { downloadAndInstallAppUpdate } from '../../services/appUpdateLauncher';
+import { IS_STORE_BUILD } from '../../config/storeBuild';
 import {
   createProgressBackup,
   getLocalProgressBackup,
@@ -328,6 +329,7 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
   return (
     <div className="journey-secondary w-full h-full max-w-4xl mx-auto overflow-y-auto no-scrollbar p-4 sm:p-6 text-slate-100 flex flex-col gap-5">
       {/* Tab Header Sub-nav */}
+      {!IS_STORE_BUILD && (
       <div className="flex gap-1.5 p-1 bg-slate-900 rounded-2xl border border-slate-800">
         <button
           onClick={() => {
@@ -371,11 +373,13 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
           <span>إدارة المحتوى</span>
         </button>
       </div>
+      )}
 
       {/* Subtab 1: App Settings */}
       {activeSubTab === 'app' && (
         <div className="flex flex-col gap-4">
           <ProfileCard profile={userProfile} onUpdateProfile={onUpdateProfile} />
+          {!IS_STORE_BUILD && (
           <section
             className="bg-gradient-to-br from-sky-950 via-slate-900 to-emerald-950/40 border border-sky-500/30 rounded-2xl p-4 flex flex-col gap-3 shadow-xl"
             aria-labelledby="updates-title"
@@ -469,6 +473,7 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
               </div>
             )}
           </section>
+          )}
           {hasLessons && <section className="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-col gap-3 shadow-lg" aria-labelledby="placement-settings-title">
             <h3 id="placement-settings-title" className="text-xs font-bold text-white flex items-center gap-2"><GraduationCap className="h-4 w-4 text-emerald-400" />تحديد المستوى التعليمي</h3>
             <p className="text-[11px] leading-6 text-slate-400">{userProfile.placementAssessment?.result
@@ -708,6 +713,48 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
               >
                 <Phone className="h-3.5 w-3.5 text-sky-400" aria-hidden="true" />
                 0665003037
+              </a>
+            </div>
+          </section>
+
+          <section
+            className="rounded-2xl border border-emerald-500/20 bg-gradient-to-br from-slate-900 to-emerald-950/30 p-4 shadow-lg"
+            aria-labelledby="app-rights-heading"
+          >
+            <div className="flex items-center gap-2 text-emerald-300">
+              <ShieldCheck className="h-4 w-4" aria-hidden="true" />
+              <h3 id="app-rights-heading" className="text-xs font-bold text-white">
+                حقوق التطبيق
+              </h3>
+            </div>
+            <p className="mt-2 text-[11px] leading-relaxed text-slate-400">
+              © 2026 EnglishTok — جميع الحقوق محفوظة. التطبيق ودروسه وبطاقاته وتصميمه مملوكة
+              للمطوّر، ولا يجوز نسخها أو تعديلها أو إعادة توزيعها دون إذن كتابي.
+            </p>
+            <div className="mt-3 flex flex-wrap gap-2">
+              <a
+                href="/legal/privacy.html"
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex min-h-9 items-center gap-1.5 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-3 py-1.5 text-[11px] font-bold text-emerald-100 transition-colors hover:bg-emerald-500/20"
+              >
+                سياسة الخصوصية
+              </a>
+              <a
+                href="/legal/terms.html"
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex min-h-9 items-center gap-1.5 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-3 py-1.5 text-[11px] font-bold text-emerald-100 transition-colors hover:bg-emerald-500/20"
+              >
+                شروط الاستخدام
+              </a>
+              <a
+                href="/legal/license.html"
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex min-h-9 items-center gap-1.5 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-3 py-1.5 text-[11px] font-bold text-emerald-100 transition-colors hover:bg-emerald-500/20"
+              >
+                حقوق الملكية
               </a>
             </div>
           </section>

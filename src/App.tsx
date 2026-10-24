@@ -14,6 +14,7 @@ import { resetGameProgress } from './services/gameProgressService';
 import { fetchLatestLearningPath, getCachedLearningPath } from './services/contentService';
 import { checkForAppUpdate, type AppUpdateManifest } from './services/appUpdateService';
 import { downloadAndInstallAppUpdate } from './services/appUpdateLauncher';
+import { IS_STORE_BUILD } from './config/storeBuild';
 import {
   SPEECH_STATUS_EVENT,
   SPEECH_UNAVAILABLE_EVENT,
@@ -72,7 +73,7 @@ export default function App() {
       : 'calc(env(safe-area-inset-top, 0px) + 74px)';
 
   useEffect(() => {
-    if (Capacitor.getPlatform() !== 'android') return;
+    if (IS_STORE_BUILD || Capacitor.getPlatform() !== 'android') return;
 
     let isMounted = true;
     const runUpdateCheck = () => {
@@ -288,7 +289,7 @@ export default function App() {
           )}
         </div>
       )}
-      {availableAppUpdate && (
+      {!IS_STORE_BUILD && availableAppUpdate && (
         <div
           role="status"
           className="fixed inset-x-4 z-[100] mx-auto flex max-w-md items-start gap-3 rounded-2xl border border-emerald-400/40 bg-slate-900 px-4 py-3 text-sm text-emerald-100 shadow-2xl"

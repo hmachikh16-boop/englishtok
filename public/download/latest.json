@@ -1,0 +1,11 @@
+{
+  "version": "1.7.8",
+  "packageId": "com.englishtok.app",
+  "apkUrl": "/english-tok.apk",
+  "sha256": "BD382F8ED2F86CB6157ACAFB58099AD03EB29FDAC863826DFD3C15B0B39940D9",
+  "size": 56772097,
+  "minimumAndroidSdk": 24,
+  "notes": "تحديث الزمرد والعاج، خط Cairo المحلي، صفحات قانونية، وتقوية أمان Android.",
+  "releaseUrl": "https://github.com/hmachikh16-boop/englishtok/releases/latest",
+  "publishedAt": "2026-10-24"
+}

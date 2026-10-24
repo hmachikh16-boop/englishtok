@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EnglishTok — Feature graphic</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: #021b15; width: 1024px; height: 500px; overflow: hidden; }
+  body { font-family: 'Segoe UI', Tahoma, Arial, sans-serif; color: #fffdf8; -webkit-font-smoothing: antialiased; }
+  .feature {
+    position: relative;
+    width: 1024px;
+    height: 500px;
+    overflow: hidden;
+    background:
+      radial-gradient(circle at 78% 28%, rgba(15, 122, 88, 0.66), transparent 56%),
+      linear-gradient(135deg, #021b15 0%, #064e3b 52%, #032b22 100%);
+  }
+  .feature::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(45deg, transparent 48.9%, rgba(231, 200, 115, 0.05) 49.2%, transparent 49.5%),
+      linear-gradient(-45deg, transparent 48.9%, rgba(231, 200, 115, 0.05) 49.2%, transparent 49.5%);
+    background-size: 90px 90px;
+  }
+  .ring {
+    position: absolute;
+    border-radius: 50%;
+    border: 2px solid rgba(231, 200, 115, 0.14);
+    pointer-events: none;
+  }
+  .ring.a { width: 380px; height: 380px; right: 40px; top: 60px; }
+  .ring.b { width: 300px; height: 300px; right: 80px; top: 100px; border-color: rgba(231, 200, 115, 0.07); }
+  .feature-content {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 700px;
+    height: 500px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    z-index: 2;
+  }
+  .feature-brand {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 7px;
+    color: #e7c873;
+  }
+  .feature-line {
+    width: 140px;
+    height: 2px;
+    margin: 14px 0 0;
+    background: linear-gradient(90deg, #8a641f, #f7e6ae, #b8892f);
+  }
+  .feature-title {
+    margin: 28px 20px 0;
+    font-size: 52px;
+    line-height: 1.35;
+    font-weight: 900;
+    color: #fffdf8;
+  }
+  .feature-sub {
+    margin: 14px 30px 0;
+    font-size: 23px;
+    color: #cfe3d8;
+    font-weight: 500;
+  }
+  .feature-note {
+    margin: 22px 0 0;
+    padding: 8px 22px;
+    border: 1px solid rgba(231, 200, 115, 0.42);
+    border-radius: 999px;
+    font-size: 20px;
+    font-weight: 700;
+    color: #e7c873;
+  }
+  .feature-icon {
+    position: absolute;
+    z-index: 3;
+    right: 72px;
+    top: 140px;
+    width: 222px;
+    height: 222px;
+    padding: 8px;
+    border-radius: 58px;
+    background: linear-gradient(135deg, #f7e6ae 0%, #b8892f 35%, #f0d48a 62%, #8a641f 100%);
+    box-shadow:
+      0 28px 55px rgba(0, 0, 0, 0.48),
+      0 0 0 10px rgba(231, 200, 115, 0.06),
+      0 0 60px rgba(15, 122, 88, 0.35);
+  }
+  .feature-icon img { display: block; width: 100%; height: 100%; border-radius: 50px; }
+</style>
+</head>
+<body>
+  <section class="feature" id="feature">
+    <div class="ring a"></div>
+    <div class="ring b"></div>
+    <div class="feature-content">
+      <div class="feature-brand">ENGLISHTOK</div>
+      <div class="feature-line"></div>
+      <div class="feature-title">تعلّم الإنجليزية كل يوم</div>
+      <div class="feature-sub">400 درس • نطق • بطاقات • معلّم ذكي</div>
+      <div class="feature-note">مجاني • بدون اشتراك</div>
+    </div>
+    <div class="feature-icon"><img src="../public/icon-512.png" alt=""></div>
+  </section>
+</body>
+</html>

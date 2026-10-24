@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EnglishTok — Store artwork</title>
+<style>
+  @font-face {
+    font-family: 'CairoLocal';
+    src: url('raw/cairo-arabic.woff2') format('woff2');
+    font-weight: 200 900;
+    font-style: normal;
+    font-display: block;
+  }
+
+  :root {
+    --gold: #e7c873;
+    --gold-soft: #f7e6ae;
+    --gold-deep: #b8892f;
+    --ivory: #fffdf8;
+    --mint: #cfe3d8;
+    --emerald: #064e3b;
+    --deep: #032b22;
+    --ink: #021b15;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: #000; }
+  body {
+    font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+    color: var(--ivory);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .frame {
+    position: relative;
+    width: 1080px;
+    height: 1920px;
+    overflow: hidden;
+    background:
+      radial-gradient(circle at 50% 12%, rgba(15, 122, 88, 0.62), transparent 58%),
+      linear-gradient(135deg, #021b15 0%, #064e3b 48%, #032b22 100%);
+  }
+
+  .frame::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(45deg, transparent 48.9%, rgba(231, 200, 115, 0.05) 49.2%, transparent 49.5%),
+      linear-gradient(-45deg, transparent 48.9%, rgba(231, 200, 115, 0.05) 49.2%, transparent 49.5%);
+    background-size: 120px 120px;
+    opacity: 0.9;
+  }
+
+  .ring {
+    position: absolute;
+    border-radius: 50%;
+    border: 2px solid rgba(231, 200, 115, 0.13);
+    pointer-events: none;
+  }
+  .ring.one { width: 430px; height: 430px; left: -150px; top: -20px; }
+  .ring.two { width: 330px; height: 330px; left: -100px; top: 30px; border-color: rgba(231, 200, 115, 0.07); }
+  .ring.three { width: 570px; height: 570px; right: -185px; bottom: -100px; }
+  .ring.four { width: 440px; height: 440px; right: -120px; bottom: -35px; border-color: rgba(231, 200, 115, 0.06); }
+
+  .brand {
+    position: relative;
+    z-index: 2;
+    margin-top: 58px;
+    text-align: center;
+    font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+    font-size: 25px;
+    font-weight: 700;
+    letter-spacing: 8px;
+    color: var(--gold);
+  }
+
+  .brand-line {
+    position: relative;
+    z-index: 2;
+    width: 144px;
+    height: 2px;
+    margin: 18px auto 0;
+    background: linear-gradient(90deg, #8a641f, #f7e6ae, #b8892f);
+  }
+
+  h1 {
+    position: relative;
+    z-index: 2;
+    margin: 44px 40px 0;
+    text-align: center;
+    font-size: 62px;
+    line-height: 1.35;
+    font-weight: 900;
+    letter-spacing: -0.5px;
+  }
+
+  .sub {
+    position: relative;
+    z-index: 2;
+    margin: 16px 80px 0;
+    text-align: center;
+    font-size: 30px;
+    line-height: 1.6;
+    color: var(--mint);
+    font-weight: 500;
+  }
+
+  .phone {
+    position: absolute;
+    z-index: 3;
+    left: 124px;
+    top: 332px;
+    width: 832px;
+    height: 1467px;
+    padding: 7px;
+    border-radius: 50px;
+    background: linear-gradient(135deg, #f7e6ae 0%, #b8892f 32%, #f0d48a 58%, #8a641f 100%);
+    box-shadow:
+      0 38px 80px rgba(0, 0, 0, 0.52),
+      0 10px 28px rgba(0, 0, 0, 0.35);
+  }
+
+  .phone::after {
+    content: '';
+    position: absolute;
+    inset: 3px;
+    border-radius: 47px;
+    border: 1px solid rgba(255, 253, 248, 0.24);
+    pointer-events: none;
+  }
+
+  .phone img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 43px;
+  }
+
+  .footer {
+    position: absolute;
+    z-index: 2;
+    left: 0;
+    right: 0;
+    bottom: 52px;
+    text-align: center;
+    font-size: 24px;
+    color: #a9c8b9;
+    font-weight: 500;
+  }
+
+  .footer::after {
+    content: '';
+    display: block;
+    width: 96px;
+    height: 2px;
+    margin: 16px auto 0;
+    background: linear-gradient(90deg, #8a641f, #f7e6ae, #b8892f);
+  }
+
+  .feature {
+    position: relative;
+    width: 1024px;
+    height: 500px;
+    overflow: hidden;
+    background:
+      radial-gradient(circle at 78% 28%, rgba(15, 122, 88, 0.66), transparent 56%),
+      linear-gradient(135deg, #021b15 0%, #064e3b 52%, #032b22 100%);
+  }
+
+  .feature::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(45deg, transparent 48.9%, rgba(231, 200, 115, 0.05) 49.2%, transparent 49.5%),
+      linear-gradient(-45deg, transparent 48.9%, rgba(231, 200, 115, 0.05) 49.2%, transparent 49.5%);
+    background-size: 90px 90px;
+  }
+
+  .feature .ring { border-color: rgba(231, 200, 115, 0.14); }
+  .feature .ring.a { width: 380px; height: 380px; right: 40px; top: 60px; }
+  .feature .ring.b { width: 300px; height: 300px; right: 80px; top: 100px; border-color: rgba(231, 200, 115, 0.07); }
+
+  .feature-content {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 700px;
+    height: 500px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    z-index: 2;
+  }
+
+  .feature-brand {
+    font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 7px;
+    color: var(--gold);
+  }
+
+  .feature-line {
+    width: 140px;
+    height: 2px;
+    margin: 14px 0 0;
+    background: linear-gradient(90deg, #8a641f, #f7e6ae, #b8892f);
+  }
+
+  .feature-title {
+    margin: 28px 20px 0;
+    font-size: 52px;
+    line-height: 1.35;
+    font-weight: 900;
+    color: var(--ivory);
+  }
+
+  .feature-sub {
+    margin: 14px 30px 0;
+    font-size: 23px;
+    color: var(--mint);
+    font-weight: 500;
+  }
+
+  .feature-note {
+    margin: 22px 0 0;
+    padding: 8px 22px;
+    border: 1px solid rgba(231, 200, 115, 0.42);
+    border-radius: 999px;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--gold);
+  }
+
+  .feature-icon {
+    position: absolute;
+    z-index: 3;
+    right: 72px;
+    top: 140px;
+    width: 222px;
+    height: 222px;
+    padding: 8px;
+    border-radius: 58px;
+    background: linear-gradient(135deg, #f7e6ae 0%, #b8892f 35%, #f0d48a 62%, #8a641f 100%);
+    box-shadow:
+      0 28px 55px rgba(0, 0, 0, 0.48),
+      0 0 0 10px rgba(231, 200, 115, 0.06),
+      0 0 60px rgba(15, 122, 88, 0.35);
+  }
+
+  .feature-icon img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border-radius: 50px;
+  }
+</style>
+</head>
+<body>
+
+  <section class="frame" id="home">
+    <div class="ring one"></div>
+    <div class="ring two"></div>
+    <div class="ring three"></div>
+    <div class="ring four"></div>
+    <div class="brand">ENGLISHTOK</div>
+    <div class="brand-line"></div>
+    <h1>تعلّم الإنجليزية يوميًا</h1>
+    <div class="sub">دروس قصيرة، نطق واضح، وتقدّم محفوظ</div>
+    <div class="phone"><img src="raw/home-540x960.png" alt=""></div>
+    <div class="footer">تعلّم في أي وقت • بدون اشتراك</div>
+  </section>
+
+  <section class="frame" id="tutor">
+    <div class="ring one"></div>
+    <div class="ring two"></div>
+    <div class="ring three"></div>
+    <div class="ring four"></div>
+    <div class="brand">ENGLISHTOK</div>
+    <div class="brand-line"></div>
+    <h1>معلّمك الذكي يرافقك</h1>
+    <div class="sub">محادثة وتصحيح ومفردات جديدة كل يوم</div>
+    <div class="phone"><img src="raw/tutor-540x960.png" alt=""></div>
+    <div class="footer">معلّم ذكي • نطق • مفردات</div>
+  </section>
+
+  <section class="frame" id="placement">
+    <div class="ring one"></div>
+    <div class="ring two"></div>
+    <div class="ring three"></div>
+    <div class="ring four"></div>
+    <div class="brand">ENGLISHTOK</div>
+    <div class="brand-line"></div>
+    <h1>ابدأ من مستواك الصحيح</h1>
+    <div class="sub">اختبار قصير يحدد نقطة البداية المناسبة لك</div>
+    <div class="phone"><img src="raw/placement-540x960.png" alt=""></div>
+    <div class="footer">400 درس • 4 مستويات • تقدمك محفوظ</div>
+  </section>
+
+  <section class="feature" id="feature">
+    <div class="ring a"></div>
+    <div class="ring b"></div>
+    <div class="feature-content">
+      <div class="feature-brand">ENGLISHTOK</div>
+      <div class="feature-line"></div>
+      <div class="feature-title">تعلّم الإنجليزية كل يوم</div>
+      <div class="feature-sub">400 درس • نطق • بطاقات • معلّم ذكي</div>
+      <div class="feature-note">مجاني • يعمل دون اتصال</div>
+    </div>
+    <div class="feature-icon"><img src="../public/icon-512.png" alt=""></div>
+  </section>
+
+</body>
+</html>
