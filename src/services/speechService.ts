@@ -1,5 +1,6 @@
 /** Studio English speech playback (bundled clips) plus synthesized UI sound effects. */
 
+import { apiUrl } from './apiBase';
 import {
   normalizeSpeechLanguage,
   normalizeSpeechText as normalizeClipText,
@@ -47,6 +48,30 @@ interface CachedAudioRecord {
   audio: Blob;
   lastUsedAt: number;
 }
+
+/** Split long lesson lines without cutting a word in half for the TTS proxy. */
+const splitSpeechChunks = (text: string, maxLength = 180): string[] => {
+  const normalized = text.replace(/\s+/g, ' ').trim();
+  if (!normalized) return [];
+  if (normalized.length <= maxLength) return [normalized];
+
+  const chunks: string[] = [];
+  let current = '';
+  for (const word of normalized.split(' ')) {
+    if (!current) {
+      current = word;
+      continue;
+    }
+    if (`${current} ${word}`.length <= maxLength) {
+      current = `${current} ${word}`;
+      continue;
+    }
+    chunks.push(current);
+    current = word;
+  }
+  if (current) chunks.push(current);
+  return chunks;
+};
 
 class SpeechService {
   private static readonly MAX_CACHED_AUDIO_ITEMS = 4;
@@ -161,6 +186,74 @@ class SpeechService {
     }
   }
 
+  /** Play French lesson text through the same-origin fallback voice. */
+  private playRemoteFrenchSpeech(
+    handlers: PlaybackHandlers,
+    onFailure: (error: unknown) => void,
+  ) {
+    const { requestId, source, text, rate, onStart, onEnd } = handlers;
+    const chunks = splitSpeechChunks(speechTextForTts(text, 'fr'));
+    if (!chunks.length) {
+      onFailure(new Error('There is no text to speak.'));
+      return;
+    }
+
+    this.clearPlayback();
+    this.currentSource = source;
+    let index = 0;
+    let started = false;
+    let failed = false;
+
+    const fail = (error: unknown) => {
+      if (failed || requestId !== this.requestId) return;
+      failed = true;
+      onFailure(error);
+    };
+
+    const finish = () => {
+      if (requestId !== this.requestId) return;
+      this.clearPlayback();
+      this.currentSource = null;
+      this.requestId += 1;
+      this.setStatus('idle');
+      onEnd?.();
+    };
+
+    const playNext = () => {
+      if (failed || requestId !== this.requestId) return;
+      if (index >= chunks.length) {
+        finish();
+        return;
+      }
+
+      const chunk = chunks[index];
+      index += 1;
+      const audio = new Audio();
+      audio.preload = 'auto';
+      audio.src = apiUrl(`/api/tts?lang=fr&q=${encodeURIComponent(chunk)}`);
+      audio.playbackRate = Math.max(0.5, Math.min(1.2, rate));
+      audio.preservesPitch = true;
+      this.currentAudio = audio;
+
+      audio.onplaying = () => {
+        if (failed || requestId !== this.requestId) return;
+        if (started) return;
+        started = true;
+        this.setStatus('playing');
+        onStart?.();
+      };
+      audio.onended = () => {
+        if (failed || requestId !== this.requestId) return;
+        playNext();
+      };
+      audio.onerror = () => fail(new Error('The French speech fallback could not be played.'));
+
+      void audio.play().catch(fail);
+    };
+
+    playNext();
+  }
+
   private playBrowserSpeech({
     requestId,
     source,
@@ -173,14 +266,55 @@ class SpeechService {
     onEnd,
     onError,
     reason,
-  }: PlaybackHandlers & { reason: unknown }) {
+    allowRemote = true,
+  }: PlaybackHandlers & { reason: unknown; allowRemote?: boolean }) {
     if (requestId !== this.requestId) return;
 
+    const language = normalizeSpeechLanguage(accent) === 'fr' ? 'fr-FR' : 'en-US';
+    const synthesis =
+      typeof window !== 'undefined' && window.speechSynthesis
+        ? window.speechSynthesis
+        : null;
+    const availableVoices = synthesis?.getVoices() ?? [];
+    const voices = availableVoices.filter((voice) =>
+      voice.lang.toLowerCase().startsWith(language.toLowerCase()),
+    );
+
+    // Android WebViews often ship without a French voice, and some do not
+    // expose the Web Speech API at all. Use the small server-side French
+    // speech fallback instead of reading French with an English/Arabic default
+    // voice. If the request fails, fall back once to a French device voice when
+    // one appeared in the meantime.
     if (
-      typeof window === 'undefined' ||
-      !window.speechSynthesis ||
-      typeof SpeechSynthesisUtterance === 'undefined'
+      language === 'fr-FR' &&
+      allowRemote &&
+      (!synthesis ||
+        typeof SpeechSynthesisUtterance === 'undefined' ||
+        availableVoices.length === 0 ||
+        voices.length === 0)
     ) {
+      this.playRemoteFrenchSpeech(
+        { requestId, source, text, rate, pitch, gender, accent, onStart, onEnd, onError },
+        (error: unknown) => {
+          if (requestId !== this.requestId) return;
+          const frenchVoiceArrived =
+            synthesis
+              ?.getVoices()
+              .some((voice) => voice.lang.toLowerCase().startsWith('fr')) ?? false;
+          if (frenchVoiceArrived) {
+            this.playBrowserSpeech({ requestId, source, text, rate, pitch, gender, accent, onStart, onEnd, onError, reason: error, allowRemote: false });
+            return;
+          }
+          this.finishWithError(
+            'تعذر تحميل الصوت الفرنسي. تحقق من اتصال الإنترنت وحاول مرة أخرى، أو ثبّت حزمة الصوت الفرنسية من إعدادات النظام.',
+            onError
+          );
+        },
+      );
+      return;
+    }
+
+    if (!synthesis || typeof SpeechSynthesisUtterance === 'undefined') {
       this.finishWithError(
         'تعذر تشغيل الصوت المحلي على هذا الجهاز. تحقق من دعم النطق في المتصفح أو جرّب متصفحًا آخر.',
         onError
@@ -191,12 +325,9 @@ class SpeechService {
     console.info('[speechService] Speaking with the device voice for instant playback.', reason);
     this.clearPlayback();
 
-    const synthesis = window.speechSynthesis;
-    const utterance = new SpeechSynthesisUtterance(speechTextForTts(text));
-    const language = normalizeSpeechLanguage(accent) === 'fr' ? 'fr-FR' : 'en-US';
-    const voices = synthesis
-      .getVoices()
-      .filter((voice) => voice.lang.toLowerCase().startsWith(language.toLowerCase()));
+    const utterance = new SpeechSynthesisUtterance(
+      speechTextForTts(text, language === 'fr-FR' ? 'fr' : 'en'),
+    );
     const genderPattern =
       language === 'fr-FR'
         ? /female|woman|amélie|amelie|audrey|thomas/i
@@ -472,7 +603,10 @@ class SpeechService {
   private playFastPath(handlers: PlaybackHandlers, audioAssetUrl?: string) {
     const useDeviceVoice = (reason: unknown) => {
       if (handlers.requestId !== this.requestId) return;
-      if (this.canUseDeviceSpeech()) {
+      if (
+        this.canUseDeviceSpeech() ||
+        normalizeSpeechLanguage(handlers.accent) === 'fr'
+      ) {
         this.playBrowserSpeech({ ...handlers, reason });
         return;
       }

@@ -20,8 +20,9 @@ export const TopBar: React.FC<TopBarProps> = ({
   onOpenAiTutor,
 }) => {
   const rank = getUserRank(userProfile.xp);
-  const isFrench = userProfile.settings.voiceLanguage === 'fr';
-  const languageFlag = isFrench ? '🇫🇷' : '🇺🇸';
+  const isFrench = userProfile.targetLanguage === 'fr';
+  const languageFlag = isFrench ? '🇫🇷' : '🇬🇧';
+  const languageNameAr = isFrench ? 'الفرنسية' : 'الإنجليزية';
   return (
     <header
       dir="ltr"
@@ -35,7 +36,7 @@ export const TopBar: React.FC<TopBarProps> = ({
             <span>English<span className="journey-brand-accent">Tok</span></span>
           </span>
           <span className="journey-topbar-tagline hidden border-r border-emerald-100 pr-3 text-xs font-semibold text-slate-500 lg:inline-block">
-            رحلتك اليومية لتعلّم الإنجليزية
+            رحلتك اليومية لتعلّم {languageNameAr}
           </span>
         </div>
 
@@ -48,7 +49,7 @@ export const TopBar: React.FC<TopBarProps> = ({
           className="journey-stats flex shrink-0 items-center gap-1 rounded-2xl px-1.5 py-1.5 text-xs font-bold transition-all hover:-translate-y-0.5 active:scale-[.98] sm:gap-2 sm:px-2"
           dir="rtl"
         >
-          <div className="topbar-metric topbar-language" title={isFrench ? 'النطق الفرنسي' : 'النطق الإنجليزي'}>
+          <div className="topbar-metric topbar-language" title={`لغة التعلّم: ${languageNameAr}`}>
             <span aria-hidden="true">{languageFlag}</span><span className="topbar-language-code hidden sm:inline">{isFrench ? 'FR' : 'EN'}</span>
           </div>
           <span className="topbar-divider" aria-hidden="true" />

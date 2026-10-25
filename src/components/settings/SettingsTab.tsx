@@ -24,7 +24,7 @@ import {
 } from 'lucide-react';
 import { App } from '@capacitor/app';
 import { Capacitor } from '@capacitor/core';
-import { UserProfile, UserSettings } from '../../types';
+import { TargetLanguage, UserProfile, UserSettings } from '../../types';
 import { ProfileCard } from './ProfileCard';
 import { speechService } from '../../services/speechService';
 import { checkForAppUpdate, type AppUpdateManifest } from '../../services/appUpdateService';
@@ -49,6 +49,7 @@ interface SettingsTabProps {
   hasLessons: boolean;
   onUpdateProfile: (updated: Partial<UserProfile>) => void;
   onRetakePlacement: () => void;
+  onChangeTargetLanguage: (language: TargetLanguage) => void;
   onResetProgress: () => void;
   onRestoreProgress: (profile: UserProfile) => void;
   onRefreshContent: () => Promise<boolean>;
@@ -59,6 +60,7 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
   hasLessons,
   onUpdateProfile,
   onRetakePlacement,
+  onChangeTargetLanguage,
   onResetProgress,
   onRestoreProgress,
   onRefreshContent,
@@ -80,6 +82,8 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
   const [isUpdatingAll, setIsUpdatingAll] = useState(false);
   const [updateAllMessage, setUpdateAllMessage] = useState<string | null>(null);
   const [appVersion, setAppVersion] = useState<string | null>(null);
+  const isFrenchCourse = userProfile.targetLanguage === 'fr';
+  const courseCode = isFrenchCourse ? 'FR' : 'EN';
 
   useEffect(() => {
     if (Capacitor.getPlatform() !== 'android') return;
@@ -147,7 +151,7 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
     setBackupMessage(null);
     const normalizedCode = progressCode.trim().toUpperCase();
     if (!isValidProgressCode(normalizedCode)) {
-      setBackupMessage('أدخل الرمز بصيغة 3 أحرف إنجليزية ثم 3 أرقام.');
+      setBackupMessage('أدخل الرمز بصيغة 3 أحرف لاتينية ثم 3 أرقام.');
       return;
     }
 
@@ -182,6 +186,15 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
     } catch (error) {
       setBackupMessage(error instanceof Error ? error.message : 'تعذرت قراءة النسخة الاحتياطية.');
     }
+  };
+
+  const changeLearningLanguage = (language: TargetLanguage) => {
+    if (userProfile.targetLanguage === language) return;
+    if (!window.confirm(
+      `هل تريد الانتقال إلى تعلّم ${language === 'fr' ? 'الفرنسية' : 'الإنجليزية'}؟ سيُحفظ تقدم اللغة الحالية كما هو، ويُفتح مسار اللغة الأخرى من حيث توقفت.`,
+    )) return;
+    speechService.playPop();
+    onChangeTargetLanguage(language);
   };
 
   const updateSetting = <K extends keyof UserSettings>(key: K, value: UserSettings[K]) => {
@@ -474,6 +487,37 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
             )}
           </section>
           )}
+          <section className="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-col gap-3 shadow-lg" aria-labelledby="learning-language-title">
+            <h3 id="learning-language-title" className="text-xs font-bold text-white flex items-center gap-2"><Languages className="h-4 w-4 text-sky-400" />لغة التعلّم</h3>
+            <p className="text-[11px] leading-6 text-slate-400">
+              تختار لغة الدروس والحوارات والتمارين والصوت. يحتفظ التطبيق بتقدم كل لغة على حدة، لذلك يمكنك التبديل دون فقدان XP أو الدروس المكتملة.
+            </p>
+            <div className="flex gap-2">
+              {([
+                { value: 'en' as const, label: 'الإنجليزية', flag: '🇬🇧' },
+                { value: 'fr' as const, label: 'الفرنسية', flag: '🇫🇷' },
+              ]).map((language) => (
+                <button
+                  key={language.value}
+                  type="button"
+                  onClick={() => changeLearningLanguage(language.value)}
+                  aria-pressed={userProfile.targetLanguage === language.value}
+                  className={`flex min-h-11 flex-1 items-center justify-center gap-2 rounded-xl border px-3 py-2 text-xs font-bold transition-colors ${
+                    userProfile.targetLanguage === language.value
+                      ? 'border-sky-400 bg-sky-400/15 text-sky-100'
+                      : 'border-slate-700 bg-slate-950 text-slate-300 hover:border-slate-500'
+                  }`}
+                >
+                  <span aria-hidden="true">{language.flag}</span>
+                  {language.label}
+                  {userProfile.targetLanguage === language.value && <Check className="h-4 w-4" />}
+                </button>
+              ))}
+            </div>
+            <p className="text-[10px] leading-5 text-slate-500">
+              تغيير اللغة لا يحذف تقدمك. إذا كانت اللغة الجديدة بلا نقطة بداية بعد، سيُفتح اختبار تحديد المستوى قبل دروسها.
+            </p>
+          </section>
           {hasLessons && <section className="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-col gap-3 shadow-lg" aria-labelledby="placement-settings-title">
             <h3 id="placement-settings-title" className="text-xs font-bold text-white flex items-center gap-2"><GraduationCap className="h-4 w-4 text-emerald-400" />تحديد المستوى التعليمي</h3>
             <p className="text-[11px] leading-6 text-slate-400">{userProfile.placementAssessment?.result
@@ -490,34 +534,14 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
               <span>إعدادات الصوت والنطق التلقائي</span>
             </h3>
 
-            {/* Speech language */}
-            <div className="flex items-center justify-between pt-2 border-t border-slate-800/80">
+            <div className="flex items-center justify-between gap-3 pt-2 border-t border-slate-800/80">
               <div>
                 <span className="text-xs font-semibold text-slate-300 block">لغة النطق</span>
-                <span className="text-[11px] text-slate-500">تُقرأ النصوص الفرنسية بالصوت الفرنسي تلقائيًا</span>
+                <span className="text-[11px] text-slate-500">تتبع لغة التعلّم تلقائيًا: صوت إنجليزي أو فرنسي واضح.</span>
               </div>
-              <div className="flex gap-1.5 p-1 bg-slate-950 rounded-xl border border-slate-800">
-                <button
-                  onClick={() => updateSetting('voiceLanguage', 'en')}
-                  className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
-                    userProfile.settings.voiceLanguage === 'en'
-                      ? 'bg-sky-500 text-slate-950'
-                      : 'text-slate-400 hover:text-slate-200'
-                  }`}
-                >
-                  إنجليزية
-                </button>
-                <button
-                  onClick={() => updateSetting('voiceLanguage', 'fr')}
-                  className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
-                    userProfile.settings.voiceLanguage === 'fr'
-                      ? 'bg-sky-500 text-slate-950'
-                      : 'text-slate-400 hover:text-slate-200'
-                  }`}
-                >
-                  فرنسية
-                </button>
-              </div>
+              <span className="rounded-lg border border-slate-700 bg-slate-950 px-3 py-1 text-xs font-bold text-sky-200">
+                {userProfile.targetLanguage === 'fr' ? '🇫🇷 فرنسية' : '🇬🇧 إنجليزية'}
+              </span>
             </div>
 
             {/* Default Speech Speed */}
@@ -587,7 +611,7 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
                         : 'text-slate-400 hover:text-slate-200'
                     }`}
                   >
-                    {mode === 'both' ? 'عربي+EN' : mode === 'en' ? 'EN فقط' : 'مخفية'}
+                    {mode === 'both' ? `عربي+${courseCode}` : mode === 'en' ? `${courseCode} فقط` : 'مخفية'}
                   </button>
                 ))}
               </div>
@@ -596,11 +620,15 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
             <div className="flex items-center justify-between pt-2 border-t border-slate-800/80">
               <div>
                 <span className="text-xs font-semibold text-slate-300 block">الوضع بدون إنترنت (Offline)</span>
-                <span className="text-[11px] text-slate-500">كل محادثات ومفردات التطبيق تعمل محلياً بالكامل</span>
+                <span className="text-[11px] text-slate-500">
+                  {isFrenchCourse
+                    ? 'الدروس والمفردات محفوظة محليًا، وصوت الدروس يحتاج حزمة صوت فرنسية أو اتصالًا بالإنترنت'
+                    : 'كل محادثات ومفردات التطبيق تعمل محلياً بالكامل'}
+                </span>
               </div>
-              <span className="px-2.5 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-[11px] font-bold flex items-center gap-1">
+              <span className={`px-2.5 py-1 rounded-full border text-[11px] font-bold flex items-center gap-1 ${isFrenchCourse ? 'bg-amber-500/15 border-amber-500/30 text-amber-300' : 'bg-emerald-500/15 border-emerald-500/30 text-emerald-400'}`}>
                 <ShieldCheck className="w-3.5 h-3.5" />
-                <span>جاهز ومفعل</span>
+                <span>{isFrenchCourse ? 'الصوت يحتاج اتصالًا' : 'جاهز ومفعل'}</span>
               </span>
             </div>
           </div>
@@ -953,7 +981,7 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
               لإضافة درس جديد، يكفي إضافة كائن داخل مصفوفة <code className="text-amber-300">INITIAL_LESSONS</code> يحتوي على:
             </p>
             <ul className="text-xs text-slate-300 flex flex-col gap-1.5 list-disc pr-5">
-              <li><strong className="text-white">title & titleAr:</strong> عنوان الدرس بالإنجليزية والعربية.</li>
+              <li><strong className="text-white">title & titleAr:</strong> عنوان الدرس بلغة التعلّم والعربية.</li>
               <li><strong className="text-white">characterA & characterB:</strong> شخصيتا المحادثة مع ألوان اللباس ونوع الصوت والأنميشن.</li>
               <li><strong className="text-white">dialogue:</strong> أسطر المحادثة مع النصين والترجمة.</li>
               <li><strong className="text-white">vocabulary:</strong> قائمة المفردات الجديدة مع النطق الصوتي IPA والترجمة.</li>

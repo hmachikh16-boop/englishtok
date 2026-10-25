@@ -5,10 +5,10 @@ const GITHUB_APK = `https://github.com/${REPOSITORY}/releases/latest/download/en
 const GITHUB_RELEASE = `https://github.com/${REPOSITORY}/releases/latest`;
 
 const FALLBACK = {
-  version: '1.7.8',
-  size: 56_772_097,
-  sha256: 'BD382F8ED2F86CB6157ACAFB58099AD03EB29FDAC863826DFD3C15B0B39940D9',
-  notes: 'تحديث الزمرد والعاج، خط Cairo المحلي، صفحات قانونية، وتقوية أمان Android.',
+  version: '1.8.0',
+  size: 57_787_156,
+  sha256: '56D07AB7A7FE3B6DAA5874462F3A35364404157882ADDD54CBB8F221534638FF',
+  notes: 'المسار الفرنسي الكامل (400 درس)، اختيار اللغة قبل المستوى، نطق فرنسي دقيق، وتحسينات التحديث المباشر.',
   releaseUrl: GITHUB_RELEASE,
 };
 

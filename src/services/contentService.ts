@@ -1,7 +1,12 @@
 import type { Lesson } from '../types';
 
-const CONTENT_CACHE_KEY = 'englishtok_learning_path_content_v7';
+const CONTENT_CACHE_KEYS = {
+  en: 'englishtok_learning_path_content_v7',
+  fr: 'englishtok_learning_path_content_fr_v1',
+} as const;
 const GITHUB_REPOSITORY = import.meta.env.VITE_GITHUB_REPOSITORY;
+
+type ContentLanguage = keyof typeof CONTENT_CACHE_KEYS;
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null && !Array.isArray(value);
@@ -80,26 +85,26 @@ const parseContent = (value: unknown): Lesson[] | null => {
   return lessons;
 };
 
-export const getCachedLearningPath = (): Lesson[] | null => {
+export const getCachedLearningPath = (language: ContentLanguage = 'en'): Lesson[] | null => {
   if (typeof window === 'undefined') return null;
   try {
-    const raw = window.localStorage.getItem(CONTENT_CACHE_KEY);
+    const raw = window.localStorage.getItem(CONTENT_CACHE_KEYS[language]);
     if (!raw) return null;
     return parseContent(JSON.parse(raw));
   } catch (error) {
-    console.warn('Unable to load cached EnglishTok lesson content:', error);
+    console.warn(`Unable to load cached EnglishTok ${language} lesson content:`, error);
     return null;
   }
 };
 
-const saveContent = (lessons: Lesson[]) => {
+const saveContent = (lessons: Lesson[], language: ContentLanguage) => {
   try {
     window.localStorage.setItem(
-      CONTENT_CACHE_KEY,
+      CONTENT_CACHE_KEYS[language],
       JSON.stringify({ schemaVersion: 4, lessons }),
     );
   } catch (error) {
-    console.warn('Unable to cache the latest EnglishTok lesson content:', error);
+    console.warn(`Unable to cache the latest EnglishTok ${language} lesson content:`, error);
   }
 };
 
@@ -116,24 +121,45 @@ const getRepository = () => {
  * and is also mirrored to jsDelivr. Both endpoints send CORS headers, unlike
  * GitHub release assets whose download redirect is blocked inside the WebView.
  */
-const contentUrls = (repository: string): { url: string; githubApi: boolean }[] => [
-  {
-    url: `https://api.github.com/repos/${repository}/contents/public/content/learning-path.json?ref=main`,
-    githubApi: true,
-  },
-  {
-    url: `https://cdn.jsdelivr.net/gh/${repository}@main/public/content/learning-path.json`,
-    githubApi: false,
-  },
-];
+const contentUrls = (
+  repository: string,
+  language: ContentLanguage,
+): { url: string; githubApi: boolean }[] => {
+  const fileName = language === 'fr' ? 'learning-path-fr.json' : 'learning-path.json';
+  const local = { url: `/content/${fileName}`, githubApi: false };
+  const remote = [
+    {
+      url: `https://api.github.com/repos/${repository}/contents/public/content/${fileName}?ref=main`,
+      githubApi: true,
+    },
+    {
+      url: `https://cdn.jsdelivr.net/gh/${repository}@main/public/content/${fileName}`,
+      githubApi: false,
+    },
+  ];
+  // French is loaded from the bundled/site file first so a preview always
+  // matches the generated curriculum. English keeps its existing update chain.
+  return language === 'fr' ? [local, ...remote] : [...remote, local];
+};
 
-export const fetchLatestLearningPath = async (): Promise<Lesson[] | null> => {
+export const fetchLatestLearningPath = async (
+  language: ContentLanguage = 'en',
+): Promise<Lesson[] | null> => {
   const repository = getRepository();
-  if (!repository) return null;
+  if (!repository) {
+    if (language === 'fr') {
+      const response = await fetch('/content/learning-path-fr.json', { cache: 'no-store' });
+      if (!response.ok) return null;
+      const lessons = parseContent(await response.json());
+      if (lessons) saveContent(lessons, 'fr');
+      return lessons;
+    }
+    return null;
+  }
 
   let lastError: unknown = new Error('تعذر تحميل محتوى الدروس.');
 
-  for (const candidate of contentUrls(repository)) {
+  for (const candidate of contentUrls(repository, language)) {
     try {
       const contentResponse = await fetch(candidate.url, {
         cache: 'no-store',
@@ -153,7 +179,7 @@ export const fetchLatestLearningPath = async (): Promise<Lesson[] | null> => {
         continue;
       }
 
-      saveContent(lessons);
+      saveContent(lessons, language);
       return lessons;
     } catch (error) {
       lastError = error;

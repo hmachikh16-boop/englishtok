@@ -53,6 +53,7 @@ export interface SendTutorMessageInput {
   stage: number;
   mode?: TutorMode;
   target?: string;
+  language?: 'en' | 'fr';
 }
 
 export interface TutorStatus {
@@ -72,6 +73,9 @@ export class AiTutorError extends Error {
 
 const HISTORY_KEY = 'englishtok_ai_tutor_v1';
 const MAX_STORED_MESSAGES = 40;
+
+const tutorHistoryKey = (language: 'en' | 'fr'): string =>
+  language === 'fr' ? `${HISTORY_KEY}:fr` : HISTORY_KEY;
 const LEVELS: Level[] = ['A1', 'A2', 'B1', 'B2', 'C1'];
 
 const FALLBACK_LEVEL_BY_STAGE: Record<number, Level> = {
@@ -213,10 +217,10 @@ export const getTutorContext = (
 export const normalizeTutorLevel = (value: string | null | undefined): Level =>
   LEVELS.includes(value as Level) ? (value as Level) : 'A1';
 
-export const loadTutorHistory = (): TutorMessage[] => {
+export const loadTutorHistory = (language: 'en' | 'fr' = 'en'): TutorMessage[] => {
   if (typeof window === 'undefined') return [];
   try {
-    const raw = window.localStorage.getItem(HISTORY_KEY);
+    const raw = window.localStorage.getItem(tutorHistoryKey(language));
     if (!raw) return [];
     const parsed: unknown = JSON.parse(raw);
     if (!Array.isArray(parsed)) return [];
@@ -241,11 +245,14 @@ export const loadTutorHistory = (): TutorMessage[] => {
   }
 };
 
-export const saveTutorHistory = (messages: TutorMessage[]): void => {
+export const saveTutorHistory = (
+  messages: TutorMessage[],
+  language: 'en' | 'fr' = 'en',
+): void => {
   if (typeof window === 'undefined') return;
   try {
     window.localStorage.setItem(
-      HISTORY_KEY,
+      tutorHistoryKey(language),
       JSON.stringify(messages.slice(-MAX_STORED_MESSAGES)),
     );
   } catch {
@@ -253,10 +260,10 @@ export const saveTutorHistory = (messages: TutorMessage[]): void => {
   }
 };
 
-export const clearTutorHistory = (): void => {
+export const clearTutorHistory = (language: 'en' | 'fr' = 'en'): void => {
   if (typeof window === 'undefined') return;
   try {
-    window.localStorage.removeItem(HISTORY_KEY);
+    window.localStorage.removeItem(tutorHistoryKey(language));
   } catch {
     // Ignore storage failures.
   }
@@ -321,6 +328,7 @@ export const sendTutorMessage = async ({
   stage,
   mode = 'conversation',
   target,
+  language = 'en',
 }: SendTutorMessageInput): Promise<TutorReply> => {
   const conversation = messages.slice(-10).map((message) => ({
     role: message.role,
@@ -340,6 +348,7 @@ export const sendTutorMessage = async ({
           stage,
           mode,
           target,
+          language,
         }),
       },
       58_000,

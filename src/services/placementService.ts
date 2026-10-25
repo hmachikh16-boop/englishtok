@@ -2,6 +2,7 @@ import type { PlacementAssessmentResult, PlacementStageResult } from '../types';
 import { CURRICULUM_LEVELS } from '../data/curriculum';
 
 export type PlacementSkill = 'vocabulary' | 'grammar' | 'reading';
+export type PlacementLanguage = 'en' | 'fr';
 
 export interface PlacementQuestion {
   id: string;
@@ -220,7 +221,178 @@ const RAW_PLACEMENT_QUESTIONS: RawQuestion[] = [
   },
 ];
 
+const RAW_FRENCH_PLACEMENT_QUESTIONS: RawQuestion[] = [
+  // ── Stage 1 · bases ────────────────────────────────────────────────────
+  {
+    id: 'placement-fr-1-vocabulary-bonjour',
+    stage: 1,
+    skill: 'vocabulary',
+    promptAr: 'ما معنى كلمة bonjour؟',
+    options: ['مرحبًا', 'وداعًا', 'شكرًا', 'من فضلك'],
+    correctAnswer: 'مرحبًا',
+    explanationAr: 'bonjour تعني مرحبًا، وتُستخدم للتحية نهارًا.',
+  },
+  {
+    id: 'placement-fr-1-grammar-est',
+    stage: 1,
+    skill: 'grammar',
+    promptAr: 'أكمل الجملة بالشكل الصحيح:',
+    promptEn: 'Elle ___ une nouvelle élève.',
+    options: ['est', 'sont', 'suis', 'être'],
+    correctAnswer: 'est',
+    explanationAr: 'مع الضمير المفرد elle نستخدم est من الفعل être.',
+  },
+  {
+    id: 'placement-fr-1-grammar-sommes',
+    stage: 1,
+    skill: 'grammar',
+    promptAr: 'أكمل الجملة بالشكل الصحيح:',
+    promptEn: 'Nous ___ étudiants.',
+    options: ['sommes', 'sont', 'êtes', 'est'],
+    correctAnswer: 'sommes',
+    explanationAr: 'مع الضمير nous نستخدم sommes من الفعل être.',
+  },
+  {
+    id: 'placement-fr-1-reading-lea',
+    stage: 1,
+    skill: 'reading',
+    promptAr: 'اقرأ الجملة، ثم اختر ما تفعله ليا بعد الاستيقاظ مباشرة:',
+    promptEn: 'Léa se réveille à sept heures, prend son petit-déjeuner et va à l’école.',
+    options: ['تتناول الفطور', 'تذهب إلى المدرسة', 'تنام مرة أخرى', 'تتناول العشاء'],
+    correctAnswer: 'تتناول الفطور',
+    explanationAr: 'ترتيب الأحداث: تستيقظ، ثم تتناول الفطور، ثم تذهب إلى المدرسة.',
+  },
+
+  // ── Stage 2 · communication quotidienne ────────────────────────────────
+  {
+    id: 'placement-fr-2-vocabulary-souvent',
+    stage: 2,
+    skill: 'vocabulary',
+    promptAr: 'ما معنى كلمة souvent؟',
+    options: ['غالبًا', 'أبدًا', 'أمس', 'غدًا'],
+    correctAnswer: 'غالبًا',
+    explanationAr: 'souvent ظرف تكرار يعني غالبًا.',
+  },
+  {
+    id: 'placement-fr-2-grammar-passe-compose',
+    stage: 2,
+    skill: 'grammar',
+    promptAr: 'أكمل الجملة بالشكل الصحيح:',
+    promptEn: 'Hier, il ___ au football.',
+    options: ['a joué', 'joue', 'jouer', 'jouant'],
+    correctAnswer: 'a joué',
+    explanationAr: 'وجود hier يدل على الماضي، ونستخدم passé composé: il a joué.',
+  },
+  {
+    id: 'placement-fr-2-grammar-comparatif',
+    stage: 2,
+    skill: 'grammar',
+    promptAr: 'اختر الشكل الصحيح للصفة مع الاسم المذكر المفرد:',
+    promptEn: 'Ce sac est ___ que l’autre.',
+    options: ['plus cher', 'plus chère', 'plus chers', 'plus chères'],
+    correctAnswer: 'plus cher',
+    explanationAr: 'sac اسم مذكر مفرد، لذلك نستخدم plus cher.',
+  },
+  {
+    id: 'placement-fr-2-reading-aujourdhui',
+    stage: 2,
+    skill: 'reading',
+    promptAr: 'اقرأ الجملة، ثم اختر كيف وصل المتحدث إلى العمل اليوم:',
+    promptEn: 'Je prends habituellement le bus pour aller au travail, mais aujourd’hui je marche parce qu’il fait beau.',
+    options: ['مشيًا', 'بالحافلة', 'بالسيارة', 'بالقطار'],
+    correctAnswer: 'مشيًا',
+    explanationAr: 'habituellement تعبّر عن العادة، أما aujourd’hui فتشير إلى أنه يمشي اليوم.',
+  },
+
+  // ── Stage 3 · تعبير وتحليل ─────────────────────────────────────────────
+  {
+    id: 'placement-fr-3-vocabulary-dune-part',
+    stage: 3,
+    skill: 'vocabulary',
+    promptAr: 'ما معنى d’une part … d’autre part؟',
+    options: ['من ناحية… ومن ناحية أخرى', 'بالإضافة إلى ذلك', 'على سبيل المثال', 'باختصار'],
+    correctAnswer: 'من ناحية… ومن ناحية أخرى',
+    explanationAr: 'd’une part … d’autre part تُستخدم لعرض جانبين أو وجهتي نظر.',
+  },
+  {
+    id: 'placement-fr-3-grammar-conditionnel-passe',
+    stage: 3,
+    skill: 'grammar',
+    promptAr: 'أكمل الجملة بالشكل الصحيح:',
+    promptEn: 'Si j’avais étudié davantage, j’___ l’examen.',
+    options: ['aurais réussi', 'réussirai', 'réussirais', 'ai réussi'],
+    correctAnswer: 'aurais réussi',
+    explanationAr: 'الشرط الثالث: si + plus-que-parfait، ثم conditionnel passé.',
+  },
+  {
+    id: 'placement-fr-3-grammar-voix-passive',
+    stage: 3,
+    skill: 'grammar',
+    promptAr: 'اختر الصيغة الصحيحة للمبني للمجهول:',
+    promptEn: 'Le rapport ___ par l’équipe hier.',
+    options: ['a été écrit', 'a écrit', 'écrivait', 'avait écrit'],
+    correctAnswer: 'a été écrit',
+    explanationAr: 'المبني للمجهول في الماضي: a été + participe passé. التقرير كُتب، لذلك a été écrit.',
+  },
+  {
+    id: 'placement-fr-3-reading-budget',
+    stage: 3,
+    skill: 'reading',
+    promptAr: 'اقرأ الجملة، ثم اختر سبب رفض اللجنة للاقتراح:',
+    promptEn: 'Bien que la proposition fût ambitieuse, le comité l’a rejetée parce que le budget n’était pas clair.',
+    options: ['لأن الميزانية لم تكن واضحة', 'لأن الاقتراح لم يكن طموحًا', 'لأن الفريق رفضه', 'لأن الاقتراح كان قصيرًا'],
+    correctAnswer: 'لأن الميزانية لم تكن واضحة',
+    explanationAr: 'parce que le budget n’était pas clair هي السبب المذكور مباشرة.',
+  },
+
+  // ── Stage 4 · nuance متقدمة ────────────────────────────────────────────
+  {
+    id: 'placement-fr-4-vocabulary-attenuer',
+    stage: 4,
+    skill: 'vocabulary',
+    promptAr: 'ما معنى الفعل atténuer؟',
+    options: ['يخفف', 'يزيد', 'يؤجل', 'يكرر'],
+    correctAnswer: 'يخفف',
+    explanationAr: 'atténuer تعني يخفف من حدة شيء أو يقلل أثره.',
+  },
+  {
+    id: 'placement-fr-4-grammar-inversion',
+    stage: 4,
+    skill: 'grammar',
+    promptAr: 'أكمل الجملة بالشكل الصحيح:',
+    promptEn: 'Rarement ___ un argument aussi convaincant.',
+    options: ['ai-je entendu', 'j’ai entendu', 'j’avais entendu', 'j’entendais'],
+    correctAnswer: 'ai-je entendu',
+    explanationAr: 'بعد الظرف السلبي Rarement نستخدم ترتيب السؤال: Rarement ai-je entendu…',
+  },
+  {
+    id: 'placement-fr-4-grammar-subjonctif',
+    stage: 4,
+    skill: 'grammar',
+    promptAr: 'أكمل الجملة بالشكل الصحيح:',
+    promptEn: 'Bien qu’il ___ fatigué, il a continué.',
+    options: ['soit', 'est', 'était', 'sera'],
+    correctAnswer: 'soit',
+    explanationAr: 'بعد bien que نستخدم صيغة subjonctif: bien qu’il soit.',
+  },
+  {
+    id: 'placement-fr-4-reading-ton',
+    stage: 4,
+    skill: 'reading',
+    promptAr: 'اقرأ الجملة، ثم اختر وصفًا دقيقًا لأسلوب الكاتبة:',
+    promptEn: 'Le ton de l’auteure est délibérément mesuré ; elle laisse les faits parler plutôt que d’orienter le lecteur vers une conclusion.',
+    options: ['هادئ ويعتمد على الأدلة', 'ساخر ومبالغ', 'متحمس وعاطفي', 'غامض ومتردد'],
+    correctAnswer: 'هادئ ويعتمد على الأدلة',
+    explanationAr: 'mesuré تعني متحفظ وهادئ، وlaisse les faits parler تؤكد الاعتماد على الأدلة.',
+  },
+];
+
 export const PLACEMENT_QUESTIONS: readonly PlacementQuestion[] = RAW_PLACEMENT_QUESTIONS.map((question) => ({
+  ...question,
+  options: shuffleOptions(question.id, question.options),
+}));
+
+const FRENCH_PLACEMENT_QUESTIONS: readonly PlacementQuestion[] = RAW_FRENCH_PLACEMENT_QUESTIONS.map((question) => ({
   ...question,
   options: shuffleOptions(question.id, question.options),
 }));
@@ -231,16 +403,25 @@ export const PLACEMENT_QUESTIONS: readonly PlacementQuestion[] = RAW_PLACEMENT_Q
  * silently turn a vocabulary question into a grammar question, or produce
  * ambiguous distractors.
  */
-export const buildPlacementQuestions = (): PlacementQuestion[] => [...PLACEMENT_QUESTIONS];
+const placementBank = (language: PlacementLanguage): readonly PlacementQuestion[] =>
+  language === 'fr' ? FRENCH_PLACEMENT_QUESTIONS : PLACEMENT_QUESTIONS;
 
-const stageQuestions = (stage: number): PlacementQuestion[] =>
-  PLACEMENT_QUESTIONS.filter((question) => question.stage === stage);
+export const buildPlacementQuestions = (language: PlacementLanguage = 'en'): PlacementQuestion[] => [
+  ...placementBank(language),
+];
+
+const stageQuestions = (stage: number, bank: readonly PlacementQuestion[]): PlacementQuestion[] =>
+  bank.filter((question) => question.stage === stage);
 
 const answerFor = (answers: Record<string, string>, questionId: string): string | undefined =>
   Object.prototype.hasOwnProperty.call(answers, questionId) ? answers[questionId] : undefined;
 
-const stageResult = (stage: number, answers: Record<string, string>): PlacementStageResult => {
-  const questions = stageQuestions(stage);
+const stageResult = (
+  stage: number,
+  answers: Record<string, string>,
+  bank: readonly PlacementQuestion[],
+): PlacementStageResult => {
+  const questions = stageQuestions(stage, bank);
   const correct = questions.filter((question) => answerFor(answers, question.id) === question.correctAnswer).length;
   return {
     stage,
@@ -250,22 +431,34 @@ const stageResult = (stage: number, answers: Record<string, string>): PlacementS
   };
 };
 
-const isStageComplete = (stage: number, answers: Record<string, string>): boolean =>
-  stageQuestions(stage).every((question) => answerFor(answers, question.id) !== undefined);
+const isStageComplete = (
+  stage: number,
+  answers: Record<string, string>,
+  bank: readonly PlacementQuestion[],
+): boolean =>
+  stageQuestions(stage, bank).every((question) => answerFor(answers, question.id) !== undefined);
 
-const nextStageQuestion = (stage: number, answers: Record<string, string>): PlacementQuestion | null =>
-  stageQuestions(stage).find((question) => answerFor(answers, question.id) === undefined) ?? null;
+const nextStageQuestion = (
+  stage: number,
+  answers: Record<string, string>,
+  bank: readonly PlacementQuestion[],
+): PlacementQuestion | null =>
+  stageQuestions(stage, bank).find((question) => answerFor(answers, question.id) === undefined) ?? null;
 
-const countAnswered = (answers: Record<string, string>): number =>
-  PLACEMENT_QUESTIONS.filter((question) => answerFor(answers, question.id) !== undefined).length;
+const countAnswered = (
+  answers: Record<string, string>,
+  bank: readonly PlacementQuestion[],
+): number =>
+  bank.filter((question) => answerFor(answers, question.id) !== undefined).length;
 
 const buildResult = (
   suggestedStage: number,
   testedStages: PlacementStageResult[],
   answers: Record<string, string>,
   completedAt: string,
+  bank: readonly PlacementQuestion[],
 ): PlacementAssessmentResult => {
-  const answeredQuestions = PLACEMENT_QUESTIONS.filter(
+  const answeredQuestions = bank.filter(
     (question) => answerFor(answers, question.id) !== undefined,
   );
   const correctCount = answeredQuestions.filter(
@@ -289,9 +482,10 @@ const sessionForStage = (
   stage: number,
   answers: Record<string, string>,
   testedStages: PlacementStageResult[],
+  bank: readonly PlacementQuestion[],
 ): PlacementSession => {
-  const question = nextStageQuestion(stage, answers);
-  const questions = stageQuestions(stage);
+  const question = nextStageQuestion(stage, answers, bank);
+  const questions = stageQuestions(stage, bank);
   return {
     currentStage: stage,
     currentStageQuestionIndex: question
@@ -299,7 +493,7 @@ const sessionForStage = (
       : questions.length,
     currentStageQuestionTotal: questions.length,
     question,
-    answeredCount: countAnswered(answers),
+    answeredCount: countAnswered(answers, bank),
     testedStages,
     result: null,
   };
@@ -310,8 +504,9 @@ const completedSession = (
   answers: Record<string, string>,
   testedStages: PlacementStageResult[],
   completedAt: string,
+  bank: readonly PlacementQuestion[],
 ): PlacementSession => {
-  const result = buildResult(suggestedStage, testedStages, answers, completedAt);
+  const result = buildResult(suggestedStage, testedStages, answers, completedAt, bank);
   return {
     currentStage: suggestedStage,
     currentStageQuestionIndex: 0,
@@ -330,42 +525,45 @@ const completedSession = (
  */
 export const getPlacementSession = (
   answers: Record<string, string>,
+  language: PlacementLanguage = 'en',
   completedAt = new Date().toISOString(),
 ): PlacementSession => {
-  const stageTwo = stageResult(2, answers);
-  if (!isStageComplete(2, answers)) {
-    return sessionForStage(2, answers, []);
+  const bank = placementBank(language);
+  const stageTwo = stageResult(2, answers, bank);
+  if (!isStageComplete(2, answers, bank)) {
+    return sessionForStage(2, answers, [], bank);
   }
   if (stageTwo.passed) {
-    const stageThree = stageResult(3, answers);
-    if (!isStageComplete(3, answers)) {
-      return sessionForStage(3, answers, [stageTwo]);
+    const stageThree = stageResult(3, answers, bank);
+    if (!isStageComplete(3, answers, bank)) {
+      return sessionForStage(3, answers, [stageTwo], bank);
     }
     if (!stageThree.passed) {
-      return completedSession(3, answers, [stageTwo, stageThree], completedAt);
+      return completedSession(3, answers, [stageTwo, stageThree], completedAt, bank);
     }
-    const stageFour = stageResult(4, answers);
-    if (!isStageComplete(4, answers)) {
-      return sessionForStage(4, answers, [stageTwo, stageThree]);
+    const stageFour = stageResult(4, answers, bank);
+    if (!isStageComplete(4, answers, bank)) {
+      return sessionForStage(4, answers, [stageTwo, stageThree], bank);
     }
-    return completedSession(4, answers, [stageTwo, stageThree, stageFour], completedAt);
+    return completedSession(4, answers, [stageTwo, stageThree, stageFour], completedAt, bank);
   }
 
-  const stageOne = stageResult(1, answers);
-  if (!isStageComplete(1, answers)) {
-    return sessionForStage(1, answers, [stageTwo]);
+  const stageOne = stageResult(1, answers, bank);
+  if (!isStageComplete(1, answers, bank)) {
+    return sessionForStage(1, answers, [stageTwo], bank);
   }
   // A learner who only scrapes through stage 1 should not be pushed into stage 2
   // after a weak stage 2 attempt. Require both a solid stage 1 score and at least
   // half of the stage 2 items before recommending stage 2.
   const suggestedStage = stageOne.correct >= 3 && stageTwo.correct >= 2 ? 2 : 1;
-  return completedSession(suggestedStage, answers, [stageTwo, stageOne], completedAt);
+  return completedSession(suggestedStage, answers, [stageTwo, stageOne], completedAt, bank);
 };
 
 export const scorePlacementAssessment = (
   answers: Record<string, string>,
+  language: PlacementLanguage = 'en',
   completedAt = new Date().toISOString(),
-): PlacementAssessmentResult | null => getPlacementSession(answers, completedAt).result;
+): PlacementAssessmentResult | null => getPlacementSession(answers, language, completedAt).result;
 
 export const PLACEMENT_STAGE_LABELS: Record<number, string> = {
   1: 'بداية الأساسيات (A1)',

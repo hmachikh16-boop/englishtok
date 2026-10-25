@@ -37,7 +37,7 @@ export const CURRICULUM_LEVELS: readonly CurriculumLevel[] = [
   {
     stage: 1,
     titleAr: 'المبتدئ (A1)',
-    subtitleAr: 'Phonics والتكرار المتباعد وبناء الأساس اللغوي',
+    subtitleAr: 'الأصوات والتكرار المتباعد وبناء الأساس اللغوي',
     color: 'sky',
     cefr: 'CEFR A1',
     audienceAr: 'الأطفال والمبتدئون من الصفر',

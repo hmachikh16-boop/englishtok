@@ -429,7 +429,7 @@ export const LevelFinalExam: React.FC<LevelFinalExamProps> = ({
 
             {question.kind === 'listening' && (
               <button type="button" onClick={playListeningPrompt} className="mt-3 inline-flex w-fit items-center gap-2 rounded-xl border border-sky-400/30 bg-sky-400/10 px-4 py-2 text-sm font-bold text-sky-200">
-                <Headphones className="h-4 w-4" /> تشغيل الجملة الإنجليزية
+                <Headphones className="h-4 w-4" /> تشغيل الجملة {voiceLanguage === 'fr' ? 'الفرنسية' : 'الإنجليزية'}
               </button>
             )}
 

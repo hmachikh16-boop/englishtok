@@ -68,7 +68,7 @@ export const VocabTab: React.FC<VocabTabProps> = ({
       text,
       rate: 0.85,
       gender: 'female',
-      accent: 'en-US',
+      accent: userProfile.targetLanguage ?? 'en',
     });
   };
 
@@ -204,7 +204,7 @@ export const VocabTab: React.FC<VocabTabProps> = ({
           type="text"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder="ابحث عن كلمة بالإنجليزية أو العربية..."
+          placeholder={`ابحث عن كلمة ${userProfile.targetLanguage === 'fr' ? 'بالفرنسية' : 'بالإنجليزية'} أو العربية...`}
           className="w-full bg-slate-900 border border-slate-800 rounded-2xl py-3 pr-10 pl-4 text-xs font-medium text-slate-200 placeholder-slate-500 focus:outline-none focus:border-sky-500 shadow-lg"
         />
         <Search className="w-4 h-4 text-slate-400 absolute right-3.5 top-1/2 -translate-y-1/2" />

@@ -258,7 +258,7 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({ profile, onUpdateProfi
               value={draftTagline}
               onChange={(event) => setDraftTagline(event.target.value)}
               maxLength={80}
-              placeholder="مثال: أتعلّم الإنجليزية كل يوم"
+              placeholder={profile.targetLanguage === 'fr' ? 'مثال: أتعلّم الفرنسية كل يوم' : 'مثال: أتعلّم الإنجليزية كل يوم'}
             />
           </label>
           <button type="button" className="profile-save-button" onClick={saveIdentity}>

@@ -46,7 +46,15 @@ const STAGE_ACCENTS: Record<number, { main: string; soft: string; ink: string }>
 };
 
 const normalizeAnswer = (text: string) =>
-  text.trim().toLocaleLowerCase().replace(/[.,!?;:]/g, '').replace(/\s+/g, ' ');
+  text
+    .trim()
+    .toLocaleLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/œ/g, 'oe')
+    .replace(/[’']/g, "'")
+    .replace(/[.,!?;:]/g, '')
+    .replace(/\s+/g, ' ');
 
 const isArabic = (text: string) => /[\u0600-\u06FF]/.test(text);
 
@@ -311,7 +319,7 @@ export const LessonSession: React.FC<LessonSessionProps> = ({ lesson, userProfil
     }
 
     recognitionRef.current?.stop();
-    const session = startSpeechRecognition('en-US');
+    const session = startSpeechRecognition(language === 'fr' ? 'fr-FR' : 'en-US');
     recognitionRef.current = session;
     setTranscript('');
     setSpeakErrorMessage('');
@@ -681,8 +689,8 @@ export const LessonSession: React.FC<LessonSessionProps> = ({ lesson, userProfil
                     value={selectedOption ?? ''}
                     disabled={isAnswerChecked}
                     onChange={(event) => setSelectedOption(event.target.value)}
-                    placeholder="Type here"
-                    aria-label="اكتب الكلمة الإنجليزية المناسبة"
+                    placeholder="اكتب الكلمة هنا"
+                    aria-label={`اكتب الكلمة ${userProfile.targetLanguage === 'fr' ? 'الفرنسية' : 'الإنجليزية'} المناسبة`}
                     className="duo-input"
                   />
                 </div>

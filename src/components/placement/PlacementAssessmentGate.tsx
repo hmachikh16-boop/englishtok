@@ -10,7 +10,7 @@ import {
   Target,
   Volume2,
 } from 'lucide-react';
-import type { PlacementAssessmentState, UserProfile } from '../../types';
+import type { PlacementAssessmentState, TargetLanguage, UserProfile } from '../../types';
 import {
   PLACEMENT_MAX_QUESTIONS,
   PLACEMENT_PASS_RULE,
@@ -23,6 +23,7 @@ import { speechService } from '../../services/speechService';
 interface PlacementAssessmentGateProps {
   profile: UserProfile;
   onUpdateProfile: (updated: Partial<UserProfile>) => void;
+  onSelectLanguage: (language: TargetLanguage) => void;
   onContinue: () => void;
 }
 
@@ -43,9 +44,14 @@ const testState = (startedAt: string, answers: Record<string, string>): Placemen
 export const PlacementAssessmentGate: React.FC<PlacementAssessmentGateProps> = ({
   profile,
   onUpdateProfile,
+  onSelectLanguage,
   onContinue,
 }) => {
-  const questions = useMemo(() => buildPlacementQuestions(), []);
+  const placementLanguage = profile.targetLanguage ?? 'en';
+  const questions = useMemo(
+    () => buildPlacementQuestions(placementLanguage),
+    [placementLanguage],
+  );
   const knownQuestionIds = useMemo(() => new Set(questions.map((question) => question.id)), [questions]);
   const placement = profile.placementAssessment;
   const [showSavedResult, setShowSavedResult] = useState(true);
@@ -57,15 +63,34 @@ export const PlacementAssessmentGate: React.FC<PlacementAssessmentGateProps> = (
   );
   const [started, setStarted] = useState(Boolean(placement?.startedAt));
   const [activeQuestionId, setActiveQuestionId] = useState<string | null>(null);
-  const session = useMemo(() => getPlacementSession(answers), [answers]);
+  const session = useMemo(
+    () => getPlacementSession(answers, placementLanguage),
+    [answers, placementLanguage],
+  );
   const question = useMemo(
     () => (activeQuestionId ? questions.find((entry) => entry.id === activeQuestionId) : undefined) ?? session.question,
     [activeQuestionId, questions, session.question],
   );
   const selected = question ? answers[question.id] : undefined;
   const willFinish = question && selected
-    ? Boolean(getPlacementSession({ ...answers, [question.id]: selected }).result)
+    ? Boolean(getPlacementSession({ ...answers, [question.id]: selected }, placementLanguage).result)
     : false;
+
+  useEffect(() => {
+    // Switching courses must load that course's saved placement answers, not
+    // reuse the previous language's question IDs.
+    setAnswers(
+      Object.fromEntries(
+        Object.entries(profile.placementAssessment?.answers ?? {}).filter(([questionId]) =>
+          knownQuestionIds.has(questionId),
+        ),
+      ),
+    );
+    setStarted(Boolean(profile.placementAssessment?.startedAt));
+    setShowSavedResult(true);
+    setActiveQuestionId(null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [placementLanguage]);
 
   useEffect(() => {
     if (started && !activeQuestionId && session.question) {
@@ -77,7 +102,7 @@ export const PlacementAssessmentGate: React.FC<PlacementAssessmentGateProps> = (
     const startedAt = placement?.startedAt ?? new Date().toISOString();
     setShowSavedResult(false);
     onUpdateProfile({ placementAssessment: testState(startedAt, answers) });
-    setActiveQuestionId(getPlacementSession(answers).question?.id ?? null);
+    setActiveQuestionId(getPlacementSession(answers, placementLanguage).question?.id ?? null);
     setStarted(true);
   };
 
@@ -85,7 +110,7 @@ export const PlacementAssessmentGate: React.FC<PlacementAssessmentGateProps> = (
     const startedAt = new Date().toISOString();
     setShowSavedResult(false);
     setAnswers({});
-    setActiveQuestionId(getPlacementSession({}).question?.id ?? null);
+    setActiveQuestionId(getPlacementSession({}, placementLanguage).question?.id ?? null);
     onUpdateProfile({ placementAssessment: testState(startedAt, {}) });
     setStarted(true);
   };
@@ -124,7 +149,7 @@ export const PlacementAssessmentGate: React.FC<PlacementAssessmentGateProps> = (
   const continueTest = () => {
     if (!question || !selected) return;
     const nextAnswers = { ...answers, [question.id]: selected };
-    const nextSession = getPlacementSession(nextAnswers);
+    const nextSession = getPlacementSession(nextAnswers, placementLanguage);
     setAnswers(nextAnswers);
     if (nextSession.result) {
       setShowSavedResult(true);
@@ -170,12 +195,54 @@ export const PlacementAssessmentGate: React.FC<PlacementAssessmentGateProps> = (
         <div className="placement-panel-top flex items-center justify-between gap-3 px-5 py-4 sm:px-7">
           <div className="flex items-center gap-3">
             <span className="placement-logo"><BookOpen className="h-5 w-5" /></span>
-            <div><div className="text-sm font-black">EnglishTok</div><div className="text-[10px] opacity-80">اختيار نقطة البداية</div></div>
+            <div><div className="text-sm font-black">EnglishTok</div><div className="text-[10px] opacity-80">اختيار اللغة ونقطة البداية</div></div>
           </div>
           <span className="placement-lock-label"><LockKeyhole className="h-3.5 w-3.5" /> قبل بدء الدروس</span>
         </div>
 
-        {result ? (
+        {!profile.targetLanguage ? (
+          <div className="p-5 sm:p-8">
+            <div className="placement-result-mark"><Languages className="h-7 w-7" /></div>
+            <h1 className="mt-3 text-center text-2xl font-black text-slate-800">اختر لغة التعلّم أولًا</h1>
+            <p className="mt-2 text-center text-sm leading-7 text-slate-500">
+              ستُبنى الدروس والتمارين والصوت على اللغة التي تختارها. اختيار المستوى والبدء مقفلان حتى تختار اللغة.
+            </p>
+            <div className="placement-choice-grid mt-5">
+              <button
+                type="button"
+                onClick={() => onSelectLanguage('en')}
+                className="placement-choice is-recommended"
+              >
+                <span className="placement-choice-icon" aria-hidden="true">🇬🇧</span>
+                <span className="placement-choice-copy">
+                  <span className="placement-choice-title"><strong>الإنجليزية</strong><span className="placement-choice-badge">English</span></span>
+                  <small>نفس المسار الحالي المكوّن من 400 درس، مع المفردات والحوارات الإنجليزية.</small>
+                </span>
+                <ArrowLeft className="h-4 w-4 shrink-0" />
+              </button>
+              <button
+                type="button"
+                onClick={() => onSelectLanguage('fr')}
+                className="placement-choice"
+              >
+                <span className="placement-choice-icon is-basics" aria-hidden="true">🇫🇷</span>
+                <span className="placement-choice-copy">
+                  <span className="placement-choice-title"><strong>الفرنسية</strong><span className="placement-choice-badge">Français</span></span>
+                  <small>نفس المسار والدروس والشخصيات، مع مفردات وحوارات فرنسية وصوت فرنسي.</small>
+                </span>
+                <ArrowLeft className="h-4 w-4 shrink-0" />
+              </button>
+            </div>
+            <div className="placement-skill-row mt-4">
+              {['400 درس', 'A1 حتى C1', 'حوارات وصوت'].map((item) => (
+                <span key={item} className="placement-skill-chip"><CheckCircle2 className="h-4 w-4" />{item}</span>
+              ))}
+            </div>
+            <p className="mt-4 rounded-2xl bg-emerald-50 p-3 text-xs leading-6 text-emerald-900">
+              يحتفظ التطبيق بتقدم كل لغة على حدة، ولن يضيع تقدمك الحالي عند إضافة الفرنسية. يمكنك تغيير لغة التعلّم لاحقًا من الإعدادات.
+            </p>
+          </div>
+        ) : result ? (
           <div className="p-5 sm:p-8">
             <div className="placement-result-mark">{isFirstStageChoice ? <BookOpen className="h-7 w-7" /> : <Sparkles className="h-7 w-7" />}</div>
             <h1 className="mt-3 text-center text-2xl font-black text-slate-800">
@@ -290,7 +357,7 @@ export const PlacementAssessmentGate: React.FC<PlacementAssessmentGateProps> = (
                     {question.skill === 'reading' && (
                       <button
                         type="button"
-                        onClick={() => speechService.speakText({ source: `placement:${question.id}`, text: question.promptEn!, accent: profile.settings.voiceLanguage, rate: 0.9 })}
+                        onClick={() => speechService.speakText({ source: `placement:${question.id}`, text: question.promptEn!, accent: placementLanguage, rate: 0.9 })}
                         className="placement-audio-button"
                         aria-label="استمع إلى الجملة"
                       >

@@ -6,10 +6,11 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { App as CapacitorApp } from '@capacitor/app';
 import { Capacitor } from '@capacitor/core';
-import { ActiveTab, Lesson, UserProfile } from './types';
+import { ActiveTab, Lesson, TargetLanguage, UserProfile } from './types';
 import { LEARNING_PATH_LESSONS } from './data/curriculum';
 import { getLearningPathState } from './services/learningPath';
 import { getStoredProfile, saveProfile } from './services/storageService';
+import { switchLearningLanguage } from './services/languageService';
 import { resetGameProgress } from './services/gameProgressService';
 import { fetchLatestLearningPath, getCachedLearningPath } from './services/contentService';
 import { checkForAppUpdate, type AppUpdateManifest } from './services/appUpdateService';
@@ -33,10 +34,15 @@ import { PlacementAssessmentGate } from './components/placement/PlacementAssessm
 
 export default function App() {
   const [userProfile, setUserProfile] = useState<UserProfile>(() => getStoredProfile());
-  const [lessons, setLessons] = useState<Lesson[]>(
-    () => getCachedLearningPath() ?? LEARNING_PATH_LESSONS,
+  const [lessons, setLessons] = useState<Lesson[]>(() => {
+    const cached = getCachedLearningPath(userProfile.targetLanguage ?? 'en');
+    if (cached) return cached;
+    return userProfile.targetLanguage === 'fr' ? [] : LEARNING_PATH_LESSONS;
+  });
+  const [placementGateOpen, setPlacementGateOpen] = useState(
+    () => !userProfile.targetLanguage || !userProfile.placementAssessment?.result,
   );
-  const [placementGateOpen, setPlacementGateOpen] = useState(() => lessons.length > 0 && !userProfile.placementAssessment?.result);
+  const [contentLoading, setContentLoading] = useState(false);
   const learningPath = useMemo(
     () => getLearningPathState(lessons, userProfile),
     [
@@ -123,25 +129,35 @@ export default function App() {
   };
 
   useEffect(() => {
+    const language = userProfile.targetLanguage;
+    if (!language) return;
+
     let isMounted = true;
-    void fetchLatestLearningPath()
+    const cached = getCachedLearningPath(language);
+    if (language === 'fr') {
+      setLessons(cached ?? []);
+      setContentLoading(!cached);
+    } else {
+      setLessons(cached ?? LEARNING_PATH_LESSONS);
+      setContentLoading(!cached);
+    }
+    setSelectedLessonId(null);
+
+    void fetchLatestLearningPath(language)
       .then((latestLessons) => {
         if (isMounted && latestLessons) setLessons(latestLessons);
       })
       .catch((error: unknown) => {
-        console.warn('Using locally cached EnglishTok lesson content:', error);
+        console.warn(`Using locally cached ${language} EnglishTok lesson content:`, error);
+      })
+      .finally(() => {
+        if (isMounted) setContentLoading(false);
       });
 
     return () => {
       isMounted = false;
     };
-  }, []);
-
-  useEffect(() => {
-    if (lessons.length === 0 && placementGateOpen) {
-      setPlacementGateOpen(false);
-    }
-  }, [lessons.length, placementGateOpen]);
+  }, [userProfile.targetLanguage]);
 
   useEffect(() => {
     const handleSpeechUnavailable = (event: Event) => {
@@ -187,6 +203,14 @@ export default function App() {
     };
   }, []);
 
+  useEffect(() => {
+    setSelectedLessonId((current) =>
+      current && lessons.some((lesson) => lesson.id === current)
+        ? current
+        : learningPath.nextLessonId,
+    );
+  }, [lessons, learningPath.nextLessonId]);
+
   const handleChangeTab = (tab: ActiveTab) => {
     if (placementGateOpen && tab !== 'categories') return;
     if (tab !== activeTab) speechService.stopSpeaking();
@@ -202,22 +226,30 @@ export default function App() {
     });
   }, []);
 
+  const handleSelectLanguage = useCallback((language: TargetLanguage) => {
+    const next = switchLearningLanguage(userProfile, language);
+    saveProfile(next);
+    setUserProfile(next);
+    setPlacementGateOpen(!next.placementAssessment?.result);
+    setActiveTab('categories');
+  }, [userProfile]);
+
   const handleResetProgress = () => {
     localStorage.removeItem('englishtok_user_profile_v1');
     resetGameProgress();
     const fresh = getStoredProfile();
     setUserProfile(fresh);
-    setPlacementGateOpen(lessons.length > 0);
+    setPlacementGateOpen(!fresh.targetLanguage || !fresh.placementAssessment?.result);
   };
 
   const handleRestoreProgress = (profile: UserProfile) => {
     saveProfile(profile);
     setUserProfile(profile);
-    setPlacementGateOpen(lessons.length > 0 && !profile.placementAssessment?.result);
+    setPlacementGateOpen(!profile.targetLanguage || !profile.placementAssessment?.result);
   };
 
   const handleRetakePlacement = () => {
-    if (lessons.length === 0) return;
+    if (!userProfile.targetLanguage) return;
     if (!window.confirm('سيُعاد اختيار نقطة البداية: يمكنك البدء من المرحلة الأولى أو إجراء اختبار المستوى من جديد. لن يُحذف XP أو سجل الدروس والاختبارات. هل تريد المتابعة؟')) return;
     handleUpdateProfile({ placementAssessment: undefined });
     setActiveTab('categories');
@@ -225,7 +257,7 @@ export default function App() {
   };
 
   const handleRefreshContent = async () => {
-    const latestLessons = await fetchLatestLearningPath();
+    const latestLessons = await fetchLatestLearningPath(userProfile.targetLanguage ?? 'en');
     if (!latestLessons) return false;
     setLessons(latestLessons);
     return true;
@@ -269,8 +301,8 @@ export default function App() {
         >
           <span>
             {speechProgress === null
-              ? 'جارٍ تحميل وتهيئة نموذج النطق الإنجليزي…'
-              : `جارٍ تنزيل نموذج النطق: ${speechProgress}%`}
+              ? `جارٍ تحميل وتهيئة الصوت ${userProfile.targetLanguage === 'fr' ? 'الفرنسي' : 'الإنجليزي'}…`
+              : `جارٍ تنزيل الصوت: ${speechProgress}%`}
           </span>
           {speechProgress !== null && (
             <div
@@ -287,6 +319,17 @@ export default function App() {
               />
             </div>
           )}
+        </div>
+      )}
+      {contentLoading && !placementGateOpen && (
+        <div
+          role="status"
+          aria-live="polite"
+          className="fixed inset-x-4 z-[100] mx-auto w-fit rounded-full border border-sky-400/40 bg-slate-900 px-4 py-2 text-sm text-sky-100 shadow-xl"
+          style={{ top: notificationTop }}
+          dir="rtl"
+        >
+          جارٍ تحميل دروس {userProfile.targetLanguage === 'fr' ? 'الفرنسية' : 'الإنجليزية'}…
         </div>
       )}
       {!IS_STORE_BUILD && availableAppUpdate && (
@@ -442,7 +485,8 @@ export default function App() {
               userProfile={userProfile}
               hasLessons={lessons.length > 0}
               onUpdateProfile={handleUpdateProfile}
-            onRetakePlacement={handleRetakePlacement}
+              onRetakePlacement={handleRetakePlacement}
+              onChangeTargetLanguage={handleSelectLanguage}
               onResetProgress={handleResetProgress}
               onRestoreProgress={handleRestoreProgress}
               onRefreshContent={handleRefreshContent}
@@ -451,6 +495,7 @@ export default function App() {
 
           {activeTab === 'chat' && (
             <ChatTab
+              key={userProfile.targetLanguage ?? 'en'}
               lessons={lessons}
               userProfile={userProfile}
               onBack={() => handleChangeTab('categories')}
@@ -467,9 +512,10 @@ export default function App() {
         />}
 
       </div>
-      {placementGateOpen && lessons.length > 0 && <PlacementAssessmentGate
+      {placementGateOpen && <PlacementAssessmentGate
         profile={userProfile}
         onUpdateProfile={handleUpdateProfile}
+        onSelectLanguage={handleSelectLanguage}
         onContinue={() => setPlacementGateOpen(false)}
       />}
     </div>

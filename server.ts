@@ -6,6 +6,7 @@ import express from 'express';
 import { createServer as createViteServer } from 'vite';
 import chatHandler from './api/chat';
 import progressHandler from './api/progress';
+import ttsHandler from './api/tts';
 
 const app = express();
 const httpServer = createServer(app);
@@ -24,6 +25,12 @@ app.all('/api/chat', (request, response) => {
   void chatHandler(
     request as unknown as Parameters<typeof chatHandler>[0],
     response as unknown as Parameters<typeof chatHandler>[1],
+  );
+});
+app.all('/api/tts', (request, response) => {
+  void ttsHandler(
+    request as unknown as Parameters<typeof ttsHandler>[0],
+    response as unknown as Parameters<typeof ttsHandler>[1],
   );
 });
 

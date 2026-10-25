@@ -121,6 +121,26 @@ export interface Lesson {
   savedCount: number;
 }
 
+export type TargetLanguage = 'en' | 'fr';
+
+/** Per-language learning state so switching courses never erases progress. */
+export interface LanguageProgress {
+  likedLessonIds: string[];
+  favoriteLessonIds: string[];
+  watchedLessonIds: string[];
+  completedLessonIds: string[];
+  savedWordIds: string[];
+  masteredWordIds: string[];
+  reviewWordIds: string[];
+  quizScores: Record<string, number>;
+  levelExamResults: Record<string, LevelExamResult>;
+  placementAssessment?: PlacementAssessmentState;
+  dailyProgress: {
+    date: string;
+    completedLessonIds: string[];
+  };
+}
+
 export interface UserSettings {
   playbackSpeed: number; // 0.5, 0.75, 1.0
   subtitlesMode: 'both' | 'en' | 'ar' | 'none';
@@ -131,6 +151,10 @@ export interface UserSettings {
 }
 
 export interface UserProfile {
+  /** Chosen course language. Missing means the first-run language gate is due. */
+  targetLanguage?: TargetLanguage;
+  /** Inactive course progress, keyed by language. The active course lives at the top level. */
+  languageProgress?: Partial<Record<TargetLanguage, LanguageProgress>>;
   /** Optional public identity shown in the Settings profile card. */
   displayName?: string;
   profileTagline?: string;

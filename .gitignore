@@ -26,6 +26,7 @@ public/english-tok.apk
 # Local snapshots, upload staging and browser profiles are not source files.
 backups/
 .git-upload-staging/
+tmp/
 tmp-placement-browser/
 store/raw/
 

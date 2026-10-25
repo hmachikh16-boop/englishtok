@@ -40,11 +40,12 @@ export const GAME_STAGES: Array<{ value: GameStageFilter; labelAr: string }> = [
   { value: 'all', labelAr: 'كل المراحل' },
 ];
 
-const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZÀÂÄÇÉÈÊËÎÏÔÖÙÛÜŸŒ'.split('');
 
 export const difficultyFromWord = (word: string): GameDifficulty => {
-  if (word.length <= 5) return 'easy';
-  if (word.length <= 8) return 'medium';
+  const length = Array.from(word).length;
+  if (length <= 5) return 'easy';
+  if (length <= 8) return 'medium';
   return 'hard';
 };
 
@@ -61,9 +62,9 @@ export const buildGamePuzzles = (lessons: Lesson[]): GamePuzzle[] => {
     const stage = lesson.curriculumStage ?? 1;
     lesson.vocabulary.forEach((vocabularyWord) => {
       const rawWord = vocabularyWord.word.trim();
-      const normalized = rawWord.toLowerCase();
+      const normalized = rawWord.normalize('NFC').toLowerCase();
       if (
-        !/^[a-z]{3,12}$/.test(normalized) ||
+        !/^[a-zàâäçéèêëîïôöùûüÿœ]{3,12}$/u.test(normalized) ||
         !vocabularyWord.translationAr.trim() ||
         seenWords.has(normalized)
       ) {
@@ -133,7 +134,7 @@ export const pickRandomPuzzle = (
  * useful to remove, and avoids a four-row wall of 26 keys on small phones.
  */
 export const buildKeyboardLetters = (word: string): string[] => {
-  const answerLetters = Array.from(new Set(word.toUpperCase().split('')));
+  const answerLetters = Array.from(new Set(Array.from(word.toUpperCase())));
   const distractors = shuffle(ALPHABET.filter((letter) => !answerLetters.includes(letter)));
   const targetCount = Math.min(18, Math.max(12, answerLetters.length + 6));
   return shuffle([...answerLetters, ...distractors.slice(0, targetCount - answerLetters.length)]);

@@ -175,7 +175,7 @@ export const GamesTab: React.FC<GamesTabProps> = ({
       text: word.toLowerCase(),
       rate: 0.9,
       gender: 'female',
-      accent: 'en',
+      accent: userProfile.targetLanguage ?? 'en',
     });
   };
 
@@ -518,7 +518,7 @@ export const GamesTab: React.FC<GamesTabProps> = ({
             )}
 
             <div className="games-clue">
-              <span className="games-clue-label">اكتب الكلمة الإنجليزية للصورة</span>
+              <span className="games-clue-label">اكتب الكلمة {userProfile.targetLanguage === 'fr' ? 'الفرنسية' : 'الإنجليزية'} للصورة</span>
               <h2>{currentPuzzle.translationAr}</h2>
               <div className="games-clue-meta">
                 <span>{currentPuzzle.partOfSpeech}</span>
@@ -573,7 +573,7 @@ export const GamesTab: React.FC<GamesTabProps> = ({
               </button>
             </div>
 
-            <div className="games-keyboard" dir="ltr" aria-label="لوحة الحروف الإنجليزية">
+            <div className="games-keyboard" dir="ltr" aria-label={`لوحة الحروف ${userProfile.targetLanguage === 'fr' ? 'الفرنسية' : 'الإنجليزية'}`}>
               {keyboardLetters.map((letter) => {
                 const hidden = hiddenLetters.includes(letter);
                 const exhausted =

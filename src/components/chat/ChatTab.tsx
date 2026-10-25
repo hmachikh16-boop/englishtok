@@ -54,24 +54,44 @@ interface SuggestedPrompt {
 
 const LEVELS: Level[] = ['A1', 'A2', 'B1', 'B2', 'C1'];
 
-const SUGGESTED_PROMPTS: SuggestedPrompt[] = [
-  {
-    labelAr: 'عرّفني بنفسك',
-    text: 'Hi! Please introduce yourself and ask me a simple question.',
-  },
-  {
-    labelAr: 'تحدث عن يومي',
-    text: 'Let’s talk about my day. Ask me what I did today.',
-  },
-  {
-    labelAr: 'صحح جملتي',
-    text: 'Please correct this sentence: I go to the market yesterday and buy two apple.',
-  },
-  {
-    labelAr: 'كلمات عن السفر',
-    text: 'Teach me three useful English words for travel.',
-  },
-];
+const suggestedPromptsFor = (language: 'en' | 'fr'): SuggestedPrompt[] =>
+  language === 'fr'
+    ? [
+        {
+          labelAr: 'عرّفني بنفسك',
+          text: 'Bonjour ! Présentez-vous et posez-moi une question simple.',
+        },
+        {
+          labelAr: 'تحدث عن يومي',
+          text: 'Parlons de ma journée. Demandez-moi ce que j’ai fait aujourd’hui.',
+        },
+        {
+          labelAr: 'صحح جملتي',
+          text: 'Corrige cette phrase : Je aller au marché hier et acheter deux pomme.',
+        },
+        {
+          labelAr: 'كلمات عن السفر',
+          text: 'Apprends-moi trois mots français utiles pour voyager.',
+        },
+      ]
+    : [
+        {
+          labelAr: 'عرّفني بنفسك',
+          text: 'Hi! Please introduce yourself and ask me a simple question.',
+        },
+        {
+          labelAr: 'تحدث عن يومي',
+          text: 'Let’s talk about my day. Ask me what I did today.',
+        },
+        {
+          labelAr: 'صحح جملتي',
+          text: 'Please correct this sentence: I go to the market yesterday and buy two apple.',
+        },
+        {
+          labelAr: 'كلمات عن السفر',
+          text: 'Teach me three useful English words for travel.',
+        },
+      ];
 
 const formatScoreColor = (score: number): string => {
   if (score >= 80) return 'text-emerald-700 bg-emerald-50 border-emerald-200';
@@ -88,6 +108,9 @@ const TypingDots: React.FC = () => (
 );
 
 export const ChatTab: React.FC<ChatTabProps> = ({ lessons, userProfile, onBack }) => {
+  const language = userProfile.targetLanguage ?? 'en';
+  const targetNameAr = language === 'fr' ? 'الفرنسية' : 'الإنجليزية';
+  const suggestedPrompts = useMemo(() => suggestedPromptsFor(language), [language]);
   const initialContext = useMemo(
     () => getTutorContext(lessons, userProfile),
     // The context only needs to be recalculated when the learner's path changes.
@@ -95,7 +118,7 @@ export const ChatTab: React.FC<ChatTabProps> = ({ lessons, userProfile, onBack }
   );
   const [level, setLevel] = useState<Level>(initialContext.level);
   const [stage] = useState<number>(initialContext.stage);
-  const [messages, setMessages] = useState<TutorMessage[]>(() => loadTutorHistory());
+  const [messages, setMessages] = useState<TutorMessage[]>(() => loadTutorHistory(language));
   const [input, setInput] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [isSending, setIsSending] = useState(false);
@@ -123,8 +146,8 @@ export const ChatTab: React.FC<ChatTabProps> = ({ lessons, userProfile, onBack }
   }, []);
 
   useEffect(() => {
-    saveTutorHistory(messages);
-  }, [messages]);
+    saveTutorHistory(messages, language);
+  }, [messages, language]);
 
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
@@ -151,16 +174,19 @@ export const ChatTab: React.FC<ChatTabProps> = ({ lessons, userProfile, onBack }
       setSpeakingKey(key);
       void speakTutorText({
         text,
+        language,
         rate: Math.max(0.7, Math.min(1.1, userProfile.settings.playbackSpeed || 1)),
         onEnd: () => setSpeakingKey((current) => (current === key ? null : current)),
         onError: () => {
           setSpeakingKey((current) => (current === key ? null : current));
           lastRequestRef.current = null;
-          setError('تعذر تشغيل الصوت على هذا الجهاز. تأكد من تثبيت صوت إنجليزي في إعدادات الهاتف.');
+          setError(language === 'fr'
+            ? 'تعذر تشغيل الصوت الفرنسي. تأكد من اتصال الإنترنت أو ثبّت حزمة الصوت الفرنسي من إعدادات الهاتف.'
+            : 'تعذر تشغيل الصوت على هذا الجهاز. تأكد من تثبيت الصوت الإنجليزي في إعدادات الهاتف.');
         },
       });
     },
-    [isListening, speakingKey, userProfile.settings.playbackSpeed],
+    [isListening, language, speakingKey, userProfile.settings.playbackSpeed],
   );
 
   const requestTutorReply = useCallback(
@@ -175,6 +201,7 @@ export const ChatTab: React.FC<ChatTabProps> = ({ lessons, userProfile, onBack }
           stage,
           mode,
           target,
+          language,
         });
         const assistantMessage = createTutorReplyMessage(reply);
         setMessages((current) => [...current, assistantMessage]);
@@ -189,7 +216,7 @@ export const ChatTab: React.FC<ChatTabProps> = ({ lessons, userProfile, onBack }
         setIsSending(false);
       }
     },
-    [level, stage],
+    [language, level, stage],
   );
 
   const submitText = useCallback(
@@ -223,7 +250,7 @@ export const ChatTab: React.FC<ChatTabProps> = ({ lessons, userProfile, onBack }
       stopTutorSpeech();
       setSpeakingKey(null);
       setIsListening(true);
-      const session = startSpeechRecognition('en-US');
+      const session = startSpeechRecognition(language === 'fr' ? 'fr-FR' : 'en-US');
       recognitionRef.current = session;
       try {
         const transcript = await session.result;
@@ -246,7 +273,7 @@ export const ChatTab: React.FC<ChatTabProps> = ({ lessons, userProfile, onBack }
         setIsListening(false);
       }
     },
-    [isListening, submitText],
+    [isListening, language, submitText],
   );
 
   const handleRetry = () => {
@@ -262,7 +289,7 @@ export const ChatTab: React.FC<ChatTabProps> = ({ lessons, userProfile, onBack }
     recognitionRef.current?.stop();
     recognitionRef.current = null;
     setIsListening(false);
-    clearTutorHistory();
+    clearTutorHistory(language);
     setMessages([]);
     setInput('');
     setError(null);
@@ -301,7 +328,7 @@ export const ChatTab: React.FC<ChatTabProps> = ({ lessons, userProfile, onBack }
                 <Sparkles className="h-3.5 w-3.5 shrink-0 text-[#d39b35]" aria-hidden="true" />
               </div>
               <p className="truncate text-[10px] font-semibold text-[#72847a]">
-                محادثة إنجليزية · تصحيح وترجمة ونطق
+                محادثة {targetNameAr} · تصحيح وترجمة ونطق
               </p>
             </div>
           </div>
@@ -371,9 +398,9 @@ export const ChatTab: React.FC<ChatTabProps> = ({ lessons, userProfile, onBack }
               <p className="mt-3 text-[11px] font-black uppercase tracking-[0.18em] text-[#2b8b78]">
                 EnglishTok AI Tutor
               </p>
-              <h2 className="mt-1 text-xl font-black text-[#173b32]">هيا نتحدث الإنجليزية</h2>
+              <h2 className="mt-1 text-xl font-black text-[#173b32]">هيا نتحدث {targetNameAr}</h2>
               <p className="mx-auto mt-2 max-w-[340px] text-[12px] font-semibold leading-6 text-[#61766b]">
-                اكتب أو تحدث بالإنجليزية. سأرد عليك حسب مستواك، أصحح الأخطاء بلطف،
+                اكتب أو تحدث {language === 'fr' ? 'بالفرنسية' : 'بالإنجليزية'}. سأرد عليك حسب مستواك، أصحح الأخطاء بلطف،
                 وأعرض الترجمة والكلمات الجديدة، ونساعدك على النطق.
               </p>
               {serviceState === 'unconfigured' && (
@@ -386,9 +413,9 @@ export const ChatTab: React.FC<ChatTabProps> = ({ lessons, userProfile, onBack }
                 </div>
               )}
               <div className="mt-4 flex flex-wrap justify-center gap-2">
-                {SUGGESTED_PROMPTS.map((prompt) => (
+                {suggestedPrompts.map((prompt) => (
                   <button
-                    key={prompt.labelAr}
+                    key={prompt.text}
                     type="button"
                     className="ai-tutor-suggestion"
                     onClick={() => submitText(prompt.text)}
@@ -666,10 +693,10 @@ export const ChatTab: React.FC<ChatTabProps> = ({ lessons, userProfile, onBack }
               onKeyDown={handleInputKeyDown}
               placeholder={
                 isListening
-                  ? 'أتحدث الآن… تحدث بالإنجليزية'
+                  ? `أتحدث الآن… تحدث ${language === 'fr' ? 'بالفرنسية' : 'بالإنجليزية'}`
                   : practiceTarget
                     ? 'اكتب أو استخدم الميكروفون لتكرار الجملة…'
-                    : 'اكتب رسالتك بالإنجليزية…'
+                    : `اكتب رسالتك ${language === 'fr' ? 'بالفرنسية' : 'بالإنجليزية'}…`
               }
               rows={1}
               dir="auto"
@@ -682,8 +709,8 @@ export const ChatTab: React.FC<ChatTabProps> = ({ lessons, userProfile, onBack }
                 type="button"
                 onClick={() => void startListening('conversation')}
                 className={`ai-tutor-mic-button ${isListening ? 'is-listening' : ''}`}
-                aria-label={isListening ? 'إيقاف الاستماع' : 'التحدث بالإنجليزية'}
-                title={isListening ? 'إيقاف الاستماع' : 'التحدث بالإنجليزية'}
+                aria-label={isListening ? 'إيقاف الاستماع' : `التحدث ${language === 'fr' ? 'بالفرنسية' : 'بالإنجليزية'}`}
+                title={isListening ? 'إيقاف الاستماع' : `التحدث ${language === 'fr' ? 'بالفرنسية' : 'بالإنجليزية'}`}
               >
                 {isListening ? <Loader2 className="h-4 w-4 animate-spin" /> : <Mic className="h-4 w-4" />}
               </button>

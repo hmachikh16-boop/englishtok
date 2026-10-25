@@ -1,11 +1,11 @@
 {
-  "version": "1.7.8",
+  "version": "1.8.0",
   "packageId": "com.englishtok.app",
   "apkUrl": "/english-tok.apk",
-  "sha256": "BD382F8ED2F86CB6157ACAFB58099AD03EB29FDAC863826DFD3C15B0B39940D9",
-  "size": 56772097,
+  "sha256": "56D07AB7A7FE3B6DAA5874462F3A35364404157882ADDD54CBB8F221534638FF",
+  "size": 57787156,
   "minimumAndroidSdk": 24,
-  "notes": "تحديث الزمرد والعاج، خط Cairo المحلي، صفحات قانونية، وتقوية أمان Android.",
+  "notes": "المسار الفرنسي الكامل (400 درس)، اختيار اللغة قبل المستوى، نطق فرنسي دقيق، وتحسينات التحديث المباشر.",
   "releaseUrl": "https://github.com/hmachikh16-boop/englishtok/releases/latest",
-  "publishedAt": "2026-10-24"
+  "publishedAt": "2026-10-25"
 }

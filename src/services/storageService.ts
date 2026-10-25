@@ -76,6 +76,11 @@ export const getStoredProfile = (): UserProfile => {
     const profile: UserProfile = {
       ...DEFAULT_PROFILE,
       ...parsed,
+      targetLanguage:
+        parsed.targetLanguage === 'en' || parsed.targetLanguage === 'fr'
+          ? parsed.targetLanguage
+          : undefined,
+      languageProgress: sanitizeLanguageProgress(parsed.languageProgress),
       joinedAt,
       ...(sanitizePlacementAssessment((parsed as UserProfile).placementAssessment)
         ? { placementAssessment: sanitizePlacementAssessment((parsed as UserProfile).placementAssessment)! }
@@ -87,7 +92,15 @@ export const getStoredProfile = (): UserProfile => {
         parsed.dailyProgress?.date === today
           ? parsed.dailyProgress
           : { date: today, completedLessonIds: [] },
-      settings: { ...DEFAULT_SETTINGS, ...parsed.settings },
+      settings: {
+        ...DEFAULT_SETTINGS,
+        ...parsed.settings,
+        // The active course is authoritative for pronunciation. This also
+        // repairs profiles saved before the language switch existed.
+        ...(parsed.targetLanguage === 'en' || parsed.targetLanguage === 'fr'
+          ? { voiceLanguage: parsed.targetLanguage }
+          : {}),
+      },
     };
     // Save the generated identity once so the join date and default name stay
     // stable for profiles created before the profile card existed.
@@ -206,6 +219,89 @@ const scoreMap = (value: unknown): Record<string, number> | null => {
   return Object.fromEntries(entries) as Record<string, number>;
 };
 
+const sanitizeLevelExamResults = (
+  exams: unknown,
+): UserProfile['levelExamResults'] | null => {
+  if (!exams || typeof exams !== 'object' || Array.isArray(exams) || Object.keys(exams).length > 100) {
+    return null;
+  }
+  const levelExamResults: UserProfile['levelExamResults'] = {};
+  for (const [key, entry] of Object.entries(exams)) {
+    if (!entry || typeof entry !== 'object' || Array.isArray(entry)) return null;
+    const exam = entry as Record<string, unknown>;
+    const reviewTopics = boundedStringArray(exam.reviewTopics);
+    const reviewIds = boundedStringArray(exam.reviewWordIds);
+    if (!Number.isSafeInteger(exam.attempts) || (exam.attempts as number) < 0 || typeof exam.passed !== 'boolean' || !reviewTopics || !reviewIds) return null;
+    if (typeof exam.bestScore !== 'number' || exam.bestScore < 0 || exam.bestScore > 100 || typeof exam.latestScore !== 'number' || exam.latestScore < 0 || exam.latestScore > 100) return null;
+    levelExamResults[key] = {
+      attempts: exam.attempts as number,
+      bestScore: exam.bestScore,
+      latestScore: exam.latestScore,
+      passed: exam.passed,
+      reviewTopics,
+      reviewWordIds: reviewIds,
+      ...(typeof exam.passedAt === 'string' ? { passedAt: exam.passedAt } : {}),
+    };
+  }
+  return levelExamResults;
+};
+
+const sanitizeDailyProgress = (
+  value: unknown,
+): UserProfile['dailyProgress'] | null => {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return null;
+  const daily = value as Record<string, unknown>;
+  const dailyCompleted = boundedStringArray(daily.completedLessonIds);
+  if (typeof daily.date !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(daily.date) || !dailyCompleted) {
+    return null;
+  }
+  return { date: daily.date, completedLessonIds: dailyCompleted };
+};
+
+const sanitizeLanguageProgress = (value: unknown): UserProfile['languageProgress'] | undefined => {
+  if (value === undefined) return undefined;
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return undefined;
+  const raw = value as Record<string, unknown>;
+  const result: NonNullable<UserProfile['languageProgress']> = {};
+  for (const language of ['en', 'fr'] as const) {
+    const snapshot = raw[language];
+    if (snapshot === undefined) continue;
+    if (!snapshot || typeof snapshot !== 'object' || Array.isArray(snapshot)) continue;
+    const entry = snapshot as Record<string, unknown>;
+    const likedLessonIds = boundedStringArray(entry.likedLessonIds);
+    const favoriteLessonIds = boundedStringArray(entry.favoriteLessonIds);
+    const watchedLessonIds = boundedStringArray(entry.watchedLessonIds);
+    const completedLessonIds = boundedStringArray(entry.completedLessonIds);
+    const savedWordIds = boundedStringArray(entry.savedWordIds);
+    const masteredWordIds = boundedStringArray(entry.masteredWordIds);
+    const reviewWordIds = boundedStringArray(entry.reviewWordIds);
+    const quizScores = scoreMap(entry.quizScores);
+    const levelExamResults = sanitizeLevelExamResults(entry.levelExamResults);
+    const dailyProgress = sanitizeDailyProgress(entry.dailyProgress);
+    const placementAssessment = sanitizePlacementAssessment(entry.placementAssessment);
+    if (
+      [likedLessonIds, favoriteLessonIds, watchedLessonIds, completedLessonIds, savedWordIds, masteredWordIds, reviewWordIds, quizScores, levelExamResults, dailyProgress].some((item) => item === null) ||
+      placementAssessment === null
+    ) {
+      continue;
+    }
+    result[language] = {
+      likedLessonIds: likedLessonIds!,
+      favoriteLessonIds: favoriteLessonIds!,
+      watchedLessonIds: watchedLessonIds!,
+      completedLessonIds: completedLessonIds!,
+      savedWordIds: savedWordIds!,
+      masteredWordIds: masteredWordIds!,
+      reviewWordIds: reviewWordIds!,
+      quizScores: quizScores!,
+      levelExamResults: levelExamResults!,
+      ...(placementAssessment ? { placementAssessment } : {}),
+      dailyProgress: dailyProgress!,
+    };
+  }
+  return Object.keys(result).length ? result : undefined;
+};
+
 const sanitizePlacementAssessment = (value: unknown): UserProfile['placementAssessment'] | null => {
   if (value === undefined || value === null) return undefined;
   if (!value || typeof value !== 'object' || Array.isArray(value)) return null;
@@ -269,32 +365,10 @@ const sanitizeProfile = (value: unknown): UserProfile | null => {
   if (!Number.isSafeInteger(raw.dailyGoalLessons) || (raw.dailyGoalLessons as number) < 1 || (raw.dailyGoalLessons as number) > 100) return null;
   if (typeof raw.lastActiveDate !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(raw.lastActiveDate)) return null;
 
-  const exams = raw.levelExamResults;
-  if (!exams || typeof exams !== 'object' || Array.isArray(exams) || Object.keys(exams).length > 100) return null;
-  const levelExamResults: UserProfile['levelExamResults'] = {};
-  for (const [key, entry] of Object.entries(exams)) {
-    if (!entry || typeof entry !== 'object' || Array.isArray(entry)) return null;
-    const exam = entry as Record<string, unknown>;
-    const reviewTopics = boundedStringArray(exam.reviewTopics);
-    const reviewIds = boundedStringArray(exam.reviewWordIds);
-    if (!Number.isSafeInteger(exam.attempts) || (exam.attempts as number) < 0 || typeof exam.passed !== 'boolean' || !reviewTopics || !reviewIds) return null;
-    if (typeof exam.bestScore !== 'number' || exam.bestScore < 0 || exam.bestScore > 100 || typeof exam.latestScore !== 'number' || exam.latestScore < 0 || exam.latestScore > 100) return null;
-    levelExamResults[key] = {
-      attempts: exam.attempts as number,
-      bestScore: exam.bestScore,
-      latestScore: exam.latestScore,
-      passed: exam.passed,
-      reviewTopics,
-      reviewWordIds: reviewIds,
-      ...(typeof exam.passedAt === 'string' ? { passedAt: exam.passedAt } : {}),
-    };
-  }
-
-  const dailyProgress = raw.dailyProgress;
-  if (!dailyProgress || typeof dailyProgress !== 'object' || Array.isArray(dailyProgress)) return null;
-  const daily = dailyProgress as Record<string, unknown>;
-  const dailyCompleted = boundedStringArray(daily.completedLessonIds);
-  if (typeof daily.date !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(daily.date) || !dailyCompleted) return null;
+  const levelExamResults = sanitizeLevelExamResults(raw.levelExamResults);
+  if (!levelExamResults) return null;
+  const dailyProgress = sanitizeDailyProgress(raw.dailyProgress);
+  if (!dailyProgress) return null;
 
   const settings = raw.settings;
   if (!settings || typeof settings !== 'object' || Array.isArray(settings)) return null;
@@ -303,6 +377,11 @@ const sanitizeProfile = (value: unknown): UserProfile | null => {
   if (!['both', 'en', 'ar', 'none'].includes(String(config.subtitlesMode)) || typeof config.soundEffects !== 'boolean' || typeof config.autoNext !== 'boolean') return null;
   const placementAssessment = sanitizePlacementAssessment(raw.placementAssessment);
   if (placementAssessment === null) return null;
+  const targetLanguage =
+    raw.targetLanguage === 'en' || raw.targetLanguage === 'fr'
+      ? raw.targetLanguage
+      : undefined;
+  const languageProgress = sanitizeLanguageProgress(raw.languageProgress);
 
   const displayName = typeof raw.displayName === 'string'
     ? raw.displayName.trim().slice(0, 40)
@@ -320,6 +399,8 @@ const sanitizeProfile = (value: unknown): UserProfile | null => {
     : undefined;
 
   return {
+    ...(targetLanguage ? { targetLanguage } : {}),
+    ...(languageProgress ? { languageProgress } : {}),
     ...(displayName ? { displayName } : {}),
     ...(profileTagline ? { profileTagline } : {}),
     ...(joinedAt ? { joinedAt } : {}),
@@ -332,13 +413,15 @@ const sanitizeProfile = (value: unknown): UserProfile | null => {
     quizScores: quizScores!, levelExamResults,
     ...(placementAssessment ? { placementAssessment } : {}),
     dailyGoalLessons: raw.dailyGoalLessons as number,
-    dailyProgress: { date: daily.date, completedLessonIds: dailyCompleted },
+    dailyProgress,
     settings: {
       playbackSpeed: config.playbackSpeed as number,
       subtitlesMode: config.subtitlesMode as UserSettings['subtitlesMode'],
       soundEffects: config.soundEffects,
       autoNext: config.autoNext,
-      voiceLanguage: normalizeSpeechLanguage(config.voiceLanguage ?? config.voiceAccent),
+      voiceLanguage:
+        targetLanguage ??
+        normalizeSpeechLanguage(config.voiceLanguage ?? config.voiceAccent),
     },
   };
 };
@@ -354,7 +437,7 @@ export const getLocalProgressBackup = (codeInput: string): ProgressBackup | null
 
 export const parseProgressBackupFile = (contents: string, codeInput: string): ProgressBackup => {
   const code = codeInput.trim().toUpperCase();
-  if (!isValidProgressCode(code)) throw new Error('أدخل الرمز بصيغة 3 أحرف إنجليزية ثم 3 أرقام.');
+  if (!isValidProgressCode(code)) throw new Error('أدخل الرمز بصيغة 3 أحرف لاتينية ثم 3 أرقام.');
   if (contents.length > 2_000_000) throw new Error('حجم ملف النسخة الاحتياطية أكبر من الحد المسموح.');
   let parsed: unknown;
   try { parsed = JSON.parse(contents) as unknown; } catch { throw new Error('ملف النسخة الاحتياطية ليس JSON صالحًا.'); }
@@ -383,5 +466,5 @@ export const getUserRank = (xp: number): { titleAr: string; titleEn: string; nex
   if (xp < 1500) {
     return { titleAr: 'محاور طليق', titleEn: 'Fluent Converser', nextThreshold: 1500, progressPercent: ((xp - 700) / 800) * 100 };
   }
-  return { titleAr: 'خبير إنجليزي بارع', titleEn: 'English Master', nextThreshold: 3000, progressPercent: Math.min(100, ((xp - 1500) / 1500) * 100) };
+  return { titleAr: 'خبير لغوي بارع', titleEn: 'Language Master', nextThreshold: 3000, progressPercent: Math.min(100, ((xp - 1500) / 1500) * 100) };
 };

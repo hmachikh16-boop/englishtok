@@ -1,7 +1,7 @@
 {
   "name": "english-tok",
   "private": true,
-  "version": "1.7.8",
+  "version": "1.8.0",
   "type": "module",
   "scripts": {
     "dev": "tsx server.ts",
@@ -51,10 +51,11 @@
     "@types/react-dom": "^19.3.0",
     "autoprefixer": "^10.4.21",
     "esbuild": "^0.28.2",
+    "ipa-dict": "^1.0.3",
+    "kokoro-js": "^1.2.1",
     "sharp": "^0.34.5",
     "tailwindcss": "^4.3.3",
     "tsx": "^4.21.0",
-    "typescript": "^7.0.2",
-    "kokoro-js": "^1.2.1"
+    "typescript": "^7.0.2"
   }
 }

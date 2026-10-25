@@ -47,8 +47,13 @@ export const looksFrench = (text: string): boolean => {
  */
 export const resolveSpeechLanguage = (
   text: string,
-  _preferred: unknown = 'en'
-): SpeechLanguage => (looksFrench(text) ? 'fr' : 'en');
+  preferred: unknown = 'en'
+): SpeechLanguage => {
+  // The active course language is authoritative. This matters for short French
+  // lines such as "Bonjour !" that have no accents or unambiguous word count.
+  if (normalizeSpeechLanguage(preferred) === 'fr') return 'fr';
+  return looksFrench(text) ? 'fr' : 'en';
+};
 
 /** Strip emoji and reject anything that is not plain Latin-script text. */
 export const normalizeSpeechText = (text: string): string | null => {
@@ -72,7 +77,26 @@ const IPA_SOUND_LABELS: Record<string, string> = {
   ɔɪ: 'oy', aʊ: 'ow', əʊ: 'oh', eə: 'air', ɪə: 'ear', ʊə: 'oor',
 };
 
-export const speechTextForTts = (text: string): string => {
+export const speechTextForTts = (
+  text: string,
+  language: 'en' | 'fr' = 'en',
+): string => {
+  if (language === 'fr') {
+    // French phonics examples read naturally without English classroom
+    // phrases: "A, /a/, pomme" becomes "A, pomme", and a standalone /k/ becomes
+    // "le son k". This prevents an English phrase from leaking into French TTS.
+    const withExamples = text.replace(/,\s*\/([^/]{1,24})\/,\s*/g, ', ');
+    return withExamples
+      .replace(/_{2,}/g, ' blanc ')
+      .replace(/\s*\/([^/]{1,24})\/\s*/g, (_match, rawIpa: string) => {
+        const label = rawIpa.replace(/[ˈˌː]/g, '').trim();
+        return ` le son ${IPA_SOUND_LABELS[label] ?? label} `;
+      })
+      .replace(/\s+/g, ' ')
+      .replace(/\s+([,.!?;:])/g, '$1')
+      .trim();
+  }
+
   const withExamples = text.replace(/,\s*\/([^/]{1,24})\/,\s*/g, ' as in ');
   // Fill-in-the-blank prompts show underscores on screen. The phonemizer drops
   // them, which would make "My ___ is tall" sound like "My is tall"; say the
@@ -117,6 +141,10 @@ export const speechClipUrl = (
 ): string | null => {
   const clean = normalizeSpeechText(text);
   if (!clean) return null;
+  // French has no bundled Kokoro library in this release. Returning null sends
+  // playback straight to the device's French voice instead of requesting a
+  // missing .ogg file and falling back after a visible delay.
+  if (normalizeSpeechLanguage(language) === 'fr') return null;
   return `/audio/tts/${voiceFor(language, gender)}/${speechClipHash(clean)}.ogg?v=${SPEECH_LIBRARY_VERSION}`;
 };
 

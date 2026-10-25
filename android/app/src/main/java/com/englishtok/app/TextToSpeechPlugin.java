@@ -15,7 +15,9 @@ import java.util.Locale;
 /**
  * Android WebView does not expose the Web Speech synthesis API. The AI tutor
  * needs to pronounce dynamic replies and target phrases, so this bridge hands
- * short English utterances to the device's installed TTS engine.
+ * short English or French utterances to the device's installed TTS engine.
+ * The requested locale is applied on every call; French must never be spoken
+ * with the device's default English/Arabic voice.
  */
 @CapacitorPlugin(name = "TextToSpeech")
 public class TextToSpeechPlugin extends Plugin {
@@ -29,7 +31,6 @@ public class TextToSpeechPlugin extends Plugin {
         textToSpeech = new TextToSpeech(getContext(), status -> {
             ready = status == TextToSpeech.SUCCESS;
             if (ready) {
-                textToSpeech.setLanguage(Locale.US);
                 textToSpeech.setPitch(1.0f);
             }
         });
@@ -89,6 +90,10 @@ public class TextToSpeechPlugin extends Plugin {
             return;
         }
 
+        String requestedLanguage = call.getString("language", "en-US");
+        boolean french = requestedLanguage != null && requestedLanguage.toLowerCase(Locale.ROOT).startsWith("fr");
+        Locale locale = french ? Locale.FRENCH : Locale.US;
+
         String finalText = text;
         float chosenRate = call.getFloat("rate", 1.0f);
         chosenRate = Math.max(0.5f, Math.min(1.3f, chosenRate));
@@ -99,11 +104,13 @@ public class TextToSpeechPlugin extends Plugin {
 
         getActivity().runOnUiThread(() -> {
             try {
-                int languageResult = textToSpeech.setLanguage(Locale.US);
+                int languageResult = textToSpeech.setLanguage(locale);
                 if (languageResult == TextToSpeech.LANG_MISSING_DATA
                     || languageResult == TextToSpeech.LANG_NOT_SUPPORTED) {
                     call.reject(
-                        "لا يوجد صوت إنجليزي مثبت على هذا الجهاز. ثبّت حزمة الصوت الإنجليزي من إعدادات الهاتف.",
+                        french
+                            ? "لا يوجد صوت فرنسي مثبت على هذا الجهاز. ثبّت حزمة الصوت الفرنسي من إعدادات الهاتف."
+                            : "لا يوجد صوت إنجليزي مثبت على هذا الجهاز. ثبّت حزمة الصوت الإنجليزي من إعدادات الهاتف.",
                         "TTS_LANGUAGE_UNAVAILABLE"
                     );
                     return;

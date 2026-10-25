@@ -16,6 +16,7 @@ const NativeTextToSpeech = registerPlugin<NativeTextToSpeechPlugin>('TextToSpeec
 export interface TutorSpeechOptions {
   text: string;
   rate?: number;
+  language?: 'en' | 'fr';
   onStart?: () => void;
   onEnd?: () => void;
   onError?: (error: unknown) => void;
@@ -29,12 +30,14 @@ export interface TutorSpeechOptions {
 export const speakTutorText = async ({
   text,
   rate = 1,
+  language = 'en',
   onStart,
   onEnd,
   onError,
 }: TutorSpeechOptions): Promise<void> => {
   const cleanText = text.trim();
   if (!cleanText) return;
+  const speechLanguage = language === 'fr' ? 'fr-FR' : 'en-US';
 
   if (Capacitor.getPlatform() === 'android') {
     onStart?.();
@@ -46,7 +49,7 @@ export const speakTutorText = async ({
             text: cleanText,
             rate,
             pitch: 1,
-            language: 'en-US',
+            language: speechLanguage,
           });
           onEnd?.();
           return;
@@ -67,8 +70,38 @@ export const speakTutorText = async ({
           await new Promise((resolve) => window.setTimeout(resolve, 500));
         }
       }
+      // Android may not have a French speech package. Never let the native
+      // engine fall back to its default English/Arabic voice: use the app's
+      // French speech path instead (device French voice if exposed by the
+      // WebView, otherwise the short server-side fallback).
+      if (language === 'fr') {
+        speechService.speakText({
+          source: 'ai-tutor',
+          text: cleanText,
+          rate,
+          gender: 'female',
+          accent: 'fr',
+          onStart,
+          onEnd,
+          onError,
+        });
+        return;
+      }
       onError?.(lastError);
     } catch (error) {
+      if (language === 'fr') {
+        speechService.speakText({
+          source: 'ai-tutor',
+          text: cleanText,
+          rate,
+          gender: 'female',
+          accent: 'fr',
+          onStart,
+          onEnd,
+          onError,
+        });
+        return;
+      }
       onError?.(error);
     }
     return;
@@ -79,7 +112,7 @@ export const speakTutorText = async ({
     text: cleanText,
     rate,
     gender: 'female',
-    accent: 'en',
+    accent: language,
     onStart,
     onEnd,
     onError,
