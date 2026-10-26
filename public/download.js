@@ -5,10 +5,10 @@ const GITHUB_APK = `https://github.com/${REPOSITORY}/releases/latest/download/en
 const GITHUB_RELEASE = `https://github.com/${REPOSITORY}/releases/latest`;
 
 const FALLBACK = {
-  version: '1.8.2',
-  size: 57_906_857,
-  sha256: '3BF6C5974659888BE0FB0A91190E08D8B706DCB547E44D325D0E10F0CDE353EA',
-  notes: 'أزرق ملكي أهدأ وأكثر احترافية في الواجهة، مع الحفاظ على التقدم والنسخ الاحتياطي المشفّر والتحديث المباشر.',
+  version: '1.8.3',
+  size: 58_555_722,
+  sha256: 'D819FAA01EA82E5D696E6741C7887AF6307836BA10A9DC92ABD2D3F1684228A7',
+  notes: 'تحديث آمن يفتح المتصفح لتنزيل الحزمة الرسمية بدل تنزيلها وتثبيتها داخل التطبيق، لمنع تحذيرات Google Play Protect. لا تغيير في تقدمك أو نسخك الاحتياطي المشفّر.',
   releaseUrl: GITHUB_RELEASE,
 };
 

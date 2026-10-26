@@ -30,7 +30,7 @@ import { ProfileCard } from './ProfileCard';
 import { ProgressBackupPanel } from './ProgressBackupPanel';
 import { speechService } from '../../services/speechService';
 import { checkForAppUpdate, type AppUpdateManifest } from '../../services/appUpdateService';
-import { downloadAndInstallAppUpdate } from '../../services/appUpdateLauncher';
+import { openAppUpdateDownload } from '../../services/appUpdateLauncher';
 import { IS_STORE_BUILD } from '../../config/storeBuild';
 import {
   createProgressBackup,
@@ -77,7 +77,6 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
   const [isCheckingUpdate, setIsCheckingUpdate] = useState(false);
   const [availableUpdate, setAvailableUpdate] = useState<AppUpdateManifest | null>(null);
   const [updateMessage, setUpdateMessage] = useState<string | null>(null);
-  const [updateDownloadProgress, setUpdateDownloadProgress] = useState<number | null>(null);
   const [isOpeningUpdate, setIsOpeningUpdate] = useState(false);
   const [isRefreshingContent, setIsRefreshingContent] = useState(false);
   const [contentMessage, setContentMessage] = useState<string | null>(null);
@@ -269,22 +268,18 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
     if (!availableUpdate) return;
     setIsOpeningUpdate(true);
     setUpdateMessage(null);
-    setUpdateDownloadProgress(0);
     try {
-      await downloadAndInstallAppUpdate(availableUpdate, (progress) => {
-        setUpdateDownloadProgress(progress.percent);
-      });
+      await openAppUpdateDownload(availableUpdate);
       setUpdateMessage(
-        'اكتمل تنزيل التحديث. أكمل خطوات التثبيت التي يعرضها Android؛ لن يبدأ التثبيت دون موافقتك.',
+        'فُتح المتصفح لتنزيل الحزمة الرسمية. بعد اكتمال التنزيل، اضغط على الملف لتثبيت التحديث.',
       );
     } catch (error) {
-      console.error('Failed to download the Lin Go update:', error);
+      console.error('Failed to open the Lin Go update download:', error);
       setUpdateMessage(
-        error instanceof Error ? error.message : 'تعذر تنزيل التحديث. حاول مرة أخرى.',
+        error instanceof Error ? error.message : 'تعذر فتح رابط التحديث. حاول مرة أخرى.',
       );
     } finally {
       setIsOpeningUpdate(false);
-      setUpdateDownloadProgress(null);
     }
   };
 
@@ -453,8 +448,8 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
                         {availableUpdate.notes || 'لا توجد ملاحظات إصدار إضافية.'}
                       </p>
                       <p className="mt-2 text-slate-400">
-                        سينزّل التطبيق ملف APK الرسمي داخليًا، ثم يفتح مثبّت Android. قد يطلب
-                        Android السماح بالتثبيت من هذا المصدر مرة واحدة؛ ويظل التثبيت بموافقتك.
+                        سيفتح التطبيق المتصفح لتنزيل حزمة APK الرسمية. بعد اكتمال التنزيل،
+                        اضغط على الملف لتثبيت التحديث. لا يثبّت التطبيق الحزم تلقائيًا.
                       </p>
                       <button
                         type="button"
@@ -464,19 +459,9 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
                       >
                         <Download className="h-4 w-4" />
                         {isOpeningUpdate
-                          ? updateDownloadProgress !== null
-                            ? `جارٍ تنزيل التحديث… ${updateDownloadProgress}%`
-                            : 'جارٍ بدء التنزيل…'
-                          : `تنزيل تحديث ${availableUpdate.version} من التطبيق`}
+                          ? 'جارٍ فتح المتصفح…'
+                          : `تنزيل تحديث ${availableUpdate.version} عبر المتصفح`}
                       </button>
-                      {isOpeningUpdate && updateDownloadProgress !== null && (
-                        <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-slate-800" aria-hidden="true">
-                          <div
-                            className="h-full rounded-full bg-emerald-400 transition-[width] duration-200"
-                            style={{ width: `${Math.max(4, updateDownloadProgress)}%` }}
-                          />
-                        </div>
-                      )}
                       <a
                         href={availableUpdate.apkUrl}
                         target="_blank"
@@ -484,11 +469,8 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
                         className="mt-2 flex min-h-10 items-center justify-center gap-2 rounded-xl border border-slate-600 bg-slate-900/70 px-4 py-2 font-bold text-slate-100 transition-colors hover:border-sky-400 hover:text-sky-200"
                       >
                         <Download className="h-4 w-4" />
-                        تنزيل APK من المتصفح
+                        فتح رابط APK مباشرة
                       </a>
-                      <p className="mt-2 text-[10px] leading-5 text-slate-500">
-                        استخدم رابط المتصفح إذا تعذّر بدء التنزيل داخل التطبيق.
-                      </p>
                     </>
                   )}
                 </div>
@@ -829,10 +811,9 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
             </div>
             <p className="text-[11px] leading-relaxed text-slate-400">
               يتحقق التطبيق من آخر إصدار منشور في مستودع GitHub الموثوق، ويعرض ملاحظات الإصدار
-              وبصمة SHA-256 المنشورة. ينزّل زر التحديث حزمة APK الرسمية داخل التطبيق باستخدام
-              مدير التنزيلات، ثم يفتح مثبّت Android لتأكيد التثبيت. قد يطلب Android السماح
-              بالتثبيت من هذا المصدر مرة واحدة، ويتحقق من بصمة الملف والتوقيع قبل التثبيت.
-              لا يثبّت Lin Go أي ملف بصمت، ولا يطلب صلاحية الوصول إلى جميع الملفات.
+              وبصمة SHA-256 المنشورة. يفتح زر التحديث المتصفح لتنزيل حزمة APK الرسمية، ثم
+              يؤكد المستخدم التثبيت في Android. لا ينزّل Lin Go الحزمة داخليًا ولا يثبّتها
+              بنفسه، ولا يطلب صلاحية تثبيت التطبيقات.
             </p>
             <button
               type="button"
@@ -873,7 +854,7 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
                       </p>
                       <p className="mt-2 text-slate-400">
                         يتطلب Android SDK API {availableUpdate.minimumAndroidSdk} أو أحدث.
-                        سيُحفظ ملف APK داخل التطبيق ثم يفتح مثبّت Android؛ لن يبدأ التثبيت دون موافقتك.
+                        سيفتح المتصفح لتنزيل الحزمة؛ بعد اكتمال التنزيل اضغط على الملف لتثبيته.
                       </p>
                       <button
                         type="button"
@@ -882,20 +863,8 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
                         className="mt-3 flex min-h-10 items-center justify-center gap-2 rounded-xl bg-emerald-500 px-4 py-2 font-bold text-slate-950 transition-colors hover:bg-emerald-400 disabled:cursor-wait disabled:opacity-70"
                       >
                         <Download className="h-4 w-4" />
-                        {isOpeningUpdate
-                          ? updateDownloadProgress !== null
-                            ? `جارٍ تنزيل التحديث… ${updateDownloadProgress}%`
-                            : 'جارٍ بدء التنزيل…'
-                          : 'تنزيل تحديث Android من التطبيق'}
+                        {isOpeningUpdate ? 'جارٍ فتح المتصفح…' : 'تنزيل تحديث Android عبر المتصفح'}
                       </button>
-                      {isOpeningUpdate && updateDownloadProgress !== null && (
-                        <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-slate-800" aria-hidden="true">
-                          <div
-                            className="h-full rounded-full bg-emerald-400 transition-[width] duration-200"
-                            style={{ width: `${Math.max(4, updateDownloadProgress)}%` }}
-                          />
-                        </div>
-                      )}
                     </>
                   )}
                 </div>

@@ -1,11 +1,11 @@
 {
-  "version": "1.8.2",
+  "version": "1.8.3",
   "packageId": "com.englishtok.app",
   "apkUrl": "/english-tok.apk",
-  "sha256": "3BF6C5974659888BE0FB0A91190E08D8B706DCB547E44D325D0E10F0CDE353EA",
-  "size": 57906857,
+  "sha256": "D819FAA01EA82E5D696E6741C7887AF6307836BA10A9DC92ABD2D3F1684228A7",
+  "size": 58555722,
   "minimumAndroidSdk": 24,
-  "notes": "أزرق ملكي أهدأ وأكثر احترافية في الواجهة، مع الحفاظ على التقدم والنسخ الاحتياطي المشفّر والتحديث المباشر.",
+  "notes": "تحديث آمن يفتح المتصفح لتنزيل الحزمة الرسمية بدل تنزيلها وتثبيتها داخل التطبيق، لمنع تحذيرات Google Play Protect. لا تغيير في تقدمك أو نسخك الاحتياطي المشفّر.",
   "releaseUrl": "https://github.com/hmachikh16-boop/englishtok/releases/latest",
-  "publishedAt": "2026-10-26"
+  "publishedAt": "2026-10-26T11:16:00.000Z"
 }

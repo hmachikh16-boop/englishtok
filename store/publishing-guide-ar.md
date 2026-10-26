@@ -1,4 +1,4 @@
-# دليل النشر في المتاجر — Lin Go 1.7.8
+﻿# دليل النشر في المتاجر — Lin Go 1.8.3
 
 ## 1. الخلاصة والتوصية
 
@@ -10,13 +10,13 @@
 
 ## 2. ما الذي نرفعه؟
 
-| الملف | الاستخدام | التحديث الذاتي | صلاحية `REQUEST_INSTALL_PACKAGES` |
+| الملف | الاستخدام | التحديث | صلاحية `REQUEST_INSTALL_PACKAGES` |
 |---|---|---|---|
-| `releases/english-tok-1.7.8.apk` | الموقع/التنزيل المباشر | نعم | موجودة |
-| `releases/english-tok-1.7.8-store.apk` | Samsung Galaxy Store / متاجر APK | لا | **محذوفة** |
-| `releases/english-tok-1.7.8-store.aab` | Google Play / المتاجر التي تقبل AAB | لا | **محذوفة** |
+| `releases/english-tok-1.8.3.apk` | الموقع/التنزيل المباشر | يفتح المتصفح لتنزيل الحزمة | **غير مطلوبة** |
+| `releases/english-tok-1.8.3-store.apk` | Samsung Galaxy Store / متاجر APK | عبر المتجر | **غير مطلوبة** |
+| `releases/english-tok-1.8.3-store.aab` | Google Play / المتاجر التي تقبل AAB | عبر المتجر | **غير مطلوبة** |
 
-**لا ترفع نسخة التوزيع المباشر إلى أي متجر.** المتاجر تمنع عادةً تنزيل APK وتثبيته خارج المتجر. نسخة المتجر تبني الويب بـ `VITE_STORE_BUILD=true` وتخفي واجهات التحديث الذاتي، وتزيل الصلاحية من AndroidManifest عبر flavor باسم `store`.
+**لا ترفع نسخة التوزيع المباشر إلى أي متجر.** المتاجر تمنع عادةً تنزيل APK وتثبيته خارج المتجر. نسخة المتجر تبني الويب بـ `VITE_STORE_BUILD=true` وتخفي واجهات التحديث وتستبعد صفحات تحميل APK، بينما لا تطلب أي نسخة صلاحية تثبيت الحزم بعد 1.8.3.
 
 ## 3. بناء الملفات والتحقق منها
 
@@ -40,7 +40,7 @@ npm run android:aab
 استخدم `apksigner` من Android SDK build-tools:
 
 ```powershell
-& "$env:LOCALAPPDATA\Android\Sdk\build-tools\35.0.0\apksigner.bat" verify --print-certs releases\english-tok-1.7.8-store.apk
+& "$env:LOCALAPPDATA\Android\Sdk\build-tools\35.0.0\apksigner.bat" verify --print-certs releases\english-tok-1.8.3-store.apk
 ```
 
 يجب أن تظهر بصمة SHA-256 للشهادة:
@@ -49,23 +49,23 @@ npm run android:aab
 ### التحقق من الصلاحيات
 
 ```powershell
-& "$env:LOCALAPPDATA\Android\Sdk\build-tools\35.0.0\aapt2.exe" dump permissions releases\english-tok-1.7.8-store.apk
+& "$env:LOCALAPPDATA\Android\Sdk\build-tools\35.0.0\aapt2.exe" dump permissions releases\english-tok-1.8.3-store.apk
 ```
 
-يجب ألا تظهر `android.permission.REQUEST_INSTALL_PACKAGES` في نسخة المتجر. يجب أن تظهر في نسخة التوزيع المباشر فقط.
+يجب ألا تظهر `android.permission.REQUEST_INSTALL_PACKAGES` في أي نسخة ابتداءً من 1.8.3. التطبيق يفتح المتصفح للتحديث ولا يثبّت الحزم بنفسه.
 
 ### التحقق من AAB
 
 ```powershell
-jarsigner -verify -verbose -certs releases\english-tok-1.7.8-store.aab
+jarsigner -verify -verbose -certs releases\english-tok-1.8.3-store.aab
 ```
 
 ### البصمات
 
 ```powershell
-Get-FileHash releases\english-tok-1.7.8.apk -Algorithm SHA256
-Get-FileHash releases\english-tok-1.7.8-store.apk -Algorithm SHA256
-Get-FileHash releases\english-tok-1.7.8-store.aab -Algorithm SHA256
+Get-FileHash releases\english-tok-1.8.3.apk -Algorithm SHA256
+Get-FileHash releases\english-tok-1.8.3-store.apk -Algorithm SHA256
+Get-FileHash releases\english-tok-1.8.3-store.aab -Algorithm SHA256
 ```
 
 ## 4. Samsung Galaxy Store
@@ -82,8 +82,8 @@ Get-FileHash releases\english-tok-1.7.8-store.aab -Algorithm SHA256
 1. افتح `https://seller.samsungapps.com` وسجّل الدخول بحساب Samsung.
 2. اختر التسجيل كبائع/مطوّر، وأكمل التحقق من البريد والهوية.
 3. أضف تطبيقًا جديدًا، واختر **Android**.
-4. أدخل اسم الحزمة `com.englishtok.app` والإصدار `1.7.8` وversionCode `1007008`.
-5. ارفع `releases/english-tok-1.7.8-store.apk`.
+4. أدخل اسم الحزمة `com.englishtok.app` والإصدار `1.8.3` وversionCode `1008003`.
+5. ارفع `releases/english-tok-1.8.3-store.apk`.
 6. املأ بيانات المتجر من `listing-ar.md`:
    - الاسم: Lin Go — تعلّم الإنجليزية.
    - الوصف القصير والكامل.
@@ -122,7 +122,7 @@ Get-FileHash releases\english-tok-1.7.8-store.aab -Algorithm SHA256
 1. أنشئ حساب Google Play Console وادفع الرسوم.
 2. أكمل التحقق من الهوية.
 3. أنشئ تطبيقًا جديدًا بالاسم `Lin Go — تعلّم الإنجليزية`.
-4. ارفع `releases/english-tok-1.7.8-store.aab` في مسار **Production** أو **Closed testing** أولًا.
+4. ارفع `releases/english-tok-1.8.3-store.aab` في مسار **Production** أو **Closed testing** أولًا.
 5. اختر **Play App Signing** بحذر. إذا أردت الحفاظ على تحديث APK المباشر، استخدم حزمة منفصلة أو لا تنشر على Play.
 6. املأ:
    - App content: Privacy policy، Ads (No)، App access (No login)، Content rating، Target audience (13+ مقترح)، Data safety من `data-safety-ar.md`.
@@ -142,7 +142,7 @@ Get-FileHash releases\english-tok-1.7.8-store.aab -Algorithm SHA256
 ## 6. Huawei AppGallery (اختياري)
 
 - التسجيل مجاني بشكل عام، لكن تحقق من الشروط الحالية.
-- ارفع `english-tok-1.7.8-store.apk` أو AAB حسب ما تقبله لوحة التحكم.
+- ارفع `english-tok-1.8.3-store.apk` أو AAB حسب ما تقبله لوحة التحكم.
 - اختبر على جهاز Huawei بدون خدمات Google:
   - التعرف على الكلام (قد لا يتوفر).
   - تحويل النص إلى كلام (Android TTS).
@@ -173,7 +173,7 @@ Get-FileHash releases\english-tok-1.7.8-store.aab -Algorithm SHA256
 
 ## 9. قائمة ما قبل الرفع
 
-- [ ] تم بناء `english-tok-1.7.8-store.apk` و`english-tok-1.7.8-store.aab`.
+- [ ] تم بناء `english-tok-1.8.3-store.apk` و`english-tok-1.8.3-store.aab`.
 - [ ] تم التحقق من التوقيع وبصمة الشهادة.
 - [ ] نسخة المتجر لا تحتوي `REQUEST_INSTALL_PACKAGES`.
 - [ ] نسخة المتجر لا تعرض «تحديث APK» أو روابط تنزيل APK.

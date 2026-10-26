@@ -7,8 +7,8 @@ android {
         applicationId "com.englishtok.app"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1008002
-        versionName "1.8.2"
+        versionCode 1008003
+        versionName "1.8.3"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
              // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
@@ -23,8 +23,9 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-    // The direct APK keeps the in-app APK updater. Store builds remove the
-    // installer permission and are published through the store's update path.
+    // Direct and store builds both open the browser for updates and never
+    // request the package-installer permission. Store builds also hide update
+    // UI and exclude the website's APK download pages.
     flavorDimensions "distribution"
     productFlavors {
         direct {

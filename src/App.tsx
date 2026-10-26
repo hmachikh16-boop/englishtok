@@ -23,7 +23,7 @@ import {
 } from './services/progressBackupService';
 import { fetchLatestLearningPath, getCachedLearningPath } from './services/contentService';
 import { checkForAppUpdate, type AppUpdateManifest } from './services/appUpdateService';
-import { downloadAndInstallAppUpdate } from './services/appUpdateLauncher';
+import { openAppUpdateDownload } from './services/appUpdateLauncher';
 import { IS_STORE_BUILD } from './config/storeBuild';
 import {
   SPEECH_STATUS_EVENT,
@@ -79,7 +79,6 @@ export default function App() {
   const [availableAppUpdate, setAvailableAppUpdate] = useState<AppUpdateManifest | null>(null);
   const [updateDownloadError, setUpdateDownloadError] = useState<string | null>(null);
   const [updateOpenMessage, setUpdateOpenMessage] = useState<string | null>(null);
-  const [updateDownloadProgress, setUpdateDownloadProgress] = useState<number | null>(null);
   const [isOpeningAppUpdate, setIsOpeningAppUpdate] = useState(false);
   const notificationTop = activeTab === 'lesson'
     ? 'calc(env(safe-area-inset-top, 0px) + 12px)'
@@ -115,25 +114,21 @@ export default function App() {
     if (!availableAppUpdate) return;
     setUpdateDownloadError(null);
     setUpdateOpenMessage(null);
-    setUpdateDownloadProgress(0);
     setIsOpeningAppUpdate(true);
     try {
-      await downloadAndInstallAppUpdate(availableAppUpdate, (progress) => {
-        setUpdateDownloadProgress(progress.percent);
-      });
+      await openAppUpdateDownload(availableAppUpdate);
       setUpdateOpenMessage(
-        'اكتمل تنزيل التحديث. أكمل خطوات التثبيت التي يعرضها Android؛ لن يبدأ التثبيت دون موافقتك.',
+        'فُتح المتصفح لتنزيل الحزمة الرسمية. بعد اكتمال التنزيل، اضغط على الملف لتثبيت التحديث.',
       );
     } catch (error) {
-      console.error('Failed to download the Lin Go update:', error);
+      console.error('Failed to open the Lin Go update download:', error);
       setUpdateDownloadError(
         error instanceof Error
           ? error.message
-          : 'تعذر تنزيل التحديث. تحقق من اتصال الإنترنت وحاول مرة أخرى.',
+          : 'تعذر فتح رابط التحديث. تحقق من اتصال الإنترنت وحاول مرة أخرى.',
       );
     } finally {
       setIsOpeningAppUpdate(false);
-      setUpdateDownloadProgress(null);
     }
   };
 
@@ -393,23 +388,11 @@ export default function App() {
               disabled={isOpeningAppUpdate}
               className="mt-3 rounded-lg bg-emerald-400 px-3 py-2 text-xs font-bold text-slate-950 hover:bg-emerald-300 disabled:cursor-wait disabled:opacity-70"
             >
-              {isOpeningAppUpdate
-                ? updateDownloadProgress !== null
-                  ? `جارٍ تنزيل التحديث… ${updateDownloadProgress}%`
-                  : 'جارٍ بدء التنزيل…'
-                : 'تنزيل التحديث من التطبيق'}
+              {isOpeningAppUpdate ? 'جارٍ فتح المتصفح…' : 'تنزيل التحديث عبر المتصفح'}
             </button>
-            {isOpeningAppUpdate && updateDownloadProgress !== null && (
-              <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-slate-800" aria-hidden="true">
-                <div
-                  className="h-full rounded-full bg-emerald-400 transition-[width] duration-200"
-                  style={{ width: `${Math.max(4, updateDownloadProgress)}%` }}
-                />
-              </div>
-            )}
             <p className="mt-2 text-[10px] text-slate-400">
-              سينزّل التطبيق حزمة APK الرسمية داخليًا، ثم يفتح مثبّت Android لتأكيد التثبيت.
-              قد يطلب Android السماح بالتثبيت من هذا المصدر مرة واحدة، ويتحقق من التوقيع والتوافق قبل التثبيت.
+              سيفتح التطبيق المتصفح لتنزيل حزمة APK الرسمية. بعد اكتمال التنزيل، اضغط على الملف
+              لتثبيت التحديث. لا يثبّت التطبيق الحزم تلقائيًا.
             </p>
           </div>
           <button
@@ -418,7 +401,6 @@ export default function App() {
               setAvailableAppUpdate(null);
               setUpdateDownloadError(null);
               setUpdateOpenMessage(null);
-              setUpdateDownloadProgress(null);
             }}
             disabled={isOpeningAppUpdate}
             className="shrink-0 rounded-lg px-2 py-1 text-xs font-bold text-slate-300 hover:bg-slate-800 disabled:cursor-wait disabled:opacity-50"

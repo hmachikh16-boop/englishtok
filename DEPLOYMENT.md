@@ -67,23 +67,25 @@ Keep the same signing key for every APK update. Android rejects an update signed
 
 ## In-app update checks
 
-On Android, the app checks the latest stable GitHub Release at launch and shows a dismissible notice when a newer version is available. The Settings → Export APK screen also supports a manual check. Both flows validate the release version, package ID, expected official APK URL, and SHA-256 format, then download the APK inside the app with Android DownloadManager. The native `AppUpdateInstaller` plugin verifies the downloaded file's SHA-256, shares it through FileProvider, and opens Android's package installer. The user still confirms every installation; the app never installs silently. If Android has not allowed this source to install apps, the plugin opens the system setting and asks the user to retry. Android checks package compatibility and the APK signature during installation.
+On Android, the app checks the latest stable GitHub Release at launch and shows a dismissible notice when a newer version is available. The Settings → Export APK screen also supports a manual check. Both flows validate the release version, package ID, expected official APK URL, and SHA-256 format, then open the official APK link in the system browser with `@capacitor/browser`. Lin Go does not download or install packages itself, and it no longer declares `REQUEST_INSTALL_PACKAGES`. The learner confirms the installation in Android's own package installer or browser download flow.
+
+Versions `1.8.2` and older still contain the former self-installer. If Google Play Protect blocks the transition update started by one of those versions, install `1.8.3` manually from the official download page in a browser. Do not disable Play Protect. Once `1.8.3` is installed, later updates open the browser directly.
 
 An app build without `VITE_GITHUB_REPOSITORY` can still run normally, but cannot discover GitHub releases or remote content. Set the variable to `owner/repository` for Vercel builds; GitHub workflows inject their own repository automatically.
 
 ## Android permissions
 
-The released APK declares three permissions:
+The released APK declares two permissions:
 
 - `android.permission.INTERNET` — GitHub release checks and the optional AI tutor.
 - `android.permission.RECORD_AUDIO` — pronunciation practice, requested at runtime when the learner uses the microphone.
-- `android.permission.REQUEST_INSTALL_PACKAGES` — user-initiated in-app APK updates only. Android still requires the user to allow this source and confirm every installation.
 
 It intentionally does **not** request:
 
-- `MANAGE_EXTERNAL_STORAGE`, `READ_EXTERNAL_STORAGE`, or `WRITE_EXTERNAL_STORAGE` — learner data stays in private app storage, and manual backups use Android's Storage Access Framework one-file picker. The downloaded APK lives in the app-specific external Download directory and is shared read-only with the package installer through FileProvider.
+- `REQUEST_INSTALL_PACKAGES` — the app opens the browser for updates and never installs packages itself.
+- `MANAGE_EXTERNAL_STORAGE`, `READ_EXTERNAL_STORAGE`, or `WRITE_EXTERNAL_STORAGE` — learner data stays in private app storage, and manual backups use Android's Storage Access Framework one-file picker.
 
-`REQUEST_INSTALL_PACKAGES` can increase the chance of a Play Protect warning. The app must not disable Play Protect or bypass the installer. Even a clean, self-signed APK distributed outside Google Play can be flagged on some devices depending on reputation and device settings; publishing through Google Play is the only reliable way to guarantee a standard, warning-free install experience. Users who trust the official release can review the APK signature and SHA-256 before choosing to install.
+Avoiding the package-installer permission and native installer code removes the main reason Google Play Protect treated the direct APK as a dropper/self-updater. Even a clean, self-signed APK distributed outside Google Play can still be flagged on some devices depending on reputation and device settings; publishing through Google Play is the only reliable way to guarantee a standard, warning-free install experience. Users who trust the official release can review the APK signature and SHA-256 before choosing to install.
 
 ## Content-only updates
 
