@@ -124,26 +124,6 @@ const ensureDownloadTarget = async () => {
   });
 };
 
-const setupCopyButton = () => {
-  const button = document.querySelector('[data-copy-hash]');
-  if (!button) return;
-  button.addEventListener('click', async () => {
-    const hash = document.querySelector('[data-latest-hash]')?.textContent?.trim();
-    if (!hash) return;
-    const copied = await copyText(hash);
-    if (!copied) {
-      showToast('تعذّر النسخ. حدّد البصمة يدويًا.');
-      return;
-    }
-    showToast('تم نسخ بصمة SHA-256');
-    const original = button.textContent;
-    button.textContent = 'تم النسخ';
-    setTimeout(() => {
-      button.textContent = original;
-    }, 1800);
-  });
-};
-
 const setupShare = () => {
   document.querySelectorAll('[data-share]').forEach((button) => {
     button.addEventListener('click', async () => {
@@ -178,6 +158,5 @@ const setupHeader = () => {
 
 loadLatest();
 ensureDownloadTarget();
-setupCopyButton();
 setupShare();
 setupHeader();

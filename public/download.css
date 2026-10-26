@@ -1123,22 +1123,6 @@ svg {
   text-align: left;
 }
 
-.copy-btn {
-  margin-top: 6px;
-  padding: 3px 9px;
-  border: 1px solid var(--line-strong);
-  border-radius: 8px;
-  background: var(--ivory-3);
-  color: var(--emerald-700);
-  cursor: pointer;
-  font-size: 9.5px;
-  font-weight: 800;
-}
-
-.copy-btn:hover {
-  border-color: var(--emerald-600);
-}
-
 .release-link {
   display: inline-flex;
   align-items: center;
