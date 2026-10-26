@@ -40,7 +40,7 @@ const MAX_HEARTS = 5;
 
 const STAGE_ACCENTS: Record<number, { main: string; soft: string; ink: string }> = {
   1: { main: '#ce82ff', soft: '#f5e9ff', ink: '#7d2fc4' },
-  2: { main: '#1cb0f6', soft: '#e4f6ff', ink: '#0b6fa4' },
+  2: { main: '#3d7198', soft: '#e7eef4', ink: '#284965' },
   3: { main: '#ffc800', soft: '#fff6d1', ink: '#8a5a00' },
   4: { main: '#ff9600', soft: '#fff0dd', ink: '#a35a00' },
 };

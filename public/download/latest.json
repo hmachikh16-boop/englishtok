@@ -1,11 +1,11 @@
 {
-  "version": "1.8.1",
+  "version": "1.8.2",
   "packageId": "com.englishtok.app",
   "apkUrl": "/english-tok.apk",
-  "sha256": "DE46427FB3F345C4E9D58EDE33D89E78AD38CA3954F00F3BB45D976C077707B3",
-  "size": 57906977,
+  "sha256": "3BF6C5974659888BE0FB0A91190E08D8B706DCB547E44D325D0E10F0CDE353EA",
+  "size": 57906857,
   "minimumAndroidSdk": 24,
-  "notes": "اسم Lin Go الجديد، نسخة احتياطية مشفرة بكلمة مرور مع معاينة وحفظ أمان قبل الاستبدال، وتحسينات الملفات الكبيرة مع الحفاظ على تقدمك والتحديث المباشر.",
+  "notes": "أزرق ملكي أهدأ وأكثر احترافية في الواجهة، مع الحفاظ على التقدم والنسخ الاحتياطي المشفّر والتحديث المباشر.",
   "releaseUrl": "https://github.com/hmachikh16-boop/englishtok/releases/latest",
   "publishedAt": "2026-10-26"
 }

@@ -5,10 +5,10 @@ const GITHUB_APK = `https://github.com/${REPOSITORY}/releases/latest/download/en
 const GITHUB_RELEASE = `https://github.com/${REPOSITORY}/releases/latest`;
 
 const FALLBACK = {
-  version: '1.8.1',
-  size: 57_906_977,
-  sha256: 'DE46427FB3F345C4E9D58EDE33D89E78AD38CA3954F00F3BB45D976C077707B3',
-  notes: 'اسم Lin Go الجديد، نسخة احتياطية مشفرة بكلمة مرور مع معاينة وحفظ أمان قبل الاستبدال، وتحسينات الملفات الكبيرة مع الحفاظ على تقدمك والتحديث المباشر.',
+  version: '1.8.2',
+  size: 57_906_857,
+  sha256: '3BF6C5974659888BE0FB0A91190E08D8B706DCB547E44D325D0E10F0CDE353EA',
+  notes: 'أزرق ملكي أهدأ وأكثر احترافية في الواجهة، مع الحفاظ على التقدم والنسخ الاحتياطي المشفّر والتحديث المباشر.',
   releaseUrl: GITHUB_RELEASE,
 };
 

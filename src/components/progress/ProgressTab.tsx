@@ -257,7 +257,7 @@ export const ProgressTab: React.FC<ProgressTabProps> = ({
           </div>
         </div>
         <div className="mt-3 h-2 overflow-hidden rounded-full bg-slate-800">
-          <div className="h-full rounded-full bg-gradient-to-l from-emerald-400 to-sky-400" style={{ width: `${Math.min(100, (dailyLessons / userProfile.dailyGoalLessons) * 100)}%` }} />
+          <div className="h-full rounded-full bg-gradient-to-l from-emerald-400 to-[#3d7198]" style={{ width: `${Math.min(100, (dailyLessons / userProfile.dailyGoalLessons) * 100)}%` }} />
         </div>
         <p className="mt-2 text-[11px] text-slate-400">{dailyLessons >= userProfile.dailyGoalLessons ? 'أحسنت، أنجزت هدف اليوم.' : `بقي ${Math.max(0, userProfile.dailyGoalLessons - dailyLessons)} درس لإكمال هدف اليوم.`}</p>
       </section>

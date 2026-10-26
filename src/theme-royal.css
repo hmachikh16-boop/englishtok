@@ -1,20 +1,21 @@
 ﻿/* ============================================================
-   Lin Go — Royal Blue / Gold / Parchment theme
+   Lin Go — Muted Royal Blue / Gold / Parchment theme
    A colour-only refresh: layout, spacing and interactions stay
-   exactly as they were. Deep blue carries navigation, gold marks
-   progress and rewards, parchment keeps reading comfortable, and
-   green/red remain meaningful action and danger colours.
+   exactly as they were. A calm, desaturated slate-blue carries
+   navigation, gold marks progress and rewards, parchment keeps
+   reading comfortable, and green/red remain meaningful action and
+   danger colours.
    ============================================================ */
 
 :root {
-  --rt-blue-950: #04233f;
-  --rt-blue-900: #052f54;
-  --rt-blue-850: #073b68;
-  --rt-blue-800: #0a4b83;
-  --rt-blue-700: #0f5d9e;
-  --rt-blue-600: #1877bd;
-  --rt-blue-300: #84b4dc;
-  --rt-blue-100: #d7eaf8;
+  --rt-blue-950: #132230;
+  --rt-blue-900: #192e40;
+  --rt-blue-850: #1f3950;
+  --rt-blue-800: #284965;
+  --rt-blue-700: #315a7c;
+  --rt-blue-600: #3d7198;
+  --rt-blue-300: #93b3cd;
+  --rt-blue-100: #dee9f1;
   --rt-gold-700: #986200;
   --rt-gold-600: #c48600;
   --rt-gold-500: #f4b603;
@@ -24,8 +25,8 @@
   --rt-cream-100: #fff3cf;
   --rt-cream-200: #f2e2b2;
   --rt-cream-300: #d9c58f;
-  --rt-ink: #102f4a;
-  --rt-ink-soft: #49657a;
+  --rt-ink: #1b2e3f;
+  --rt-ink-soft: #4c6577;
   --rt-red-600: #b51d1d;
   --rt-red-500: #d32f2f;
   --rt-green-600: #3f8f00;
@@ -37,7 +38,7 @@
 body {
   background:
     radial-gradient(ellipse at 50% -16%, rgb(244 182 3 / 15%), transparent 42%),
-    linear-gradient(180deg, #063967 0%, #052a4d 58%, #041f3b 100%);
+    linear-gradient(180deg, #1e384f 0%, #172a3b 58%, #121f2d 100%);
   color: var(--rt-cream-50);
 }
 
@@ -50,8 +51,8 @@ body {
 .journey-secondary {
   background:
     radial-gradient(circle at 50% -14%, rgb(244 182 3 / 13%), transparent 34%),
-    radial-gradient(circle at 100% 38%, rgb(24 119 189 / 11%), transparent 36%),
-    linear-gradient(180deg, #073b68 0%, #052d52 55%, #041f3b 100%);
+    radial-gradient(circle at 100% 38%, rgb(61 113 152 / 11%), transparent 36%),
+    linear-gradient(180deg, #1f3950 0%, #182c3f 55%, #121f2d 100%);
   color: var(--rt-cream-50);
 }
 
@@ -59,9 +60,9 @@ body {
 .journey-topbar {
   color: var(--rt-cream-50);
   background:
-    linear-gradient(180deg, #0b5aa0 0%, #074781 52%, #053866 100%);
+    linear-gradient(180deg, #30587b 0%, #264562 52%, #1e374d 100%);
   border-color: var(--rt-gold-500);
-  box-shadow: 0 3px 0 #03213d, 0 8px 22px rgb(0 0 0 / 24%);
+  box-shadow: 0 3px 0 #12202e, 0 8px 22px rgb(0 0 0 / 24%);
 }
 
 .journey-topbar .journey-brand-name {
@@ -74,7 +75,7 @@ body {
 }
 
 .journey-topbar .journey-topbar-tagline {
-  color: #cde2f3;
+  color: #d4e1ec;
   border-color: rgb(255 255 255 / 26%);
 }
 
@@ -198,15 +199,15 @@ button.journey-frame-toggle svg {
 /* ---------- Bottom navigation ---------- */
 .journey-nav {
   background:
-    linear-gradient(180deg, #073f70 0%, #052f54 100%);
+    linear-gradient(180deg, #213d56 0%, #192e40 100%);
   border-color: var(--rt-gold-500);
-  box-shadow: 0 -2px 0 #03213d, 0 -8px 22px rgb(0 0 0 / 18%);
+  box-shadow: 0 -2px 0 #12202e, 0 -8px 22px rgb(0 0 0 / 18%);
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
 }
 
 .journey-tab {
-  color: #b9d3e8;
+  color: #c1d2e0;
 }
 
 .journey-tab:hover {
@@ -249,7 +250,7 @@ button.journey-frame-toggle svg {
 }
 
 .journey-tab-center .journey-center-label {
-  color: #c8dceb;
+  color: #cddbe6;
 }
 
 .journey-tab-center.is-active .journey-center-label {
@@ -269,7 +270,7 @@ button.journey-frame-toggle svg {
 
 /* ---------- Stage rail ---------- */
 .path-stage-rail {
-  background: rgb(5 47 84 / 94%);
+  background: rgb(25 46 64 / 94%);
   border-color: rgb(244 182 3 / 42%);
   box-shadow: 0 2px 0 rgb(2 25 46 / 45%);
   backdrop-filter: none;
@@ -277,7 +278,7 @@ button.journey-frame-toggle svg {
 }
 
 .path-stage-rail-label {
-  color: #c9deee;
+  color: #cfdde8;
 }
 
 .path-stage-chip {
@@ -301,7 +302,7 @@ button.journey-frame-toggle svg {
 }
 
 .path-stage-chip.is-locked {
-  color: #a9c3d8;
+  color: #afc2d2;
   background: rgb(255 255 255 / 7%);
   border-color: rgb(255 255 255 / 14%);
   box-shadow: none;
@@ -467,17 +468,17 @@ button.journey-frame-toggle svg {
 .path-hero .continuous-route-unit[data-stage="6"] .path-stage-heading,
 .path-hero .continuous-route-unit[data-stage="7"] .path-stage-heading {
   color: #fff;
-  background: linear-gradient(110deg, var(--rt-blue-800), var(--rt-blue-700) 52%, #0a4779);
+  background: linear-gradient(110deg, var(--rt-blue-800), var(--rt-blue-700) 52%, #25445e);
   border-bottom: 4px solid var(--rt-gold-500);
   box-shadow: 0 4px 0 rgb(2 25 46 / 24%);
 }
 
 .path-hero .continuous-route-unit:nth-child(3n + 2) .path-stage-heading {
-  background: linear-gradient(110deg, #08436f, #0b5b94 55%, #0a4b83);
+  background: linear-gradient(110deg, #213f56, #2d5572 55%, #284965);
 }
 
 .path-hero .continuous-route-unit:nth-child(3n + 3) .path-stage-heading {
-  background: linear-gradient(110deg, #0a4779, #12679f 55%, #0c568b);
+  background: linear-gradient(110deg, #25445e, #32607f 55%, #2b516c);
 }
 
 .path-stage[data-stage] > .path-stage-heading .text-white,
@@ -558,7 +559,7 @@ button.journey-frame-toggle svg {
 }
 
 .path-node.is-locked .path-node-orb {
-  color: #8fb1ca;
+  color: #96b0c3;
   background: rgb(255 255 255 / 8%);
   border: 1px solid rgb(255 255 255 / 10%);
   box-shadow: 0 6px 0 rgb(2 25 46 / 30%);
@@ -609,7 +610,7 @@ button.journey-frame-toggle svg {
 }
 
 .path-node.is-locked .path-node-number {
-  color: #9db9ce;
+  color: #a2b8c9;
   background: rgb(255 255 255 / 8%);
   border-color: rgb(255 255 255 / 14%);
 }
@@ -634,7 +635,7 @@ button.journey-frame-toggle svg {
 
 .path-node-stars {
   border-color: var(--rt-gold-500);
-  background: rgb(4 35 63 / 70%);
+  background: rgb(19 34 48 / 70%);
 }
 
 .path-node-stars svg {
@@ -768,7 +769,7 @@ button.journey-frame-toggle svg {
 
 .path-hero > div > .mt-4,
 .path-hero .text-slate-400 {
-  color: #c5d9e9;
+  color: #cad8e4;
 }
 
 .path-hero .text-slate-400 svg {
@@ -904,12 +905,12 @@ button.journey-frame-toggle svg {
 
 /* Settings sub-navigation */
 .journey-secondary > .flex.gap-1\.5 {
-  background: rgb(4 35 63 / 80%);
+  background: rgb(19 34 48 / 80%);
   border-color: var(--rt-gold-500);
 }
 
 .journey-secondary > .flex.gap-1\.5 > button {
-  color: #bcd3e5;
+  color: #c2d2df;
 }
 
 .journey-secondary > .flex.gap-1\.5 > button[class*="bg-slate-800"] {
@@ -1004,7 +1005,7 @@ button.journey-frame-toggle svg {
 .ai-tutor {
   background:
     radial-gradient(ellipse at 100% 0%, rgb(255 211 77 / 10%), transparent 30%),
-    radial-gradient(ellipse at 0% 100%, rgb(21 101 192 / 9%), transparent 34%),
+    radial-gradient(ellipse at 0% 100%, rgb(49 90 124 / 9%), transparent 34%),
     var(--rt-cream-50);
   color: var(--rt-ink);
 }
@@ -1014,15 +1015,15 @@ button.journey-frame-toggle svg {
 }
 
 .ai-tutor-header p {
-  color: #bdd7ea;
+  color: #c4d6e3;
 }
 
 .ai-tutor-level-line {
-  color: #bdd7ea;
+  color: #c4d6e3;
 }
 
 .ai-tutor-level-line .text-\[\#b1c0b6\] {
-  color: #7ea8c9;
+  color: #88a7bf;
 }
 
 .ai-tutor-level-line .text-amber-700 {
@@ -1071,7 +1072,7 @@ button.journey-frame-toggle svg {
 
 .ai-tutor-scroll {
   scrollbar-color: var(--rt-blue-300) transparent;
-  background-image: radial-gradient(rgb(21 101 192 / 13%) 0.65px, transparent 0.65px);
+  background-image: radial-gradient(rgb(49 90 124 / 13%) 0.65px, transparent 0.65px);
 }
 
 .ai-tutor-scroll::-webkit-scrollbar-thumb {
@@ -1081,7 +1082,7 @@ button.journey-frame-toggle svg {
 .ai-tutor-welcome {
   border-color: var(--rt-gold-500);
   background: #fffdf7;
-  box-shadow: 0 5px 0 var(--rt-cream-300), 0 16px 34px rgb(6 47 86 / 9%);
+  box-shadow: 0 5px 0 var(--rt-cream-300), 0 16px 34px rgb(15 38 55 / 9%);
 }
 
 .ai-tutor-welcome-orb {
@@ -1138,7 +1139,7 @@ button.journey-frame-toggle svg {
 .ai-tutor-bubble-user {
   color: #fff;
   background: linear-gradient(145deg, var(--rt-blue-600), var(--rt-blue-800));
-  box-shadow: 0 4px 0 var(--rt-blue-950), 0 7px 16px rgb(6 47 86 / 20%);
+  box-shadow: 0 4px 0 var(--rt-blue-950), 0 7px 16px rgb(15 38 55 / 20%);
 }
 
 .ai-tutor-speak-button {
@@ -1158,7 +1159,7 @@ button.journey-frame-toggle svg {
 
 .ai-tutor-translation {
   border-color: var(--rt-blue-200);
-  background: #f4faff;
+  background: #f7fafc;
 }
 
 .ai-tutor-translation-label {
@@ -1204,7 +1205,7 @@ button.journey-frame-toggle svg {
 
 .ai-tutor-pronunciation {
   border-color: var(--rt-blue-200);
-  background: #f4faff;
+  background: #f7fafc;
 }
 
 .ai-tutor-practice-button {
@@ -1220,7 +1221,7 @@ button.journey-frame-toggle svg {
 .ai-tutor-composer {
   border-top-color: var(--rt-cream-300);
   background: rgb(255 253 247 / 97%);
-  box-shadow: 0 -6px 18px rgb(6 47 86 / 7%);
+  box-shadow: 0 -6px 18px rgb(15 38 55 / 7%);
 }
 
 .ai-tutor-practice-card {
@@ -1236,7 +1237,7 @@ button.journey-frame-toggle svg {
 
 .ai-tutor-input-shell:focus-within {
   border-color: var(--rt-blue-500);
-  box-shadow: 0 3px 0 var(--rt-blue-200), 0 0 0 3px rgb(21 101 192 / 12%);
+  box-shadow: 0 3px 0 var(--rt-blue-200), 0 0 0 3px rgb(49 90 124 / 12%);
 }
 
 .ai-tutor-input-shell.is-listening {
@@ -1305,7 +1306,7 @@ button.journey-frame-toggle svg {
   border-radius: 24px;
   background:
     radial-gradient(circle at 92% 4%, rgb(255 211 77 / 19%), transparent 26%),
-    linear-gradient(145deg, #0c4f88, #073761 60%, #052b4d);
+    linear-gradient(145deg, #2a4d6a, #1d364b 60%, #172a3b);
   box-shadow: 0 5px 0 var(--rt-gold-700), 0 18px 32px rgb(0 0 0 / 24%);
   color: var(--rt-cream-50);
 }
@@ -1363,7 +1364,7 @@ button.journey-frame-toggle svg {
   border-radius: 999px;
   padding: 5px 9px;
   color: var(--rt-gold-300, #ffe9a6);
-  background: rgb(4 35 63 / 46%);
+  background: rgb(19 34 48 / 46%);
   font-size: 9px;
   font-weight: 900;
   white-space: nowrap;
@@ -1390,7 +1391,7 @@ button.journey-frame-toggle svg {
   overflow: hidden;
   border: 3px solid var(--rt-gold-400);
   border-radius: 20px;
-  background: linear-gradient(145deg, #eff8ff, #b9d9f1);
+  background: linear-gradient(145deg, #f3f7fb, #c4d7e6);
   box-shadow: 0 4px 0 #b97800, 0 0 0 4px rgb(255 255 255 / 10%);
   color: var(--rt-blue-900);
   font-family: var(--font-english);
@@ -1485,7 +1486,7 @@ button.journey-frame-toggle svg {
   align-items: center;
   gap: 5px;
   margin: 6px 0 0;
-  color: #c9deee;
+  color: #cfdde8;
   font-size: 10px;
   font-weight: 700;
 }
@@ -1507,12 +1508,12 @@ button.journey-frame-toggle svg {
   border: 2px solid var(--rt-gold-500);
   border-radius: 12px;
   padding: 7px 9px;
-  background: linear-gradient(160deg, #0b4779, #052b4d);
-  box-shadow: inset 0 1px 0 rgb(255 255 255 / 18%), 0 3px 0 #031d35;
+  background: linear-gradient(160deg, #25455f, #172a3b);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 18%), 0 3px 0 #101c28;
 }
 
 .profile-level-badge span {
-  color: #c6ddeb;
+  color: #ccdce5;
   font-size: 8px;
   font-weight: 900;
 }
@@ -1526,7 +1527,7 @@ button.journey-frame-toggle svg {
 }
 
 .profile-level-badge small {
-  color: #9fc3dd;
+  color: #a9c1d3;
   font-family: var(--font-english);
   font-size: 7px;
   font-weight: 800;
@@ -1588,11 +1589,11 @@ button.journey-frame-toggle svg {
   width: 28px;
   height: 28px;
   place-items: center;
-  border: 1px solid rgb(16 47 74 / 12%);
+  border: 1px solid rgb(27 46 63 / 12%);
   border-radius: 9px;
   color: #fff;
   background: var(--rt-blue-700);
-  box-shadow: 0 2px 0 rgb(16 47 74 / 18%);
+  box-shadow: 0 2px 0 rgb(27 46 63 / 18%);
 }
 
 .profile-stat-icon.is-red {
@@ -1650,7 +1651,7 @@ button.journey-frame-toggle svg {
   border: 1px solid rgb(255 255 255 / 24%);
   border-radius: 14px;
   padding: 10px;
-  background: rgb(4 35 63 / 55%);
+  background: rgb(19 34 48 / 55%);
 }
 
 .profile-editor-heading {
@@ -1672,7 +1673,7 @@ button.journey-frame-toggle svg {
   height: 24px;
   place-items: center;
   border-radius: 7px;
-  color: #d6e7f3;
+  color: #dbe6ee;
   background: rgb(255 255 255 / 10%);
 }
 
@@ -1688,7 +1689,7 @@ button.journey-frame-toggle svg {
 }
 
 .profile-editor label span {
-  color: #c8ddec;
+  color: #cedce6;
   font-size: 9px;
   font-weight: 800;
 }
@@ -1733,17 +1734,17 @@ button.journey-frame-toggle svg {
   border-radius: 9px;
   padding: 7px 9px;
   color: #ffe9a6;
-  background: rgb(4 35 63 / 60%);
+  background: rgb(19 34 48 / 60%);
   font-size: 10px;
   font-weight: 700;
 }
 
 .journey-nav .journey-tab:not(.is-active) > span:not(.sr-only) {
-  color: #b9d3e8;
+  color: #c1d2e0;
 }
 
 .journey-nav .journey-tab:not(.is-active) .journey-center-label {
-  color: #b9d3e8;
+  color: #c1d2e0;
 }
 
 .journey-nav .journey-tab:not(.is-active):hover > span:not(.sr-only) {
@@ -1756,8 +1757,8 @@ button.journey-frame-toggle svg {
   color: var(--rt-cream-50);
   background:
     radial-gradient(ellipse at 88% 18%, rgb(255 211 77 / 16%), transparent 38%),
-    radial-gradient(ellipse at 6% 100%, rgb(24 119 189 / 16%), transparent 34%),
-    linear-gradient(138deg, #07406f 0%, #06345b 52%, #042641 100%);
+    radial-gradient(ellipse at 6% 100%, rgb(61 113 152 / 16%), transparent 34%),
+    linear-gradient(138deg, #213e55 0%, #1b3246 52%, #132432 100%);
   box-shadow: inset 0 1px rgb(255 255 255 / 10%), 0 5px 0 var(--rt-gold-700), 0 16px 30px rgb(0 0 0 / 24%);
 }
 
@@ -1766,7 +1767,7 @@ button.journey-frame-toggle svg {
 }
 
 .goal-quest-orb-two {
-  background: rgb(24 119 189 / 16%);
+  background: rgb(61 113 152 / 16%);
 }
 
 .goal-quest-eyebrow {
@@ -1784,7 +1785,7 @@ button.journey-frame-toggle svg {
 }
 
 .goal-quest-description {
-  color: #c3d9e8;
+  color: #c8d8e3;
 }
 
 .goal-quest-count {
@@ -1797,7 +1798,7 @@ button.journey-frame-toggle svg {
 
 .goal-quest-count-number small,
 .goal-quest-count-label {
-  color: #a9c6da;
+  color: #afc5d4;
 }
 
 .goal-quest-meter {
@@ -1824,7 +1825,7 @@ button.journey-frame-toggle svg {
 
 .goal-quest-next-line span,
 .goal-quest-next p {
-  color: #a9c6da;
+  color: #afc5d4;
 }
 
 .goal-quest-next-progress {
@@ -1847,7 +1848,7 @@ button.journey-frame-toggle svg {
 }
 
 .goal-quest-whisper {
-  color: #a9c6da;
+  color: #afc5d4;
 }
 
 .goal-quest-card-ring {
@@ -1855,7 +1856,7 @@ button.journey-frame-toggle svg {
 }
 
 .goal-quest-card-caption {
-  color: #c3d9e8;
+  color: #c8d8e3;
 }
 
 /* ---------- Stage animal collection ---------- */
@@ -1901,7 +1902,7 @@ button.journey-frame-toggle svg {
 .stage-goal-card {
   --card-start: var(--rt-blue-900) !important;
   --card-mid: var(--rt-blue-700) !important;
-  --card-deep: #052e50 !important;
+  --card-deep: #182c3d !important;
   --card-glow: rgb(255 211 77 / 46%) !important;
   --card-accent: var(--rt-gold-300) !important;
 }
@@ -1911,7 +1912,7 @@ button.journey-frame-toggle svg {
 }
 
 .goal-flip-card.rarity-epic {
-  --card-frame: #8ec5ee;
+  --card-frame: #a3c2d9;
 }
 
 .goal-flip-card.rarity-legend {
@@ -1921,13 +1922,13 @@ button.journey-frame-toggle svg {
 .goal-card-front {
   background:
     radial-gradient(ellipse at 78% 4%, rgb(255 255 255 / 15%), transparent 34%),
-    linear-gradient(152deg, var(--rt-blue-900) 0%, var(--rt-blue-700) 54%, #052e50 100%);
+    linear-gradient(152deg, var(--rt-blue-900) 0%, var(--rt-blue-700) 54%, #182c3d 100%);
 }
 
 .stage-goal-card {
   background:
     radial-gradient(ellipse at 50% 30%, rgb(255 211 77 / 32%), transparent 64%),
-    linear-gradient(150deg, var(--rt-blue-900), var(--rt-blue-700) 55%, #052e50);
+    linear-gradient(150deg, var(--rt-blue-900), var(--rt-blue-700) 55%, #182c3d);
 }
 
 .goal-card-state.is-unlocked {
@@ -1949,7 +1950,7 @@ button.journey-frame-toggle svg {
   color: var(--rt-cream-50);
   background:
     radial-gradient(ellipse at 88% 4%, rgb(255 211 77 / 20%), transparent 34%),
-    linear-gradient(135deg, var(--rt-blue-800) 0%, var(--rt-blue-700) 55%, #0b4b83 100%);
+    linear-gradient(135deg, var(--rt-blue-800) 0%, var(--rt-blue-700) 55%, #284966 100%);
   box-shadow: 0 5px 0 var(--rt-gold-700), 0 16px 30px rgb(0 0 0 / 22%);
 }
 
@@ -1964,7 +1965,7 @@ button.journey-frame-toggle svg {
 }
 
 .games-hero-copy {
-  color: #c9dfef;
+  color: #d0dee9;
 }
 
 .games-hero-mascot {
@@ -1984,7 +1985,7 @@ button.journey-frame-toggle svg {
 }
 
 .games-stat span {
-  color: #d3e5f2;
+  color: #d8e4ed;
 }
 
 .games-filters {
@@ -2078,7 +2079,7 @@ button.journey-frame-toggle svg {
 .placement-gate {
   background:
     radial-gradient(ellipse at 50% 0%, rgb(244 182 3 / 16%), transparent 42%),
-    rgb(4 35 63 / 82%);
+    rgb(19 34 48 / 82%);
   backdrop-filter: blur(9px);
   -webkit-backdrop-filter: blur(9px);
 }
@@ -2170,7 +2171,7 @@ button.journey-frame-toggle svg {
 .placement-audio-button {
   border-color: var(--rt-blue-300);
   color: var(--rt-blue-700);
-  background: #f3faff;
+  background: #f6f9fc;
 }
 
 .placement-result-stats > div {
@@ -2469,7 +2470,7 @@ button.journey-frame-toggle svg {
 
 .path-hero-intro-zone .daily-goal-card,
 .path-hero-intro-zone .daily-goal-card * {
-  color: #eef8ff;
+  color: #f3f7fa;
 }
 
 .path-hero-intro-zone .daily-goal-icon {

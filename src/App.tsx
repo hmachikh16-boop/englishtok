@@ -327,7 +327,7 @@ export default function App() {
         <div
           role="status"
           aria-live="polite"
-          className="fixed inset-x-4 z-[100] mx-auto w-fit rounded-full border border-sky-400/40 bg-slate-900 px-4 py-2 text-sm text-sky-100 shadow-xl"
+          className="fixed inset-x-4 z-[100] mx-auto w-fit rounded-full border border-[#315a7c]/60 bg-slate-900 px-4 py-2 text-sm text-[#dbe7f0] shadow-xl"
           style={{ top: notificationTop }}
           dir="rtl"
         >
@@ -346,7 +346,7 @@ export default function App() {
               aria-valuenow={speechProgress}
             >
               <div
-                className="h-full rounded-full bg-sky-400 transition-[width] duration-150"
+                className="h-full rounded-full bg-[#3d7198] transition-[width] duration-150"
                 style={{ width: `${speechProgress}%` }}
               />
             </div>
@@ -357,7 +357,7 @@ export default function App() {
         <div
           role="status"
           aria-live="polite"
-          className="fixed inset-x-4 z-[100] mx-auto w-fit rounded-full border border-sky-400/40 bg-slate-900 px-4 py-2 text-sm text-sky-100 shadow-xl"
+          className="fixed inset-x-4 z-[100] mx-auto w-fit rounded-full border border-[#315a7c]/60 bg-slate-900 px-4 py-2 text-sm text-[#dbe7f0] shadow-xl"
           style={{ top: notificationTop }}
           dir="rtl"
         >

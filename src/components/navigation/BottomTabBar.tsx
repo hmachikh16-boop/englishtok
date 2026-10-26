@@ -134,7 +134,7 @@ export const BottomTabBar: React.FC<BottomTabBarProps> = ({
                 {tab.badge && (
                   <span
                     className={`absolute -right-2 -top-1.5 flex h-[17px] min-w-[17px] items-center justify-center rounded-full px-1 font-mono-num text-[9px] font-black ring-2 ring-white ${
-                      tab.id === 'progress' ? 'bg-[#ff9600] text-white' : 'bg-[#1cb0f6] text-white'
+                      tab.id === 'progress' ? 'bg-[#ff9600] text-white' : 'bg-[#3d7198] text-white'
                     }`}
                   >
                     {tab.id === 'progress' ? (
