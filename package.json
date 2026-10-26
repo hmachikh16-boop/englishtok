@@ -1,7 +1,7 @@
 {
   "name": "english-tok",
   "private": true,
-  "version": "1.8.0",
+  "version": "1.8.1",
   "type": "module",
   "scripts": {
     "dev": "tsx server.ts",
@@ -22,6 +22,8 @@
     "android:open": "cap open android",
     "preview": "vite preview",
     "preview:phone": "npm run build && node scripts/preview-phone.mjs",
+    "test": "npm run test:backup",
+    "test:backup": "tsx --test tests/progressBackup.test.ts",
     "start": "tsx server.ts --production",
     "clean": "rm -rf dist server.js",
     "lint": "tsc --noEmit",

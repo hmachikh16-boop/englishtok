@@ -103,7 +103,7 @@ const GoalCardFront: React.FC<GoalCardFrontProps> = ({ entry, completed, unlocke
       <span className="goal-card-holo" aria-hidden="true" />
       <span className="goal-card-shine" aria-hidden="true" />
       <header className="goal-card-head">
-        <span className="goal-card-brand">EnglishTok <b>Legends</b></span>
+        <span className="goal-card-brand">Lin Go <b>Legends</b></span>
         <span className="goal-card-stage">STAGE {pad(entry.stage)}</span>
       </header>
       <div className={`goal-card-art ${unlocked ? '' : 'is-secret'}`}>
@@ -616,7 +616,7 @@ export const MotivationalCardModal: React.FC<ModalProps> = ({
       >
         <header className="goal-card-modal-head">
           <div>
-            <p>EnglishTok Legends · {MOTIVATIONAL_CARDS.length} بطاقة</p>
+            <p>Lin Go Legends · {MOTIVATIONAL_CARDS.length} بطاقة</p>
             <h2 id="goal-card-modal-title">
               {view === 'gallery' ? 'مملكة البطاقات' : 'بطاقة المجموعة'}
             </h2>

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Renders the EnglishTok app icon and splash artwork from the SVG sources in
+ * Renders the Lin Go app icon and splash artwork from the SVG sources in
  * `resources/`. Run with `npm run icons:generate` after editing those files.
  */
 import { mkdir } from 'node:fs/promises';

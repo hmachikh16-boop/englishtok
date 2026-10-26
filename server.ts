@@ -51,10 +51,10 @@ async function startServer() {
     httpServer.once('error', rejectListen);
     httpServer.listen(port, '0.0.0.0', resolveListen);
   });
-  console.info(`[server] EnglishTok listening on port ${port}.`);
+  console.info(`[server] Lin Go listening on port ${port}.`);
 }
 
 void startServer().catch((error: unknown) => {
-  console.error('[server] Failed to start EnglishTok:', error);
+  console.error('[server] Failed to start Lin Go:', error);
   process.exitCode = 1;
 });

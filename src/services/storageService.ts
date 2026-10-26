@@ -1,4 +1,5 @@
 import { UserProfile, UserSettings } from '../types';
+import { APP_DISPLAY_NAME } from '../config/appBrand';
 import { normalizeSpeechLanguage } from './speechClip';
 
 const STORAGE_KEY = 'englishtok_user_profile_v1';
@@ -7,6 +8,8 @@ const PROGRESS_BACKUP_FORMAT = 'englishtok-progress-backup';
 const PROGRESS_BACKUP_SCHEMA_VERSION = 1;
 const CODE_LETTERS = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
 const CODE_DIGITS = '23456789';
+const DEFAULT_DISPLAY_NAME = `متعلّم ${APP_DISPLAY_NAME}`;
+const LEGACY_DEFAULT_DISPLAY_NAME = 'متعلّم EnglishTok';
 
 export interface ProgressBackup {
   format: typeof PROGRESS_BACKUP_FORMAT;
@@ -25,7 +28,7 @@ const DEFAULT_SETTINGS: UserSettings = {
 };
 
 const DEFAULT_PROFILE: UserProfile = {
-  displayName: 'متعلّم EnglishTok',
+  displayName: DEFAULT_DISPLAY_NAME,
   profileTagline: 'رحلتي اليومية نحو الطلاقة',
   joinedAt: new Date().toISOString(),
   xp: 120,
@@ -76,6 +79,11 @@ export const getStoredProfile = (): UserProfile => {
     const profile: UserProfile = {
       ...DEFAULT_PROFILE,
       ...parsed,
+      displayName:
+        typeof parsed.displayName === 'string' &&
+        parsed.displayName.trim() === LEGACY_DEFAULT_DISPLAY_NAME
+          ? DEFAULT_DISPLAY_NAME
+          : parsed.displayName,
       targetLanguage:
         parsed.targetLanguage === 'en' || parsed.targetLanguage === 'fr'
           ? parsed.targetLanguage
@@ -103,21 +111,35 @@ export const getStoredProfile = (): UserProfile => {
       },
     };
     // Save the generated identity once so the join date and default name stay
-    // stable for profiles created before the profile card existed.
-    if (!parsed.displayName || !parsed.joinedAt) saveProfile(profile);
+    // stable for profiles created before the profile card existed. Also persist
+    // the visible default-name rename without touching a custom display name.
+    if (
+      !parsed.displayName ||
+      !parsed.joinedAt ||
+      parsed.displayName.trim() === LEGACY_DEFAULT_DISPLAY_NAME
+    ) {
+      saveProfile(profile);
+    }
     return profile;
   } catch (e) {
-    console.error('Failed to load EnglishTok profile:', e);
+    console.error(`Failed to load ${APP_DISPLAY_NAME} profile:`, e);
     return DEFAULT_PROFILE;
   }
 };
 
-export const saveProfile = (profile: UserProfile): void => {
-  if (typeof window === 'undefined') return;
+/**
+ * Returns true only after localStorage accepted the write. Restore uses this
+ * result so it never tells the learner that progress was replaced when the
+ * browser rejected the data (for example because storage is full).
+ */
+export const saveProfile = (profile: UserProfile): boolean => {
+  if (typeof window === 'undefined') return false;
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(profile));
+    return true;
   } catch (e) {
     console.error('Failed to save profile to localStorage:', e);
+    return false;
   }
 };
 
@@ -148,7 +170,7 @@ export const getCloudProgressBackup = async (codeInput: string): Promise<Progres
   const record = raw as Record<string, unknown>;
   const profile = sanitizeProfile(record.profile);
   if (record.format !== PROGRESS_BACKUP_FORMAT || record.schemaVersion !== PROGRESS_BACKUP_SCHEMA_VERSION || record.code !== code || typeof record.createdAt !== 'string' || !profile) {
-    throw new Error('بيانات النسخة السحابية لا تطابق إصدار EnglishTok.');
+    throw new Error(`بيانات النسخة السحابية لا تطابق إصدار ${APP_DISPLAY_NAME}.`);
   }
   const backup: ProgressBackup = { format: PROGRESS_BACKUP_FORMAT, schemaVersion: PROGRESS_BACKUP_SCHEMA_VERSION, code, createdAt: record.createdAt, profile };
   writeProgressBackup(backup);
@@ -383,9 +405,12 @@ const sanitizeProfile = (value: unknown): UserProfile | null => {
       : undefined;
   const languageProgress = sanitizeLanguageProgress(raw.languageProgress);
 
-  const displayName = typeof raw.displayName === 'string'
+  const rawDisplayName = typeof raw.displayName === 'string'
     ? raw.displayName.trim().slice(0, 40)
     : undefined;
+  const displayName = rawDisplayName === LEGACY_DEFAULT_DISPLAY_NAME
+    ? DEFAULT_DISPLAY_NAME
+    : rawDisplayName;
   const profileTagline = typeof raw.profileTagline === 'string'
     ? raw.profileTagline.trim().slice(0, 80)
     : undefined;
@@ -447,7 +472,7 @@ export const parseProgressBackupFile = (contents: string, codeInput: string): Pr
   if (typeof raw.code !== 'string' || raw.code.toUpperCase() !== code) throw new Error('الرمز لا يطابق ملف النسخة الاحتياطية.');
   if (typeof raw.createdAt !== 'string' || !Number.isFinite(Date.parse(raw.createdAt))) throw new Error('تاريخ النسخة الاحتياطية غير صالح.');
   const profile = sanitizeProfile(raw.profile);
-  if (!profile) throw new Error('بيانات التقدم غير صالحة أو لا تطابق مخطط EnglishTok.');
+  if (!profile) throw new Error(`بيانات التقدم غير صالحة أو لا تطابق مخطط ${APP_DISPLAY_NAME}.`);
   const backup: ProgressBackup = { format: PROGRESS_BACKUP_FORMAT, schemaVersion: PROGRESS_BACKUP_SCHEMA_VERSION, code, createdAt: raw.createdAt, profile };
   writeProgressBackup(backup);
   return backup;

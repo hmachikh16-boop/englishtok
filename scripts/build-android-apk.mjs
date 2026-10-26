@@ -7,7 +7,7 @@
  * The signing key in android/keystore.properties MUST stay the same for every
  * future release, otherwise Android rejects the update over an installed app.
  */
-import { copyFile, mkdir, readFile } from 'node:fs/promises';
+import { copyFile, mkdir, readFile, rm } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -59,6 +59,18 @@ if (!process.env.VITE_GITHUB_REPOSITORY) {
   console.log(`Using the release repository ${process.env.VITE_GITHUB_REPOSITORY} for in-app updates.`);
 }
 process.env.VITE_STORE_BUILD = 'false';
+
+// Vercel stages the published APK in public/ so the website can serve it.
+// Never copy that 50+ MB file into the Android app itself.
+for (const stagedApk of [
+  resolve(root, 'public', 'english-tok.apk'),
+  resolve(root, 'dist', 'english-tok.apk'),
+]) {
+  if (existsSync(stagedApk)) {
+    await rm(stagedApk, { force: true });
+    console.log(`Removed staged website APK before Android build: ${stagedApk}`);
+  }
+}
 
 console.log('1/3  Building web assets and syncing Capacitor…');
 run('npm', ['run', 'android:sync'], root);

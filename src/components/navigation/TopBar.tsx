@@ -33,7 +33,7 @@ export const TopBar: React.FC<TopBarProps> = ({
         <div className="flex min-w-0 items-center gap-2 sm:gap-3">
           <span className="journey-brand-name flex shrink-0 items-center gap-2 whitespace-nowrap font-en text-base font-extrabold tracking-tight text-slate-800 sm:text-lg">
             <span className="brand-mark journey-brand-mark"><BookOpen className="h-4 w-4" strokeWidth={2.8} /></span>
-            <span>English<span className="journey-brand-accent">Tok</span></span>
+            <span>Lin<span className="journey-brand-accent"> Go</span></span>
           </span>
           <span className="journey-topbar-tagline hidden border-r border-emerald-100 pr-3 text-xs font-semibold text-slate-500 lg:inline-block">
             رحلتك اليومية لتعلّم {languageNameAr}

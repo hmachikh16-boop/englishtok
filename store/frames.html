@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>EnglishTok — Store artwork</title>
+<title>Lin Go — Store artwork</title>
 <style>
   @font-face {
     font-family: 'CairoLocal';
@@ -269,12 +269,12 @@
     <div class="ring two"></div>
     <div class="ring three"></div>
     <div class="ring four"></div>
-    <div class="brand">ENGLISHTOK</div>
+    <div class="brand">LIN GO</div>
     <div class="brand-line"></div>
-    <h1>تعلّم الإنجليزية يوميًا</h1>
+    <h1>تعلّم الإنجليزية والفرنسية يوميًا</h1>
     <div class="sub">دروس قصيرة، نطق واضح، وتقدّم محفوظ</div>
     <div class="phone"><img src="raw/home-540x960.png" alt=""></div>
-    <div class="footer">تعلّم في أي وقت • بدون اشتراك</div>
+    <div class="footer">مساران كاملان • تعلّم في أي وقت</div>
   </section>
 
   <section class="frame" id="tutor">
@@ -282,7 +282,7 @@
     <div class="ring two"></div>
     <div class="ring three"></div>
     <div class="ring four"></div>
-    <div class="brand">ENGLISHTOK</div>
+    <div class="brand">LIN GO</div>
     <div class="brand-line"></div>
     <h1>معلّمك الذكي يرافقك</h1>
     <div class="sub">محادثة وتصحيح ومفردات جديدة كل يوم</div>
@@ -290,31 +290,39 @@
     <div class="footer">معلّم ذكي • نطق • مفردات</div>
   </section>
 
-  <section class="frame" id="placement">
+  <section class="frame" id="backup">
     <div class="ring one"></div>
     <div class="ring two"></div>
     <div class="ring three"></div>
     <div class="ring four"></div>
-    <div class="brand">ENGLISHTOK</div>
+    <div class="brand">LIN GO</div>
     <div class="brand-line"></div>
-    <h1>ابدأ من مستواك الصحيح</h1>
-    <div class="sub">اختبار قصير يحدد نقطة البداية المناسبة لك</div>
-    <div class="phone"><img src="raw/placement-540x960.png" alt=""></div>
-    <div class="footer">400 درس • 4 مستويات • تقدمك محفوظ</div>
+    <h1>تقدّمك محفوظ ومشفّر</h1>
+    <div class="sub">نسخة احتياطية بكلمة مرور، واستعادة آمنة على أي جهاز</div>
+    <div class="phone"><img src="raw/backup-540x960.png" alt=""></div>
+    <div class="footer">تشفير محلي • بدون خادم • تراجع بنقرة</div>
   </section>
 
   <section class="feature" id="feature">
     <div class="ring a"></div>
     <div class="ring b"></div>
     <div class="feature-content">
-      <div class="feature-brand">ENGLISHTOK</div>
+      <div class="feature-brand">LIN GO</div>
       <div class="feature-line"></div>
-      <div class="feature-title">تعلّم الإنجليزية كل يوم</div>
-      <div class="feature-sub">400 درس • نطق • بطاقات • معلّم ذكي</div>
+      <div class="feature-title">تعلّم الإنجليزية والفرنسية كل يوم</div>
+      <div class="feature-sub">مساران كاملان • نطق • بطاقات • معلّم ذكي</div>
       <div class="feature-note">مجاني • يعمل دون اتصال</div>
     </div>
     <div class="feature-icon"><img src="../public/icon-512.png" alt=""></div>
   </section>
 
+  <script>
+    const requestedFrame = new URLSearchParams(window.location.search).get('frame');
+    if (requestedFrame) {
+      document.querySelectorAll('.frame, .feature').forEach((element) => {
+        element.style.display = element.id === requestedFrame ? 'block' : 'none';
+      });
+    }
+  </script>
 </body>
 </html>

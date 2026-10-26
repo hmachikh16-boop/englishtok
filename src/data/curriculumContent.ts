@@ -12,7 +12,7 @@ import { EXPANSION_LESSONS } from './curriculumExpansion';
 import { buildExpansionLesson } from './expansion/buildExpansionLesson';
 
 /**
- * The four-level EnglishTok curriculum.
+ * The four-level Lin Go curriculum.
  *
  * Level 1 (A1)      phonics + spaced repetition + first structures — Leo & Gigi
  * Level 2 (A2/B1)   task-based learning + everyday communication — Alex & Maya

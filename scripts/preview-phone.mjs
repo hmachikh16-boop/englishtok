@@ -142,7 +142,7 @@ server.listen(port, '0.0.0.0', () => {
     }
   }
   console.log('\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-  console.log('  معاينة EnglishTok جاهزة على الهاتف');
+  console.log('  معاينة Lin Go جاهزة على الهاتف');
   console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
   console.log(`  على هذا الحاسوب:        http://localhost:${port}`);
   for (const address of addresses) {

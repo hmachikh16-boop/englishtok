@@ -21,7 +21,7 @@
   --color-brand-teal: #5eead4;
 }
 
-/* EnglishTok learning journey */
+/* Lin Go learning journey */
 .path-hero {
   container-type: inline-size;
   background: radial-gradient(ellipse at 8% 0%, rgb(45 212 191 / 13%), transparent 42%),
@@ -154,7 +154,7 @@
   .path-node:nth-of-type(3), .path-node:nth-of-type(7) { --node-shift: 24%; }
 }
 
-/* Brighter, lesson-first presentation with EnglishTok's own teal and lime palette. */
+/* Brighter, lesson-first presentation with Lin Go's own teal and lime palette. */
 .journey-topbar { padding-top: env(safe-area-inset-top, 0px); background: rgb(255 255 255 / 96%); border-color: #e5eee8; }
 .journey-topbar.is-phone-frame { padding-inline: 8px; }
 .journey-topbar.is-phone-frame > div { height: 60px; gap: 6px; }
@@ -358,7 +358,7 @@
 .journey-quick-quiz-panel [class*="text-slate-200"], .journey-quick-quiz-panel [class*="text-slate-300"], .journey-quick-quiz-panel [class*="text-slate-400"] { color: #64766c; }
 .journey-quick-quiz-panel [class*="border-slate-800"] { border-color: #dfe9e0; }
 
-/* EnglishTok's bright, map-first learning journey. */
+/* Lin Go's bright, map-first learning journey. */
 .journey-topbar {
   color: #fff;
   background: #2f8000;
@@ -995,7 +995,7 @@ svg {
 }
 
 /* Legacy blue accents still live in a few feature screens; align them with
-   the teal-green EnglishTok palette instead of letting the app look mixed. */
+   the teal-green Lin Go palette instead of letting the app look mixed. */
 .journey-home [class*="text-sky-"],
 .journey-secondary [class*="text-sky-"] { color: #0f8f83; }
 .journey-home [class*="border-sky-"],
@@ -1076,7 +1076,7 @@ svg {
 .journey-secondary [class*="text-rose-400"] { color: #be123c; }
 
 /* ============================================================
-   EnglishTok x Duolingo-inspired refresh
+   Lin Go x Duolingo-inspired refresh
    Bright palette, chunky 3D surfaces, pressable buttons and a
    playful learning path. Text-bearing surfaces use accessible
    green shades while the path keeps the vivid Duolingo green.
@@ -1271,7 +1271,7 @@ button.journey-frame-toggle svg { color: var(--duo-blue); }
 }
 
 /* ============================================================
-   EnglishTok lesson player — picture-first exercise screens
+   Lin Go lesson player — picture-first exercise screens
    ============================================================ */
 .duo-lesson {
   padding-top: env(safe-area-inset-top, 0px);
@@ -3446,7 +3446,7 @@ button.journey-frame-toggle svg { color: var(--duo-blue); }
 .goal-quest-card-wrap .goal-flip-card:hover { transform: translateY(-4px); }
 
 /* The card itself: a tactile, holographic collectible built from the
-   same original EnglishTok vector cast used everywhere else in the app. */
+   same original Lin Go vector cast used everywhere else in the app. */
 .goal-flip-card {
   position: relative;
   display: block;

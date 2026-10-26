@@ -396,7 +396,7 @@ export const ChatTab: React.FC<ChatTabProps> = ({ lessons, userProfile, onBack }
                 <span className="ai-tutor-welcome-sparkle" aria-hidden="true">✦</span>
               </div>
               <p className="mt-3 text-[11px] font-black uppercase tracking-[0.18em] text-[#2b8b78]">
-                EnglishTok AI Tutor
+                Lin Go AI Tutor
               </p>
               <h2 className="mt-1 text-xl font-black text-[#173b32]">هيا نتحدث {targetNameAr}</h2>
               <p className="mx-auto mt-2 max-w-[340px] text-[12px] font-semibold leading-6 text-[#61766b]">

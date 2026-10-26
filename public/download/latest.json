@@ -1,11 +1,11 @@
 {
-  "version": "1.8.0",
+  "version": "1.8.1",
   "packageId": "com.englishtok.app",
   "apkUrl": "/english-tok.apk",
-  "sha256": "56D07AB7A7FE3B6DAA5874462F3A35364404157882ADDD54CBB8F221534638FF",
-  "size": 57787156,
+  "sha256": "DE46427FB3F345C4E9D58EDE33D89E78AD38CA3954F00F3BB45D976C077707B3",
+  "size": 57906977,
   "minimumAndroidSdk": 24,
-  "notes": "المسار الفرنسي الكامل (400 درس)، اختيار اللغة قبل المستوى، نطق فرنسي دقيق، وتحسينات التحديث المباشر.",
+  "notes": "اسم Lin Go الجديد، نسخة احتياطية مشفرة بكلمة مرور مع معاينة وحفظ أمان قبل الاستبدال، وتحسينات الملفات الكبيرة مع الحفاظ على تقدمك والتحديث المباشر.",
   "releaseUrl": "https://github.com/hmachikh16-boop/englishtok/releases/latest",
-  "publishedAt": "2026-10-25"
+  "publishedAt": "2026-10-26"
 }

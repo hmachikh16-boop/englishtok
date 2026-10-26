@@ -1,4 +1,4 @@
-# Copilot instructions for EnglishTok
+# Copilot instructions for Lin Go
 
 ## Project overview
 

@@ -195,7 +195,7 @@ export const PlacementAssessmentGate: React.FC<PlacementAssessmentGateProps> = (
         <div className="placement-panel-top flex items-center justify-between gap-3 px-5 py-4 sm:px-7">
           <div className="flex items-center gap-3">
             <span className="placement-logo"><BookOpen className="h-5 w-5" /></span>
-            <div><div className="text-sm font-black">EnglishTok</div><div className="text-[10px] opacity-80">اختيار اللغة ونقطة البداية</div></div>
+            <div><div className="text-sm font-black">Lin Go</div><div className="text-[10px] opacity-80">اختيار اللغة ونقطة البداية</div></div>
           </div>
           <span className="placement-lock-label"><LockKeyhole className="h-3.5 w-3.5" /> قبل بدء الدروس</span>
         </div>
@@ -281,7 +281,7 @@ export const PlacementAssessmentGate: React.FC<PlacementAssessmentGateProps> = (
                   </div>
                 )}
                 <p className="mt-4 rounded-2xl bg-slate-50 p-3 text-xs leading-6 text-slate-600">
-                  الاختبار تكيّف مع إجاباتك بين المفردات والقواعد والقراءة. النتيجة نقطة بداية تعليمية في EnglishTok، وليست شهادة CEFR أو بديلًا عن اختبار معياري.
+                  الاختبار تكيّف مع إجاباتك بين المفردات والقواعد والقراءة. النتيجة نقطة بداية تعليمية في Lin Go، وليست شهادة CEFR أو بديلًا عن اختبار معياري.
                 </p>
                 <p className="mt-3 text-[11px] leading-5 text-slate-500">{PLACEMENT_PASS_RULE}</p>
                 <div className="mt-5 grid grid-cols-1 gap-2 sm:grid-cols-2">

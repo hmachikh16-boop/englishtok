@@ -138,7 +138,7 @@ await sleep(500);
 for (const [id, name] of [
   ['home', '01-home.png'],
   ['tutor', '02-tutor.png'],
-  ['placement', '03-placement.png'],
+  ['backup', '03-backup.png'],
 ]) {
   await evaluate(`(() => {
     document.documentElement.style.scrollBehavior = 'auto';

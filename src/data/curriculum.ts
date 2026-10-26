@@ -8,7 +8,7 @@ import {
 export type { CurriculumLevel };
 
 /**
- * The EnglishTok learning path built from the four-level curriculum module.
+ * The Lin Go learning path built from the four-level curriculum module.
  *
  * Level 1 (A1)      phonics + spaced repetition — Leo & Gigi
  * Level 2 (A2/B1)   task-based learning — Alex & Maya

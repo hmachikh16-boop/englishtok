@@ -1,4 +1,4 @@
-# EnglishTok app artwork
+# Lin Go app artwork
 
 The launcher icon and splash screens are generated from the SVG files in this
 folder:

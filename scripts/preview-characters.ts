@@ -29,7 +29,7 @@ const scene = `<svg viewBox="0 0 420 740" width="290" height="511" style="border
 </svg>`;
 
 const html = `<!doctype html>
-<html lang="en"><head><meta charset="utf-8"><title>EnglishTok primary cast</title>
+<html lang="en"><head><meta charset="utf-8"><title>Lin Go primary cast</title>
 <style>
   body { margin: 0; padding: 24px; background: #eef7f1; font-family: system-ui, sans-serif; }
   h1 { font-size: 20px; color: #14532d; }

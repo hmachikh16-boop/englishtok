@@ -32,4 +32,4 @@ const manifest = {
 };
 
 await writeFile('update-manifest.json', `${JSON.stringify(manifest, null, 2)}\n`, 'utf8');
-console.info(`Created update metadata for EnglishTok ${version}.`);
+console.info(`Created update metadata for Lin Go ${version}.`);

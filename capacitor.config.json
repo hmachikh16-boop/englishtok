@@ -1,6 +1,6 @@
 {
   "appId": "com.englishtok.app",
-  "appName": "EnglishTok",
+  "appName": "Lin Go",
   "webDir": "dist",
   "bundledWebRuntime": false,
   "server": {

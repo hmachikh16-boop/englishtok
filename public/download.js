@@ -5,10 +5,10 @@ const GITHUB_APK = `https://github.com/${REPOSITORY}/releases/latest/download/en
 const GITHUB_RELEASE = `https://github.com/${REPOSITORY}/releases/latest`;
 
 const FALLBACK = {
-  version: '1.8.0',
-  size: 57_787_156,
-  sha256: '56D07AB7A7FE3B6DAA5874462F3A35364404157882ADDD54CBB8F221534638FF',
-  notes: 'المسار الفرنسي الكامل (400 درس)، اختيار اللغة قبل المستوى، نطق فرنسي دقيق، وتحسينات التحديث المباشر.',
+  version: '1.8.1',
+  size: 57_906_977,
+  sha256: 'DE46427FB3F345C4E9D58EDE33D89E78AD38CA3954F00F3BB45D976C077707B3',
+  notes: 'اسم Lin Go الجديد، نسخة احتياطية مشفرة بكلمة مرور مع معاينة وحفظ أمان قبل الاستبدال، وتحسينات الملفات الكبيرة مع الحفاظ على تقدمك والتحديث المباشر.',
   releaseUrl: GITHUB_RELEASE,
 };
 
@@ -76,7 +76,7 @@ const applyLatest = (data) => {
   setText('[data-latest-hash]', latest.sha256);
   setText('[data-latest-notes]', latest.notes);
   setLink('[data-release-link]', latest.releaseUrl);
-  document.title = `تحميل EnglishTok ${latest.version} — أحدث إصدار APK`;
+  document.title = `تحميل Lin Go ${latest.version} — أحدث إصدار APK`;
 
   const schema = document.querySelector('script[type="application/ld+json"]');
   if (schema) {
@@ -148,7 +148,7 @@ const setupShare = () => {
   document.querySelectorAll('[data-share]').forEach((button) => {
     button.addEventListener('click', async () => {
       const shareData = {
-        title: 'EnglishTok — تعلّم الإنجليزية',
+        title: 'Lin Go — تعلّم الإنجليزية',
         text: 'تطبيق عربي مجاني لتعلّم الإنجليزية: دروس قصيرة، نطق، بطاقات، ومعلّم ذكي.',
         url: DOWNLOAD_PAGE,
       };

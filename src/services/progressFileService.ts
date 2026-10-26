@@ -76,7 +76,7 @@ export const openProgressBackupFile = async (): Promise<{ fileName: string; cont
   try {
     const result = await NativeProgressBackup.open();
     return {
-      fileName: result.fileName || 'englishtok-progress.json',
+      fileName: result.fileName || 'lin-go-progress.json',
       content: typeof result.content === 'string' ? result.content : '',
     };
   } catch (error) {

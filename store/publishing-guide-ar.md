@@ -1,4 +1,4 @@
-# دليل النشر في المتاجر — EnglishTok 1.7.8
+# دليل النشر في المتاجر — Lin Go 1.7.8
 
 ## 1. الخلاصة والتوصية
 
@@ -85,7 +85,7 @@ Get-FileHash releases\english-tok-1.7.8-store.aab -Algorithm SHA256
 4. أدخل اسم الحزمة `com.englishtok.app` والإصدار `1.7.8` وversionCode `1007008`.
 5. ارفع `releases/english-tok-1.7.8-store.apk`.
 6. املأ بيانات المتجر من `listing-ar.md`:
-   - الاسم: EnglishTok — تعلّم الإنجليزية.
+   - الاسم: Lin Go — تعلّم الإنجليزية.
    - الوصف القصير والكامل.
    - التصنيف: Education / Education > Language Learning.
    - السعر: مجاني.
@@ -121,7 +121,7 @@ Get-FileHash releases\english-tok-1.7.8-store.aab -Algorithm SHA256
 
 1. أنشئ حساب Google Play Console وادفع الرسوم.
 2. أكمل التحقق من الهوية.
-3. أنشئ تطبيقًا جديدًا بالاسم `EnglishTok — تعلّم الإنجليزية`.
+3. أنشئ تطبيقًا جديدًا بالاسم `Lin Go — تعلّم الإنجليزية`.
 4. ارفع `releases/english-tok-1.7.8-store.aab` في مسار **Production** أو **Closed testing** أولًا.
 5. اختر **Play App Signing** بحذر. إذا أردت الحفاظ على تحديث APK المباشر، استخدم حزمة منفصلة أو لا تنشر على Play.
 6. املأ:
@@ -169,7 +169,7 @@ Get-FileHash releases\english-tok-1.7.8-store.aab -Algorithm SHA256
 - الترخيص: جميع الحقوق محفوظة، مع الإشارة إلى تراخيص المكونات مفتوحة المصدر وخط Cairo (OFL 1.1).
 - لا تدرج بيانات اعتماد أو مفاتيح خدمة في المتجر أو المستودع.
 - احتفظ بنسخة من المفتاح و`keystore.properties` في مكان آمن؛ لا ترفعهما إلى Git.
-- العلامة التجارية «EnglishTok» غير مسجّلة بالضرورة؛ التسجيل مسؤولية المالك.
+- العلامة التجارية «Lin Go» غير مسجّلة بالضرورة؛ التسجيل مسؤولية المالك.
 
 ## 9. قائمة ما قبل الرفع
 

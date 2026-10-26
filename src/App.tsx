@@ -11,7 +11,16 @@ import { LEARNING_PATH_LESSONS } from './data/curriculum';
 import { getLearningPathState } from './services/learningPath';
 import { getStoredProfile, saveProfile } from './services/storageService';
 import { switchLearningLanguage } from './services/languageService';
-import { resetGameProgress } from './services/gameProgressService';
+import {
+  loadGameProgress,
+  resetGameProgress,
+  saveGameProgress,
+  type GameProgress,
+} from './services/gameProgressService';
+import {
+  clearPreImportSnapshot,
+  savePreImportSnapshot,
+} from './services/progressBackupService';
 import { fetchLatestLearningPath, getCachedLearningPath } from './services/contentService';
 import { checkForAppUpdate, type AppUpdateManifest } from './services/appUpdateService';
 import { downloadAndInstallAppUpdate } from './services/appUpdateLauncher';
@@ -89,7 +98,7 @@ export default function App() {
           if (isMounted && update) setAvailableAppUpdate(update);
         })
         .catch((error: unknown) => {
-          console.warn('Unable to check for EnglishTok updates:', error);
+          console.warn('Unable to check for Lin Go updates:', error);
         });
     };
 
@@ -116,7 +125,7 @@ export default function App() {
         'اكتمل تنزيل التحديث. أكمل خطوات التثبيت التي يعرضها Android؛ لن يبدأ التثبيت دون موافقتك.',
       );
     } catch (error) {
-      console.error('Failed to download the EnglishTok update:', error);
+      console.error('Failed to download the Lin Go update:', error);
       setUpdateDownloadError(
         error instanceof Error
           ? error.message
@@ -148,7 +157,7 @@ export default function App() {
         if (isMounted && latestLessons) setLessons(latestLessons);
       })
       .catch((error: unknown) => {
-        console.warn(`Using locally cached ${language} EnglishTok lesson content:`, error);
+        console.warn(`Using locally cached ${language} Lin Go lesson content:`, error);
       })
       .finally(() => {
         if (isMounted) setContentLoading(false);
@@ -237,13 +246,36 @@ export default function App() {
   const handleResetProgress = () => {
     localStorage.removeItem('englishtok_user_profile_v1');
     resetGameProgress();
+    clearPreImportSnapshot();
     const fresh = getStoredProfile();
     setUserProfile(fresh);
     setPlacementGateOpen(!fresh.targetLanguage || !fresh.placementAssessment?.result);
   };
 
-  const handleRestoreProgress = (profile: UserProfile) => {
-    saveProfile(profile);
+  const handleRestoreProgress = (
+    profile: UserProfile,
+    gameProgress?: GameProgress,
+    options?: { createPreImportSnapshot?: boolean; sourceCreatedAt?: string },
+  ) => {
+    const previousProfile = userProfile;
+    const previousGameProgress = loadGameProgress();
+
+    if (options?.createPreImportSnapshot) {
+      // This must succeed before any current data is replaced. If storage is
+      // full, restore is blocked and the learner's progress stays untouched.
+      savePreImportSnapshot(previousProfile, previousGameProgress, options.sourceCreatedAt);
+    }
+
+    if (!saveProfile(profile)) {
+      throw new Error('تعذر حفظ التقدم المستورد في التخزين المحلي. لم يتم تغيير تقدمك الحالي.');
+    }
+    if (gameProgress && !saveGameProgress(gameProgress)) {
+      saveProfile(previousProfile);
+      throw new Error(
+        'تعذر حفظ إنجازات الألعاب المستوردة. حاول إفراغ مساحة التخزين ثم أعد المحاولة؛ لم يتم اعتماد الاستيراد.',
+      );
+    }
+
     setUserProfile(profile);
     setPlacementGateOpen(!profile.targetLanguage || !profile.placementAssessment?.result);
   };
@@ -340,7 +372,7 @@ export default function App() {
           dir="rtl"
         >
           <div className="min-w-0 flex-1">
-            <p className="font-bold">يتوفر تحديث جديد لـ EnglishTok</p>
+            <p className="font-bold">يتوفر تحديث جديد لـ Lin Go</p>
             <p className="mt-1 text-xs text-slate-300">
               الإصدار {availableAppUpdate.version}
               {availableAppUpdate.notes ? ` — ${availableAppUpdate.notes}` : ''}

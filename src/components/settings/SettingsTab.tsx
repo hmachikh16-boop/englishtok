@@ -25,7 +25,9 @@ import {
 import { App } from '@capacitor/app';
 import { Capacitor } from '@capacitor/core';
 import { TargetLanguage, UserProfile, UserSettings } from '../../types';
+import type { GameProgress } from '../../services/gameProgressService';
 import { ProfileCard } from './ProfileCard';
+import { ProgressBackupPanel } from './ProgressBackupPanel';
 import { speechService } from '../../services/speechService';
 import { checkForAppUpdate, type AppUpdateManifest } from '../../services/appUpdateService';
 import { downloadAndInstallAppUpdate } from '../../services/appUpdateLauncher';
@@ -51,7 +53,11 @@ interface SettingsTabProps {
   onRetakePlacement: () => void;
   onChangeTargetLanguage: (language: TargetLanguage) => void;
   onResetProgress: () => void;
-  onRestoreProgress: (profile: UserProfile) => void;
+  onRestoreProgress: (
+    profile: UserProfile,
+    gameProgress?: GameProgress,
+    options?: { createPreImportSnapshot?: boolean; sourceCreatedAt?: string },
+  ) => void;
   onRefreshContent: () => Promise<boolean>;
 }
 
@@ -97,7 +103,7 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
   const saveBackupFile = async (backup: ProgressBackup): Promise<string> => {
     try {
       const destination = await saveProgressBackupFile(
-        `englishtok-progress-${backup.code}.json`,
+        `lin-go-legacy-progress-${backup.code}.json`,
         JSON.stringify(backup, null, 2),
       );
       return destination === 'native'
@@ -180,7 +186,10 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
       const differs = JSON.stringify(userProfile) !== JSON.stringify(backup.profile);
       if (currentHasProgress && differs && !window.confirm('استعادة هذه النسخة ستستبدل تقدم هذا الجهاز الحالي. هل تريد المتابعة؟')) return;
 
-      onRestoreProgress(backup.profile);
+      onRestoreProgress(backup.profile, undefined, {
+        createPreImportSnapshot: true,
+        sourceCreatedAt: backup.createdAt,
+      });
       setBackupMessage('تمت استعادة التقدم بنجاح على هذا الجهاز.');
       setBackupFile(null);
     } catch (error) {
@@ -247,7 +256,7 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
           : `التطبيق محدّث إلى الإصدار ${appInfo.version}.`,
       );
     } catch (error) {
-      console.error('Failed to check for EnglishTok updates:', error);
+      console.error('Failed to check for Lin Go updates:', error);
       setUpdateMessage(
         error instanceof Error ? error.message : 'تعذر التحقق من التحديث. حاول مرة أخرى لاحقًا.',
       );
@@ -269,7 +278,7 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
         'اكتمل تنزيل التحديث. أكمل خطوات التثبيت التي يعرضها Android؛ لن يبدأ التثبيت دون موافقتك.',
       );
     } catch (error) {
-      console.error('Failed to download the EnglishTok update:', error);
+      console.error('Failed to download the Lin Go update:', error);
       setUpdateMessage(
         error instanceof Error ? error.message : 'تعذر تنزيل التحديث. حاول مرة أخرى.',
       );
@@ -290,7 +299,7 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
           : 'لا يوجد إصدار محتوى منشور بعد؛ يستمر التطبيق باستخدام المحتوى المحلي.',
       );
     } catch (error) {
-      console.error('Failed to refresh EnglishTok lesson content:', error);
+      console.error('Failed to refresh Lin Go lesson content:', error);
       setContentMessage('تعذر تحديث المحتوى الآن؛ سيستمر التطبيق بالمحتوى المحفوظ محليًا.');
     } finally {
       setIsRefreshingContent(false);
@@ -330,7 +339,7 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
           : `التطبيق محدّث إلى الإصدار ${appInfo.version}.`,
       );
     } catch (error) {
-      console.error('Failed to check for EnglishTok updates:', error);
+      console.error('Failed to check for Lin Go updates:', error);
       notes.push(error instanceof Error ? error.message : 'تعذر التحقق من إصدار التطبيق.');
     } finally {
       setIsUpdatingAll(false);
@@ -523,7 +532,7 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
             <p className="text-[11px] leading-6 text-slate-400">{userProfile.placementAssessment?.result
               ? userProfile.placementAssessment.result.method === 'first_stage'
                 ? 'اخترت البدء من المرحلة الأولى. يمكنك تحديد مستواك بالاختبار أو تغيير نقطة البداية في أي وقت. لن يُحذف XP أو الدروس المكتملة.'
-                : `نقطة البداية المقترحة حاليًا: المستوى ${userProfile.placementAssessment.result.suggestedStage} في EnglishTok. يمكنك إعادة الاختبار أو البدء من المرحلة الأولى. لن يُحذف XP أو الدروس المكتملة.`
+                : `نقطة البداية المقترحة حاليًا: المستوى ${userProfile.placementAssessment.result.suggestedStage} في Lin Go. يمكنك إعادة الاختبار أو البدء من المرحلة الأولى. لن يُحذف XP أو الدروس المكتملة.`
               : 'لم تُسجّل نقطة بداية لهذا الملف بعد. يمكنك البدء من المرحلة الأولى أو تحديد مستواك بالاختبار.'}</p>
             <button type="button" onClick={onRetakePlacement} className="min-h-11 rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs font-bold text-emerald-800 hover:bg-emerald-100">تغيير نقطة البداية أو إعادة الاختبار</button>
           </section>}
@@ -633,17 +642,25 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
             </div>
           </div>
 
-          <section className="rounded-2xl border border-sky-500/25 bg-gradient-to-br from-slate-900 to-sky-950/25 p-4 shadow-lg" aria-labelledby="progress-backup-title">
-            <h3 id="progress-backup-title" className="flex items-center gap-2 text-sm font-black text-white">
-              <KeyRound className="h-4 w-4 text-sky-300" />
-              حفظ واستعادة التقدم
+          <ProgressBackupPanel userProfile={userProfile} onRestoreProgress={onRestoreProgress} />
+
+          <details className="rounded-2xl border border-slate-700/80 bg-slate-900/50 p-3">
+            <summary className="cursor-pointer select-none text-xs font-bold text-slate-300">
+              نسخ قديمة بالرمز (غير مشفرة) — للتوافق فقط
+            </summary>
+            <section className="mt-3 rounded-2xl border border-amber-500/20 bg-gradient-to-br from-slate-900 to-amber-950/10 p-4 shadow-lg" aria-labelledby="legacy-progress-backup-title">
+            <h3 id="legacy-progress-backup-title" className="flex items-center gap-2 text-sm font-black text-white">
+              <KeyRound className="h-4 w-4 text-amber-300" />
+              نسخة قديمة بالرمز أو السحابة
             </h3>
             <p className="mt-2 text-xs leading-relaxed text-slate-300">
-              تقدمك يُحفظ تلقائيًا داخل مساحة التطبيق، ولا يحتاج صلاحية ملفات. ينشئ الزر نسخة إضافية ويحفظها عبر منتقي ملفات أندرويد في المكان الذي تختاره مثل Downloads أو Google Drive، دون منح التطبيق وصولًا إلى كل الملفات. عند إعداد التخزين السحابي يمكنك استعادتها بالرمز وحده على جهاز آخر.
+              هذا القسم للتوافق مع النسخ التي أنشأتها إصدارات سابقة فقط. الملفات هنا غير مشفرة
+              ولا تستخدم كلمة مرور، لذلك لا ننصح باستخدامها للبيانات الجديدة. استخدم النسخة المشفرة
+              في الأعلى.
             </p>
             <button type="button" onClick={handleCreateProgressBackup} className="mt-3 inline-flex min-h-10 items-center justify-center gap-2 rounded-xl bg-sky-400 px-4 py-2 text-xs font-black text-slate-950 transition hover:bg-sky-300 active:scale-[.98]">
               <Download className="h-4 w-4" />
-              إنشاء نسخة وحفظ ملف
+              إنشاء نسخة قديمة وحفظ ملف
             </button>
             <p className="mt-2 flex items-start gap-2 text-[11px] leading-relaxed text-emerald-200/80">
               <ShieldCheck className="mt-0.5 h-3.5 w-3.5 shrink-0" />
@@ -661,7 +678,7 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
                     <Save className="h-3.5 w-3.5" /> حفظ الملف
                   </button>
                 </div>
-                <p className="mt-2 text-[11px] text-slate-400">احفظ الرمز وملف <bdi dir="ltr">englishtok-progress-{createdBackup.code}.json</bdi> في مكان آمن.</p>
+                <p className="mt-2 text-[11px] text-slate-400">احفظ الرمز وملف <bdi dir="ltr">lin-go-legacy-progress-{createdBackup.code}.json</bdi> في مكان آمن.</p>
               </div>
             )}
             <div className="mt-4 border-t border-slate-700/70 pt-3">
@@ -673,11 +690,12 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
               </label>
               <input id="progress-backup-file" type="file" accept=".json,application/json" className="sr-only" onChange={(event) => setBackupFile(event.target.files?.[0] ?? null)} />
               <button type="button" onClick={() => void handleRestoreProgress()} className="mt-2 min-h-10 rounded-xl border border-emerald-400/30 bg-emerald-500/15 px-4 py-2 text-xs font-black text-emerald-200 transition hover:bg-emerald-500/25">
-                تحقق واستعد التقدم
+                استعادة النسخة القديمة
               </button>
             </div>
             {backupMessage && <p role="status" className="mt-3 rounded-xl bg-slate-950/70 p-3 text-xs leading-relaxed text-slate-200">{backupMessage}</p>}
-          </section>
+            </section>
+          </details>
 
           {/* Danger zone / Reset */}
           <div className="bg-slate-900 border border-rose-900/40 rounded-2xl p-4 flex flex-col gap-3 shadow-lg">
@@ -756,7 +774,7 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
               </h3>
             </div>
             <p className="mt-2 text-[11px] leading-relaxed text-slate-400">
-              © 2026 EnglishTok — جميع الحقوق محفوظة. التطبيق ودروسه وبطاقاته وتصميمه مملوكة
+              © 2026 Lin Go — جميع الحقوق محفوظة. التطبيق ودروسه وبطاقاته وتصميمه مملوكة
               للمطوّر، ولا يجوز نسخها أو تعديلها أو إعادة توزيعها دون إذن كتابي.
             </p>
             <div className="mt-3 flex flex-wrap gap-2">
@@ -796,7 +814,7 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
             <div className="flex items-center gap-2 text-emerald-400 mb-2">
               <Smartphone className="w-5 h-5" />
               <h3 className="text-sm font-bold text-white">
-                دليل تحويل EnglishTok إلى تطبيق Android (APK)
+                دليل تحويل Lin Go إلى تطبيق Android (APK)
               </h3>
             </div>
             <p className="text-xs text-slate-300 leading-relaxed">
@@ -814,7 +832,7 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
               وبصمة SHA-256 المنشورة. ينزّل زر التحديث حزمة APK الرسمية داخل التطبيق باستخدام
               مدير التنزيلات، ثم يفتح مثبّت Android لتأكيد التثبيت. قد يطلب Android السماح
               بالتثبيت من هذا المصدر مرة واحدة، ويتحقق من بصمة الملف والتوقيع قبل التثبيت.
-              لا يثبّت EnglishTok أي ملف بصمت، ولا يطلب صلاحية الوصول إلى جميع الملفات.
+              لا يثبّت Lin Go أي ملف بصمت، ولا يطلب صلاحية الوصول إلى جميع الملفات.
             </p>
             <button
               type="button"
@@ -921,7 +939,7 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
           <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-col gap-2 text-xs">
             <span className="font-bold text-amber-400">ملف الإعداد المهيأ جاهزاً:</span>
             <p className="text-slate-400 leading-relaxed text-[11px]">
-              تم تضمين ملف <code className="text-sky-300 bg-slate-950 px-1 py-0.5 rounded">capacitor.config.json</code> مسبقاً في جذر المشروع باسم التطبيق <strong className="text-white">EnglishTok</strong> ومجلد التوزيع <code className="text-sky-300 bg-slate-950 px-1 py-0.5 rounded">dist</code>.
+              تم تضمين ملف <code className="text-sky-300 bg-slate-950 px-1 py-0.5 rounded">capacitor.config.json</code> مسبقاً في جذر المشروع باسم التطبيق <strong className="text-white">Lin Go</strong> ومجلد التوزيع <code className="text-sky-300 bg-slate-950 px-1 py-0.5 rounded">dist</code>.
             </p>
           </div>
         </div>

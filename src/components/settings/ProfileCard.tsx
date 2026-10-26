@@ -73,7 +73,7 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({ profile, onUpdateProfi
   const [avatarMessage, setAvatarMessage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const displayName = profile.displayName?.trim() || 'متعلّم EnglishTok';
+  const displayName = profile.displayName?.trim() || 'متعلّم Lin Go';
   const tagline = profile.profileTagline?.trim() || 'رحلتي اليومية نحو الطلاقة';
   const rank = getUserRank(profile.xp);
   const level = Math.max(1, Math.floor(profile.xp / 100));
@@ -135,7 +135,7 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({ profile, onUpdateProfi
 
   const saveIdentity = () => {
     onUpdateProfile({
-      displayName: draftName.trim().slice(0, 40) || 'متعلّم EnglishTok',
+      displayName: draftName.trim().slice(0, 40) || 'متعلّم Lin Go',
       profileTagline: draftTagline.trim().slice(0, 80) || 'رحلتي اليومية نحو الطلاقة',
       joinedAt: profile.joinedAt ?? new Date().toISOString(),
     });

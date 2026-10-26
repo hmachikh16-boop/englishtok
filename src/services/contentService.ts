@@ -92,7 +92,7 @@ export const getCachedLearningPath = (language: ContentLanguage = 'en'): Lesson[
     if (!raw) return null;
     return parseContent(JSON.parse(raw));
   } catch (error) {
-    console.warn(`Unable to load cached EnglishTok ${language} lesson content:`, error);
+    console.warn(`Unable to load cached Lin Go ${language} lesson content:`, error);
     return null;
   }
 };
@@ -104,7 +104,7 @@ const saveContent = (lessons: Lesson[], language: ContentLanguage) => {
       JSON.stringify({ schemaVersion: 4, lessons }),
     );
   } catch (error) {
-    console.warn(`Unable to cache the latest EnglishTok ${language} lesson content:`, error);
+    console.warn(`Unable to cache the latest Lin Go ${language} lesson content:`, error);
   }
 };
 

@@ -1,4 +1,4 @@
-# EnglishTok releases and deployment
+# Lin Go releases and deployment
 
 ## Quick start (already prepared in this workspace)
 

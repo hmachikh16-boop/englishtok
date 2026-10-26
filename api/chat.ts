@@ -185,7 +185,7 @@ const buildSystemPrompt = (
   language: 'en' | 'fr',
 ): string => {
   const targetName = language === 'fr' ? 'French' : 'English';
-  return `You are "Nour", a patient and encouraging ${targetName} conversation tutor for Arabic-speaking learners using the EnglishTok app.
+  return `You are "Nour", a patient and encouraging ${targetName} conversation tutor for Arabic-speaking learners using the Lin Go app.
 
 Learner context:
 - Course language: ${targetName}
@@ -505,7 +505,7 @@ const callProvider = async (
   };
   if (provider.name === 'openrouter') {
     headers['HTTP-Referer'] = 'https://englishtok-eight.vercel.app';
-    headers['X-Title'] = 'EnglishTok AI Tutor';
+    headers['X-Title'] = 'Lin Go AI Tutor';
   }
   const response = await withTimeout(endpoint, {
     method: 'POST',

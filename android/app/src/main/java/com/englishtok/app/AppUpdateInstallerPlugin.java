@@ -23,7 +23,7 @@ import java.security.MessageDigest;
 import java.util.Locale;
 
 /**
- * Downloads a signed EnglishTok APK with Android's DownloadManager and then
+ * Downloads a signed Lin Go APK with Android's DownloadManager and then
  * opens the system package installer. Android always asks the user to confirm
  * the installation; the app cannot install an APK silently.
  *
@@ -58,7 +58,7 @@ public class AppUpdateInstallerPlugin extends Plugin {
         if (!canInstallPackages()) {
             openInstallSettingsInternal();
             call.reject(
-                    "اسمح لـ EnglishTok بتثبيت التطبيقات من إعدادات Android، ثم أعد المحاولة.",
+                    "اسمح لـ Lin Go بتثبيت التطبيقات من إعدادات Android، ثم أعد المحاولة.",
                     "INSTALL_PERMISSION_REQUIRED"
             );
             return;
@@ -79,8 +79,8 @@ public class AppUpdateInstallerPlugin extends Plugin {
 
         try {
             DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
-            request.setTitle("EnglishTok " + fileName.replace("english-tok-", "").replace(".apk", ""));
-            request.setDescription("تنزيل تحديث EnglishTok من داخل التطبيق");
+            request.setTitle("Lin Go " + fileName.replace("english-tok-", "").replace(".apk", ""));
+            request.setDescription("تنزيل تحديث Lin Go من داخل التطبيق");
             request.setMimeType("application/vnd.android.package-archive");
             request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
             request.setAllowedOverMetered(true);
@@ -182,7 +182,7 @@ public class AppUpdateInstallerPlugin extends Plugin {
         if (!canInstallPackages()) {
             openInstallSettingsInternal();
             call.reject(
-                    "اسمح لـ EnglishTok بتثبيت التطبيقات من إعدادات Android، ثم أعد المحاولة.",
+                    "اسمح لـ Lin Go بتثبيت التطبيقات من إعدادات Android، ثم أعد المحاولة.",
                     "INSTALL_PERMISSION_REQUIRED"
             );
             return;

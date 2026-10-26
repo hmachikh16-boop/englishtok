@@ -1,7 +1,7 @@
 #requires -Version 5.1
 <#
 .SYNOPSIS
-  Publishes EnglishTok to GitHub and triggers the signed APK release workflow.
+  Publishes Lin Go to GitHub and triggers the signed APK release workflow.
 
 .DESCRIPTION
   - Logs in to GitHub CLI if needed (interactive, one time).
@@ -67,7 +67,7 @@ if ($Version -notmatch '^\d+\.\d+\.\d+$') { Fail "Invalid version '$Version'. Us
 gh repo view $repo *> $null
 if ($LASTEXITCODE -ne 0) {
   Write-Host "Creating the public repository and pushing main..." -ForegroundColor Cyan
-  gh repo create $repo --public --source . --remote origin --push --description "EnglishTok - Arabic-first English learning app"
+  gh repo create $repo --public --source . --remote origin --push --description "Lin Go - Arabic-first English and French learning app"
   if ($LASTEXITCODE -ne 0) { Fail "Could not create or push the repository." }
 } else {
   Write-Host "Repository already exists; ensuring origin and pushing main..." -ForegroundColor Cyan

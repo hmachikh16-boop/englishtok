@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!--
-        EnglishTok keeps lesson audio and learner progress inside its private
+        Lin Go keeps lesson audio and learner progress inside its private
         storage. Progress backups use the Storage Access Framework (the user
         picks one file). In-app APK updates are downloaded by Android's
         DownloadManager and always require the user's confirmation in the
@@ -10,7 +10,7 @@
     -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
-    <!-- Only used for user-initiated updates of EnglishTok; never for silent installs. -->
+    <!-- Only used for user-initiated updates of Lin Go; never for silent installs. -->
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
 
     <!-- Android 11+ package visibility for the installed speech services. -->

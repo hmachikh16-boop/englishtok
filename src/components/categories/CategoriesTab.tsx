@@ -411,7 +411,7 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
         <div className="path-hero-intro-zone">
         <div className="path-hero-intro relative flex flex-wrap items-center justify-between gap-4">
           <div className="path-hero-copy">
-            <p className="flex items-center gap-2 text-xs font-black text-teal-200"><span className="h-2 w-2 rounded-full bg-lime-300 shadow-[0_0_14px_#bef264]" /> {isFrenchCourse ? 'رحلتك في المسار الفرنسي' : 'رحلتك في EnglishTok'}</p>
+            <p className="flex items-center gap-2 text-xs font-black text-teal-200"><span className="h-2 w-2 rounded-full bg-lime-300 shadow-[0_0_14px_#bef264]" /> {isFrenchCourse ? 'رحلتك في المسار الفرنسي' : 'رحلتك في Lin Go'}</p>
             <h2 className="mt-2 text-2xl font-black tracking-tight text-white sm:text-3xl">كل يوم، خطوة أقرب للطلاقة</h2>
             <p className="mt-2 max-w-lg text-xs leading-6 text-slate-300">{lessons.length === 0 ? 'المحتوى فارغ حالياً: حُذفت جميع الدروس والمستويات السابقة، وسيُضاف المنهج الجديد هنا بعد اعتماده.' : `${path.levels.length} مستويات و${path.totalLessons} درسًا في المسار ${isFrenchCourse ? 'الفرنسي' : 'العام'}${schoolYearLessonCount ? `، إضافة إلى ${schoolYearLessonCount} درسًا في مسارات الأطوار الدراسية` : ''}.`}</p>
           </div>

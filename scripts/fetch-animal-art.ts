@@ -51,7 +51,7 @@ await writeFile(
     'Copyright 2020 Twitter, Inc and other contributors.',
     'Licensed under CC-BY 4.0: https://creativecommons.org/licenses/by/4.0/',
     '',
-    'The SVGs are bundled unmodified and scaled by EnglishTok at render time.',
+    'The SVGs are bundled unmodified and scaled by Lin Go at render time.',
   ].join('\n'),
   'utf8',
 );

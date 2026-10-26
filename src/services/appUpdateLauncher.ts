@@ -52,7 +52,7 @@ const normalizeUpdateError = (error: unknown): Error => {
   if (isRecord(error)) {
     if (error.code === 'INSTALL_PERMISSION_REQUIRED') {
       return new Error(
-        'اسمح لـ EnglishTok بتثبيت التطبيقات من إعدادات Android، ثم اضغط «تنزيل التحديث» مرة أخرى. لن يثبّت التطبيق أي ملف دون موافقتك.',
+        'اسمح لـ Lin Go بتثبيت التطبيقات من إعدادات Android، ثم اضغط «تنزيل التحديث» مرة أخرى. لن يثبّت التطبيق أي ملف دون موافقتك.',
       );
     }
     if (error.code === 'CHECKSUM_MISMATCH' || error.code === 'INVALID_CHECKSUM') {

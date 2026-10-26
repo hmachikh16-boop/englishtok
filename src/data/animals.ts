@@ -1,5 +1,5 @@
 /**
- * The hundred animals that appear on EnglishTok's collectible motivation
+ * The hundred animals that appear on Lin Go's collectible motivation
  * cards. Each stage owns a distinct 25-animal habitat, so opening the next
  * stage feels like discovering a new part of the animal kingdom.
  *

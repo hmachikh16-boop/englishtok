@@ -1,5 +1,5 @@
 {
-  "name": "EnglishTok",
+  "name": "Lin Go",
   "description": "تطبيق تعليم الإنجليزية والفرنسية بأسلوب فيديوهات تيك توك التفاعلية القصيرة للهواتف والتابلت مع شخصيات كرتونية ومحادثات ونظام نقاط وترجمة فورية.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]

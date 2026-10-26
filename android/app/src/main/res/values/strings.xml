@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">EnglishTok</string>
-    <string name="title_activity_main">EnglishTok</string>
+    <string name="app_name">Lin Go</string>
+    <string name="title_activity_main">Lin Go</string>
     <string name="package_name">com.englishtok.app</string>
     <string name="custom_url_scheme">com.englishtok.app</string>
 </resources>

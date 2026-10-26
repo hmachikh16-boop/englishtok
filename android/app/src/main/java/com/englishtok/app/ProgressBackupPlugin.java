@@ -32,7 +32,7 @@ import java.nio.charset.StandardCharsets;
 @CapacitorPlugin(name = "ProgressBackup")
 public class ProgressBackupPlugin extends Plugin {
 
-    private static final int MAX_BACKUP_BYTES = 1024 * 1024;
+    private static final int MAX_BACKUP_BYTES = 4 * 1024 * 1024;
 
     private String pendingSaveContent;
     private String pendingSaveName;
@@ -40,7 +40,7 @@ public class ProgressBackupPlugin extends Plugin {
     @PluginMethod
     public void save(PluginCall call) {
         final String content = call.getString("content");
-        final String fileName = call.getString("fileName", "englishtok-progress.json");
+        final String fileName = call.getString("fileName", "lin-go-progress.json");
         if (content == null || content.isEmpty()) {
             call.reject("محتوى النسخة الاحتياطية غير متوفر.");
             return;
@@ -186,7 +186,7 @@ public class ProgressBackupPlugin extends Plugin {
         }
         String lastSegment = uri.getLastPathSegment();
         return lastSegment == null || lastSegment.isEmpty()
-                ? "englishtok-progress.json"
+                ? "lin-go-progress.json"
                 : lastSegment;
     }
 }
