@@ -2045,3 +2045,574 @@ svg {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Gold on the official download page */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.main-nav .nav-gold {
+  color: var(--emerald-800);
+}
+
+.main-nav .nav-gold::before {
+  content: '';
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  margin-left: 5px;
+  border-radius: 50%;
+  background: var(--gold);
+  vertical-align: 3px;
+}
+
+.eyebrow-sep {
+  opacity: 0.45;
+}
+
+.btn-gold-outline {
+  background: rgba(255, 253, 247, 0.62);
+  border-color: rgba(216, 178, 90, 0.62);
+  color: var(--emerald-900);
+  font-size: 13px;
+  padding: 0 20px;
+}
+
+.btn-gold-outline .btn-icon {
+  background: rgba(216, 178, 90, 0.18);
+  color: var(--emerald-800);
+}
+
+.btn-gold-outline:hover {
+  background: var(--ivory-3);
+  border-color: var(--gold);
+  box-shadow: 0 16px 32px -26px rgba(3, 37, 28, 0.45);
+}
+
+.gold-section {
+  padding-top: 88px;
+}
+
+.gold-panel {
+  position: relative;
+  overflow: hidden;
+  padding: 42px;
+  border: 1px solid rgba(240, 220, 164, 0.22);
+  border-radius: 30px;
+  background:
+    radial-gradient(circle at 8% 0%, rgba(216, 178, 90, 0.2), transparent 26rem),
+    radial-gradient(circle at 96% 12%, rgba(27, 145, 107, 0.28), transparent 24rem),
+    linear-gradient(145deg, #03251c, #06382a 58%, #0a4d38);
+  color: var(--ivory);
+  box-shadow: var(--shadow);
+}
+
+.gold-panel::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 12%;
+  width: 32%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+
+.gold-panel-head {
+  position: relative;
+  z-index: 1;
+  max-width: 760px;
+  margin: 0 auto 34px;
+  text-align: center;
+}
+
+.eyebrow.gold {
+  border-color: rgba(240, 220, 164, 0.38);
+  background: rgba(240, 220, 164, 0.1);
+  color: var(--gold-soft);
+}
+
+.eyebrow.gold svg {
+  width: 14px;
+  height: 14px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.gold-panel-head h2 {
+  margin: 16px 0 10px;
+  color: var(--ivory-3);
+  font-size: clamp(1.8rem, 3vw, 2.2rem);
+  font-weight: 700;
+  line-height: 1.55;
+}
+
+.gold-panel-head > p {
+  max-width: 690px;
+  margin: 0 auto;
+  color: rgba(221, 243, 232, 0.78);
+  font-size: 13.5px;
+  line-height: 1.95;
+}
+
+.gold-panel-badges {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 7px;
+  margin-top: 18px;
+}
+
+.gold-panel-badges span {
+  padding: 5px 10px;
+  border: 1px solid rgba(240, 220, 164, 0.2);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--gold-soft);
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.plan-grid {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  align-items: stretch;
+}
+
+.plan-card {
+  position: relative;
+  padding: 26px;
+  border-radius: 24px;
+}
+
+.plan-free {
+  border: 1px solid rgba(221, 243, 232, 0.16);
+  background: rgba(255, 253, 247, 0.065);
+  color: var(--ivory);
+}
+
+.plan-gold {
+  border: 1px solid rgba(216, 178, 90, 0.72);
+  background: linear-gradient(160deg, #fffdf7, #f7edcf);
+  color: var(--ink);
+  box-shadow: 0 26px 54px -32px rgba(0, 0, 0, 0.6);
+}
+
+.plan-ribbon {
+  position: absolute;
+  top: 18px;
+  left: 18px;
+  padding: 4px 9px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, var(--gold-soft), var(--gold));
+  color: var(--emerald-950);
+  font-size: 9px;
+  font-weight: 900;
+  box-shadow: 0 8px 16px -12px rgba(0, 0, 0, 0.6);
+}
+
+.plan-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.plan-kicker {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 0 9px;
+  border-radius: 999px;
+  background: rgba(221, 243, 232, 0.12);
+  color: var(--mint);
+  font-family: 'Segoe UI', Tahoma, sans-serif;
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+}
+
+.plan-kicker.gold {
+  background: rgba(216, 178, 90, 0.18);
+  color: #866623;
+}
+
+.plan-state {
+  color: rgba(221, 243, 232, 0.68);
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.plan-gold .plan-state {
+  color: var(--emerald-700);
+}
+
+.plan-card h3 {
+  margin: 18px 0 6px;
+  font-size: 1.35rem;
+  font-weight: 900;
+}
+
+.plan-free h3 {
+  color: var(--ivory-3);
+}
+
+.plan-lead {
+  min-height: 44px;
+  margin: 0;
+  color: rgba(221, 243, 232, 0.7);
+  font-size: 12px;
+  line-height: 1.8;
+}
+
+.plan-gold .plan-lead {
+  color: var(--ink-muted);
+}
+
+.plan-list {
+  display: grid;
+  gap: 9px;
+  margin: 20px 0 22px;
+  padding: 0;
+  list-style: none;
+}
+
+.plan-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  color: rgba(221, 243, 232, 0.82);
+  font-size: 11.5px;
+  font-weight: 600;
+  line-height: 1.65;
+}
+
+.plan-gold .plan-list li {
+  color: var(--ink-soft);
+}
+
+.plan-list li > span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 17px;
+  height: 17px;
+  margin-top: 1px;
+  border-radius: 50%;
+  background: rgba(27, 145, 107, 0.22);
+  color: var(--gold-soft);
+  font-size: 10px;
+  font-weight: 900;
+}
+
+.plan-gold .plan-list li > span {
+  background: var(--mint);
+  color: var(--emerald-700);
+}
+
+.plan-btn {
+  width: 100%;
+}
+
+.plan-free .btn-primary {
+  background: linear-gradient(135deg, var(--emerald-700), var(--emerald-500));
+}
+
+.plan-meta {
+  display: block;
+  margin-top: 10px;
+  color: rgba(221, 243, 232, 0.56);
+  font-size: 9.5px;
+  line-height: 1.6;
+  text-align: center;
+}
+
+.plan-meta b {
+  color: var(--gold-soft);
+}
+
+.gold-plan-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.gold-compare-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  color: var(--emerald-700);
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.gold-compare-link svg {
+  width: 14px;
+  height: 14px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.gold-compare-link:hover {
+  color: var(--emerald-500);
+}
+
+.gold-code-box {
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px dashed rgba(8, 38, 31, 0.18);
+}
+
+.gold-code-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  color: var(--emerald-900);
+  font-size: 11.5px;
+  font-weight: 900;
+}
+
+.demo-tag {
+  padding: 3px 7px;
+  border-radius: 999px;
+  background: rgba(216, 178, 90, 0.2);
+  color: #80601e;
+  font-size: 8.5px;
+  font-weight: 900;
+}
+
+.gold-code-form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 7px;
+  margin-top: 8px;
+}
+
+.gold-code-form input {
+  min-width: 0;
+  height: 42px;
+  padding: 0 11px;
+  border: 1px solid rgba(8, 38, 31, 0.18);
+  border-radius: 11px;
+  background: #fffdf7;
+  color: var(--ink);
+  font-family: 'Segoe UI', Tahoma, sans-serif;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  direction: ltr;
+  text-align: left;
+}
+
+.gold-code-form input::placeholder {
+  color: #9b9484;
+  font-size: 10px;
+  letter-spacing: 0;
+}
+
+.gold-code-form input:focus {
+  outline: 2px solid rgba(216, 178, 90, 0.42);
+  border-color: var(--gold);
+}
+
+.gold-code-form button {
+  min-height: 42px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 11px;
+  background: var(--emerald-900);
+  color: var(--gold-soft);
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 900;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.gold-code-form button:hover {
+  background: var(--emerald-800);
+  transform: translateY(-1px);
+}
+
+.gold-code-message {
+  margin: 8px 0 0;
+  color: var(--ink-muted);
+  font-size: 10px;
+  line-height: 1.7;
+}
+
+.gold-code-message code {
+  padding: 1px 4px;
+  border-radius: 4px;
+  background: rgba(8, 38, 31, 0.07);
+  color: var(--emerald-800);
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-size: 9px;
+  direction: ltr;
+  unicode-bidi: embed;
+}
+
+.gold-code-message.is-error {
+  color: #9a3e32;
+}
+
+.gold-code-success {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-top: 9px;
+  padding: 9px 11px;
+  border: 1px solid #bfe4d4;
+  border-radius: 11px;
+  background: #e8f6ee;
+  color: var(--emerald-900);
+  font-size: 10.5px;
+  line-height: 1.6;
+}
+
+.gold-code-success[hidden] {
+  display: none;
+}
+
+.gold-code-success a {
+  color: var(--emerald-700);
+  font-weight: 900;
+}
+
+.gold-footnote {
+  position: relative;
+  z-index: 1;
+  max-width: 720px;
+  margin: 20px auto 0;
+  color: rgba(221, 243, 232, 0.55);
+  font-size: 10.5px;
+  line-height: 1.8;
+  text-align: center;
+}
+
+/* Gold screen card */
+.screen-grid {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.screen-card-gold {
+  border-color: rgba(216, 178, 90, 0.5);
+  background: linear-gradient(180deg, #fffdf7, #fbf3df);
+}
+
+.screen-gold-tag {
+  display: inline-flex;
+  align-items: center;
+  margin-right: 4px;
+  padding: 2px 5px;
+  border-radius: 999px;
+  background: var(--gold-soft);
+  color: #755619;
+  font-family: 'Segoe UI', Tahoma, sans-serif;
+  font-size: 7.5px;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  vertical-align: 1px;
+}
+
+@media (max-width: 1020px) {
+  .gold-panel {
+    padding: 34px;
+  }
+
+  .plan-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .screen-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 860px) {
+  .gold-panel-head {
+    margin-bottom: 28px;
+  }
+
+  .gold-panel-head > p {
+    font-size: 13px;
+  }
+
+  .screen-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .gold-section {
+    padding-top: 60px;
+  }
+
+  .gold-panel {
+    padding: 24px 16px;
+    border-radius: 24px;
+  }
+
+  .gold-panel-head h2 {
+    font-size: 1.65rem;
+  }
+
+  .gold-panel-badges {
+    gap: 5px;
+  }
+
+  .gold-panel-badges span {
+    padding: 4px 8px;
+    font-size: 9px;
+  }
+
+  .plan-card {
+    padding: 21px 16px;
+    border-radius: 20px;
+  }
+
+  .plan-ribbon {
+    top: 15px;
+    left: 15px;
+    font-size: 8.5px;
+  }
+
+  .plan-card h3 {
+    font-size: 1.2rem;
+  }
+
+  .plan-lead {
+    min-height: 0;
+  }
+
+  .gold-code-form {
+    grid-template-columns: 1fr;
+  }
+
+  .gold-code-form button {
+    width: 100%;
+  }
+
+  .screen-grid {
+    grid-template-columns: 1fr;
+  }
+}

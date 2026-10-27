@@ -3,6 +3,7 @@ const DOWNLOAD_PAGE = 'https://englishtok-eight.vercel.app/download';
 const LOCAL_APK = '/english-tok.apk';
 const GITHUB_APK = `https://github.com/${REPOSITORY}/releases/latest/download/english-tok.apk`;
 const GITHUB_RELEASE = `https://github.com/${REPOSITORY}/releases/latest`;
+const GOLD_DEMO_CODE = 'LINGO-GOLD-DEMO-2026';
 
 const FALLBACK = {
   version: '1.8.3',
@@ -76,7 +77,7 @@ const applyLatest = (data) => {
   setText('[data-latest-hash]', latest.sha256);
   setText('[data-latest-notes]', latest.notes);
   setLink('[data-release-link]', latest.releaseUrl);
-  document.title = `تحميل Lin Go ${latest.version} — أحدث إصدار APK`;
+  document.title = `تحميل Lin Go ${latest.version} و Gold — أحدث إصدار APK`;
 
   const schema = document.querySelector('script[type="application/ld+json"]');
   if (schema) {
@@ -124,6 +125,41 @@ const ensureDownloadTarget = async () => {
   });
 };
 
+const setupGoldForm = () => {
+  const form = document.querySelector('[data-gold-form]');
+  const input = document.querySelector('[data-gold-input]');
+  const message = document.querySelector('[data-gold-message]');
+  const success = document.querySelector('[data-gold-success]');
+  if (!form || !input) return;
+
+  form.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const code = input.value.trim().toUpperCase();
+
+    if (code === GOLD_DEMO_CODE) {
+      if (message) {
+        message.classList.remove('is-error');
+        message.textContent = 'تم التحقق من كود المعاينة. يمكنك فتح Gold الآن.';
+      }
+      if (success) success.hidden = false;
+      showToast('Gold جاهز للمعاينة');
+      return;
+    }
+
+    if (success) success.hidden = true;
+    if (message) {
+      message.classList.add('is-error');
+      message.textContent = code
+        ? 'هذا الكود غير صالح للمعاينة. استخدم الكود التجريبي الموجود بالأعلى، أو انتظر التفعيل الرسمي.'
+        : 'أدخل كود Gold أولًا. للمعاينة استخدم الكود التجريبي.';
+    }
+  });
+
+  input.addEventListener('input', () => {
+    message?.classList.remove('is-error');
+  });
+};
+
 const setupShare = () => {
   document.querySelectorAll('[data-share]').forEach((button) => {
     button.addEventListener('click', async () => {
@@ -158,5 +194,6 @@ const setupHeader = () => {
 
 loadLatest();
 ensureDownloadTarget();
+setupGoldForm();
 setupShare();
 setupHeader();

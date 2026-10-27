@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Lin Go Gold</string>
+    <string name="title_activity_main">Lin Go Gold</string>
+    <string name="package_name">com.englishtok.gold</string>
+    <string name="custom_url_scheme">com.englishtok.gold</string>
+</resources>

@@ -330,7 +330,7 @@ export const sendTutorMessage = async ({
   target,
   language = 'en',
 }: SendTutorMessageInput): Promise<TutorReply> => {
-  const conversation = messages.slice(-10).map((message) => ({
+  const conversation = messages.slice(-6).map((message) => ({
     role: message.role,
     content: message.text,
   }));
@@ -351,7 +351,7 @@ export const sendTutorMessage = async ({
           language,
         }),
       },
-      58_000,
+      30_000,
     );
   } catch (error) {
     if (error instanceof Error && error.name === 'AbortError') {

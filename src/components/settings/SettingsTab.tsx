@@ -32,6 +32,7 @@ import { speechService } from '../../services/speechService';
 import { checkForAppUpdate, type AppUpdateManifest } from '../../services/appUpdateService';
 import { openAppUpdateDownload } from '../../services/appUpdateLauncher';
 import { IS_STORE_BUILD } from '../../config/storeBuild';
+import { IS_GOLD_EDITION } from '../../config/edition';
 import {
   createProgressBackup,
   getLocalProgressBackup,
@@ -346,7 +347,7 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
   return (
     <div className="journey-secondary w-full h-full max-w-4xl mx-auto overflow-y-auto no-scrollbar p-4 sm:p-6 text-slate-100 flex flex-col gap-5">
       {/* Tab Header Sub-nav */}
-      {!IS_STORE_BUILD && (
+      {!IS_STORE_BUILD && !IS_GOLD_EDITION && (
       <div className="flex gap-1.5 p-1 bg-slate-900 rounded-2xl border border-slate-800">
         <button
           onClick={() => {
@@ -396,7 +397,7 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
       {activeSubTab === 'app' && (
         <div className="flex flex-col gap-4">
           <ProfileCard profile={userProfile} onUpdateProfile={onUpdateProfile} />
-          {!IS_STORE_BUILD && (
+          {!IS_STORE_BUILD && !IS_GOLD_EDITION && (
           <section
             className="bg-gradient-to-br from-sky-950 via-slate-900 to-emerald-950/40 border border-sky-500/30 rounded-2xl p-4 flex flex-col gap-3 shadow-xl"
             aria-labelledby="updates-title"

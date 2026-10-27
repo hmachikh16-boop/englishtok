@@ -16,6 +16,7 @@
     "build": "npm run content:export && npm run speech:check && npm run generate:lesson-illustrations && node scripts/stage-latest-apk.mjs && vite build",
     "android:sync": "npm run build && cap sync android",
     "android:apk": "node scripts/build-android-apk.mjs",
+    "android:gold": "node scripts/build-android-gold-apk.mjs",
     "android:apk:store": "node scripts/build-android-store-apk.mjs",
     "android:aab": "node scripts/build-android-aab.mjs",
     "serve:releases": "node scripts/serve-releases.mjs",

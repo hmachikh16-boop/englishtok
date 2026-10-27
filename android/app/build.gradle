@@ -34,6 +34,15 @@ android {
         store {
             dimension "distribution"
         }
+        // Lin Go Gold is a separate installable edition. It shares the same
+        // UI, signing key and native code, but has its own application id so
+        // it can live beside the free app and receive Gold-only curriculum.
+        gold {
+            dimension "distribution"
+            applicationId "com.englishtok.gold"
+            versionCode 1000000
+            versionName "1.0.0"
+        }
     }
 }
 

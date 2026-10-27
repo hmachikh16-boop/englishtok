@@ -1,6 +1,6 @@
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
-import { rm } from 'node:fs/promises';
+import { readdir, rm } from 'node:fs/promises';
 import path from 'path';
 import {defineConfig} from 'vite';
 
@@ -15,17 +15,43 @@ export default defineConfig(() => {
         name: 'store-build-exclude-download-assets',
         apply: 'build',
         async closeBundle() {
-          if (process.env.VITE_STORE_BUILD !== 'true') return;
+          if (
+            process.env.VITE_STORE_BUILD !== 'true' &&
+            process.env.VITE_GOLD_EDITION !== 'true'
+          ) return;
           const outDir = path.resolve(__dirname, 'dist');
           await Promise.all([
             rm(path.resolve(outDir, 'download.html'), { force: true }),
             rm(path.resolve(outDir, 'download.js'), { force: true }),
             rm(path.resolve(outDir, 'download'), { recursive: true, force: true }),
             rm(path.resolve(outDir, 'english-tok.apk'), { force: true }),
+            rm(path.resolve(outDir, 'gold-preview.html'), { force: true }),
           ]);
+
+          // Remove the entry chunks of the standalone Gold preview as well.
+          // Store builds must not carry the direct-download edition UI.
+          const assetsDir = path.resolve(outDir, 'assets');
+          try {
+            const assets = await readdir(assetsDir);
+            await Promise.all(
+              assets
+                .filter((file) => file.startsWith('gold-preview-'))
+                .map((file) => rm(path.resolve(assetsDir, file), { force: true })),
+            );
+          } catch {
+            /* No assets directory means there is nothing else to remove. */
+          }
         },
       },
     ],
+    build: {
+      rolldownOptions: {
+        input: {
+          main: path.resolve(__dirname, 'index.html'),
+          goldPreview: path.resolve(__dirname, 'gold-preview.html'),
+        },
+      },
+    },
     worker: {
       format: 'es' as const,
     },

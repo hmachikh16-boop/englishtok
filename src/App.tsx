@@ -8,6 +8,7 @@ import { App as CapacitorApp } from '@capacitor/app';
 import { Capacitor } from '@capacitor/core';
 import { ActiveTab, Lesson, TargetLanguage, UserProfile } from './types';
 import { LEARNING_PATH_LESSONS } from './data/curriculum';
+import { applyGoldCurriculum } from './data/goldCurriculum';
 import { getLearningPathState } from './services/learningPath';
 import { getStoredProfile, saveProfile } from './services/storageService';
 import { switchLearningLanguage } from './services/languageService';
@@ -25,6 +26,7 @@ import { fetchLatestLearningPath, getCachedLearningPath } from './services/conte
 import { checkForAppUpdate, type AppUpdateManifest } from './services/appUpdateService';
 import { openAppUpdateDownload } from './services/appUpdateLauncher';
 import { IS_STORE_BUILD } from './config/storeBuild';
+import { IS_GOLD_EDITION } from './config/edition';
 import {
   SPEECH_STATUS_EVENT,
   SPEECH_UNAVAILABLE_EVENT,
@@ -44,9 +46,10 @@ import { PlacementAssessmentGate } from './components/placement/PlacementAssessm
 export default function App() {
   const [userProfile, setUserProfile] = useState<UserProfile>(() => getStoredProfile());
   const [lessons, setLessons] = useState<Lesson[]>(() => {
-    const cached = getCachedLearningPath(userProfile.targetLanguage ?? 'en');
-    if (cached) return cached;
-    return userProfile.targetLanguage === 'fr' ? [] : LEARNING_PATH_LESSONS;
+    const language = userProfile.targetLanguage ?? 'en';
+    const cached = getCachedLearningPath(language);
+    const base = cached ?? (language === 'fr' ? [] : LEARNING_PATH_LESSONS);
+    return IS_GOLD_EDITION ? applyGoldCurriculum(base, language) : base;
   });
   const [placementGateOpen, setPlacementGateOpen] = useState(
     () => !userProfile.targetLanguage || !userProfile.placementAssessment?.result,
@@ -87,7 +90,7 @@ export default function App() {
       : 'calc(env(safe-area-inset-top, 0px) + 74px)';
 
   useEffect(() => {
-    if (IS_STORE_BUILD || Capacitor.getPlatform() !== 'android') return;
+    if (IS_STORE_BUILD || IS_GOLD_EDITION || Capacitor.getPlatform() !== 'android') return;
 
     let isMounted = true;
     const runUpdateCheck = () => {
@@ -138,18 +141,22 @@ export default function App() {
 
     let isMounted = true;
     const cached = getCachedLearningPath(language);
-    if (language === 'fr') {
-      setLessons(cached ?? []);
-      setContentLoading(!cached);
-    } else {
-      setLessons(cached ?? LEARNING_PATH_LESSONS);
-      setContentLoading(!cached);
-    }
+    const cachedLessons = cached ?? (language === 'fr' ? [] : LEARNING_PATH_LESSONS);
+    setLessons(
+      IS_GOLD_EDITION ? applyGoldCurriculum(cachedLessons, language) : cachedLessons,
+    );
+    setContentLoading(!cached && language === 'fr');
     setSelectedLessonId(null);
 
     void fetchLatestLearningPath(language)
       .then((latestLessons) => {
-        if (isMounted && latestLessons) setLessons(latestLessons);
+        if (isMounted && latestLessons) {
+          setLessons(
+            IS_GOLD_EDITION
+              ? applyGoldCurriculum(latestLessons, language)
+              : latestLessons,
+          );
+        }
       })
       .catch((error: unknown) => {
         console.warn(`Using locally cached ${language} Lin Go lesson content:`, error);
@@ -284,9 +291,12 @@ export default function App() {
   };
 
   const handleRefreshContent = async () => {
-    const latestLessons = await fetchLatestLearningPath(userProfile.targetLanguage ?? 'en');
+    const language = userProfile.targetLanguage ?? 'en';
+    const latestLessons = await fetchLatestLearningPath(language);
     if (!latestLessons) return false;
-    setLessons(latestLessons);
+    setLessons(
+      IS_GOLD_EDITION ? applyGoldCurriculum(latestLessons, language) : latestLessons,
+    );
     return true;
   };
 
@@ -359,7 +369,7 @@ export default function App() {
           جارٍ تحميل دروس {userProfile.targetLanguage === 'fr' ? 'الفرنسية' : 'الإنجليزية'}…
         </div>
       )}
-      {!IS_STORE_BUILD && availableAppUpdate && (
+      {!IS_STORE_BUILD && !IS_GOLD_EDITION && availableAppUpdate && (
         <div
           role="status"
           className="fixed inset-x-4 z-[100] mx-auto flex max-w-md items-start gap-3 rounded-2xl border border-emerald-400/40 bg-slate-900 px-4 py-3 text-sm text-emerald-100 shadow-2xl"
