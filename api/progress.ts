@@ -103,6 +103,7 @@ const readBody = (body: unknown): Record<string, unknown> | null => {
 export default async function progressHandler(request: ProgressRequest, response: ProgressResponse) {
   response.setHeader('Cache-Control', 'no-store, max-age=0');
   response.setHeader('X-Content-Type-Options', 'nosniff');
+  response.setHeader('X-Progress-Api-Version', '2026-10-28.4');
   const method = request.method?.toUpperCase();
   if (method !== 'GET' && method !== 'POST') {
     response.setHeader('Allow', 'GET, POST');
