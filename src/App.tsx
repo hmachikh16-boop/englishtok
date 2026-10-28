@@ -90,6 +90,12 @@ export default function App() {
       : 'calc(env(safe-area-inset-top, 0px) + 74px)';
 
   useEffect(() => {
+    if (!IS_GOLD_EDITION) return;
+    document.title = 'Lin Go Gold — نفس التطبيق، مع 4 مشاريع';
+    document.documentElement.dataset.linGoEdition = 'gold';
+  }, []);
+
+  useEffect(() => {
     if (IS_STORE_BUILD || IS_GOLD_EDITION || Capacitor.getPlatform() !== 'android') return;
 
     let isMounted = true;

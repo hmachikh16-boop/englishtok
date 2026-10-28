@@ -44,6 +44,16 @@ for (const key of ['storeFile', 'storePassword', 'keyAlias', 'keyPassword']) {
   }
 }
 
+// Read the Gold flavor version from Gradle so the output filename and the
+// published release cannot drift apart after a version bump.
+const gradleSource = await readFile(resolve(androidDir, 'app', 'build.gradle'), 'utf8');
+const goldFlavor = /gold\s*\{([\s\S]*?)\}/.exec(gradleSource)?.[1] ?? '';
+const goldVersion = /versionName\s+["']([^"']+)["']/.exec(goldFlavor)?.[1];
+if (!goldVersion || !/^\d+\.\d+\.\d+$/.test(goldVersion)) {
+  console.error('Could not read the Gold versionName from android/app/build.gradle.');
+  process.exit(1);
+}
+
 const run = (command, args, cwd, env = process.env) => {
   const result = spawnSync(command, args, {
     cwd,
@@ -128,8 +138,8 @@ if (!existsSync(apk)) {
 }
 
 await mkdir(resolve(root, 'releases'), { recursive: true });
-const output = resolve(root, 'releases', 'lin-go-gold-1.0.0.apk');
+const output = resolve(root, 'releases', `lin-go-gold-${goldVersion}.apk`);
 await copyFile(apk, output);
 
-console.log(`4/4  Done. Gold APK: ${output}`);
+console.log(`4/4  Done. Gold APK ${goldVersion}: ${output}`);
 console.log('The free APK in releases/ is untouched.');

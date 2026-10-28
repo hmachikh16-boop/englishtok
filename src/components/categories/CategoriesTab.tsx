@@ -1,9 +1,12 @@
 import React, { useCallback, useDeferredValue, useEffect, useMemo, useRef, useState, useTransition } from 'react';
-import { Search, Sparkles, Play, BookOpen, Clock, Heart, Lock, CheckCircle2, Trophy, Star, ArrowDown, Footprints } from 'lucide-react';
+import { Search, Sparkles, Play, BookOpen, Clock, Heart, Lock, CheckCircle2, Trophy, Star, ArrowDown, ArrowLeft, Crown, Footprints } from 'lucide-react';
 import { Lesson, CategoryKey, UserProfile } from '../../types';
 import { CATEGORIES } from '../../data/lessons';
 import { CURRICULUM_CONFIG, CURRICULUM_LEVELS } from '../../data/curriculum';
 import { speechService } from '../../services/speechService';
+import { IS_GOLD_EDITION } from '../../config/edition';
+import { IS_STORE_BUILD } from '../../config/storeBuild';
+import { openGoldPage } from '../../services/goldLauncher';
 import type { LearningPathState, LessonPathStatus } from '../../services/learningPath';
 import { LevelFinalExam } from '../quiz/LevelFinalExam';
 import { PremiumIcon } from '../icons/PremiumIcon';
@@ -81,6 +84,8 @@ interface CategoriesTabProps {
   onUpdateProfile: (updated: Partial<UserProfile>) => void;
   onSelectLesson: (lessonId: string) => void;
   isPhoneFrameView: boolean;
+  /** Lets the interactive Gold preview show the Gold identity in a normal web build. */
+  goldEdition?: boolean;
 }
 
 export const CategoriesTab: React.FC<CategoriesTabProps> = ({
@@ -90,6 +95,7 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
   onUpdateProfile,
   onSelectLesson,
   isPhoneFrameView,
+  goldEdition = IS_GOLD_EDITION,
 }) => {
   const routeRef = useRef<HTMLDivElement>(null);
   const libraryRef = useRef<HTMLDetailsElement>(null);
@@ -411,7 +417,20 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
         <div className="path-hero-intro-zone">
         <div className="path-hero-intro relative flex flex-wrap items-center justify-between gap-4">
           <div className="path-hero-copy">
-            <p className="flex items-center gap-2 text-xs font-black text-teal-200"><span className="h-2 w-2 rounded-full bg-lime-300 shadow-[0_0_14px_#bef264]" /> {isFrenchCourse ? 'رحلتك في المسار الفرنسي' : 'رحلتك في Lin Go'}</p>
+            <p className="flex items-center gap-2 text-xs font-black text-teal-200">
+              <span className="h-2 w-2 rounded-full bg-lime-300 shadow-[0_0_14px_#bef264]" />
+              {goldEdition
+                ? 'رحلتك في Lin Go Gold'
+                : isFrenchCourse
+                  ? 'رحلتك في المسار الفرنسي'
+                  : 'رحلتك في Lin Go'}
+              {goldEdition && (
+                <span className="inline-flex items-center gap-0.5 rounded-full border border-amber-300/50 bg-amber-300/15 px-1.5 py-0.5 text-[8px] font-black uppercase tracking-[0.12em] text-amber-200">
+                  <Crown className="h-2.5 w-2.5" strokeWidth={2.8} aria-hidden="true" />
+                  Gold
+                </span>
+              )}
+            </p>
             <h2 className="mt-2 text-2xl font-black tracking-tight text-white sm:text-3xl">كل يوم، خطوة أقرب للطلاقة</h2>
             <p className="mt-2 max-w-lg text-xs leading-6 text-slate-300">{lessons.length === 0 ? 'المحتوى فارغ حالياً: حُذفت جميع الدروس والمستويات السابقة، وسيُضاف المنهج الجديد هنا بعد اعتماده.' : `${path.levels.length} مستويات و${path.totalLessons} درسًا في المسار ${isFrenchCourse ? 'الفرنسي' : 'العام'}${schoolYearLessonCount ? `، إضافة إلى ${schoolYearLessonCount} درسًا في مسارات الأطوار الدراسية` : ''}.`}</p>
           </div>
@@ -428,6 +447,39 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
           <div className="min-w-0 flex-1"><div className="flex justify-between gap-2 text-[11px] font-black"><span>هدف اليوم</span><span>{dailyLessonCount}/{dailyGoal} دروس</span></div><div className="daily-goal-track mt-1.5 h-1.5 overflow-hidden rounded-full"><div className="daily-goal-fill h-full rounded-full transition-[width] duration-500" style={{ width: `${Math.min(100, (dailyLessonCount / dailyGoal) * 100)}%` }} /></div></div>
           {dailyLessonCount >= dailyGoal && <span className="daily-goal-done"><CheckCircle2 className="h-4 w-4" /> اكتمل</span>}
         </div>
+
+        {!goldEdition && !IS_STORE_BUILD && (
+          <button
+            type="button"
+            onClick={() => void openGoldPage()}
+            className="gold-path-entry relative z-[1] mt-3 flex w-full items-center gap-3 rounded-2xl border border-amber-300/70 bg-gradient-to-l from-amber-300 via-yellow-200 to-amber-100 px-3 py-2.5 text-right text-emerald-950 shadow-lg shadow-black/15 transition-all hover:brightness-105 active:scale-[.99]"
+            aria-label="اكتشف Lin Go Gold — النسخة المميزة بأربعة مشاريع تطبيقية"
+          >
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-emerald-950 text-amber-300 shadow-inner">
+              <Crown className="h-5 w-5" strokeWidth={2.5} aria-hidden="true" />
+            </span>
+            <span className="min-w-0 flex-1">
+              <span className="block text-xs font-black">اكتشف Lin Go Gold</span>
+              <span className="mt-0.5 block text-[10px] font-bold text-emerald-900/70">
+                نفس التطبيق والمسار + 4 مشاريع تطبيقية
+              </span>
+            </span>
+            <span className="flex shrink-0 items-center gap-1 text-[10px] font-black">
+              <span className="hidden sm:inline">جرّب الآن</span>
+              <ArrowLeft className="h-4 w-4" strokeWidth={2.6} aria-hidden="true" />
+            </span>
+          </button>
+        )}
+
+        {goldEdition && (
+          <div className="relative z-[1] mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 rounded-2xl border border-amber-300/35 bg-amber-300/10 px-3 py-2 text-[10px] font-bold text-amber-100">
+            <span className="inline-flex items-center gap-1 text-[9px] font-black uppercase tracking-[0.16em] text-amber-200">
+              <Crown className="h-3 w-3" strokeWidth={2.8} aria-hidden="true" />
+              Gold Edition
+            </span>
+            <span className="text-amber-100/70">4 مشاريع تطبيقية مضافة إلى مسارك — بدون واجهة جديدة</span>
+          </div>
+        )}
         </div>
         {!isSchoolYearCourse && path.levels.length > 0 && (
           <MotivationalGoalSpotlight

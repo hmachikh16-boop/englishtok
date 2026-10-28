@@ -6,12 +6,17 @@ const GITHUB_RELEASE = `https://github.com/${REPOSITORY}/releases/latest`;
 const GOLD_DEMO_CODE = 'LINGO-GOLD-DEMO-2026';
 
 const FALLBACK = {
-  version: '1.8.3',
-  size: 58_555_722,
-  sha256: 'D819FAA01EA82E5D696E6741C7887AF6307836BA10A9DC92ABD2D3F1684228A7',
-  notes: 'تحديث آمن يفتح المتصفح لتنزيل الحزمة الرسمية بدل تنزيلها وتثبيتها داخل التطبيق، لمنع تحذيرات Google Play Protect. لا تغيير في تقدمك أو نسخك الاحتياطي المشفّر.',
+  version: '1.8.4',
+  size: 58_147_386,
+  sha256: '0B1C9211A37A17A38130DBA883727E3B19949785617DDCEAC57926118F7F8027',
+  notes: 'تحديث 1.8.4: زر اكتشاف Lin Go Gold داخل التطبيق، شريط إحصاءات محدّث، وتحسينات تنزيل. لا تغيير في تقدمك أو نسخك الاحتياطي المشفّر.',
   releaseUrl: GITHUB_RELEASE,
 };
+
+let currentVersion = FALLBACK.version;
+
+const githubApkUrl = (version) =>
+  `https://github.com/${REPOSITORY}/releases/download/v${version}/english-tok-${version}.apk`;
 
 const isValidVersion = (value) => typeof value === 'string' && /^\d+\.\d+\.\d+$/.test(value);
 const isValidHash = (value) => typeof value === 'string' && /^[a-f0-9]{64}$/i.test(value);
@@ -63,6 +68,19 @@ const copyText = async (text) => {
   }
 };
 
+const setDownloadLinks = (version, target = LOCAL_APK) => {
+  const href = target === LOCAL_APK ? `${LOCAL_APK}?v=${encodeURIComponent(version)}` : target;
+  document.querySelectorAll('[data-download]').forEach((link) => {
+    link.setAttribute('href', href);
+    link.setAttribute('download', `lin-go-${version}.apk`);
+    link.setAttribute(
+      'title',
+      target === LOCAL_APK ? 'تنزيل من الموقع الرسمي' : 'تنزيل من صفحة GitHub الرسمية',
+    );
+  });
+  setLink('[data-github-download]', githubApkUrl(version));
+};
+
 const applyLatest = (data) => {
   const latest = {
     version: isValidVersion(data?.version) ? data.version : FALLBACK.version,
@@ -72,11 +90,13 @@ const applyLatest = (data) => {
     releaseUrl: typeof data?.releaseUrl === 'string' ? data.releaseUrl : FALLBACK.releaseUrl,
   };
 
+  currentVersion = latest.version;
   setText('[data-latest-version]', latest.version);
   setText('[data-latest-size]', formatSize(latest.size));
   setText('[data-latest-hash]', latest.sha256);
   setText('[data-latest-notes]', latest.notes);
   setLink('[data-release-link]', latest.releaseUrl);
+  setDownloadLinks(latest.version);
   document.title = `تحميل Lin Go ${latest.version} و Gold — أحدث إصدار APK`;
 
   const schema = document.querySelector('script[type="application/ld+json"]');
@@ -117,12 +137,7 @@ const ensureDownloadTarget = async () => {
     target = GITHUB_APK;
   }
 
-  links.forEach((link) => {
-    link.setAttribute('href', target);
-    if (target === GITHUB_APK) {
-      link.setAttribute('title', 'تنزيل من صفحة GitHub الرسمية');
-    }
-  });
+  setDownloadLinks(currentVersion, target);
 };
 
 const setupGoldForm = () => {
@@ -192,8 +207,16 @@ const setupHeader = () => {
   window.addEventListener('scroll', update, { passive: true });
 };
 
-loadLatest();
-ensureDownloadTarget();
+const setupDownloadFeedback = () => {
+  document.querySelectorAll('[data-download]').forEach((link) => {
+    link.addEventListener('click', () => {
+      showToast('بعد اكتمال 100% افتح ملف APK من «التنزيلات» لتثبيته.');
+    });
+  });
+};
+
+void loadLatest().then(() => ensureDownloadTarget());
 setupGoldForm();
 setupShare();
 setupHeader();
+setupDownloadFeedback();

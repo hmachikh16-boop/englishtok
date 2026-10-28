@@ -25,6 +25,7 @@ export default defineConfig(() => {
             rm(path.resolve(outDir, 'download.js'), { force: true }),
             rm(path.resolve(outDir, 'download'), { recursive: true, force: true }),
             rm(path.resolve(outDir, 'english-tok.apk'), { force: true }),
+            rm(path.resolve(outDir, 'lin-go-gold.apk'), { force: true }),
             rm(path.resolve(outDir, 'gold-preview.html'), { force: true }),
           ]);
 
@@ -35,7 +36,12 @@ export default defineConfig(() => {
             const assets = await readdir(assetsDir);
             await Promise.all(
               assets
-                .filter((file) => file.startsWith('gold-preview-'))
+                .filter(
+                  (file) =>
+                    file.startsWith('gold-preview-') ||
+                    file.startsWith('goldPreview-') ||
+                    file.startsWith('GoldAppPreview-'),
+                )
                 .map((file) => rm(path.resolve(assetsDir, file), { force: true })),
             );
           } catch {

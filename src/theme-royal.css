@@ -90,48 +90,162 @@ body {
   border-color: var(--rt-blue-900);
 }
 
+/* Royal status rail: a compact emerald-and-gold dashboard rather than a plain
+   white pill. Keeps language, XP, streak and rank legible at phone widths. */
 .journey-stats {
-  color: var(--rt-ink);
-  background: var(--rt-cream-50);
-  border: 2px solid var(--rt-cream-300);
-  box-shadow: 0 3px 0 var(--rt-gold-700);
+  position: relative;
+  min-height: 40px;
+  gap: 0;
+  padding: 0 6px;
+  overflow: hidden;
+  color: #fff8e7;
+  border: 1.5px solid #edc66a;
   border-radius: 14px;
+  background:
+    radial-gradient(120% 160% at 18% -20%, rgb(255 224 140 / 20%), transparent 48%),
+    linear-gradient(160deg, #0d5b49 0%, #074335 56%, #032e25 100%);
+  box-shadow:
+    0 2px 0 #021912,
+    0 7px 14px rgb(0 0 0 / 28%),
+    inset 0 1px 0 rgb(255 255 255 / 16%);
+  isolation: isolate;
+}
+
+.journey-stats::before {
+  position: absolute;
+  z-index: -1;
+  inset: 3px;
+  border: 1px solid rgb(255 229 160 / 18%);
+  border-radius: 10px;
+  pointer-events: none;
+  content: '';
+}
+
+.journey-stats::after {
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  left: 18%;
+  width: 42%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgb(255 247 214 / 85%), transparent);
+  content: '';
+  pointer-events: none;
 }
 
 .journey-stats:hover {
-  border-color: var(--rt-gold-500);
-  background: #fffdf5;
+  border-color: #ffe08a;
+  background:
+    radial-gradient(120% 160% at 18% -20%, rgb(255 224 140 / 28%), transparent 48%),
+    linear-gradient(160deg, #116a55 0%, #084b3b 56%, #04362b 100%);
 }
 
-.journey-stats .topbar-rank,
-.journey-stats .topbar-xp,
-.journey-stats .topbar-streak {
-  color: var(--rt-ink);
+.journey-stats:focus-visible {
+  outline: 3px solid #f4cb68;
+  outline-offset: 3px;
 }
 
-.journey-stats .topbar-rank svg {
-  color: var(--rt-blue-700);
+.journey-stats .topbar-metric {
+  gap: 5px;
+  padding: 0 3px;
+  color: #fff8e7;
+  font-size: 11px;
+  font-weight: 900;
+  line-height: 1;
 }
 
-.journey-stats .topbar-xp svg {
-  color: var(--rt-gold-600);
+.journey-stats .topbar-value {
+  color: #fff9e9;
+  font-size: 11.5px;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  text-shadow: 0 1px 0 rgb(0 0 0 / 32%);
 }
 
-.journey-stats .topbar-streak svg {
-  color: var(--rt-red-500);
+.journey-stats .topbar-unit {
+  color: #cdbf9b;
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
 
-.topbar-language,
-.topbar-language-code {
-  color: var(--rt-blue-700);
+.topbar-icon {
+  display: inline-flex;
+  width: 21px;
+  height: 21px;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 21px;
+  border-radius: 999px;
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 62%),
+    0 1px 2px rgb(0 0 0 / 28%);
 }
 
-.topbar-unit {
-  color: var(--rt-ink-soft);
+.topbar-icon svg {
+  width: 13px;
+  height: 13px;
+}
+
+.topbar-icon-xp {
+  color: #4a3000;
+  background: linear-gradient(145deg, #ffebae 0%, #e5b449 58%, #c98a1b 100%);
+}
+
+.topbar-icon-streak {
+  color: #fff9f2;
+  background: linear-gradient(145deg, #ffb17b 0%, #e16b35 58%, #c7451d 100%);
+}
+
+.topbar-icon-rank {
+  color: #082d49;
+  background: linear-gradient(145deg, #c9e6ff 0%, #88bde3 58%, #5a93bd 100%);
+}
+
+.journey-stats .topbar-rank {
+  gap: 4px;
+  color: #e5f2ea;
+  font-size: 9.5px;
+  font-weight: 800;
+}
+
+.topbar-language {
+  gap: 0;
+  padding: 0 2px;
+  color: #fff8e7;
+}
+
+.topbar-language-badge {
+  display: grid;
+  width: 24px;
+  height: 24px;
+  place-items: center;
+  border-radius: 8px;
+  color: #0a493b;
+  background: linear-gradient(145deg, #fff9e7 0%, #f2db9c 58%, #ddbd6c 100%);
+  box-shadow:
+    inset 0 0 0 1px rgb(255 255 255 / 58%),
+    0 1px 2px rgb(0 0 0 / 32%);
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+}
+
+.topbar-language-name {
+  margin-inline-start: 5px;
+  color: #dcebe2;
+  font-size: 9px;
+  font-weight: 800;
 }
 
 .topbar-divider {
-  background: var(--rt-cream-300);
+  width: 1px;
+  height: 20px;
+  flex: 0 0 1px;
+  margin: 0 4px;
+  background: linear-gradient(180deg, transparent, rgb(247 213 132 / 42%) 20%, rgb(247 213 132 / 42%) 80%, transparent);
 }
 
 button.journey-frame-toggle {
@@ -2978,5 +3092,64 @@ button.journey-frame-toggle svg {
 
   .path-hero-intro-zone .path-hero-intro {
     gap: 12px;
+  }
+}
+
+/* Compact status rail on phones; keep the Gold CTA and AI entry visible. */
+@media (max-width: 640px) {
+  .journey-topbar .journey-stats {
+    min-height: 36px;
+    padding: 0 4px;
+    border-radius: 12px;
+  }
+
+  .journey-topbar .journey-stats .topbar-metric {
+    gap: 3px;
+    padding: 0 1px;
+    font-size: 10px;
+  }
+
+  .journey-topbar .journey-stats .topbar-value {
+    font-size: 10.5px;
+  }
+
+  .journey-topbar .topbar-icon {
+    width: 19px;
+    height: 19px;
+    flex-basis: 19px;
+  }
+
+  .journey-topbar .topbar-icon svg {
+    width: 12px;
+    height: 12px;
+  }
+
+  .journey-topbar .topbar-divider {
+    height: 16px;
+    margin: 0 3px;
+  }
+
+  .journey-topbar .topbar-language {
+    padding: 0 1px;
+  }
+
+  .journey-topbar .topbar-language-badge {
+    width: 22px;
+    height: 22px;
+    border-radius: 7px;
+    font-size: 7.5px;
+  }
+}
+
+@media (max-width: 370px) {
+  .journey-topbar .journey-stats .topbar-language,
+  .journey-topbar .journey-stats .topbar-language + .topbar-divider {
+    display: none;
+  }
+
+  .journey-topbar .topbar-icon {
+    width: 18px;
+    height: 18px;
+    flex-basis: 18px;
   }
 }

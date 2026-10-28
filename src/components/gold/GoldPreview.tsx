@@ -35,7 +35,7 @@ const GoldAppPreview = React.lazy(() =>
 
 const DEMO_CODE = 'LINGO-GOLD-DEMO-2026';
 const GOLD_APK_URL =
-  'https://github.com/hmachikh16-boop/englishtok/releases/download/gold-v1.0.0/lin-go-gold-1.0.0.apk';
+  'https://github.com/hmachikh16-boop/englishtok/releases/download/gold-v1.0.1/lin-go-gold-1.0.1.apk';
 
 const stages = [
   {
@@ -101,7 +101,7 @@ const features = [
   {
     icon: Award,
     title: 'الشهادة — قريبًا',
-    body: 'شهادة الإتمام والتحقق الرقمي ضمن التفعيل الرسمي، وليست في نسخة 1.0.0 التجريبية.',
+    body: 'شهادة الإتمام والتحقق الرقمي ضمن التفعيل الرسمي، وليست في نسخة 1.0.1 التجريبية.',
   },
 ] as const;
 
@@ -328,7 +328,7 @@ const CodePanel: React.FC<{
     )}
     <a className="gold-preview-toggle" href={GOLD_APK_URL} rel="noopener">
       <Download className="h-3.5 w-3.5" />
-      تحميل Gold 1.0.0 التجريبي
+      تحميل Gold 1.0.1 التجريبي
       <ChevronLeft className="h-3 w-3" />
     </a>
     <button type="button" className="gold-preview-toggle" onClick={onPreview}>
@@ -456,7 +456,7 @@ export const GoldPreview: React.FC = () => {
               <div className="gold-hero-actions">
                 <a className="gold-btn gold-btn-gold" href={GOLD_APK_URL} rel="noopener">
                   <Download className="h-4 w-4" />
-                  حمّل Gold 1.0.0
+                  حمّل Gold 1.0.1
                 </a>
                 <button type="button" className="gold-btn gold-btn-ghost" onClick={handlePreview}>
                   <Play className="h-4 w-4 fill-current" />
@@ -689,7 +689,7 @@ export const GoldPreview: React.FC = () => {
               <div className="gold-hero-actions">
                 <a className="gold-btn gold-btn-primary" href={GOLD_APK_URL} rel="noopener">
                   <Download className="h-4 w-4" />
-                  حمّل Gold 1.0.0
+                  حمّل Gold 1.0.1
                 </a>
                 <button type="button" className="gold-btn gold-btn-ghost" onClick={scrollToActivate}>
                   <KeyRound className="h-4 w-4" />

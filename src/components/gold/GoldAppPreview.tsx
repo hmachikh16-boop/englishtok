@@ -223,6 +223,7 @@ export const GoldAppPreview: React.FC<{ compact?: boolean }> = ({ compact = fals
           onUpdateProfile={updateProfile}
           onSelectLesson={selectLesson}
           isPhoneFrameView
+          goldEdition
         />
       );
     }
@@ -303,6 +304,7 @@ export const GoldAppPreview: React.FC<{ compact?: boolean }> = ({ compact = fals
               onToggleFrameView={noop}
               onGoToProgress={() => changeTab('progress')}
               onOpenAiTutor={() => changeTab('chat')}
+              goldEdition
             />
           )}
           <main className="gold-app-main">
