@@ -60,9 +60,16 @@ const rateLimitKey = (request: ProgressRequest, method: 'GET' | 'POST') => {
 };
 
 const redisCommand = async (url: string, token: string, command: string, ...args: string[]) => {
-  const path = [command, ...args].map(encodeURIComponent).join('/');
-  const response = await fetch(`${url}/${path}`, {
-    headers: { Authorization: `Bearer ${token}` },
+  // Send commands in the request body instead of the URL path. Progress
+  // backups can be tens of kilobytes, and URL-encoding them into a path is
+  // both fragile and large enough for intermediaries to truncate.
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify([command, ...args]),
     cache: 'no-store',
   });
   if (!response.ok) throw new Error(`Redis REST request failed (${response.status}).`);
