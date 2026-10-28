@@ -73,7 +73,20 @@ const redisCommand = async (url: string, token: string, command: string, ...args
     cache: 'no-store',
   });
   if (!response.ok) throw new Error(`Redis REST request failed (${response.status}).`);
-  const payload = await response.json() as { result?: unknown; error?: string };
+  const responseText = await response.text();
+  let payload: { result?: unknown; error?: string };
+  try {
+    payload = JSON.parse(responseText) as { result?: unknown; error?: string };
+  } catch {
+    console.error('[progress-api] Redis returned a non-JSON response:', {
+      command,
+      status: response.status,
+      contentType: response.headers.get('content-type'),
+      length: responseText.length,
+      preview: responseText.slice(0, 120),
+    });
+    throw new Error('Redis REST returned an invalid response.');
+  }
   if (payload.error) throw new Error('Redis REST returned an error.');
   return payload.result;
 };
