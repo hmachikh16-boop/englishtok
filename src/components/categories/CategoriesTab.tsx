@@ -17,6 +17,8 @@ import {
   StageMotivationalCards,
 } from '../learning/MotivationalCards';
 import { PrimaryAvatar } from '../video/PrimaryCharacterArt';
+import { GoldJourneyPanel } from '../gold/GoldJourneyPanel';
+import { GoldErrorBoundary } from '../gold/GoldErrorBoundary';
 import { EDUCATIONAL_PHASES, findSchoolYearRoute, SCHOOL_YEAR_ALIGNMENT_NOTE } from '../../data/educationalStructure';
 
 const ROUTE_SHIFTS = [0, 30, 44, 30, 0, -30, -44, -30, 0, 30];
@@ -453,7 +455,7 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
             type="button"
             onClick={() => void openGoldPage()}
             className="gold-path-entry relative z-[1] mt-3 flex w-full items-center gap-3 rounded-2xl border border-amber-300/70 bg-gradient-to-l from-amber-300 via-yellow-200 to-amber-100 px-3 py-2.5 text-right text-emerald-950 shadow-lg shadow-black/15 transition-all hover:brightness-105 active:scale-[.99]"
-            aria-label="اكتشف Lin Go Gold — النسخة المميزة بأربعة مشاريع تطبيقية"
+            aria-label="اكتشف Lin Go Gold — النسخة المميزة بتدريب Gold+ وقلوب لا نهائية"
           >
             <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-emerald-950 text-amber-300 shadow-inner">
               <Crown className="h-5 w-5" strokeWidth={2.5} aria-hidden="true" />
@@ -461,7 +463,7 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
             <span className="min-w-0 flex-1">
               <span className="block text-xs font-black">اكتشف Lin Go Gold</span>
               <span className="mt-0.5 block text-[10px] font-bold text-emerald-900/70">
-                نفس التطبيق والمسار + 4 مشاريع تطبيقية
+                نفس التطبيق + قلوب لا نهائية وتدريب Gold+ أغنى
               </span>
             </span>
             <span className="flex shrink-0 items-center gap-1 text-[10px] font-black">
@@ -475,12 +477,23 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
           <div className="relative z-[1] mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 rounded-2xl border border-amber-300/35 bg-amber-300/10 px-3 py-2 text-[10px] font-bold text-amber-100">
             <span className="inline-flex items-center gap-1 text-[9px] font-black uppercase tracking-[0.16em] text-amber-200">
               <Crown className="h-3 w-3" strokeWidth={2.8} aria-hidden="true" />
-              Gold Edition
+              Gold+ Edition
             </span>
-            <span className="text-amber-100/70">4 مشاريع تطبيقية مضافة إلى مسارك — بدون واجهة جديدة</span>
+            <span className="text-amber-100/70">قلوب لا نهائية · +25% XP · تحدٍّ بصري · نطق موسّع · دوري ومكافآت</span>
           </div>
         )}
         </div>
+        {goldEdition && (
+          <GoldErrorBoundary>
+            <GoldJourneyPanel
+              userProfile={userProfile}
+              lessons={lessons}
+              learningPath={path}
+              onSelectLesson={handlePathLessonClick}
+              onUpdateProfile={onUpdateProfile}
+            />
+          </GoldErrorBoundary>
+        )}
         {!isSchoolYearCourse && path.levels.length > 0 && (
           <MotivationalGoalSpotlight
             progressByStage={cardProgressByStage}

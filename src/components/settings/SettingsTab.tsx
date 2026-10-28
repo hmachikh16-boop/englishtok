@@ -61,6 +61,8 @@ interface SettingsTabProps {
     options?: { createPreImportSnapshot?: boolean; sourceCreatedAt?: string },
   ) => void;
   onRefreshContent: () => Promise<boolean>;
+  /** The website Gold preview opts into the Gold settings presentation. */
+  goldEdition?: boolean;
 }
 
 export const SettingsTab: React.FC<SettingsTabProps> = ({
@@ -72,6 +74,7 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
   onResetProgress,
   onRestoreProgress,
   onRefreshContent,
+  goldEdition = IS_GOLD_EDITION,
 }) => {
   const [copiedCmd, setCopiedCmd] = useState<string | null>(null);
   const [showResetConfirm, setShowResetConfirm] = useState(false);
@@ -292,6 +295,10 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
 
   const handleOpenUpdateInBrowser = async () => {
     if (!availableUpdate) return;
+    if (goldEdition) {
+      setUpdateMessage('تحديث Gold+ يتم داخل التطبيق نفسه عبر مدير التنزيلات، دون فتح المتصفح.');
+      return;
+    }
     setIsOpeningUpdate(true);
     setUpdateMessage(null);
     setUpdateDownloadMode(null);
@@ -381,7 +388,7 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
   return (
     <div className="journey-secondary w-full h-full max-w-4xl mx-auto overflow-y-auto no-scrollbar p-4 sm:p-6 text-slate-100 flex flex-col gap-5">
       {/* Tab Header Sub-nav */}
-      {!IS_STORE_BUILD && !IS_GOLD_EDITION && (
+      {!IS_STORE_BUILD && !goldEdition && (
       <div className="flex gap-1.5 p-1 bg-slate-900 rounded-2xl border border-slate-800">
         <button
           onClick={() => {
@@ -431,17 +438,19 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
       {activeSubTab === 'app' && (
         <div className="flex flex-col gap-4">
           <ProfileCard profile={userProfile} onUpdateProfile={onUpdateProfile} />
-          {!IS_STORE_BUILD && !IS_GOLD_EDITION && (
+          {!IS_STORE_BUILD && (
           <section
             className="bg-gradient-to-br from-sky-950 via-slate-900 to-emerald-950/40 border border-sky-500/30 rounded-2xl p-4 flex flex-col gap-3 shadow-xl"
             aria-labelledby="updates-title"
           >
             <h3 id="updates-title" className="text-sm font-bold text-white flex items-center gap-2">
               <RefreshCw className="h-4 w-4 text-sky-400" />
-              تحديث التطبيق والدروس
+              {goldEdition ? 'تحديث Gold داخل التطبيق' : 'تحديث التطبيق والدروس'}
             </h3>
             <p className="text-[11px] leading-6 text-slate-300">
-              يجلب أحدث الدروس من المستودع ويتحقق من وجود إصدار جديد للتطبيق.
+              {goldEdition
+                ? 'يتحقق Gold من إصدار Gold المنشور، ثم ينزّل الحزمة داخل التطبيق عبر مدير التنزيلات. لا يُفتح المتصفح، والتثبيت يبقى بيدك من إشعار النظام.'
+                : 'يجلب أحدث الدروس من المستودع ويتحقق من وجود إصدار جديد للتطبيق.'}
               {appVersion && (
                 <span className="text-slate-400">
                   {' '}الإصدار الحالي: <span dir="ltr" className="font-mono">{appVersion}</span>.
@@ -499,15 +508,17 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
                             ? 'جارٍ بدء التنزيل…'
                             : `تنزيل تحديث ${availableUpdate.version} داخل التطبيق`}
                         </button>
-                        <button
-                          type="button"
-                          onClick={handleOpenUpdateInBrowser}
-                          disabled={isOpeningUpdate}
-                          className="flex min-h-10 items-center justify-center gap-2 rounded-xl border border-slate-600 bg-slate-900/70 px-4 py-2 font-bold text-slate-100 transition-colors hover:border-sky-400 hover:text-sky-200 disabled:cursor-wait disabled:opacity-70"
-                        >
-                          <Download className="h-4 w-4" />
-                          فتح في المتصفح
-                        </button>
+                        {!goldEdition && (
+                          <button
+                            type="button"
+                            onClick={handleOpenUpdateInBrowser}
+                            disabled={isOpeningUpdate}
+                            className="flex min-h-10 items-center justify-center gap-2 rounded-xl border border-slate-600 bg-slate-900/70 px-4 py-2 font-bold text-slate-100 transition-colors hover:border-sky-400 hover:text-sky-200 disabled:cursor-wait disabled:opacity-70"
+                          >
+                            <Download className="h-4 w-4" />
+                            فتح في المتصفح
+                          </button>
+                        )}
                         {updateDownloadMode === 'app' && (
                           <button
                             type="button"

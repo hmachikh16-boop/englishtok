@@ -93,12 +93,12 @@ export default function App() {
 
   useEffect(() => {
     if (!IS_GOLD_EDITION) return;
-    document.title = 'Lin Go Gold — نفس التطبيق، مع 4 مشاريع';
+    document.title = 'Lin Go Gold — نفس التطبيق، مع تجربة Gold+';
     document.documentElement.dataset.linGoEdition = 'gold';
   }, []);
 
   useEffect(() => {
-    if (IS_STORE_BUILD || IS_GOLD_EDITION || Capacitor.getPlatform() !== 'android') return;
+    if (IS_STORE_BUILD || Capacitor.getPlatform() !== 'android') return;
 
     let isMounted = true;
     const runUpdateCheck = () => {
@@ -412,7 +412,7 @@ export default function App() {
           جارٍ تحميل دروس {userProfile.targetLanguage === 'fr' ? 'الفرنسية' : 'الإنجليزية'}…
         </div>
       )}
-      {!IS_STORE_BUILD && !IS_GOLD_EDITION && availableAppUpdate && (
+      {!IS_STORE_BUILD && availableAppUpdate && (
         <div
           role="status"
           className="fixed inset-x-4 z-[100] mx-auto flex max-w-md items-start gap-3 rounded-2xl border border-emerald-400/40 bg-slate-900 px-4 py-3 text-sm text-emerald-100 shadow-2xl"
@@ -420,7 +420,9 @@ export default function App() {
           dir="rtl"
         >
           <div className="min-w-0 flex-1">
-            <p className="font-bold">يتوفر تحديث جديد لـ Lin Go</p>
+            <p className="font-bold">
+              {IS_GOLD_EDITION ? 'يتوفر تحديث جديد لـ Lin Go Gold' : 'يتوفر تحديث جديد لـ Lin Go'}
+            </p>
             <p className="mt-1 text-xs text-slate-300">
               الإصدار {availableAppUpdate.version}
               {availableAppUpdate.notes ? ` — ${availableAppUpdate.notes}` : ''}
@@ -442,16 +444,18 @@ export default function App() {
                 disabled={isOpeningAppUpdate}
                 className="rounded-lg bg-emerald-400 px-3 py-2 text-xs font-bold text-slate-950 hover:bg-emerald-300 disabled:cursor-wait disabled:opacity-70"
               >
-                {isOpeningAppUpdate ? 'جارٍ بدء التنزيل…' : 'تنزيل داخل التطبيق'}
+                {isOpeningAppUpdate ? 'جارٍ بدء التنزيل…' : 'تحديث داخل التطبيق'}
               </button>
-              <button
-                type="button"
-                onClick={handleOpenAppUpdateInBrowser}
-                disabled={isOpeningAppUpdate}
-                className="rounded-lg border border-slate-600 px-3 py-2 text-xs font-bold text-slate-100 hover:border-emerald-300 hover:text-emerald-200 disabled:cursor-wait disabled:opacity-70"
-              >
-                فتح في المتصفح
-              </button>
+              {!IS_GOLD_EDITION && (
+                <button
+                  type="button"
+                  onClick={handleOpenAppUpdateInBrowser}
+                  disabled={isOpeningAppUpdate}
+                  className="rounded-lg border border-slate-600 px-3 py-2 text-xs font-bold text-slate-100 hover:border-emerald-300 hover:text-emerald-200 disabled:cursor-wait disabled:opacity-70"
+                >
+                  فتح في المتصفح
+                </button>
+              )}
               {updateDownloadMode === 'app' && (
                 <button
                   type="button"
@@ -463,9 +467,9 @@ export default function App() {
               )}
             </div>
             <p className="mt-2 text-[10px] text-slate-400">
-              التنزيل داخل التطبيق يستخدم مدير التنزيلات في Android، فيظهر التقدم في الإشعارات
-              ويُحفظ الملف في مجلد التنزيلات. بعد اكتماله اضغط على الملف لتثبيت التحديث. لا يثبّت
-              التطبيق الحزم تلقائيًا.
+              {IS_GOLD_EDITION
+                ? 'التحديث يُنزّل داخل تطبيق Gold عبر مدير التنزيلات، ثم تثبّته من إشعار النظام بعد اكتمال التنزيل. لن يُفتح المتصفح.'
+                : 'التنزيل داخل التطبيق يستخدم مدير التنزيلات في Android، فيظهر التقدم في الإشعارات ويُحفظ الملف في مجلد التنزيلات. بعد اكتماله اضغط على الملف لتثبيت التحديث. لا يثبّت التطبيق الحزم تلقائيًا.'}
             </p>
           </div>
           <button

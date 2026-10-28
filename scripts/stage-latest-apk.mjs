@@ -34,11 +34,12 @@ const repository = process.env.GITHUB_REPOSITORY || 'hmachikh16-boop/englishtok'
 const url = `https://github.com/${repository}/releases/latest/download/english-tok.apk`;
 const manifestUrl = `https://github.com/${repository}/releases/latest/download/update-manifest.json`;
 const target = resolve(process.cwd(), 'public', 'english-tok.apk');
-const goldVersion = '1.0.1';
+const goldVersion = '1.1.0';
 const goldTarget = resolve(process.cwd(), 'public', `lin-go-gold-${goldVersion}.apk`);
 const goldUrl = `https://github.com/${repository}/releases/download/gold-v${goldVersion}/lin-go-gold-${goldVersion}.apk`;
 const latestDir = resolve(process.cwd(), 'public', 'download');
 const latestFile = resolve(latestDir, 'latest.json');
+const goldLatestFile = resolve(latestDir, 'gold-latest.json');
 
 const sha256File = (file) =>
   new Promise((resolveHash, rejectHash) => {
@@ -95,27 +96,47 @@ try {
   console.log(
     `stage-latest-apk: wrote ${target} (${size} bytes) and ${latestFile} (${version}).`,
   );
-
-  // Gold is a prerelease, so it has an explicit tag instead of "latest". Keep
-  // it on the same first-party origin as Free: the GitHub asset host can pause
-  // mobile downloads at 100% before the file becomes visible in Downloads.
-  try {
-    const goldResponse = await fetch(goldUrl, { redirect: 'follow' });
-    if (!goldResponse.ok || !goldResponse.body) {
-      throw new Error(`Gold APK HTTP ${goldResponse.status}`);
-    }
-    if (existsSync(goldTarget)) unlinkSync(goldTarget);
-    await pipeline(Readable.fromWeb(goldResponse.body), createWriteStream(goldTarget));
-    console.log(
-      `stage-latest-apk: wrote ${goldTarget} (${statSync(goldTarget).size} bytes).`,
-    );
-  } catch (error) {
-    console.warn(
-      `stage-latest-apk: Gold APK was not staged (${error instanceof Error ? error.message : String(error)}).`,
-    );
-  }
 } catch (error) {
   console.warn(
-    `stage-latest-apk: skipped (${error instanceof Error ? error.message : String(error)}).`,
+    `stage-latest-apk: Free APK was not staged (${error instanceof Error ? error.message : String(error)}).`,
+  );
+}
+
+// Gold is a prerelease, so it has an explicit tag instead of "latest". Keep it
+// on the same first-party origin as Free: the GitHub asset host can pause
+// mobile downloads at 100% before the file becomes visible in Downloads.
+//
+// This runs independently of Free staging: a temporary problem with the Free
+// release must never take down the Gold update manifest.
+try {
+  const goldResponse = await fetch(goldUrl, { redirect: 'follow' });
+  if (!goldResponse.ok || !goldResponse.body) {
+    throw new Error(`Gold APK HTTP ${goldResponse.status}`);
+  }
+  mkdirSync(resolve(process.cwd(), 'public'), { recursive: true });
+  if (existsSync(goldTarget)) unlinkSync(goldTarget);
+  await pipeline(Readable.fromWeb(goldResponse.body), createWriteStream(goldTarget));
+  const goldSha256 = await sha256File(goldTarget);
+  const goldSize = statSync(goldTarget).size;
+  const goldLatest = {
+    version: goldVersion,
+    packageId: 'com.englishtok.gold',
+    apkUrl: `/lin-go-gold-${goldVersion}.apk`,
+    sha256: goldSha256,
+    size: goldSize,
+    minimumAndroidSdk: 24,
+    notes:
+      'تحديث Gold+ 1.1.0: لوحة رحلة Gold+، تحدٍّ بصري، نطق موسّع، قلوب لا نهائية، +25% XP، دوري، صندوق يومي، واحتفال إنجاز — مع تحديث داخل التطبيق دون متصفح.',
+    releaseUrl: `https://github.com/${repository}/releases/tag/gold-v${goldVersion}`,
+    publishedAt: new Date().toISOString(),
+  };
+  mkdirSync(latestDir, { recursive: true });
+  writeFileSync(goldLatestFile, `${JSON.stringify(goldLatest, null, 2)}\n`, 'utf8');
+  console.log(
+    `stage-latest-apk: wrote ${goldTarget} (${goldSize} bytes) and ${goldLatestFile} (${goldVersion}).`,
+  );
+} catch (error) {
+  console.warn(
+    `stage-latest-apk: Gold APK was not staged (${error instanceof Error ? error.message : String(error)}).`,
   );
 }

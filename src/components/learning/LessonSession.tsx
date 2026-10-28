@@ -5,16 +5,21 @@ import {
   BookOpen,
   Check,
   CheckCircle2,
+  Crown,
+  Headphones,
   Heart,
   HeartOff,
   Lightbulb,
   Mic,
   RotateCcw,
+  Sparkles,
   Star,
   Volume2,
   X,
 } from 'lucide-react';
 import type { Character, DialogueLine, Lesson, QuizQuestion, UserProfile } from '../../types';
+import { IS_GOLD_EDITION } from '../../config/edition';
+import { GoldLessonCelebration } from '../gold/GoldLessonCelebration';
 import { getLevelExamPassingScore } from '../../services/learningPath';
 import { speechService } from '../../services/speechService';
 import {
@@ -26,7 +31,7 @@ import {
 import { PrimaryCharacter } from '../video/PrimaryCharacterArt';
 import { getOptionEmoji, isSentenceOption } from './lessonVisuals';
 
-type SessionPhase = 'welcome' | 'story' | 'speak' | 'quiz' | 'result' | 'failed';
+type SessionPhase = 'welcome' | 'story' | 'speak' | 'picture' | 'quiz' | 'result' | 'failed';
 type SpeakState = 'idle' | 'listening' | 'correct' | 'wrong' | 'unsupported' | 'error' | 'skipped';
 
 interface LessonSessionProps {
@@ -34,9 +39,75 @@ interface LessonSessionProps {
   userProfile: UserProfile;
   onUpdateProfile: (updated: Partial<UserProfile>) => void;
   onBackToPath: () => void;
+  /** The Gold build and the interactive website preview opt into the Gold+ lesson layer. */
+  goldEdition?: boolean;
 }
 
 const MAX_HEARTS = 5;
+const GOLD_PICTURE_BONUS_XP = 10;
+const GOLD_XP_MULTIPLIER = 1.25;
+
+const GOLD_PICTURE_FALLBACK = [
+  { id: 'gold-fallback-apple', word: 'apple', translationAr: 'تفاحة' },
+  { id: 'gold-fallback-cat', word: 'cat', translationAr: 'قطة' },
+  { id: 'gold-fallback-book', word: 'book', translationAr: 'كتاب' },
+  { id: 'gold-fallback-water', word: 'water', translationAr: 'ماء' },
+  { id: 'gold-fallback-house', word: 'house', translationAr: 'منزل' },
+  { id: 'gold-fallback-train', word: 'train', translationAr: 'قطار' },
+] as const;
+
+interface GoldPictureOption {
+  label: string;
+  emoji: string;
+  word: string;
+}
+
+interface GoldPictureChallenge {
+  prompt: string;
+  promptAr: string;
+  correctLabel: string;
+  correctWordId: string;
+  options: GoldPictureOption[];
+}
+
+const buildGoldPictureChallenge = (lesson: Lesson): GoldPictureChallenge | null => {
+  const source = lesson.vocabulary.filter((word) => word.word.trim() && word.translationAr.trim());
+  if (!source.length) return null;
+
+  const seenTranslations = new Set<string>();
+  const pool = [...source, ...GOLD_PICTURE_FALLBACK].filter((word) => {
+    const key = normalizeAnswer(word.translationAr);
+    if (!key || seenTranslations.has(key)) return false;
+    seenTranslations.add(key);
+    return true;
+  });
+  if (pool.length < 3) return null;
+
+  const correct = source[0];
+  const distractors = pool
+    .filter((word) => normalizeAnswer(word.translationAr) !== normalizeAnswer(correct.translationAr))
+    .slice(0, 3);
+  const options = [correct, ...distractors].map((word) => {
+    const translationEmoji = getOptionEmoji(word.translationAr);
+    return {
+      label: word.translationAr,
+      // French vocabulary is mapped through its Arabic meaning, while English
+      // and the fallback pool still get their own visual.
+      emoji: translationEmoji === '📘' ? getOptionEmoji(word.word) : translationEmoji,
+      word: word.word,
+    };
+  });
+  const offset = lesson.id.length % options.length;
+  const orderedOptions = [...options.slice(offset), ...options.slice(0, offset)];
+
+  return {
+    prompt: correct.word,
+    promptAr: correct.translationAr,
+    correctLabel: correct.translationAr,
+    correctWordId: correct.id,
+    options: orderedOptions,
+  };
+};
 
 const STAGE_ACCENTS: Record<number, { main: string; soft: string; ink: string }> = {
   1: { main: '#ce82ff', soft: '#f5e9ff', ink: '#7d2fc4' },
@@ -100,7 +171,13 @@ const CharacterFigure: React.FC<{
   );
 };
 
-export const LessonSession: React.FC<LessonSessionProps> = ({ lesson, userProfile, onUpdateProfile, onBackToPath }) => {
+export const LessonSession: React.FC<LessonSessionProps> = ({
+  lesson,
+  userProfile,
+  onUpdateProfile,
+  onBackToPath,
+  goldEdition = IS_GOLD_EDITION,
+}) => {
   const [phase, setPhase] = useState<SessionPhase>('welcome');
   const [dialogueIndex, setDialogueIndex] = useState(0);
   const [questionIndex, setQuestionIndex] = useState(0);
@@ -113,13 +190,19 @@ export const LessonSession: React.FC<LessonSessionProps> = ({ lesson, userProfil
   const [lives, setLives] = useState(MAX_HEARTS);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [speakState, setSpeakState] = useState<SpeakState>('idle');
+  const [speakTargetIndex, setSpeakTargetIndex] = useState(0);
   const [speakErrorMessage, setSpeakErrorMessage] = useState('');
   const [isListening, setIsListening] = useState(false);
   const [transcript, setTranscript] = useState('');
+  const [goldPictureSelection, setGoldPictureSelection] = useState<string | null>(null);
+  const [goldPictureChecked, setGoldPictureChecked] = useState(false);
+  const [goldPictureCorrect, setGoldPictureCorrect] = useState(false);
+  const [goldPictureBonusXp, setGoldPictureBonusXp] = useState(0);
   const [finalScore, setFinalScore] = useState(0);
   const [finalCorrect, setFinalCorrect] = useState(0);
 
   const correctCountRef = useRef(0);
+  const goldPictureBonusRef = useRef(0);
   const recognitionRef = useRef<SpeechRecognitionSession | null>(null);
 
   const questions = lesson.quiz ?? [];
@@ -127,8 +210,24 @@ export const LessonSession: React.FC<LessonSessionProps> = ({ lesson, userProfil
   const line = lesson.dialogue[dialogueIndex];
   const language = userProfile.settings.voiceLanguage || 'en';
   const accent = STAGE_ACCENTS[lesson.curriculumStage ?? 1] ?? STAGE_ACCENTS[1];
-  const speakTarget = lesson.vocabulary[0]?.exampleSentence ?? lesson.dialogue[0]?.textEn ?? lesson.title;
-  const speakTargetAr = lesson.vocabulary[0]?.exampleSentenceAr ?? '';
+  const goldPicture = useMemo(
+    () => (goldEdition ? buildGoldPictureChallenge(lesson) : null),
+    [goldEdition, lesson],
+  );
+  const speakTargets = useMemo(() => {
+    const entries = lesson.vocabulary
+      .slice(0, goldEdition ? 2 : 1)
+      .map((word) => ({ text: word.exampleSentence, ar: word.exampleSentenceAr }))
+      .filter((entry) => entry.text.trim());
+    if (entries.length) return entries;
+    return [{
+      text: lesson.dialogue[0]?.textEn ?? lesson.title,
+      ar: lesson.dialogue[0]?.textAr ?? '',
+    }];
+  }, [goldEdition, lesson]);
+  const activeSpeakTarget = speakTargets[Math.min(speakTargetIndex, speakTargets.length - 1)] ?? speakTargets[0];
+  const speakTarget = activeSpeakTarget?.text ?? lesson.title;
+  const speakTargetAr = activeSpeakTarget?.ar ?? '';
 
   const playEffect = (effect: 'success' | 'error') => {
     if (!userProfile.settings.soundEffects) return;
@@ -144,16 +243,18 @@ export const LessonSession: React.FC<LessonSessionProps> = ({ lesson, userProfil
   const selectedAnswer = question?.type === 'arrange_sentence' && !answerIsSentence ? arrangedAnswer : selectedOption ?? '';
   const isCorrectAnswer = isAnswerChecked && normalizeAnswer(selectedAnswer) === normalizeAnswer(question?.correctAnswer ?? '');
 
-  const totalSteps = lesson.dialogue.length + 1 + questions.length;
+  const totalSteps = lesson.dialogue.length + 1 + (goldPicture ? 1 : 0) + questions.length;
   const completedSteps = phase === 'welcome'
     ? 0
     : phase === 'story'
       ? dialogueIndex
       : phase === 'speak'
         ? lesson.dialogue.length
-        : phase === 'quiz'
-          ? lesson.dialogue.length + 1 + questionIndex
-          : totalSteps;
+        : phase === 'picture'
+          ? lesson.dialogue.length + 1
+          : phase === 'quiz'
+            ? lesson.dialogue.length + (goldPicture ? 2 : 1) + questionIndex
+            : totalSteps;
   const progressPercent = phase === 'result' || phase === 'failed'
     ? 100
     : Math.max(0, Math.min(100, Math.round((completedSteps / Math.max(1, totalSteps)) * 100)));
@@ -185,13 +286,18 @@ export const LessonSession: React.FC<LessonSessionProps> = ({ lesson, userProfil
     }
   }, [phase, dialogueIndex, lesson, language, userProfile.settings.playbackSpeed]);
 
-  const playText = (text: string, source: string, character?: Character) => {
+  const playText = (
+    text: string,
+    source: string,
+    character?: Character,
+    rateOverride?: number,
+  ) => {
     speechService.stopSpeaking();
     setIsSpeaking(true);
     speechService.speakText({
       source,
       text,
-      rate: userProfile.settings.playbackSpeed || 1,
+      rate: rateOverride ?? (userProfile.settings.playbackSpeed || 1),
       pitch: character?.voicePitch || 1,
       gender: character?.voiceGender ?? 'female',
       accent: language,
@@ -210,7 +316,16 @@ export const LessonSession: React.FC<LessonSessionProps> = ({ lesson, userProfil
   };
 
   const speakPracticeSentence = () => {
-    playText(speakTarget, `lesson-speak:${lesson.id}`, lesson.characterA);
+    playText(speakTarget, `lesson-speak:${lesson.id}:${speakTargetIndex}`, lesson.characterA);
+  };
+
+  const speakPracticeSentenceSlowly = () => {
+    playText(
+      speakTarget,
+      `lesson-speak-slow:${lesson.id}:${speakTargetIndex}`,
+      lesson.characterA,
+      Math.max(0.55, (userProfile.settings.playbackSpeed || 1) * 0.72),
+    );
   };
 
   const moveDialogue = (index: number) => {
@@ -225,7 +340,9 @@ export const LessonSession: React.FC<LessonSessionProps> = ({ lesson, userProfil
     const previousBest = userProfile.quizScores[lesson.id] ?? 0;
     const isNewBest = score > previousBest;
     const firstCompletion = !userProfile.completedLessonIds.includes(lesson.id);
-    const reward = (firstCompletion ? 20 : 0) + (isNewBest ? finalCorrectCount * 15 + (passed ? 10 : 0) : 0);
+    const baseReward = (firstCompletion ? 20 : 0) + (isNewBest ? finalCorrectCount * 15 + (passed ? 10 : 0) : 0);
+    const bonusReward = goldEdition ? goldPictureBonusRef.current : 0;
+    const reward = Math.round(baseReward * (goldEdition ? GOLD_XP_MULTIPLIER : 1)) + bonusReward;
     const today = new Date().toISOString().slice(0, 10);
     const daily = userProfile.dailyProgress.date === today
       ? userProfile.dailyProgress
@@ -244,6 +361,7 @@ export const LessonSession: React.FC<LessonSessionProps> = ({ lesson, userProfil
       reviewWordIds: [...new Set([...userProfile.reviewWordIds, ...missedWordIds])],
       xp: userProfile.xp + reward,
     });
+    goldPictureBonusRef.current = 0;
     setPhase('result');
     playEffect('success');
   };
@@ -259,7 +377,7 @@ export const LessonSession: React.FC<LessonSessionProps> = ({ lesson, userProfil
       setCorrectCount(correctCountRef.current);
       playEffect('success');
     } else {
-      setLives((current) => Math.max(0, current - 1));
+      if (!goldEdition) setLives((current) => Math.max(0, current - 1));
       setMissedWordIds((ids) => [...new Set([...ids, ...getReviewIds(question, lesson)])]);
       playEffect('error');
     }
@@ -267,7 +385,7 @@ export const LessonSession: React.FC<LessonSessionProps> = ({ lesson, userProfil
 
   const moveToNextQuestion = () => {
     if (!question) return;
-    if (!isCorrectAnswer && lives === 0) {
+    if (!goldEdition && !isCorrectAnswer && lives === 0) {
       setPhase('failed');
       return;
     }
@@ -293,6 +411,55 @@ export const LessonSession: React.FC<LessonSessionProps> = ({ lesson, userProfil
     setLives(MAX_HEARTS);
     if (questions.length) setPhase('quiz');
     else completeSession(0);
+  };
+
+  const resetSpeakAttempt = () => {
+    recognitionRef.current?.stop();
+    recognitionRef.current = null;
+    setTranscript('');
+    setSpeakErrorMessage('');
+    setSpeakState('idle');
+    setIsListening(false);
+    setIsSpeaking(false);
+    speechService.stopSpeaking();
+  };
+
+  const continueAfterSpeaking = () => {
+    if (goldEdition && speakTargetIndex + 1 < speakTargets.length) {
+      setSpeakTargetIndex((index) => index + 1);
+      resetSpeakAttempt();
+      return;
+    }
+    if (goldEdition && goldPicture) {
+      resetSpeakAttempt();
+      setPhase('picture');
+      return;
+    }
+    startQuiz();
+  };
+
+  const checkGoldPicture = () => {
+    if (!goldPicture || !goldPictureSelection || goldPictureChecked) return;
+    const correct =
+      normalizeAnswer(goldPictureSelection) === normalizeAnswer(goldPicture.correctLabel);
+    setGoldPictureChecked(true);
+    setGoldPictureCorrect(correct);
+    if (correct) {
+      setGoldPictureBonusXp(GOLD_PICTURE_BONUS_XP);
+      goldPictureBonusRef.current = GOLD_PICTURE_BONUS_XP;
+      playEffect('success');
+    } else {
+      setMissedWordIds((ids) => [...new Set([...ids, goldPicture.correctWordId])]);
+      playEffect('error');
+    }
+  };
+
+  const retryGoldPicture = () => {
+    setGoldPictureSelection(null);
+    setGoldPictureChecked(false);
+    setGoldPictureCorrect(false);
+    setGoldPictureBonusXp(0);
+    goldPictureBonusRef.current = 0;
   };
 
   const startStory = () => {
@@ -414,13 +581,15 @@ export const LessonSession: React.FC<LessonSessionProps> = ({ lesson, userProfil
 
   const footerTone = phase === 'quiz' && isAnswerChecked
     ? (isCorrectAnswer ? 'has-success' : 'has-error')
-    : phase === 'speak' && ['correct', 'wrong', 'unsupported', 'error', 'skipped'].includes(speakState)
-      ? speakState === 'unsupported' || speakState === 'error'
-        ? 'has-info'
-        : speakState === 'correct' || speakState === 'skipped'
-          ? 'has-success'
-          : 'has-error'
-      : '';
+    : phase === 'picture' && goldPictureChecked
+      ? (goldPictureCorrect ? 'has-success' : 'has-error')
+      : phase === 'speak' && ['correct', 'wrong', 'unsupported', 'error', 'skipped'].includes(speakState)
+        ? speakState === 'unsupported' || speakState === 'error'
+          ? 'has-info'
+          : speakState === 'correct' || speakState === 'skipped'
+            ? 'has-success'
+            : 'has-error'
+        : '';
 
   const footer = (() => {
     if (phase === 'welcome') {
@@ -491,10 +660,61 @@ export const LessonSession: React.FC<LessonSessionProps> = ({ lesson, userProfil
             <button
               type="button"
               disabled={!isDone}
-              onClick={startQuiz}
+              onClick={continueAfterSpeaking}
               className="duo-btn duo-btn-primary duo-btn-grow"
             >
-              متابعة
+              {goldEdition && speakTargetIndex + 1 < speakTargets.length
+                ? 'الجملة التالية'
+                : goldEdition && goldPicture
+                  ? 'تحدي Gold البصري'
+                  : 'متابعة'}
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    if (phase === 'picture' && goldPicture) {
+      if (!goldPictureChecked) {
+        return (
+          <div className="duo-footer-row">
+            <button
+              type="button"
+              disabled={!goldPictureSelection}
+              onClick={checkGoldPicture}
+              className="duo-btn duo-btn-primary duo-btn-wide"
+            >
+              تحقّق
+            </button>
+          </div>
+        );
+      }
+      return (
+        <div className={`duo-footer-panel ${goldPictureCorrect ? 'is-correct' : 'is-wrong'}`}>
+          <div className="duo-feedback-copy">
+            <strong>{goldPictureCorrect ? 'ممتاز! عين ذهبية.' : 'ليست هذه الصورة.'}</strong>
+            <span>
+              {goldPictureCorrect
+                ? `أضفت +${GOLD_PICTURE_BONUS_XP} XP إلى مكافأة الدرس.`
+                : `الإجابة الصحيحة: ${goldPicture.correctLabel}. أضفناها إلى مراجعتك.`}
+            </span>
+          </div>
+          <div className="duo-footer-row">
+            {!goldPictureCorrect && (
+              <button type="button" onClick={retryGoldPicture} className="duo-btn duo-btn-secondary">
+                <RotateCcw className="h-4 w-4" /> حاول مجدداً
+              </button>
+            )}
+            <button
+              type="button"
+              onClick={() => {
+                speechService.stopSpeaking();
+                setIsSpeaking(false);
+                startQuiz();
+              }}
+              className="duo-btn duo-btn-primary duo-btn-grow"
+            >
+              متابعة إلى التمارين
             </button>
           </div>
         </div>
@@ -519,7 +739,7 @@ export const LessonSession: React.FC<LessonSessionProps> = ({ lesson, userProfil
       return (
         <div className={`duo-footer-panel ${isCorrectAnswer ? 'is-correct' : 'is-wrong'}`}>
           <div className="duo-feedback-copy">
-            <strong>{isCorrectAnswer ? 'ممتاز!' : lives === 0 ? 'نفدت القلوب!' : 'لا بأس!'}</strong>
+            <strong>{isCorrectAnswer ? 'ممتاز!' : !goldEdition && lives === 0 ? 'نفدت القلوب!' : 'لا بأس!'}</strong>
             <span>{isCorrectAnswer ? question?.explanationAr : `الإجابة: ${question?.correctAnswer}. ${question?.explanationAr}`}</span>
           </div>
           <div className="duo-footer-row">
@@ -548,10 +768,10 @@ export const LessonSession: React.FC<LessonSessionProps> = ({ lesson, userProfil
         <header className="duo-topbar" dir="ltr">
           <div
             className={`duo-hearts ${phase === 'result' || phase === 'failed' ? 'is-hidden' : ''}`}
-            aria-label={`${lives} محاولات متبقية`}
+            aria-label={goldEdition ? 'قلوب لا نهائية في Gold' : `${lives} محاولات متبقية`}
           >
             <Heart className="h-5 w-5" fill="currentColor" aria-hidden="true" />
-            <span>{lives}</span>
+            <span>{goldEdition ? '∞' : lives}</span>
           </div>
           <div
             className="duo-progress"
@@ -587,10 +807,20 @@ export const LessonSession: React.FC<LessonSessionProps> = ({ lesson, userProfil
                   <p>{lesson.learningNoteAr}</p>
                 </div>
               )}
+              {goldEdition && (
+                <div className="duo-note is-gold">
+                  <Crown className="h-4 w-4 shrink-0" />
+                  <p>
+                    <strong>Gold+:</strong> قلوب لا نهائية، مكافأة XP أعلى 25%، ونطق موسّع
+                    {goldPicture ? '، مع تحدي بصري إضافي' : ''}.
+                  </p>
+                </div>
+              )}
               <div className="duo-meta">
                 <span><BookOpen className="h-4 w-4" /> {lesson.dialogue.length} خطوات استماع</span>
                 <span><Mic className="h-4 w-4" /> تدريب نطق</span>
                 <span><CheckCircle2 className="h-4 w-4" /> {questions.length} تمارين</span>
+                {goldEdition && goldPicture && <span><Sparkles className="h-4 w-4" /> تحدي Gold البصري</span>}
               </div>
             </div>
           )}
@@ -624,7 +854,10 @@ export const LessonSession: React.FC<LessonSessionProps> = ({ lesson, userProfil
 
           {phase === 'speak' && (
             <div className="duo-exercise animate-fade-in">
-              <span className="duo-kicker">تدرّب على النطق</span>
+              <span className="duo-kicker">
+                {goldEdition ? 'Gold+ · تدرّب على النطق' : 'تدرّب على النطق'}
+                {goldEdition && speakTargets.length > 1 ? ` · جملة ${speakTargetIndex + 1} من ${speakTargets.length}` : ''}
+              </span>
               <h1 className="duo-title">انطق هذه الجملة</h1>
               <div className="duo-hero" dir="ltr">
                 <CharacterFigure character={lesson.characterA} speaking={isSpeaking} />
@@ -636,6 +869,11 @@ export const LessonSession: React.FC<LessonSessionProps> = ({ lesson, userProfil
                 </div>
               </div>
               {speakTargetAr && <p className="duo-translation">{speakTargetAr}</p>}
+              {goldEdition && (
+                <button type="button" onClick={speakPracticeSentenceSlowly} className="duo-retry-link">
+                  <Headphones className="h-4 w-4" /> استمع ببطء قبل النطق
+                </button>
+              )}
               <button
                 type="button"
                 onClick={startListening}
@@ -650,7 +888,9 @@ export const LessonSession: React.FC<LessonSessionProps> = ({ lesson, userProfil
                   ? speakErrorMessage
                   : isListening
                     ? 'تحدث الآن بوضوح…'
-                    : 'استمع أولاً، ثم انطق الجملة بوضوح.'}
+                    : goldEdition && speakTargets.length > 1
+                      ? 'استمع أولاً، ثم انطق الجملة. لديك جملتان في Gold+.'
+                      : 'استمع أولاً، ثم انطق الجملة بوضوح.'}
               </p>
               {transcript && <p className="duo-transcript" dir="ltr">“{transcript}”</p>}
               {speakState === 'wrong' && (
@@ -658,6 +898,57 @@ export const LessonSession: React.FC<LessonSessionProps> = ({ lesson, userProfil
                   <RotateCcw className="h-4 w-4" /> حاول مرة أخرى
                 </button>
               )}
+            </div>
+          )}
+
+          {phase === 'picture' && goldPicture && (
+            <div className="duo-exercise animate-fade-in">
+              <span className="duo-kicker">
+                <Sparkles className="mr-1 inline h-3.5 w-3.5" aria-hidden="true" />
+                Gold+ · تحدٍّ بصري · +{GOLD_PICTURE_BONUS_XP} XP
+              </span>
+              <h1 className="duo-title">اختر الصورة الصحيحة</h1>
+              <div className="duo-hero duo-hero-quiz" dir="ltr">
+                <CharacterFigure character={lesson.characterA} speaking={isSpeaking} />
+                <div className="duo-bubble">
+                  <button
+                    type="button"
+                    onClick={() => playText(goldPicture.prompt, `lesson-gold-picture:${lesson.id}`, lesson.characterA)}
+                    className="duo-bubble-audio"
+                    aria-label="استمع إلى الكلمة"
+                  >
+                    <Volume2 className="h-4 w-4" />
+                  </button>
+                  <p className="duo-bubble-en">Which picture shows “{goldPicture.prompt}”?</p>
+                </div>
+              </div>
+              <p className="duo-translation">
+                اختر الصورة التي تعني: <strong dir="ltr">{goldPicture.prompt}</strong>
+              </p>
+              <div className="duo-choice-grid">
+                {goldPicture.options.map((option, index) => {
+                  const selected = goldPictureSelection === option.label;
+                  const correctOption = goldPictureChecked && normalizeAnswer(option.label) === normalizeAnswer(goldPicture.correctLabel);
+                  const wrongOption = goldPictureChecked && selected && !correctOption;
+                  return (
+                    <button
+                      key={`${option.label}-${index}`}
+                      type="button"
+                      disabled={goldPictureChecked}
+                      onClick={() => setGoldPictureSelection(option.label)}
+                      className={`duo-choice tone-${index % 4} ${selected ? 'is-selected' : ''} ${correctOption ? 'is-correct' : ''} ${wrongOption ? 'is-wrong' : ''}`}
+                    >
+                      <span className="duo-choice-art" aria-hidden="true">{option.emoji}</span>
+                      <span className="duo-choice-label" dir="rtl">{option.label}</span>
+                      {correctOption && <span className="duo-choice-badge"><Check className="h-4 w-4" /></span>}
+                      {wrongOption && <span className="duo-choice-badge is-wrong"><X className="h-4 w-4" /></span>}
+                    </button>
+                  );
+                })}
+              </div>
+              <div className="duo-companion" aria-hidden="true">
+                <CharacterFigure character={lesson.characterB} />
+              </div>
             </div>
           )}
 
@@ -777,7 +1068,19 @@ export const LessonSession: React.FC<LessonSessionProps> = ({ lesson, userProfil
             </div>
           )}
 
-          {phase === 'result' && (
+          {phase === 'result' && (goldEdition ? (
+            <GoldLessonCelebration
+              lesson={lesson}
+              score={finalScore}
+              xp={earnedXp}
+              bonusXp={goldPictureBonusXp}
+              correct={finalCorrect}
+              total={questions.length}
+              passed={finalScore >= getLevelExamPassingScore()}
+              onContinue={onBackToPath}
+              onRetry={retryAfterFailure}
+            />
+          ) : (
             <div className="duo-result animate-scale-up">
               <div className="duo-result-art" aria-hidden="true">
                 <CharacterFigure character={lesson.characterA} />
@@ -811,7 +1114,7 @@ export const LessonSession: React.FC<LessonSessionProps> = ({ lesson, userProfil
                 </button>
               </div>
             </div>
-          )}
+          ))}
 
           {phase === 'failed' && (
             <div className="duo-failed animate-scale-up">

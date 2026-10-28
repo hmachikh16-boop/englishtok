@@ -27,7 +27,8 @@ import com.getcapacitor.annotation.CapacitorPlugin;
 public class ApkDownloaderPlugin extends Plugin {
 
     private static final String OFFICIAL_HOST = "englishtok-eight.vercel.app";
-    private static final String OFFICIAL_PATH = "/english-tok.apk";
+    private static final java.util.regex.Pattern OFFICIAL_PATH =
+        java.util.regex.Pattern.compile("^/(english-tok|lin-go-gold-\\d+\\.\\d+\\.\\d+)\\.apk$");
 
     @PluginMethod
     public void download(PluginCall call) {
@@ -50,24 +51,14 @@ public class ApkDownloaderPlugin extends Plugin {
 
         if (!"https".equalsIgnoreCase(uri.getScheme())
             || !OFFICIAL_HOST.equalsIgnoreCase(uri.getHost())
-            || !OFFICIAL_PATH.equals(uri.getPath())) {
+            || uri.getPath() == null
+            || !OFFICIAL_PATH.matcher(uri.getPath()).matches()) {
             call.reject("يُسمح فقط برابط التنزيل الرسمي من موقع Lin Go.", "UNTRUSTED_URL");
             return;
         }
 
         if (fileName == null || !fileName.matches("^[A-Za-z0-9._-]+\\.apk$")) {
             call.reject("اسم ملف التنزيل غير صالح.", "INVALID_FILE_NAME");
-            return;
-        }
-
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
-            // Public Downloads writes require a legacy storage permission on
-            // Android 7–9. Those devices use the browser fallback instead of
-            // asking for a broad storage permission just to update the app.
-            call.reject(
-                "التنزيل داخل التطبيق متاح على Android 10 فأحدث. سيُفتح المتصفح بدلًا من ذلك.",
-                "UNSUPPORTED_ANDROID"
-            );
             return;
         }
 
@@ -87,15 +78,31 @@ public class ApkDownloaderPlugin extends Plugin {
             request.setNotificationVisibility(
                 DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED
             );
-            request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName);
             request.setAllowedOverMetered(true);
             request.setAllowedOverRoaming(false);
+
+            final String location;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName);
+                location = "Downloads/" + fileName;
+            } else {
+                // Android 7–9 can use DownloadManager without broad storage
+                // permission by writing into the app's external files folder.
+                // The system notification still opens the finished APK.
+                request.setDestinationInExternalFilesDir(
+                    context,
+                    Environment.DIRECTORY_DOWNLOADS,
+                    fileName
+                );
+                location = "Android/data/" + context.getPackageName()
+                    + "/files/Download/" + fileName;
+            }
 
             final long downloadId = manager.enqueue(request);
             final JSObject result = new JSObject();
             result.put("id", downloadId);
             result.put("fileName", fileName);
-            result.put("location", "Downloads/" + fileName);
+            result.put("location", location);
             call.resolve(result);
         } catch (Exception exception) {
             call.reject(

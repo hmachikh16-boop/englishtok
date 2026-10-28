@@ -4606,3 +4606,81 @@ button.journey-frame-toggle svg { color: var(--duo-blue); }
 .stage-goal-card.edition-gold .stage-goal-copy strong {
   color: #76520a;
 }
+
+/* Gold+ lesson celebration and daily chest */
+.gold-lesson-result {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgb(252 211 77 / 28%);
+  border-radius: 28px;
+  background:
+    radial-gradient(ellipse at 50% 0%, rgb(252 211 77 / 16%), transparent 58%),
+    linear-gradient(145deg, #1b232c 0%, #101820 100%);
+  color: #f8fafc;
+  padding: 24px 14px 28px;
+  box-shadow: 0 24px 50px -24px rgb(0 0 0 / 60%);
+}
+.gold-lesson-result .duo-result-title { color: #fff; }
+.gold-lesson-result .duo-result-lesson { color: #cbd5e1; }
+.gold-lesson-result .duo-result-stars svg { color: #475569; }
+.gold-lesson-result .duo-result-stars svg.earned { color: #fcd34d; }
+.gold-lesson-result .duo-result-stats div {
+  border-color: rgb(255 255 255 / 10%);
+  background: rgb(255 255 255 / 5%);
+}
+.gold-lesson-result .duo-result-stats strong { color: #fcd34d; }
+.gold-lesson-result .duo-result-stats span { color: #94a3b8; }
+.gold-lesson-result .duo-result-hint { color: #fde68a; }
+.gold-lesson-result .duo-btn-primary {
+  color: #3b2504;
+  background: #fcd34d;
+  box-shadow: 0 4px 0 #b77900;
+}
+.gold-lesson-result .duo-btn-primary:hover:not(:disabled) { background: #fde047; }
+.gold-lesson-result .duo-btn-secondary {
+  border-color: rgb(255 255 255 / 14%);
+  color: #e2e8f0;
+  background: rgb(255 255 255 / 6%);
+  box-shadow: 0 3px 0 rgb(0 0 0 / 25%);
+}
+.gold-lesson-result .duo-btn-secondary:hover:not(:disabled) { background: rgb(255 255 255 / 12%); }
+
+.gold-result-confetti {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+.gold-result-confetti span {
+  position: absolute;
+  top: -12%;
+  left: calc(var(--i) * 4.5% + 1%);
+  width: 7px;
+  height: 13px;
+  border-radius: 2px;
+  background: #fcd34d;
+  opacity: 0;
+  animation: gold-confetti-fall 2.1s ease-in both;
+  animation-delay: calc(var(--i) * 0.06s);
+}
+.gold-result-confetti span:nth-child(3n) { background: #34d399; }
+.gold-result-confetti span:nth-child(4n) { background: #fb7185; }
+.gold-result-confetti span:nth-child(5n) { background: #60a5fa; width: 10px; height: 10px; border-radius: 999px; }
+@keyframes gold-confetti-fall {
+  0% { opacity: 0; transform: translate3d(0, -10px, 0) rotate(0deg); }
+  10% { opacity: 1; }
+  100% { opacity: 0; transform: translate3d(22px, 420px, 0) rotate(520deg); }
+}
+.gold-chest-dialog { isolation: isolate; }
+@media (prefers-reduced-motion: reduce) {
+  .gold-result-confetti span { animation: none; display: none; }
+}
+
+/* Gold+ lesson note */
+.duo-note.is-gold {
+  border-color: rgb(252 211 77 / 45%);
+  color: #78350f;
+  background: linear-gradient(120deg, #fffbeb, #fef3c7);
+}
+.duo-note.is-gold svg { color: #b45309; }

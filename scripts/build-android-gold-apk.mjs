@@ -84,6 +84,10 @@ for (const stagedApk of [
   resolve(root, 'dist', 'english-tok.apk'),
   resolve(root, 'public', 'lin-go-gold.apk'),
   resolve(root, 'dist', 'lin-go-gold.apk'),
+  resolve(root, 'public', 'lin-go-gold-1.0.1.apk'),
+  resolve(root, 'dist', 'lin-go-gold-1.0.1.apk'),
+  resolve(root, 'public', 'lin-go-gold-1.1.0.apk'),
+  resolve(root, 'dist', 'lin-go-gold-1.1.0.apk'),
 ]) {
   if (existsSync(stagedApk)) {
     await rm(stagedApk, { force: true });
@@ -100,6 +104,10 @@ for (const stagedApk of [
   resolve(root, 'dist', 'english-tok.apk'),
   resolve(root, 'public', 'lin-go-gold.apk'),
   resolve(root, 'dist', 'lin-go-gold.apk'),
+  resolve(root, 'public', 'lin-go-gold-1.0.1.apk'),
+  resolve(root, 'dist', 'lin-go-gold-1.0.1.apk'),
+  resolve(root, 'public', 'lin-go-gold-1.1.0.apk'),
+  resolve(root, 'dist', 'lin-go-gold-1.1.0.apk'),
 ]) {
   if (existsSync(stagedApk)) {
     await rm(stagedApk, { force: true });

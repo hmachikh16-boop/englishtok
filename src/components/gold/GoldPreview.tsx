@@ -1,4 +1,4 @@
-import React, { Suspense, useEffect, useMemo, useRef, useState } from 'react';
+﻿import React, { Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import {
   ArrowLeft,
   Award,
@@ -12,11 +12,15 @@ import {
   Crown,
   Download,
   Flame,
+  Gem,
+  Gift,
   GraduationCap,
   Headphones,
+  Heart,
   Home,
   KeyRound,
   Layers3,
+  Lightbulb,
   MessageCircle,
   Mic,
   Play,
@@ -25,18 +29,21 @@ import {
   Smartphone,
   Sparkles,
   Target,
+  Trophy,
   Zap,
 } from 'lucide-react';
 import '../../gold-preview.css';
+import { GoldErrorBoundary } from './GoldErrorBoundary';
 
 const GoldAppPreview = React.lazy(() =>
   import('./GoldAppPreview').then((module) => ({ default: module.GoldAppPreview })),
 );
 
 const DEMO_CODE = 'LINGO-GOLD-DEMO-2026';
-const GOLD_APK_URL = '/lin-go-gold-1.0.1.apk';
+const GOLD_VERSION = '1.1.0';
+const GOLD_APK_URL = `/lin-go-gold-${GOLD_VERSION}.apk`;
 const GOLD_GITHUB_APK_URL =
-  'https://github.com/hmachikh16-boop/englishtok/releases/download/gold-v1.0.1/lin-go-gold-1.0.1.apk';
+  `https://github.com/hmachikh16-boop/englishtok/releases/download/gold-v${GOLD_VERSION}/lin-go-gold-${GOLD_VERSION}.apk`;
 
 const stages = [
   {
@@ -75,9 +82,24 @@ const stages = [
 
 const features = [
   {
-    icon: Layers3,
-    title: 'نفس الواجهة والمسار',
-    body: 'نفس شريط Lin Go، مسار المراحل، شاشة الدرس، المعلم الذكي، والنسخ الاحتياطي.',
+    icon: Trophy,
+    title: 'لوحة Gold+ الذكية',
+    body: 'جواهر وتيجان وقلوب لا نهائية ودوري خاص، مع مهاراتك الأربع في لوحة واحدة أوضح.',
+  },
+  {
+    icon: Sparkles,
+    title: 'تحدٍّ بصري داخل الدرس',
+    body: 'بعد الاستماع والنطق، اختر الصورة الصحيحة واربح +10 XP إضافية في كل درس Gold.',
+  },
+  {
+    icon: Mic,
+    title: 'نطق موسّع بجملتين',
+    body: 'جملتا نطق لكل درس، مع زر استماع بطيء قبل التسجيل لتحسين الوضوح والثقة.',
+  },
+  {
+    icon: Heart,
+    title: 'قلوب لا نهائية و+25% XP',
+    body: 'لا تتوقف بسبب القلوب في Gold. كل إنجاز يمنحك مكافأة أكبر بنسبة 25%، مع احتفال خاص.',
   },
   {
     icon: Target,
@@ -85,24 +107,19 @@ const features = [
     body: 'مشروع تطبيقي في كل مرحلة: تقديم النفس، يوم في المدينة، نقاش مهني، وخطاب إقناع.',
   },
   {
-    icon: Zap,
-    title: 'معلم أسرع',
-    body: 'ردود أقصر وسياق أقل ومهلة أقصر، ليبدأ الرد أسرع من نفس زر المعلم.',
+    icon: Gift,
+    title: 'صندوق يومي ومكافآت',
+    body: 'أكمل هدفك اليومي لتفتح صندوق Gold وتحصل على XP إضافية، مع تذكير لطيف كل يوم.',
   },
   {
-    icon: Mic,
-    title: 'كل ميزات Free',
-    body: 'النطق والبطاقات والألعاب والتقدم والنسخ المشفّرة تبقى كما هي دون إعادة تعلّم.',
+    icon: Lightbulb,
+    title: 'نصائح ومهارات',
+    body: 'نصائح عملية للاستماع والنطق والمراجعة، ولوحة مهارات تُظهر تقدمك في كل اتجاه.',
   },
   {
-    icon: MessageCircle,
-    title: 'نسخة مستقلة',
-    body: 'Gold بحزمة مستقلة بجانب Free. يمكن تثبيت النسختين معًا دون أن يتأثر تقدمك.',
-  },
-  {
-    icon: Award,
-    title: 'الشهادة — قريبًا',
-    body: 'شهادة الإتمام والتحقق الرقمي ضمن التفعيل الرسمي، وليست في نسخة 1.0.1 التجريبية.',
+    icon: ShieldCheck,
+    title: 'نفس التطبيق والنسخ',
+    body: 'Gold مستقل بجانب Free، ويحافظ على تقدمك ونسخك الاحتياطية المشفّرة دون إعادة تعلّم.',
   },
 ] as const;
 
@@ -116,9 +133,9 @@ const skills = [
 const reviewWords = ['negotiate', 'although', 'schedule', 'recommend', 'on time'];
 
 const goldDashboardPoints = [
-  { text: 'نفس شريط Lin Go، ونفس المسار، ونفس شاشة الدرس — دون واجهة ثانية', icon: Layers3 },
-  { text: '4 مشاريع Gold تطبيقية مضافة إلى المسار، واحدة في كل مرحلة', icon: Brain },
-  { text: 'المعلم الذكي يفتح من نفس الزر، مع ردود أقصر وأسرع', icon: MessageCircle },
+  { text: 'لوحة Gold+ تعرض الجواهر والتيجان والقلوب والدوري والمهارات', icon: Trophy },
+  { text: 'تحدٍّ بصري ونطق بجملتين داخل نفس شاشة الدرس، بدون واجهة منفصلة', icon: Brain },
+  { text: 'قلوب لا نهائية و+25% XP، مع صندوق يومي واحتفال إنجاز', icon: Gift },
   { text: 'تقدمك ونسخك الاحتياطية تبقى كما هي؛ Gold لا يغيّر هوية التطبيق', icon: ShieldCheck },
 ] as const;
 
@@ -295,7 +312,7 @@ const CodePanel: React.FC<{
   <aside className="gold-activate-card" id="gold-activate">
     <span className="gold-eyebrow">
       <KeyRound className="h-3 w-3" />
-      معاينة Gold
+      معاينة Gold+
     </span>
     <h3>لديك كود معاينة؟</h3>
     <p>
@@ -324,22 +341,22 @@ const CodePanel: React.FC<{
     {activated && (
       <p className="gold-code-success">
         <BadgeCheck className="mr-1 inline h-3 w-3" />
-        تم فتح المعاينة — استكشف واجهة Gold داخل التطبيق.
+        تم فتح المعاينة — استكشف Gold+ 1.1 داخل التطبيق.
       </p>
     )}
     <a
       className="gold-preview-toggle"
       href={GOLD_APK_URL}
-      download="lin-go-gold-1.0.1.apk"
+      download={`lin-go-gold-${GOLD_VERSION}.apk`}
       rel="noopener"
     >
       <Download className="h-3.5 w-3.5" />
-      تحميل Gold 1.0.1 التجريبي
+      تحميل Gold+ {GOLD_VERSION} التجريبي
       <ChevronLeft className="h-3 w-3" />
     </a>
     <button type="button" className="gold-preview-toggle" onClick={onPreview}>
       <Smartphone className="h-3.5 w-3.5" />
-      معاينة لوحة Gold داخل التطبيق
+      معاينة لوحة Gold+ داخل التطبيق
       <ChevronLeft className="h-3 w-3" />
     </button>
     <div className="gold-secure-note">
@@ -452,22 +469,22 @@ export const GoldPreview: React.FC = () => {
               <h1>
                 نفس واجهة Lin Go.
                 <br />
-                <span>و4 مشاريع Gold.</span>
+                <span>وGold+ يرفع التجربة 70%.</span>
               </h1>
               <p className="gold-hero-copy">
-                Gold ليس واجهة جديدة ولا تطبيقًا آخر. هو نفس شاشات Lin Go، ونفس المسار، ونفس
-                الدروس التي تعرفها — والجديد أربعة مشاريع Gold تطبيقية داخل نفس المسار، ومعلم
-                يبدأ الرد أسرع.
+                Gold+ 1.1 هو نفس تطبيق Lin Go ومساره ودروسه، مع طبقة ذهبية داخل الرحلة:
+                تحدٍّ بصري، نطق بجملتين، قلوب لا نهائية، +25% XP، دوري ومهارات، صندوق يومي،
+                وأربعة مشاريع تطبيقية — أكثر من 70% أنشطة إضافية.
               </p>
               <div className="gold-hero-actions">
                 <a
                   className="gold-btn gold-btn-gold"
                   href={GOLD_APK_URL}
-                  download="lin-go-gold-1.0.1.apk"
+                  download={`lin-go-gold-${GOLD_VERSION}.apk`}
                   rel="noopener"
                 >
                   <Download className="h-4 w-4" />
-                  حمّل Gold 1.0.1
+                  حمّل Gold+ {GOLD_VERSION}
                 </a>
                 <button type="button" className="gold-btn gold-btn-ghost" onClick={handlePreview}>
                   <Play className="h-4 w-4 fill-current" />
@@ -491,8 +508,8 @@ export const GoldPreview: React.FC = () => {
                   نفس المسار · أكثر من 400 درس
                 </span>
                 <span>
-                  <ShieldCheck className="h-3.5 w-3.5 text-emerald-700" />
-                  الجديد في المنهج فقط
+                  <Sparkles className="h-3.5 w-3.5 text-emerald-700" />
+                  Gold+ أكثر من 70% أنشطة إضافية
                 </span>
               </div>
             </div>
@@ -501,22 +518,22 @@ export const GoldPreview: React.FC = () => {
               <div className="gold-hero-halo" aria-hidden="true" />
               <div className="gold-float-card is-top">
                 <span className="gold-float-icon">
-                  <Brain className="h-4 w-4" />
+                  <Heart className="h-4 w-4" />
                 </span>
                 <span>
-                  معلم أسرع
+                  قلوب لا نهائية
                   <br />
-                  <span style={{ color: '#7b8b85', fontWeight: 700 }}>ردود أقصر وأسرع</span>
+                  <span style={{ color: '#7b8b85', fontWeight: 700 }}>تدرّب دون توقف</span>
                 </span>
               </div>
               <div className="gold-float-card is-bottom">
                 <span className="gold-float-icon">
-                  <Award className="h-4 w-4" />
+                  <Sparkles className="h-4 w-4" />
                 </span>
                 <span>
-                  4 مشاريع Gold
+                  Gold+ 70%
                   <br />
-                  <span style={{ color: '#7b8b85', fontWeight: 700 }}>داخل نفس المسار</span>
+                  <span style={{ color: '#7b8b85', fontWeight: 700 }}>أنشطة وتجربة إضافية</span>
                 </span>
               </div>
               <div className="gold-hero-phone">
@@ -540,12 +557,13 @@ export const GoldPreview: React.FC = () => {
                 <h2 style={{ marginTop: 12 }}>
                   نفس الشاشات.
                   <br />
-                  والمنهج هو الفرق.
+                  والتجربة هي الفرق.
                 </h2>
               </div>
               <p>
-                لا نعيد تصميم ما تعرفه. Gold يضيف إلى نفس المسار أربعة مشاريع قصيرة، واحدة في
-                كل مرحلة، ويحسّن زمن رد المعلم — بينما تبقى واجهة Lin Go كما هي.
+                لا نعيد تصميم ما تعرفه. Gold+ يضيف إلى نفس المسار تدريبًا بصريًا، نطقًا أوسع،
+                مكافآت وقلوبًا لا نهائية، دوري مهارات، وأربعة مشاريع تطبيقية — بينما تبقى واجهة
+                Lin Go ونسخك الاحتياطية كما هي.
               </p>
             </div>
             <div className="gold-feature-grid">
@@ -616,6 +634,10 @@ export const GoldPreview: React.FC = () => {
                   </h2>
                 </div>
               </div>
+              <p className="mb-3 rounded-2xl border border-amber-300/50 bg-amber-300/15 px-3 py-2 text-[11px] font-bold leading-6 text-amber-950">
+                <Crown className="mr-1 inline h-3.5 w-3.5" />
+                Gold+ يضيف أكثر من 70% من الأنشطة والتجربة: تدريب بصري، نطق أوسع، مكافآت، دوري، وقلوب لا نهائية.
+              </p>
               <div className="gold-compare">
                 <div className="gold-compare-head">
                   <span>الميزة</span>
@@ -623,12 +645,16 @@ export const GoldPreview: React.FC = () => {
                   <b>Gold</b>
                 </div>
                 {[
-                  ['الواجهة', 'واجهة Lin Go', 'نفس واجهة Lin Go'],
+                  ['الواجهة', 'واجهة Lin Go', 'نفس واجهة Lin Go + Gold+'],
                   ['المسار', '4 مراحل · 400 درس', 'نفس المسار + 4 مشاريع'],
-                  ['المنهج', '400 درس', '404 درسًا مع مشاريع Gold'],
-                  ['خطة اليوم', 'هدف يومي', 'نفس الهدف اليومي'],
-                  ['المراجعة', 'مراجعة الكلمات', 'نفس المراجعة'],
-                  ['المعلم الذكي', 'متاح', 'ردود أسرع'],
+                  ['التدريب البصري', '—', 'تحدٍّ في كل درس +10 XP'],
+                  ['النطق', 'جملة واحدة', 'جملتان + استماع بطيء'],
+                  ['القلوب', '5 محاولات', '∞ بلا حدود'],
+                  ['مكافأة XP', '1×', '+25% في Gold'],
+                  ['الدوري', '—', 'دوري Gold+ ومهارات'],
+                  ['المكافآت', '—', 'صندوق يومي واحتفال'],
+                  ['المعلم الذكي', 'متاح', 'متاح + ردود أسرع'],
+                  ['النسخ الاحتياطي', 'مشفّر', 'نفس النسخ دون تغيير'],
                   ['الشهادة', '—', 'قريبًا'],
                 ].map(([feature, free, gold]) => (
                   <div className="gold-compare-row" key={feature}>
@@ -655,7 +681,7 @@ export const GoldPreview: React.FC = () => {
 
           <div className="gold-shell">
             <footer className="gold-footer">
-              <span>© 2026 Lin Go · نسخة Gold التجريبية</span>
+              <span>© 2026 Lin Go · Gold+ {GOLD_VERSION} التجريبية</span>
               <strong>Lin Go Gold · Learn with direction</strong>
             </footer>
           </div>
@@ -685,11 +711,11 @@ export const GoldPreview: React.FC = () => {
                 <Smartphone className="h-3 w-3" />
                 داخل التطبيق
               </span>
-              <h2 style={{ marginTop: 14 }}>نفس التطبيق. 4 مشاريع إضافية.</h2>
+              <h2 style={{ marginTop: 14 }}>نفس التطبيق. تجربة Gold+ كاملة.</h2>
               <p>
                 هذه ليست واجهة Gold منفصلة. إنها شاشات Lin Go الحقيقية — الشريط العلوي، مسار
-                المراحل، درس المحادثة، والمعلم الذكي — مع أربعة مشاريع Gold مضافة إلى نفس
-                المسار. لا شيء يتغيّر في طريقة استخدامك للتطبيق.
+                المراحل، درس المحادثة، والمعلم الذكي — مع لوحة Gold+، تحدٍّ بصري، نطق أوسع،
+                قلوب لا نهائية، دوري، ومكافآت داخل نفس المسار.
               </p>
               <div className="gold-dashboard-points">
                 {goldDashboardPoints.map((point) => {
@@ -708,11 +734,11 @@ export const GoldPreview: React.FC = () => {
                 <a
                   className="gold-btn gold-btn-primary"
                   href={GOLD_APK_URL}
-                  download="lin-go-gold-1.0.1.apk"
+                  download={`lin-go-gold-${GOLD_VERSION}.apk`}
                   rel="noopener"
                 >
                   <Download className="h-4 w-4" />
-                  حمّل Gold 1.0.1
+                  حمّل Gold+ {GOLD_VERSION}
                 </a>
                 <button type="button" className="gold-btn gold-btn-ghost" onClick={scrollToActivate}>
                   <KeyRound className="h-4 w-4" />
@@ -720,15 +746,23 @@ export const GoldPreview: React.FC = () => {
                 </button>
               </div>
             </div>
-            <Suspense
+            <GoldErrorBoundary
               fallback={
                 <div className="gold-app-preview-fallback" role="status" aria-live="polite">
-                  جارٍ تحميل واجهة Lin Go…
+                  تعذّر تشغيل المعاينة الآن. يمكنك تحميل Gold وتجربته على Android.
                 </div>
               }
             >
-              <GoldAppPreview />
-            </Suspense>
+              <Suspense
+                fallback={
+                  <div className="gold-app-preview-fallback" role="status" aria-live="polite">
+                    جارٍ تحميل واجهة Lin Go…
+                  </div>
+                }
+              >
+                <GoldAppPreview />
+              </Suspense>
+            </GoldErrorBoundary>
           </div>
           <footer className="gold-footer">
             <span>معاينة تفاعلية — لا تغيّر تقدمك الحالي في Lin Go.</span>

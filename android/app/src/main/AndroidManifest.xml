@@ -4,8 +4,10 @@
     <!--
         Lin Go keeps lesson audio and learner progress inside its private
         storage. Progress backups use the Storage Access Framework (the user
-        picks one file). Updates open the official APK link in the system
-        browser; Lin Go never downloads or installs packages itself.
+        picks one file). Updates are downloaded by Android's DownloadManager
+        and installed only after the user taps the system notification. Lin Go
+        does not request package-installer permission and never installs an
+        APK silently.
     -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />

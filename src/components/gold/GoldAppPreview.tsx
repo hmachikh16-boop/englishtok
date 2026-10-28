@@ -243,6 +243,7 @@ export const GoldAppPreview: React.FC<{ compact?: boolean }> = ({ compact = fals
           lessons={lessons}
           onUpdateProfile={updateProfile}
           onResumeLearning={() => changeTab('categories')}
+          goldEdition
         />
       );
     }
@@ -258,6 +259,7 @@ export const GoldAppPreview: React.FC<{ compact?: boolean }> = ({ compact = fals
           onResetProgress={resetProgress}
           onRestoreProgress={restoreProgress}
           onRefreshContent={refreshContent}
+          goldEdition
         />
       );
     }
@@ -281,6 +283,7 @@ export const GoldAppPreview: React.FC<{ compact?: boolean }> = ({ compact = fals
           userProfile={profile}
           onUpdateProfile={updateProfile}
           onBackToPath={() => changeTab('categories')}
+          goldEdition
         />
       );
     }

@@ -17,6 +17,8 @@ import {
 import { UserProfile, Lesson } from '../../types';
 import { getUserRank } from '../../services/storageService';
 import { getLearningPathState } from '../../services/learningPath';
+import { IS_GOLD_EDITION } from '../../config/edition';
+import { GoldLeagueCard } from '../gold/GoldLeagueCard';
 import { PremiumIcon, type PremiumIconName } from '../icons/PremiumIcon';
 
 interface ProgressTabProps {
@@ -24,6 +26,8 @@ interface ProgressTabProps {
   lessons: Lesson[];
   onUpdateProfile: (updated: Partial<UserProfile>) => void;
   onResumeLearning: () => void;
+  /** Gold build and the interactive website preview opt into the Gold+ league card. */
+  goldEdition?: boolean;
 }
 
 interface Badge {
@@ -40,6 +44,7 @@ export const ProgressTab: React.FC<ProgressTabProps> = ({
   lessons,
   onUpdateProfile,
   onResumeLearning,
+  goldEdition = IS_GOLD_EDITION,
 }) => {
   const rank = getUserRank(userProfile.xp);
   const path = getLearningPathState(lessons, userProfile);
@@ -179,6 +184,14 @@ export const ProgressTab: React.FC<ProgressTabProps> = ({
           </div>
         </div>
       </div>
+
+      {goldEdition && (
+        <GoldLeagueCard
+          userProfile={userProfile}
+          lessons={lessons}
+          learningPath={path}
+        />
+      )}
 
       {/* 4 Key Metrics Grid */}
       <div className="progress-metrics grid grid-cols-2 lg:grid-cols-4 gap-3">

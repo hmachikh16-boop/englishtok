@@ -1,5 +1,6 @@
 import { Browser } from '@capacitor/browser';
 import { Capacitor } from '@capacitor/core';
+import { IS_GOLD_EDITION } from '../config/edition';
 import { officialApkUrl } from '../config/downloadLinks';
 import type { AppUpdateManifest } from './appUpdateService';
 
@@ -25,6 +26,9 @@ const normalizeOpenError = (error: unknown): Error => {
 export const openAppUpdateDownload = async (
   update: AppUpdateManifest,
 ): Promise<void> => {
+  if (IS_GOLD_EDITION) {
+    throw new Error('تحديث Gold+ يتم داخل التطبيق نفسه عبر مدير التنزيلات، دون فتح المتصفح.');
+  }
   if (!/^\d+\.\d+\.\d+$/.test(update.version)) {
     throw new Error('رقم إصدار التحديث غير صالح.');
   }
