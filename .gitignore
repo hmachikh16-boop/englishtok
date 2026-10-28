@@ -20,8 +20,10 @@ android/keystore.properties
 android/KEYSTORE-CREDENTIALS.txt
 releases/
 update-manifest.json
-# Staged at deploy time only, never committed (the latest APK from GitHub Releases).
+# Staged at deploy time only, never committed (the latest APKs from GitHub Releases).
 public/english-tok.apk
+public/lin-go-gold-1.0.1.apk
+public/lin-go-gold.apk
 
 # Local snapshots, upload staging and browser profiles are not source files.
 backups/

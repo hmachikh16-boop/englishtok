@@ -25,6 +25,7 @@ import {
 import { fetchLatestLearningPath, getCachedLearningPath } from './services/contentService';
 import { checkForAppUpdate, type AppUpdateManifest } from './services/appUpdateService';
 import { openAppUpdateDownload } from './services/appUpdateLauncher';
+import { downloadAppUpdate, openDownloadsFolder } from './services/apkDownloadService';
 import { IS_STORE_BUILD } from './config/storeBuild';
 import { IS_GOLD_EDITION } from './config/edition';
 import {
@@ -82,6 +83,7 @@ export default function App() {
   const [availableAppUpdate, setAvailableAppUpdate] = useState<AppUpdateManifest | null>(null);
   const [updateDownloadError, setUpdateDownloadError] = useState<string | null>(null);
   const [updateOpenMessage, setUpdateOpenMessage] = useState<string | null>(null);
+  const [updateDownloadMode, setUpdateDownloadMode] = useState<'app' | 'browser' | null>(null);
   const [isOpeningAppUpdate, setIsOpeningAppUpdate] = useState(false);
   const notificationTop = activeTab === 'lesson'
     ? 'calc(env(safe-area-inset-top, 0px) + 12px)'
@@ -119,13 +121,41 @@ export default function App() {
     };
   }, []);
 
-  const handleOpenAppUpdate = async () => {
+  const handleDownloadAppUpdate = async () => {
     if (!availableAppUpdate) return;
     setUpdateDownloadError(null);
     setUpdateOpenMessage(null);
+    setUpdateDownloadMode(null);
+    setIsOpeningAppUpdate(true);
+    try {
+      const result = await downloadAppUpdate(availableAppUpdate);
+      setUpdateDownloadMode(result.mode);
+      setUpdateOpenMessage(
+        result.mode === 'app'
+          ? `بدأ تنزيل ${availableAppUpdate.version} داخل التطبيق. ستجده في مجلد التنزيلات بعد اكتماله، مع إشعار من النظام.`
+          : 'فُتح المتصفح لتنزيل الحزمة الرسمية. بعد اكتمال التنزيل، اضغط على الملف لتثبيت التحديث.',
+      );
+    } catch (error) {
+      console.error('Failed to download the Lin Go update:', error);
+      setUpdateDownloadError(
+        error instanceof Error
+          ? error.message
+          : 'تعذر بدء التنزيل. تحقق من اتصال الإنترنت وحاول مرة أخرى.',
+      );
+    } finally {
+      setIsOpeningAppUpdate(false);
+    }
+  };
+
+  const handleOpenAppUpdateInBrowser = async () => {
+    if (!availableAppUpdate) return;
+    setUpdateDownloadError(null);
+    setUpdateOpenMessage(null);
+    setUpdateDownloadMode(null);
     setIsOpeningAppUpdate(true);
     try {
       await openAppUpdateDownload(availableAppUpdate);
+      setUpdateDownloadMode('browser');
       setUpdateOpenMessage(
         'فُتح المتصفح لتنزيل الحزمة الرسمية. بعد اكتمال التنزيل، اضغط على الملف لتثبيت التحديث.',
       );
@@ -138,6 +168,13 @@ export default function App() {
       );
     } finally {
       setIsOpeningAppUpdate(false);
+    }
+  };
+
+  const handleOpenDownloads = async () => {
+    const opened = await openDownloadsFolder();
+    if (!opened) {
+      setUpdateDownloadError('تعذر فتح التنزيلات. افتح تطبيق التنزيلات من جهازك.');
     }
   };
 
@@ -398,17 +435,37 @@ export default function App() {
                 {updateOpenMessage}
               </p>
             )}
-            <button
-              type="button"
-              onClick={handleOpenAppUpdate}
-              disabled={isOpeningAppUpdate}
-              className="mt-3 rounded-lg bg-emerald-400 px-3 py-2 text-xs font-bold text-slate-950 hover:bg-emerald-300 disabled:cursor-wait disabled:opacity-70"
-            >
-              {isOpeningAppUpdate ? 'جارٍ فتح المتصفح…' : 'تنزيل التحديث عبر المتصفح'}
-            </button>
+            <div className="mt-3 flex flex-wrap gap-2">
+              <button
+                type="button"
+                onClick={handleDownloadAppUpdate}
+                disabled={isOpeningAppUpdate}
+                className="rounded-lg bg-emerald-400 px-3 py-2 text-xs font-bold text-slate-950 hover:bg-emerald-300 disabled:cursor-wait disabled:opacity-70"
+              >
+                {isOpeningAppUpdate ? 'جارٍ بدء التنزيل…' : 'تنزيل داخل التطبيق'}
+              </button>
+              <button
+                type="button"
+                onClick={handleOpenAppUpdateInBrowser}
+                disabled={isOpeningAppUpdate}
+                className="rounded-lg border border-slate-600 px-3 py-2 text-xs font-bold text-slate-100 hover:border-emerald-300 hover:text-emerald-200 disabled:cursor-wait disabled:opacity-70"
+              >
+                فتح في المتصفح
+              </button>
+              {updateDownloadMode === 'app' && (
+                <button
+                  type="button"
+                  onClick={handleOpenDownloads}
+                  className="rounded-lg border border-emerald-400/40 px-3 py-2 text-xs font-bold text-emerald-200 hover:bg-emerald-400/10"
+                >
+                  فتح التنزيلات
+                </button>
+              )}
+            </div>
             <p className="mt-2 text-[10px] text-slate-400">
-              سيفتح التطبيق المتصفح لتنزيل حزمة APK الرسمية. بعد اكتمال التنزيل، اضغط على الملف
-              لتثبيت التحديث. لا يثبّت التطبيق الحزم تلقائيًا.
+              التنزيل داخل التطبيق يستخدم مدير التنزيلات في Android، فيظهر التقدم في الإشعارات
+              ويُحفظ الملف في مجلد التنزيلات. بعد اكتماله اضغط على الملف لتثبيت التحديث. لا يثبّت
+              التطبيق الحزم تلقائيًا.
             </p>
           </div>
           <button
@@ -417,6 +474,7 @@ export default function App() {
               setAvailableAppUpdate(null);
               setUpdateDownloadError(null);
               setUpdateOpenMessage(null);
+              setUpdateDownloadMode(null);
             }}
             disabled={isOpeningAppUpdate}
             className="shrink-0 rounded-lg px-2 py-1 text-xs font-bold text-slate-300 hover:bg-slate-800 disabled:cursor-wait disabled:opacity-50"

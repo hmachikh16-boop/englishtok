@@ -31,6 +31,7 @@ import { ProgressBackupPanel } from './ProgressBackupPanel';
 import { speechService } from '../../services/speechService';
 import { checkForAppUpdate, type AppUpdateManifest } from '../../services/appUpdateService';
 import { openAppUpdateDownload } from '../../services/appUpdateLauncher';
+import { downloadAppUpdate, openDownloadsFolder } from '../../services/apkDownloadService';
 import { IS_STORE_BUILD } from '../../config/storeBuild';
 import { IS_GOLD_EDITION } from '../../config/edition';
 import {
@@ -78,6 +79,7 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
   const [isCheckingUpdate, setIsCheckingUpdate] = useState(false);
   const [availableUpdate, setAvailableUpdate] = useState<AppUpdateManifest | null>(null);
   const [updateMessage, setUpdateMessage] = useState<string | null>(null);
+  const [updateDownloadMode, setUpdateDownloadMode] = useState<'app' | 'browser' | null>(null);
   const [isOpeningUpdate, setIsOpeningUpdate] = useState(false);
   const [isRefreshingContent, setIsRefreshingContent] = useState(false);
   const [contentMessage, setContentMessage] = useState<string | null>(null);
@@ -265,12 +267,37 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
     }
   };
 
-  const handleOpenUpdate = async () => {
+  const handleDownloadUpdateInApp = async () => {
     if (!availableUpdate) return;
     setIsOpeningUpdate(true);
     setUpdateMessage(null);
+    setUpdateDownloadMode(null);
+    try {
+      const result = await downloadAppUpdate(availableUpdate);
+      setUpdateDownloadMode(result.mode);
+      setUpdateMessage(
+        result.mode === 'app'
+          ? `بدأ تنزيل ${availableUpdate.version} داخل التطبيق. ستجده في مجلد التنزيلات بعد اكتماله، مع إشعار من النظام.`
+          : 'فُتح المتصفح لتنزيل الحزمة الرسمية. بعد اكتمال التنزيل، اضغط على الملف لتثبيت التحديث.',
+      );
+    } catch (error) {
+      console.error('Failed to download the Lin Go update:', error);
+      setUpdateMessage(
+        error instanceof Error ? error.message : 'تعذر بدء التنزيل. حاول مرة أخرى.',
+      );
+    } finally {
+      setIsOpeningUpdate(false);
+    }
+  };
+
+  const handleOpenUpdateInBrowser = async () => {
+    if (!availableUpdate) return;
+    setIsOpeningUpdate(true);
+    setUpdateMessage(null);
+    setUpdateDownloadMode(null);
     try {
       await openAppUpdateDownload(availableUpdate);
+      setUpdateDownloadMode('browser');
       setUpdateMessage(
         'فُتح المتصفح لتنزيل الحزمة الرسمية. بعد اكتمال التنزيل، اضغط على الملف لتثبيت التحديث.',
       );
@@ -281,6 +308,13 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
       );
     } finally {
       setIsOpeningUpdate(false);
+    }
+  };
+
+  const handleOpenDownloads = async () => {
+    const opened = await openDownloadsFolder();
+    if (!opened) {
+      setUpdateMessage('تعذر فتح التنزيلات. افتح تطبيق التنزيلات من جهازك.');
     }
   };
 
@@ -449,29 +483,41 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
                         {availableUpdate.notes || 'لا توجد ملاحظات إصدار إضافية.'}
                       </p>
                       <p className="mt-2 text-slate-400">
-                        سيفتح التطبيق المتصفح لتنزيل حزمة APK الرسمية. بعد اكتمال التنزيل،
-                        اضغط على الملف لتثبيت التحديث. لا يثبّت التطبيق الحزم تلقائيًا.
+                        التنزيل داخل التطبيق يستخدم مدير التنزيلات في Android، فيظهر التقدم في
+                        الإشعارات ويُحفظ الملف في مجلد التنزيلات. بعد اكتماله اضغط على الملف
+                        لتثبيت التحديث. لا يثبّت التطبيق الحزم تلقائيًا.
                       </p>
-                      <button
-                        type="button"
-                        onClick={handleOpenUpdate}
-                        disabled={isOpeningUpdate}
-                        className="mt-3 flex min-h-10 items-center justify-center gap-2 rounded-xl bg-emerald-500 px-4 py-2 font-bold text-slate-950 transition-colors hover:bg-emerald-400 disabled:cursor-wait disabled:opacity-70"
-                      >
-                        <Download className="h-4 w-4" />
-                        {isOpeningUpdate
-                          ? 'جارٍ فتح المتصفح…'
-                          : `تنزيل تحديث ${availableUpdate.version} عبر المتصفح`}
-                      </button>
-                      <a
-                        href={availableUpdate.apkUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="mt-2 flex min-h-10 items-center justify-center gap-2 rounded-xl border border-slate-600 bg-slate-900/70 px-4 py-2 font-bold text-slate-100 transition-colors hover:border-sky-400 hover:text-sky-200"
-                      >
-                        <Download className="h-4 w-4" />
-                        فتح رابط APK مباشرة
-                      </a>
+                      <div className="mt-3 flex flex-wrap gap-2">
+                        <button
+                          type="button"
+                          onClick={handleDownloadUpdateInApp}
+                          disabled={isOpeningUpdate}
+                          className="flex min-h-10 items-center justify-center gap-2 rounded-xl bg-emerald-500 px-4 py-2 font-bold text-slate-950 transition-colors hover:bg-emerald-400 disabled:cursor-wait disabled:opacity-70"
+                        >
+                          <Download className="h-4 w-4" />
+                          {isOpeningUpdate
+                            ? 'جارٍ بدء التنزيل…'
+                            : `تنزيل تحديث ${availableUpdate.version} داخل التطبيق`}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={handleOpenUpdateInBrowser}
+                          disabled={isOpeningUpdate}
+                          className="flex min-h-10 items-center justify-center gap-2 rounded-xl border border-slate-600 bg-slate-900/70 px-4 py-2 font-bold text-slate-100 transition-colors hover:border-sky-400 hover:text-sky-200 disabled:cursor-wait disabled:opacity-70"
+                        >
+                          <Download className="h-4 w-4" />
+                          فتح في المتصفح
+                        </button>
+                        {updateDownloadMode === 'app' && (
+                          <button
+                            type="button"
+                            onClick={handleOpenDownloads}
+                            className="flex min-h-10 items-center justify-center gap-2 rounded-xl border border-emerald-500/40 px-4 py-2 font-bold text-emerald-200 transition-colors hover:bg-emerald-500/10"
+                          >
+                            فتح التنزيلات
+                          </button>
+                        )}
+                      </div>
                     </>
                   )}
                 </div>
@@ -855,17 +901,37 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
                       </p>
                       <p className="mt-2 text-slate-400">
                         يتطلب Android SDK API {availableUpdate.minimumAndroidSdk} أو أحدث.
-                        سيفتح المتصفح لتنزيل الحزمة؛ بعد اكتمال التنزيل اضغط على الملف لتثبيته.
+                        التنزيل داخل التطبيق يظهر في إشعارات النظام ويُحفظ في مجلد التنزيلات؛
+                        بعد اكتماله اضغط على الملف لتثبيته.
                       </p>
-                      <button
-                        type="button"
-                        onClick={handleOpenUpdate}
-                        disabled={isOpeningUpdate}
-                        className="mt-3 flex min-h-10 items-center justify-center gap-2 rounded-xl bg-emerald-500 px-4 py-2 font-bold text-slate-950 transition-colors hover:bg-emerald-400 disabled:cursor-wait disabled:opacity-70"
-                      >
-                        <Download className="h-4 w-4" />
-                        {isOpeningUpdate ? 'جارٍ فتح المتصفح…' : 'تنزيل تحديث Android عبر المتصفح'}
-                      </button>
+                      <div className="mt-3 flex flex-wrap gap-2">
+                        <button
+                          type="button"
+                          onClick={handleDownloadUpdateInApp}
+                          disabled={isOpeningUpdate}
+                          className="flex min-h-10 items-center justify-center gap-2 rounded-xl bg-emerald-500 px-4 py-2 font-bold text-slate-950 transition-colors hover:bg-emerald-400 disabled:cursor-wait disabled:opacity-70"
+                        >
+                          <Download className="h-4 w-4" />
+                          {isOpeningUpdate ? 'جارٍ بدء التنزيل…' : 'تنزيل تحديث Android داخل التطبيق'}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={handleOpenUpdateInBrowser}
+                          disabled={isOpeningUpdate}
+                          className="flex min-h-10 items-center justify-center gap-2 rounded-xl border border-slate-600 bg-slate-900/70 px-4 py-2 font-bold text-slate-100 transition-colors hover:border-sky-400 hover:text-sky-200 disabled:cursor-wait disabled:opacity-70"
+                        >
+                          فتح في المتصفح
+                        </button>
+                        {updateDownloadMode === 'app' && (
+                          <button
+                            type="button"
+                            onClick={handleOpenDownloads}
+                            className="flex min-h-10 items-center justify-center gap-2 rounded-xl border border-emerald-500/40 px-4 py-2 font-bold text-emerald-200 transition-colors hover:bg-emerald-500/10"
+                          >
+                            فتح التنزيلات
+                          </button>
+                        )}
+                      </div>
                     </>
                   )}
                 </div>

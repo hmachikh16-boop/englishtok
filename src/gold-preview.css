@@ -233,6 +233,20 @@ body.gold-preview-body {
   margin-top: 24px;
 }
 
+.gold-preview-page .gold-download-note {
+  margin: 10px 0 0;
+  color: #6b7f75;
+  font-size: 11px;
+  line-height: 1.7;
+}
+
+.gold-preview-page .gold-download-note a {
+  color: #0a5b46;
+  font-weight: 800;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
 .gold-preview-page .gold-proof {
   display: flex;
   flex-wrap: wrap;

@@ -2351,6 +2351,21 @@ svg {
   gap: 9px;
 }
 
+.gold-mirror {
+  margin: 0;
+  color: rgba(8, 38, 31, 0.58);
+  font-size: 10px;
+  line-height: 1.7;
+  text-align: center;
+}
+
+.gold-mirror a {
+  color: var(--emerald-700);
+  font-weight: 800;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
 .gold-compare-link {
   display: inline-flex;
   align-items: center;

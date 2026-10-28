@@ -26,6 +26,7 @@ export default defineConfig(() => {
             rm(path.resolve(outDir, 'download'), { recursive: true, force: true }),
             rm(path.resolve(outDir, 'english-tok.apk'), { force: true }),
             rm(path.resolve(outDir, 'lin-go-gold.apk'), { force: true }),
+            rm(path.resolve(outDir, 'lin-go-gold-1.0.1.apk'), { force: true }),
             rm(path.resolve(outDir, 'gold-preview.html'), { force: true }),
           ]);
 

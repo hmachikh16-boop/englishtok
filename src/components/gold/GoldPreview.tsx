@@ -34,7 +34,8 @@ const GoldAppPreview = React.lazy(() =>
 );
 
 const DEMO_CODE = 'LINGO-GOLD-DEMO-2026';
-const GOLD_APK_URL =
+const GOLD_APK_URL = '/lin-go-gold-1.0.1.apk';
+const GOLD_GITHUB_APK_URL =
   'https://github.com/hmachikh16-boop/englishtok/releases/download/gold-v1.0.1/lin-go-gold-1.0.1.apk';
 
 const stages = [
@@ -326,7 +327,12 @@ const CodePanel: React.FC<{
         تم فتح المعاينة — استكشف واجهة Gold داخل التطبيق.
       </p>
     )}
-    <a className="gold-preview-toggle" href={GOLD_APK_URL} rel="noopener">
+    <a
+      className="gold-preview-toggle"
+      href={GOLD_APK_URL}
+      download="lin-go-gold-1.0.1.apk"
+      rel="noopener"
+    >
       <Download className="h-3.5 w-3.5" />
       تحميل Gold 1.0.1 التجريبي
       <ChevronLeft className="h-3 w-3" />
@@ -454,7 +460,12 @@ export const GoldPreview: React.FC = () => {
                 يبدأ الرد أسرع.
               </p>
               <div className="gold-hero-actions">
-                <a className="gold-btn gold-btn-gold" href={GOLD_APK_URL} rel="noopener">
+                <a
+                  className="gold-btn gold-btn-gold"
+                  href={GOLD_APK_URL}
+                  download="lin-go-gold-1.0.1.apk"
+                  rel="noopener"
+                >
                   <Download className="h-4 w-4" />
                   حمّل Gold 1.0.1
                 </a>
@@ -463,6 +474,13 @@ export const GoldPreview: React.FC = () => {
                   جرّب التطبيق
                 </button>
               </div>
+              <p className="gold-download-note">
+                التحميل من الموقع الرسمي. إذا لم يبدأ،{' '}
+                <a href={GOLD_GITHUB_APK_URL} target="_blank" rel="noopener noreferrer">
+                  استخدم رابط GitHub الاحتياطي
+                </a>
+                .
+              </p>
               <div className="gold-proof">
                 <span>
                   <CheckCircle2 className="h-3.5 w-3.5 text-emerald-700" />
@@ -687,7 +705,12 @@ export const GoldPreview: React.FC = () => {
                 })}
               </div>
               <div className="gold-hero-actions">
-                <a className="gold-btn gold-btn-primary" href={GOLD_APK_URL} rel="noopener">
+                <a
+                  className="gold-btn gold-btn-primary"
+                  href={GOLD_APK_URL}
+                  download="lin-go-gold-1.0.1.apk"
+                  rel="noopener"
+                >
                   <Download className="h-4 w-4" />
                   حمّل Gold 1.0.1
                 </a>

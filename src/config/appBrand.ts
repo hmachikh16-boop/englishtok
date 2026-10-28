@@ -7,4 +7,4 @@
  * can still receive updates over the installed app.
  */
 export const APP_DISPLAY_NAME = 'Lin Go';
-export const APP_VERSION = '1.8.4';
+export const APP_VERSION = '1.8.5';

@@ -1,5 +1,6 @@
 import { Browser } from '@capacitor/browser';
 import { Capacitor } from '@capacitor/core';
+import { officialApkUrl } from '../config/downloadLinks';
 import type { AppUpdateManifest } from './appUpdateService';
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
@@ -14,21 +15,16 @@ const normalizeOpenError = (error: unknown): Error => {
 };
 
 /**
- * Opens the official APK download in the system browser instead of downloading
- * and installing it from inside the app.
+ * Opens the official, first-party APK download in the system browser.
  *
- * This is deliberate. Android treats an app that downloads and installs APKs
- * as a package installer/dropper, and Google Play Protect can block it as
- * harmful. Keeping the installer permission and native installer code out of
- * Lin Go makes the app safer and avoids that false-positive path. The learner
- * still confirms installation in Android's own package installer.
+ * The app itself never installs packages and never requests the package
+ * installer permission. The browser path is retained as a fallback beside the
+ * in-app DownloadManager path, so both routes deliver the exact same file and
+ * the same versioned filename.
  */
 export const openAppUpdateDownload = async (
   update: AppUpdateManifest,
 ): Promise<void> => {
-  if (!update.apkUrl.startsWith('https://github.com/')) {
-    throw new Error('رابط التحديث غير موثوق.');
-  }
   if (!/^\d+\.\d+\.\d+$/.test(update.version)) {
     throw new Error('رقم إصدار التحديث غير صالح.');
   }
@@ -36,15 +32,24 @@ export const openAppUpdateDownload = async (
     throw new Error('بصمة التحديث المنشورة غير صالحة، لذلك لن يبدأ التنزيل.');
   }
 
+  const url = officialApkUrl(update.version);
   try {
     if (Capacitor.isNativePlatform()) {
-      await Browser.open({ url: update.apkUrl });
+      await Browser.open({ url });
       return;
     }
     if (typeof window === 'undefined') {
       throw new Error('تنزيل التحديث غير متاح في هذه البيئة.');
     }
-    window.open(update.apkUrl, '_blank', 'noopener,noreferrer');
+
+    const anchor = document.createElement('a');
+    anchor.href = url;
+    anchor.download = `lin-go-${update.version}.apk`;
+    anchor.rel = 'noopener noreferrer';
+    anchor.target = '_blank';
+    document.body.appendChild(anchor);
+    anchor.click();
+    anchor.remove();
   } catch (error) {
     throw normalizeOpenError(error);
   }

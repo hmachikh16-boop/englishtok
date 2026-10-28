@@ -1,6 +1,5 @@
 import { createHash } from 'node:crypto';
 import process from 'node:process';
-import { isValidProgressCode, validateProgressBackupProfile } from '../src/services/storageService';
 
 interface ProgressRequest {
   method?: string;
@@ -20,12 +19,33 @@ interface StoredProgressBackup {
   schemaVersion: 1;
   code: string;
   createdAt: string;
-  profile: ReturnType<typeof validateProgressBackupProfile>;
+  profile: Record<string, unknown>;
 }
 
 const BACKUP_TTL_SECONDS = 60 * 60 * 24 * 90;
 const RATE_WINDOW_MS = 60 * 60 * 1000;
 const RATE_LIMITS = { GET: 30, POST: 8 } as const;
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === 'object' && value !== null && !Array.isArray(value);
+
+const isValidProgressCode = (value: string): boolean =>
+  /^[A-Z]{3}\d{3}$/i.test(value.trim());
+
+/**
+ * Cross-device backups are intentionally validated by the client with the
+ * full profile schema before upload. The server only needs to guarantee a
+ * bounded, JSON-safe object so a malformed API request cannot break the
+ * function or store an oversized payload.
+ */
+const readProgressProfile = (value: unknown): Record<string, unknown> | null => {
+  if (!isRecord(value)) return null;
+  try {
+    return JSON.stringify(value).length <= 64_000 ? value : null;
+  } catch {
+    return null;
+  }
+};
 
 const getRedisCredentials = () => ({
   url: (process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL || '').replace(/\/$/, ''),
@@ -84,7 +104,7 @@ export default async function progressHandler(request: ProgressRequest, response
     if (method === 'POST') {
       const body = readBody(request.body);
       const code = typeof body?.code === 'string' ? body.code.trim().toUpperCase() : '';
-      const profile = validateProgressBackupProfile(body?.profile);
+      const profile = readProgressProfile(body?.profile);
       if (!isValidProgressCode(code) || !profile) {
         return response.status(400).json({ error: 'Invalid backup code or profile.' });
       }
@@ -111,7 +131,7 @@ export default async function progressHandler(request: ProgressRequest, response
     try { record = JSON.parse(result) as unknown; } catch { return response.status(500).json({ error: 'Stored progress backup is invalid.' }); }
     if (!record || typeof record !== 'object' || Array.isArray(record)) return response.status(500).json({ error: 'Stored progress backup is invalid.' });
     const stored = record as Record<string, unknown>;
-    const profile = validateProgressBackupProfile(stored.profile);
+    const profile = readProgressProfile(stored.profile);
     if (stored.format !== 'englishtok-progress-backup' || stored.schemaVersion !== 1 || stored.code !== code || typeof stored.createdAt !== 'string' || !profile) {
       return response.status(500).json({ error: 'Stored progress backup failed validation.' });
     }

@@ -1,11 +1,11 @@
 {
-  "version": "1.8.4",
-  "packageId": "com.englishtok.app",
-  "apkUrl": "/english-tok.apk",
-  "sha256": "0B1C9211A37A17A38130DBA883727E3B19949785617DDCEAC57926118F7F8027",
-  "size": 58147386,
-  "minimumAndroidSdk": 24,
-  "notes": "تحديث 1.8.4: زر اكتشاف Lin Go Gold داخل التطبيق، شريط إحصاءات محدّث، وتحسينات تنزيل. لا تغيير في تقدمك أو نسخك الاحتياطي المشفّر.",
-  "releaseUrl": "https://github.com/hmachikh16-boop/englishtok/releases/latest",
-  "publishedAt": "2026-10-28T09:09:03.000Z"
+    "version":  "1.8.5",
+    "packageId":  "com.englishtok.app",
+    "apkUrl":  "/english-tok.apk",
+    "sha256":  "5A7040EABCA5D1FEBACDF0FB1C46B262D94BE7A6F2C03B0E6CBEE423E722CAE5",
+    "size":  58149338,
+    "minimumAndroidSdk":  24,
+    "notes":  "تحديث 1.8.5: تنزيل التحديث داخل التطبيق عبر مدير التنزيلات، ومسار موحّد للمتصفح، مع اسم ملف إصدار أوضح. لا تغيير في تقدمك أو نسخك الاحتياطي المشفّر.",
+    "releaseUrl":  "https://github.com/hmachikh16-boop/englishtok/releases/latest",
+    "publishedAt":  "2026-10-28T09:52:39.000Z"
 }

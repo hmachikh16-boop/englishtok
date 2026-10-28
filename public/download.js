@@ -4,12 +4,15 @@ const LOCAL_APK = '/english-tok.apk';
 const GITHUB_APK = `https://github.com/${REPOSITORY}/releases/latest/download/english-tok.apk`;
 const GITHUB_RELEASE = `https://github.com/${REPOSITORY}/releases/latest`;
 const GOLD_DEMO_CODE = 'LINGO-GOLD-DEMO-2026';
+const GOLD_APK = '/lin-go-gold-1.0.1.apk';
+const GOLD_GITHUB_APK =
+  `https://github.com/${REPOSITORY}/releases/download/gold-v1.0.1/lin-go-gold-1.0.1.apk`;
 
 const FALLBACK = {
-  version: '1.8.4',
-  size: 58_147_386,
-  sha256: '0B1C9211A37A17A38130DBA883727E3B19949785617DDCEAC57926118F7F8027',
-  notes: 'تحديث 1.8.4: زر اكتشاف Lin Go Gold داخل التطبيق، شريط إحصاءات محدّث، وتحسينات تنزيل. لا تغيير في تقدمك أو نسخك الاحتياطي المشفّر.',
+  version: '1.8.5',
+  size: 58_149_338,
+  sha256: '5A7040EABCA5D1FEBACDF0FB1C46B262D94BE7A6F2C03B0E6CBEE423E722CAE5',
+  notes: 'تحديث 1.8.5: تنزيل التحديث داخل التطبيق عبر مدير التنزيلات، ومسار موحّد للمتصفح، مع اسم ملف إصدار أوضح. لا تغيير في تقدمك أو نسخك الاحتياطي المشفّر.',
   releaseUrl: GITHUB_RELEASE,
 };
 
@@ -79,6 +82,35 @@ const setDownloadLinks = (version, target = LOCAL_APK) => {
     );
   });
   setLink('[data-github-download]', githubApkUrl(version));
+};
+
+const setGoldLinks = (target = GOLD_APK) => {
+  document.querySelectorAll('[data-gold-download]').forEach((link) => {
+    link.setAttribute('href', target);
+    link.setAttribute('download', 'lin-go-gold-1.0.1.apk');
+    link.setAttribute(
+      'title',
+      target === GOLD_APK ? 'تنزيل Gold من الموقع الرسمي' : 'تنزيل Gold من صفحة GitHub الرسمية',
+    );
+  });
+  setLink('[data-gold-github]', GOLD_GITHUB_APK);
+};
+
+const ensureGoldTarget = async () => {
+  const links = [...document.querySelectorAll('[data-gold-download]')];
+  if (!links.length) return;
+
+  let target = GOLD_APK;
+  try {
+    const response = await fetch(GOLD_APK, { method: 'HEAD', cache: 'no-store' });
+    if (!response.ok && response.status !== 405) {
+      target = GOLD_GITHUB_APK;
+    }
+  } catch {
+    target = GOLD_GITHUB_APK;
+  }
+
+  setGoldLinks(target);
 };
 
 const applyLatest = (data) => {
@@ -213,9 +245,16 @@ const setupDownloadFeedback = () => {
       showToast('بعد اكتمال 100% افتح ملف APK من «التنزيلات» لتثبيته.');
     });
   });
+  document.querySelectorAll('[data-gold-download]').forEach((link) => {
+    link.addEventListener('click', () => {
+      showToast('تنزيل Gold من الموقع الرسمي. بعد اكتمال 100% افتح الملف من «التنزيلات».');
+    });
+  });
 };
 
 void loadLatest().then(() => ensureDownloadTarget());
+setGoldLinks();
+void ensureGoldTarget();
 setupGoldForm();
 setupShare();
 setupHeader();
