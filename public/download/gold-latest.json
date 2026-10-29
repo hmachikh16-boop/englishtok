@@ -1,11 +1,11 @@
 {
-  "version": "1.1.2",
+  "version": "1.1.3",
   "packageId": "com.englishtok.gold",
-  "apkUrl": "/lin-go-gold-1.1.2.apk",
-  "sha256": "CE501867B835EE037AD96F3BC2F285DF61D27E62848FFC4DA27F2A15A647158E",
-  "size": 58130643,
+  "apkUrl": "/lin-go-gold-1.1.3.apk",
+  "sha256": "18D3342C615B6B104AC250DFE4260BA5815D0B4C5D5F356DFC07BE508A5AA852",
+  "size": 58131131,
   "minimumAndroidSdk": 24,
   "notes": "تحديث Gold+ 1.1.0: لوحة رحلة Gold+، تحدٍّ بصري، نطق موسّع، قلوب لا نهائية، +25% XP، دوري، صندوق يومي، واحتفال إنجاز — مع تحديث داخل التطبيق دون متصفح.",
-  "releaseUrl": "https://github.com/hmachikh16-boop/englishtok/releases/tag/gold-v1.1.2",
+  "releaseUrl": "https://github.com/hmachikh16-boop/englishtok/releases/tag/gold-v1.1.3",
   "publishedAt": "2026-10-29T21:30:00.000Z"
 }

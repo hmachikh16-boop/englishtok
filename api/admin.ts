@@ -770,6 +770,35 @@ const handlePublicCheck = async (request: AdminRequest, rawCode: unknown) => {
   };
 };
 
+const handleSupportSubmit = async (request: AdminRequest, body: Record<string, unknown>): Promise<{ ok: boolean; id: string }> => {
+  await enforceCheckRateLimit(request);
+  const message = asString(body.message, 1000);
+  if (message.length < 5) {
+    throw new HttpError(400, 'اكتب تفاصيل المشكلة (5 أحرف على الأقل).');
+  }
+  const email = asString(body.email, 120);
+  const code = asString(body.code, 48);
+  const device = asString(body.device, 120);
+  const fullMessage = [
+    message,
+    email ? `email: ${email}` : '',
+    code ? `code: ${code}` : '',
+    device ? `device: ${device}` : '',
+  ]
+    .filter(Boolean)
+    .join(' | ')
+    .slice(0, 1000);
+
+  const id = await withDatabaseLock(async () => {
+    const database = await loadDatabase();
+    addActivity(database, 'support', fullMessage, code || undefined);
+    await saveDatabase(database);
+    return database.activity[0]?.id || '';
+  });
+
+  return { ok: true, id };
+};
+
 const setCheckCors = (response: AdminResponse): void => {
   response.setHeader('Access-Control-Allow-Origin', '*');
   response.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
@@ -785,7 +814,7 @@ export default async function adminHandler(
   const body = readBody(request.body);
   const action = getAction(request, body);
   if (method === 'OPTIONS') {
-    if (action === 'check') setCheckCors(response);
+    if (action === 'check' || action === 'support') setCheckCors(response);
     response.setHeader('Allow', 'GET, POST, OPTIONS');
     return response.status(204).json({});
   }
@@ -803,6 +832,15 @@ export default async function adminHandler(
           method === 'GET' ? queryValue(request.query, 'code') : body.code,
         ),
       );
+    }
+
+    if (action === 'support') {
+      setCheckCors(response);
+      if (method !== 'POST') {
+        response.setHeader('Allow', 'POST, OPTIONS');
+        return response.status(405).json({ error: 'Method not allowed.' });
+      }
+      return response.status(200).json(await handleSupportSubmit(request, body));
     }
 
     if (method === 'GET') {

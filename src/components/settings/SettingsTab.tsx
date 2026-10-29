@@ -36,6 +36,7 @@ import { openAppUpdateDownload } from '../../services/appUpdateLauncher';
 import { downloadAppUpdate, openDownloadsFolder } from '../../services/apkDownloadService';
 import { IS_STORE_BUILD } from '../../config/storeBuild';
 import { IS_GOLD_EDITION } from '../../config/edition';
+import { getStoredGoldLicenseCode } from '../../services/goldLicense';
 import {
   createProgressBackup,
   getLocalProgressBackup,
@@ -81,6 +82,10 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
   const [copiedCmd, setCopiedCmd] = useState<string | null>(null);
   const [showResetConfirm, setShowResetConfirm] = useState(false);
   const [activeSubTab, setActiveSubTab] = useState<'app' | 'capacitor' | 'content'>('app');
+  const [supportMessage, setSupportMessage] = useState('');
+  const [supportEmail, setSupportEmail] = useState('');
+  const [supportStatus, setSupportStatus] = useState('');
+  const [supportSending, setSupportSending] = useState(false);
   const [isCheckingUpdate, setIsCheckingUpdate] = useState(false);
   const [availableUpdate, setAvailableUpdate] = useState<AppUpdateManifest | null>(null);
   const [updateMessage, setUpdateMessage] = useState<string | null>(null);
@@ -342,6 +347,38 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
       setContentMessage('تعذر تحديث المحتوى الآن؛ سيستمر التطبيق بالمحتوى المحفوظ محليًا.');
     } finally {
       setIsRefreshingContent(false);
+    }
+  };
+
+  const handleSupportSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!supportMessage.trim()) {
+      setSupportStatus('اكتب تفاصيل المشكلة أولًا.');
+      return;
+    }
+    setSupportSending(true);
+    setSupportStatus('');
+    try {
+      const response = await fetch('/api/admin?action=support', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({
+          message: supportMessage.trim(),
+          email: supportEmail.trim(),
+          code: getStoredGoldLicenseCode(),
+          device: `${Capacitor.getPlatform()} ${userProfile.targetLanguage ?? ''}`,
+        }),
+      });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        throw new Error(payload.error || 'تعذر إرسال الشكوى.');
+      }
+      setSupportMessage('');
+      setSupportStatus('تم إرسال الشكوى إلى لوحة التحكم. سنراجعها قريبًا.');
+    } catch (error) {
+      setSupportStatus(error instanceof Error ? error.message : 'تعذر إرسال الشكوى.');
+    } finally {
+      setSupportSending(false);
     }
   };
 
@@ -821,6 +858,41 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
                   لوحة التحكم (للإدارة)
                 </a>
               </div>
+
+              <form className="mt-4 space-y-3" onSubmit={handleSupportSubmit}>
+                <label className="block text-xs font-bold text-white" htmlFor="gold-support-email">
+                  بريدك (اختياري)
+                </label>
+                <input
+                  id="gold-support-email"
+                  type="email"
+                  value={supportEmail}
+                  onChange={(event) => setSupportEmail(event.target.value)}
+                  placeholder="name@example.com"
+                  className="w-full rounded-xl border border-emerald-500/30 bg-slate-950/60 px-3 py-2 text-xs text-white outline-none focus:border-emerald-400"
+                />
+                <label className="block text-xs font-bold text-white" htmlFor="gold-support-message">
+                  تفاصيل المشكلة
+                </label>
+                <textarea
+                  id="gold-support-message"
+                  value={supportMessage}
+                  onChange={(event) => setSupportMessage(event.target.value)}
+                  rows={4}
+                  placeholder="اشرح المشكلة (الصوت، التفعيل، التحديث، ...)"
+                  className="w-full resize-none rounded-xl border border-emerald-500/30 bg-slate-950/60 px-3 py-2 text-xs text-white outline-none focus:border-emerald-400"
+                />
+                <button
+                  type="submit"
+                  disabled={supportSending}
+                  className="w-full rounded-xl bg-emerald-500 px-4 py-2 text-xs font-black text-slate-950 transition hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  {supportSending ? 'جارٍ الإرسال…' : 'إرسال الشكوى'}
+                </button>
+                {supportStatus && (
+                  <p className="text-xs font-bold text-emerald-300">{supportStatus}</p>
+                )}
+              </form>
             </section>
           )}
 

@@ -4,9 +4,9 @@ const LOCAL_APK = '/english-tok.apk';
 const GITHUB_APK = `https://github.com/${REPOSITORY}/releases/latest/download/english-tok.apk`;
 const GITHUB_RELEASE = `https://github.com/${REPOSITORY}/releases/latest`;
 const GOLD_DEMO_CODE = 'LINGO-GOLD-DEMO-2026';
-const GOLD_APK = '/lin-go-gold-1.1.2.apk';
+const GOLD_APK = '/lin-go-gold-1.1.3.apk';
 const GOLD_GITHUB_APK =
-  `https://github.com/${REPOSITORY}/releases/download/gold-v1.1.2/lin-go-gold-1.1.2.apk`;
+  `https://github.com/${REPOSITORY}/releases/download/gold-v1.1.3/lin-go-gold-1.1.3.apk`;
 
 const FALLBACK = {
   version: '1.8.5',
@@ -87,7 +87,7 @@ const setDownloadLinks = (version, target = LOCAL_APK) => {
 const setGoldLinks = (target = GOLD_APK) => {
   document.querySelectorAll('[data-gold-download]').forEach((link) => {
     link.setAttribute('href', target);
-    link.setAttribute('download', 'lin-go-gold-1.1.2.apk');
+    link.setAttribute('download', 'lin-go-gold-1.1.3.apk');
     link.setAttribute(
       'title',
       target === GOLD_APK ? 'تنزيل Gold+ من الموقع الرسمي' : 'تنزيل Gold+ من صفحة GitHub الرسمية',
@@ -312,10 +312,56 @@ const setupDownloadFeedback = () => {
   });
 };
 
+const setupSupport = () => {
+  const form = document.getElementById('support-form');
+  const emailInput = document.getElementById('support-email');
+  const messageInput = document.getElementById('support-message');
+  const status = document.getElementById('support-status');
+  if (!form || !messageInput) return;
+
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const message = messageInput.value.trim();
+    if (message.length < 5) {
+      if (status) status.textContent = 'اكتب تفاصيل المشكلة (5 أحرف على الأقل).';
+      return;
+    }
+    const submit = form.querySelector('button[type="submit"]');
+    if (submit) {
+      submit.disabled = true;
+      submit.textContent = 'جارٍ الإرسال…';
+    }
+    try {
+      const response = await fetch('/api/admin?action=support', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({
+          message,
+          email: emailInput ? emailInput.value.trim() : '',
+        }),
+      });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(payload.error || 'تعذر إرسال الشكوى.');
+      messageInput.value = '';
+      if (status) status.textContent = 'تم إرسال الشكوى إلى لوحة التحكم. سنراجعها قريبًا.';
+    } catch (error) {
+      if (status) {
+        status.textContent = error instanceof Error ? error.message : 'تعذر إرسال الشكوى.';
+      }
+    } finally {
+      if (submit) {
+        submit.disabled = false;
+        submit.textContent = 'إرسال الشكوى';
+      }
+    }
+  });
+};
+
 void loadLatest().then(() => ensureDownloadTarget());
 setGoldLinks();
 void ensureGoldTarget();
 setupGoldForm();
+setupSupport();
 setupShare();
 setupHeader();
 setupDownloadFeedback();
