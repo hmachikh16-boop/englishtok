@@ -20,6 +20,7 @@ import { PrimaryAvatar } from '../video/PrimaryCharacterArt';
 import { GoldJourneyPanel } from '../gold/GoldJourneyPanel';
 import { GoldErrorBoundary } from '../gold/GoldErrorBoundary';
 import { EDUCATIONAL_PHASES, findSchoolYearRoute, SCHOOL_YEAR_ALIGNMENT_NOTE } from '../../data/educationalStructure';
+import { EDUCATIONAL_STORIES } from '../../data/stories';
 
 const ROUTE_SHIFTS = [0, 30, 44, 30, 0, -30, -44, -30, 0, 30];
 
@@ -610,6 +611,34 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
             </div>;
           })}
         </div>
+        <aside className="mt-6 rounded-2xl border border-teal-200/10 bg-white/[0.04] p-4" aria-label="قصص تعليمية">
+          <div className="flex items-center gap-2 text-sm font-black text-white">
+            <BookOpen className="h-4 w-4 text-lime-200" aria-hidden="true" />
+            قصص تعليمية
+          </div>
+          <p className="mt-1 text-[10px] text-slate-400">قصص قصيرة (إنجليزية/فرنسية) لتحسين الفهم والاستماع.</p>
+          <div className="mt-3 grid gap-3 sm:grid-cols-2">
+            {EDUCATIONAL_STORIES.map((story) => {
+              const text = isFrenchCourse ? story.textFr : story.textEn;
+              return (
+                <article key={story.id} className="rounded-xl border border-white/[0.08] bg-white/[0.05] p-3">
+                  <div className="flex items-center justify-between gap-2">
+                    <strong className="text-xs font-black text-white">{story.titleEn}</strong>
+                    <span className="rounded-full bg-white/[0.08] px-2 py-0.5 text-[8px] font-bold text-slate-300">{story.level}</span>
+                  </div>
+                  <p className="mt-1 text-[10px] leading-5 text-slate-300">{text}</p>
+                  <button
+                    type="button"
+                    onClick={() => speechService.speakText({ source: 'stories', text: text.toLowerCase(), rate: 0.9, gender: 'female', accent: isFrenchCourse ? 'fr' : 'en' })}
+                    className="mt-2 inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/5 px-2.5 py-1.5 text-[9px] font-bold text-slate-200 hover:bg-white/10"
+                  >
+                    <Play className="h-3 w-3 fill-current" /> استمع
+                  </button>
+                </article>
+              );
+            })}
+          </div>
+        </aside>
         <div className="mt-4 flex items-center justify-center gap-2 text-[10px] text-slate-400"><ArrowDown className="h-3.5 w-3.5 text-lime-200" />أكمل الدروس بالترتيب لفتح محطات جديدة</div>
         </>)}
       </section>
