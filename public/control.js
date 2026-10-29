@@ -130,13 +130,11 @@ const statusPill = (record) => {
 };
 
 const userLabel = (record) =>
-  String(record?.userEmail || record?.userName || '').trim();
+  String(record?.userName || record?.userEmail || '').trim();
 
 const secondaryUserLabel = (record) => {
-  const label = userLabel(record);
-  if (!label) return '';
-  if (record.userEmail && record.userName) return record.userName;
-  return record.userEmail ? '' : record.userEmail;
+  if (!record?.userName) return '';
+  return String(record.userEmail || '').trim();
 };
 
 const initials = (record) => {
