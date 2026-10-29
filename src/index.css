@@ -4684,3 +4684,17 @@ button.journey-frame-toggle svg { color: var(--duo-blue); }
   background: linear-gradient(120deg, #fffbeb, #fef3c7);
 }
 .duo-note.is-gold svg { color: #b45309; }
+.games-choice { margin-top: 16px; padding: 16px; border-radius: 24px; color: #fff; background: linear-gradient(135deg, #1f3950, #132230); border: 2px solid #f4b603; }
+.games-choice-head { display: flex; align-items: start; justify-content: space-between; gap: 12px; }
+.games-choice-score { text-align: center; }
+.games-choice-score strong { display: block; font-size: 24px; font-weight: 1000; color: #f4b603; }
+.games-choice-score span { font-size: 9px; color: #d4e1ec; }
+.games-choice-card { margin-top: 14px; border-radius: 18px; background: rgba(255,255,255,0.06); padding: 16px; }
+.games-choice-word { font-size: 28px; font-weight: 1000; text-align: center; }
+.games-choice-phonetic { text-align: center; font-size: 11px; color: #93b3cd; margin-top: 4px; }
+.games-choice-options { display: grid; gap: 8px; margin-top: 14px; }
+.games-choice-option { display: flex; align-items: center; gap: 8px; padding: 10px 12px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.12); background: rgba(0,0,0,0.18); color: #fff; font-weight: 700; cursor: pointer; }
+.games-choice-option.is-correct { background: rgba(34,197,94,0.25); border-color: #22c55e; }
+.games-choice-option.is-wrong { background: rgba(239,68,68,0.25); border-color: #ef4444; }
+.games-choice-next { margin-top: 12px; width: 100%; padding: 10px; border-radius: 12px; background: #f4b603; color: #132230; font-weight: 900; border: none; cursor: pointer; }
+.games-choice-empty { padding: 16px; color: #d4e1ec; }

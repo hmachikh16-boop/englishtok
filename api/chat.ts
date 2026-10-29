@@ -469,7 +469,7 @@ const callProvider = async (
       body: JSON.stringify({
         messages,
         max_tokens: maxTokens,
-        temperature: 0.55,
+        temperature: 0.4,
       }),
     });
     if (!response.ok) throw new Error(`AI_UPSTREAM_${response.status}`);
@@ -494,7 +494,7 @@ const callProvider = async (
         model: provider.model,
         messages,
         max_tokens: maxTokens,
-        temperature: 0.45,
+        temperature: 0.35,
         // Pollinations' anonymous model is a reasoning model. Asking for low
         // effort cuts the silent reasoning pass before the JSON reply.
         reasoning_effort: 'low',
@@ -528,7 +528,7 @@ const callProvider = async (
       model: provider.model,
       messages,
       max_tokens: maxTokens,
-      temperature: 0.55,
+      temperature: 0.4,
       stream: false,
     }),
   });

@@ -35,6 +35,7 @@ import {
   type GameProgress,
 } from '../../services/gameProgressService';
 import { GamePictureClue } from './GamePictureClue';
+import { WordChoiceGame } from './WordChoiceGame';
 
 interface GamesTabProps {
   lessons: Lesson[];
@@ -647,6 +648,8 @@ export const GamesTab: React.FC<GamesTabProps> = ({
           </button>
         </section>
       </div>
+
+      <WordChoiceGame lessons={lessons} userProfile={userProfile} onUpdateProfile={onUpdateProfile} />
 
       {toast && (
         <div className="games-toast" role="status">
