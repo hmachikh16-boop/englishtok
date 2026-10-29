@@ -303,24 +303,25 @@ const GoldPhone: React.FC<{ compact?: boolean }> = ({ compact = false }) => (
 
 const CodePanel: React.FC<{
   activated: boolean;
+  checking: boolean;
   code: string;
   error: string | null;
   onChange: (value: string) => void;
   onActivate: () => void;
   onPreview: () => void;
-}> = ({ activated, code, error, onChange, onActivate, onPreview }) => (
+}> = ({ activated, checking, code, error, onChange, onActivate, onPreview }) => (
   <aside className="gold-activate-card" id="gold-activate">
     <span className="gold-eyebrow">
       <KeyRound className="h-3 w-3" />
       معاينة Gold+
     </span>
-    <h3>لديك كود معاينة؟</h3>
+    <h3>لديك كود Gold؟</h3>
     <p>
-      الكود التجريبي يفتح المعاينة التفاعلية فقط. التفعيل الرسمي المرتبط بالجهاز سيتاح بعد
-      ربط خادم الترخيص؛ التحميل التجريبي مستقل ولا يحتاج كودًا.
+      أدخل الكود الذي حصلت عليه من لوحة التحكم للتحقق منه. كود المعاينة التجريبي يفتح
+      الواجهة التفاعلية فقط، بينما كود Gold المسجّل يتحقق من صلاحيته عبر الخادم.
     </p>
     <label className="gold-code-label" htmlFor="gold-code">
-      كود المعاينة
+      كود Gold
     </label>
     <div className="gold-code-row">
       <input
@@ -328,12 +329,12 @@ const CodePanel: React.FC<{
         className="gold-code-input"
         value={code}
         onChange={(event) => onChange(event.target.value.toUpperCase())}
-        placeholder="GOLD-XXXX-XXXX"
+        placeholder="LINGO-GOLD-XXXX-XXXX-XXXX"
         autoComplete="off"
         spellCheck={false}
       />
-      <button type="button" className="gold-code-submit" onClick={onActivate}>
-        تحقق
+      <button type="button" className="gold-code-submit" onClick={onActivate} disabled={checking}>
+        {checking ? 'جارٍ التحقق…' : 'تحقق'}
       </button>
     </div>
     <p className="gold-code-hint">كود المعاينة: {DEMO_CODE}</p>
@@ -341,7 +342,7 @@ const CodePanel: React.FC<{
     {activated && (
       <p className="gold-code-success">
         <BadgeCheck className="mr-1 inline h-3 w-3" />
-        تم فتح المعاينة — استكشف Gold+ 1.1 داخل التطبيق.
+        تم التحقق — استكشف Gold+ 1.1 داخل التطبيق.
       </p>
     )}
     <a
@@ -378,6 +379,7 @@ export const GoldPreview: React.FC = () => {
   const [code, setCode] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [activated, setActivated] = useState(false);
+  const [checking, setChecking] = useState(false);
   const [view, setView] = useState<'landing' | 'dashboard'>(getInitialView);
   const dashboardTop = useRef<HTMLDivElement>(null);
 
@@ -392,7 +394,8 @@ export const GoldPreview: React.FC = () => {
 
   const normalizedCode = useMemo(() => code.trim().toUpperCase(), [code]);
 
-  const handleActivate = () => {
+  const handleActivate = async () => {
+    if (checking) return;
     if (normalizedCode === DEMO_CODE) {
       setError(null);
       setActivated(true);
@@ -402,7 +405,45 @@ export const GoldPreview: React.FC = () => {
       }, 120);
       return;
     }
-    setError('الكود غير صحيح أو انتهت صلاحيته. تحقق من الكود أو تواصل مع الدعم.');
+    if (!normalizedCode) {
+      setError('أدخل كود Gold أولًا.');
+      return;
+    }
+    setChecking(true);
+    setError(null);
+    try {
+      const response = await fetch(
+        `/api/admin?action=check&code=${encodeURIComponent(normalizedCode)}`,
+        { headers: { Accept: 'application/json' }, cache: 'no-store' },
+      );
+      const payload = (await response.json().catch(() => ({}))) as {
+        valid?: boolean;
+        status?: string;
+        error?: string;
+      };
+      if (!response.ok) {
+        throw new Error(payload.error || 'تعذر التحقق من الكود الآن.');
+      }
+      if (payload.valid) {
+        setActivated(true);
+        setView('dashboard');
+        window.setTimeout(() => {
+          dashboardTop.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 120);
+        return;
+      }
+      setError(
+        payload.status === 'revoked'
+          ? 'هذا الكود ملغى. تواصل مع الدعم أو استخدم كودًا آخر.'
+          : payload.status === 'expired'
+            ? 'هذا الكود منتهي الصلاحية. تواصل مع الدعم لتجديده.'
+            : 'هذا الكود غير موجود. تحقق من كتابته أو تواصل مع الدعم.',
+      );
+    } catch (checkError) {
+      setError(checkError instanceof Error ? checkError.message : 'تعذر التحقق من الكود الآن.');
+    } finally {
+      setChecking(false);
+    }
   };
 
   const handlePreview = () => {
@@ -668,6 +709,7 @@ export const GoldPreview: React.FC = () => {
 
             <CodePanel
               activated={activated}
+              checking={checking}
               code={code}
               error={error}
               onChange={(value) => {

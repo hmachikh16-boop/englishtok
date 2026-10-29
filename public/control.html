@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="robots" content="noindex, nofollow, noarchive" />
+    <meta name="theme-color" content="#070d18" />
+    <meta name="color-scheme" content="dark" />
+    <title>Lin Go Gold Control — لوحة الإدارة المركزية</title>
+    <link rel="icon" type="image/png" href="/download-icon.png" />
+    <link rel="preload" href="/fonts/cairo-arabic.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="stylesheet" href="/control.css" />
+    <script src="/control.js" defer></script>
+  </head>
+  <body>
+    <svg class="icon-sprite" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+      <symbol id="icon-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="2"></rect><rect x="14" y="3" width="7" height="7" rx="2"></rect><rect x="3" y="14" width="7" height="7" rx="2"></rect><rect x="14" y="14" width="7" height="7" rx="2"></rect></symbol>
+      <symbol id="icon-key" viewBox="0 0 24 24"><circle cx="8" cy="15" r="4"></circle><path d="M11 12 21 2m-4 4 3 3m-6-6 3 3"></path></symbol>
+      <symbol id="icon-users" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9.5" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"></path></symbol>
+      <symbol id="icon-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-4-4"></path></symbol>
+      <symbol id="icon-activity" viewBox="0 0 24 24"><path d="M3 12h4l2-7 4 14 2-7h6"></path></symbol>
+      <symbol id="icon-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h.01a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h.01a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v.01a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"></path></symbol>
+      <symbol id="icon-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"></path></symbol>
+      <symbol id="icon-download" viewBox="0 0 24 24"><path d="M12 3v12m0 0 4-4m-4 4-4-4M4 19h16"></path></symbol>
+      <symbol id="icon-upload" viewBox="0 0 24 24"><path d="M12 17V5m0 0 4 4m-4-4L8 9M4 19h16"></path></symbol>
+      <symbol id="icon-refresh" viewBox="0 0 24 24"><path d="M20 11a8 8 0 0 0-14.9-4M4 5v6h6M4 13a8 8 0 0 0 14.9 4M20 19v-6h-6"></path></symbol>
+      <symbol id="icon-logout" viewBox="0 0 24 24"><path d="M10 17l5-5-5-5M15 12H3M15 4h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-4"></path></symbol>
+      <symbol id="icon-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="2"></rect><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"></path></symbol>
+      <symbol id="icon-more" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1"></circle><circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle></symbol>
+      <symbol id="icon-close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"></path></symbol>
+      <symbol id="icon-chevron" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"></path></symbol>
+      <symbol id="icon-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></symbol>
+      <symbol id="icon-alert" viewBox="0 0 24 24"><path d="M12 9v4m0 4h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"></path></symbol>
+      <symbol id="icon-lock" viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="11" rx="2"></rect><path d="M8 10V7a4 4 0 0 1 8 0v3"></path></symbol>
+      <symbol id="icon-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></symbol>
+      <symbol id="icon-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"></path></symbol>
+      <symbol id="icon-trend" viewBox="0 0 24 24"><path d="m3 17 6-6 4 4 8-8"></path><path d="M15 7h6v6"></path></symbol>
+      <symbol id="icon-spark" viewBox="0 0 24 24"><path d="m12 3 1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9L12 3Z"></path><path d="m19 16 .9 2.1L22 19l-2.1.9L19 22l-.9-2.1L16 19l2.1-.9L19 16Z"></path></symbol>
+      <symbol id="icon-trash" viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6M10 10v6M14 10v6"></path></symbol>
+      <symbol id="icon-edit" viewBox="0 0 24 24"><path d="M12 20h9"></path><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z"></path></symbol>
+      <symbol id="icon-shield" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"></path><path d="m9 12 2 2 4-5"></path></symbol>
+      <symbol id="icon-calendar" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M16 3v4M8 3v4M3 11h18"></path></symbol>
+    </svg>
+
+    <div class="ambient ambient-one"></div>
+    <div class="ambient ambient-two"></div>
+    <div class="ambient-grid"></div>
+
+    <div id="loginView" class="login-view">
+      <div class="login-frame">
+        <section class="login-story">
+          <div class="brand brand-large">
+            <span class="brand-mark"><span>G</span><i></i></span>
+            <span class="brand-copy"><strong>Lin Go</strong><small>GOLD CONTROL</small></span>
+          </div>
+          <div class="story-copy">
+            <span class="eyebrow"><span class="eyebrow-dot"></span> مركز الإدارة السحابي</span>
+            <h1>تحكّم كامل.<br /><em>من أي مكان.</em></h1>
+            <p>لوحة واحدة لإصدار أكواد Gold، متابعة المستخدمين، ومعرفة الأكواد الصالحة قبل أن تنتهي. بياناتك محفوظة مركزيًا ومحمية بمفتاح إدارة.</p>
+          </div>
+          <div class="story-points">
+            <div class="story-point"><span class="point-icon"><svg><use href="#icon-key"></use></svg></span><div><strong>أكواد فورية</strong><span>إنشاء دفعات وتصديرها في ثوانٍ.</span></div></div>
+            <div class="story-point"><span class="point-icon"><svg><use href="#icon-users"></use></svg></span><div><strong>متابعة المستخدمين</strong><span>من يستخدم الكود وعلى أي جهاز.</span></div></div>
+            <div class="story-point"><span class="point-icon"><svg><use href="#icon-shield"></use></svg></span><div><strong>وصول محمي</strong><span>جلسة مشفّرة ومفتاح إدارة سري.</span></div></div>
+          </div>
+          <div class="story-footer"><span class="pulse-dot"></span> Lin Go Cloud · متصل</div>
+        </section>
+
+        <section class="login-card">
+          <div class="login-card-head">
+            <span class="eyebrow">LIN GO · CONTROL</span>
+            <h2>دخول لوحة الإدارة</h2>
+            <p>أدخل مفتاح الإدارة الخاص بك للمتابعة.</p>
+          </div>
+          <form id="loginForm" class="login-form" autocomplete="off">
+            <label for="adminKey">مفتاح الإدارة</label>
+            <div class="secret-input">
+              <span class="input-icon"><svg><use href="#icon-lock"></use></svg></span>
+              <input id="adminKey" name="key" type="password" placeholder="••••••••" autocomplete="current-password" spellcheck="false" required />
+              <button id="toggleKey" class="icon-button reveal" type="button" aria-label="إظهار مفتاح الإدارة"><span>عرض</span></button>
+            </div>
+            <button id="loginButton" class="button button-gold button-block" type="submit"><span class="button-label">دخول آمن</span><span class="button-spinner" aria-hidden="true"></span></button>
+            <p id="loginError" class="form-error" role="alert" hidden></p>
+            <p id="loginHint" class="form-hint">المفتاح يُحفظ على الخادم فقط، ولا يظهر في المتصفح بعد الدخول.</p>
+          </form>
+          <div class="login-card-foot">
+            <span class="security-pill"><svg><use href="#icon-shield"></use></svg> جلسة محمية</span>
+            <a href="/" class="quiet-link">العودة إلى Lin Go</a>
+          </div>
+        </section>
+      </div>
+      <p class="login-copyright">© <span id="loginYear"></span> Lin Go. جميع الحقوق محفوظة.</p>
+    </div>
+
+    <div id="appView" class="app-shell" hidden>
+      <div id="sidebarBackdrop" class="sidebar-backdrop" hidden></div>
+      <aside class="sidebar" id="sidebar">
+        <div class="sidebar-brand brand">
+          <span class="brand-mark"><span>G</span><i></i></span>
+          <span class="brand-copy"><strong>Lin Go</strong><small>GOLD CONTROL</small></span>
+          <button id="closeMenuButton" class="icon-button sidebar-close" type="button" aria-label="إغلاق القائمة"><svg><use href="#icon-close"></use></svg></button>
+        </div>
+        <div class="workspace-badge"><span class="pulse-dot"></span><div><strong>مساحة العمل</strong><span>Gold · الإنتاج</span></div><span class="live-badge">LIVE</span></div>
+        <nav class="side-nav" aria-label="التنقل الرئيسي">
+          <button class="nav-item is-active" type="button" data-view="overview"><span class="nav-icon"><svg><use href="#icon-grid"></use></svg></span><span>نظرة عامة</span></button>
+          <button class="nav-item" type="button" data-view="licenses"><span class="nav-icon"><svg><use href="#icon-key"></use></svg></span><span>الأكواد</span><span class="nav-count" id="navLicenseCount">0</span></button>
+          <button class="nav-item" type="button" data-view="users"><span class="nav-icon"><svg><use href="#icon-users"></use></svg></span><span>المستخدمون</span></button>
+          <button class="nav-item" type="button" data-view="check"><span class="nav-icon"><svg><use href="#icon-search"></use></svg></span><span>فحص كود</span></button>
+          <button class="nav-item" type="button" data-view="activity"><span class="nav-icon"><svg><use href="#icon-activity"></use></svg></span><span>السجل</span></button>
+        </nav>
+        <div class="side-nav-label">الإدارة</div>
+        <nav class="side-nav" aria-label="إدارة البيانات">
+          <button class="nav-item" type="button" data-view="settings"><span class="nav-icon"><svg><use href="#icon-settings"></use></svg></span><span>البيانات والإعدادات</span></button>
+        </nav>
+        <div class="sidebar-bottom">
+          <div class="cloud-card"><span class="cloud-icon"><svg><use href="#icon-shield"></use></svg></span><div><strong>تخزين سحابي</strong><span><span class="online-dot"></span> متصل ومتزامن</span></div></div>
+          <div class="sidebar-user"><span class="avatar">LG</span><div><strong>مدير النظام</strong><span>جلسة إدارة</span></div><button id="logoutButtonSide" class="icon-button" type="button" aria-label="تسجيل الخروج"><svg><use href="#icon-logout"></use></svg></button></div>
+          <span class="version-label">Control v2.0 · 2026</span>
+        </div>
+      </aside>
+
+      <div class="workspace">
+        <header class="topbar">
+          <div class="topbar-start">
+            <button id="menuButton" class="icon-button menu-button" type="button" aria-label="فتح القائمة"><svg><use href="#icon-menu"></use></svg></button>
+            <div class="page-title"><span class="breadcrumb">Control <span>/</span> <b id="breadcrumbCurrent">نظرة عامة</b></span><h1 id="viewTitle">نظرة عامة</h1><p id="viewSubtitle">ملخص مباشر لأكواد Gold ومستخدميها.</p></div>
+          </div>
+          <div class="topbar-actions">
+            <label class="top-search" for="globalSearch"><svg><use href="#icon-search"></use></svg><input id="globalSearch" type="search" placeholder="ابحث بالكود أو المستخدم…" autocomplete="off" /><kbd>⌘ K</kbd></label>
+            <button id="refreshButton" class="icon-button tool-button" type="button" aria-label="تحديث البيانات" title="تحديث البيانات"><svg><use href="#icon-refresh"></use></svg></button>
+            <div class="sync-meta"><span class="online-dot"></span><div><strong>متزامن</strong><span id="lastUpdated">الآن</span></div></div>
+            <button id="logoutButton" class="icon-button tool-button" type="button" aria-label="تسجيل الخروج" title="تسجيل الخروج"><svg><use href="#icon-logout"></use></svg></button>
+          </div>
+        </header>
+
+        <main class="main-content">
+          <section id="view-overview" class="view is-active" data-view-panel="overview">
+            <div class="hero-card">
+              <div class="hero-glow"></div>
+              <div class="hero-content">
+                <span class="eyebrow"><span class="eyebrow-dot"></span> Gold Control · لوحة مركزية</span>
+                <h2>كل أكواد Gold،<br /><em>في مكان واحد.</em></h2>
+                <p>راقب الصلاحية، فعّل المستخدمين، واعرف ما ينتهي قبل أن ينتهي — من أي جهاز.</p>
+                <div class="hero-actions">
+                  <button class="button button-gold" type="button" data-action="generate"><svg><use href="#icon-plus"></use></svg><span>إنشاء أكواد</span></button>
+                  <button class="button button-ghost" type="button" data-view="licenses"><span>عرض كل الأكواد</span><svg><use href="#icon-chevron"></use></svg></button>
+                </div>
+              </div>
+              <div class="hero-art" aria-hidden="true">
+                <div class="hero-orbit orbit-one"></div>
+                <div class="hero-orbit orbit-two"></div>
+                <div class="hero-coin"><span>G</span><i></i></div>
+                <span class="art-chip chip-one"><span class="online-dot"></span> متصل</span>
+                <span class="art-chip chip-two"><svg><use href="#icon-shield"></use></svg> محمي</span>
+              </div>
+            </div>
+
+            <div class="stats-grid" id="statGrid" aria-live="polite"></div>
+
+            <div class="insight-grid">
+              <article class="panel chart-panel">
+                <div class="panel-head"><div><span class="panel-kicker">النشاط</span><h3>التفعيلات · آخر 7 أيام</h3></div><span class="panel-meta" id="activityChartTotal">0 تفعيل</span></div>
+                <div id="activityChart" class="bar-chart" role="img" aria-label="مخطط التفعيلات آخر 7 أيام"></div>
+              </article>
+              <article class="panel distribution-panel">
+                <div class="panel-head"><div><span class="panel-kicker">التوزيع</span><h3>حالة الأكواد</h3></div><span class="panel-meta">مباشر</span></div>
+                <div class="distribution-body"><div id="statusDonut" class="donut" role="img" aria-label="توزيع حالات الأكواد"><div class="donut-center"><strong id="donutTotal">0</strong><span>كود</span></div></div><div id="statusLegend" class="legend"></div></div>
+              </article>
+            </div>
+
+            <div class="split-grid">
+              <article class="panel table-panel">
+                <div class="panel-head"><div><span class="panel-kicker">الأحدث</span><h3>أحدث الأكواد</h3></div><button class="text-button" type="button" data-view="licenses">عرض الكل <svg><use href="#icon-chevron"></use></svg></button></div>
+                <div class="table-wrap"><table class="data-table compact-table"><thead><tr><th>الكود</th><th>الحالة</th><th>المستخدم</th><th>ينتهي</th></tr></thead><tbody id="recentTableBody"></tbody></table></div>
+              </article>
+              <article class="panel activity-panel">
+                <div class="panel-head"><div><span class="panel-kicker">السجل</span><h3>آخر النشاطات</h3></div><button class="text-button" type="button" data-view="activity">الكل <svg><use href="#icon-chevron"></use></svg></button></div>
+                <div id="activityFeed" class="activity-feed"></div>
+              </article>
+            </div>
+          </section>
+
+          <section id="view-licenses" class="view" data-view-panel="licenses" hidden>
+            <div class="section-heading"><div><span class="eyebrow">إدارة الأكواد</span><h2>كل أكواد Gold</h2><p id="licensesSubtitle">ابحث، فلتر، وفعّل الأكواد من مكان واحد.</p></div><div class="heading-actions"><button class="button button-secondary" type="button" data-action="export-csv"><svg><use href="#icon-download"></use></svg><span>تصدير CSV</span></button><button class="button button-gold" type="button" data-action="generate"><svg><use href="#icon-plus"></use></svg><span>إنشاء أكواد</span></button></div></div>
+            <article class="panel licenses-panel">
+              <div class="table-toolbar"><label class="search-field" for="licenseSearch"><svg><use href="#icon-search"></use></svg><input id="licenseSearch" type="search" placeholder="ابحث بالكود، الاسم، البريد، أو الجهاز…" autocomplete="off" /></label><div class="toolbar-filters"><label class="select-wrap"><span>الحالة</span><select id="statusFilter"><option value="all">الكل</option><option value="valid">صالحة</option><option value="active">مفعّلة</option><option value="expiring">تنتهي قريبًا</option><option value="expired">منتهية</option><option value="revoked">ملغاة</option></select></label><label class="select-wrap"><span>الترتيب</span><select id="sortFilter"><option value="newest">الأحدث</option><option value="oldest">الأقدم</option><option value="expiry">الأقرب انتهاءً</option><option value="code">الكود</option></select></label><button id="clearFilters" class="icon-button clear-filters" type="button" aria-label="مسح الفلاتر" title="مسح الفلاتر"><svg><use href="#icon-close"></use></svg></button></div></div>
+              <div class="table-wrap"><table class="data-table"><thead><tr><th>الكود</th><th>الحالة</th><th>المستخدم</th><th>الجهاز</th><th>ينتهي</th><th>أُنشئ</th><th class="actions-col">إجراءات</th></tr></thead><tbody id="licenseTableBody"></tbody></table></div>
+              <div id="licensesEmpty" class="empty-state" hidden><span class="empty-icon"><svg><use href="#icon-key"></use></svg></span><h3>لا توجد أكواد مطابقة</h3><p>جرّب تغيير البحث أو الفلتر، أو أنشئ دفعة جديدة.</p><button class="button button-gold button-small" type="button" data-action="generate"><svg><use href="#icon-plus"></use></svg><span>إنشاء أكواد</span></button></div>
+              <div class="table-footer"><span id="licenseCount" class="table-count">0 كود</span><div id="pagination" class="pagination"></div></div>
+            </article>
+          </section>
+
+          <section id="view-users" class="view" data-view-panel="users" hidden>
+            <div class="section-heading"><div><span class="eyebrow">المستخدمون</span><h2>المستخدمون المفعّلون</h2><p>الأشخاص المرتبطون بأكواد Gold النشطة.</p></div><div class="heading-actions"><button class="button button-secondary" type="button" data-action="refresh"><svg><use href="#icon-refresh"></use></svg><span>تحديث</span></button></div></div>
+            <div class="user-toolbar"><label class="search-field" for="userSearch"><svg><use href="#icon-search"></use></svg><input id="userSearch" type="search" placeholder="ابحث باسم المستخدم أو البريد أو الكود…" autocomplete="off" /></label><span id="userCount" class="table-count">0 مستخدم</span></div>
+            <div id="usersGrid" class="users-grid"></div>
+            <div id="usersEmpty" class="empty-state panel" hidden><span class="empty-icon"><svg><use href="#icon-users"></use></svg></span><h3>لا يوجد مستخدمون مفعّلون بعد</h3><p>عند تفعيل كود وتعيينه لمستخدم سيظهر هنا مباشرة.</p></div>
+          </section>
+
+          <section id="view-check" class="view" data-view-panel="check" hidden>
+            <div class="section-heading"><div><span class="eyebrow">التحقق</span><h2>فحص كود Gold</h2><p>تحقق من صلاحية أي كود ومعلومات المستخدم المرتبط به.</p></div></div>
+            <div class="check-layout">
+              <article class="panel check-panel">
+                <div class="check-illustration"><span class="check-ring"><svg><use href="#icon-search"></use></svg></span></div>
+                <h3>أدخل الكود للتحقق</h3>
+                <p>الصق الكود كاملًا، ثم اضغط تحقق.</p>
+                <form id="checkForm" class="check-form"><div class="code-input"><svg><use href="#icon-key"></use></svg><input id="checkCode" type="text" placeholder="LINGO-GOLD-XXXX-XXXX-XXXX" autocomplete="off" spellcheck="false" required /><button class="button button-gold" type="submit"><span>تحقق</span></button></div></form>
+                <button id="pasteCodeButton" class="text-button paste-button" type="button"><svg><use href="#icon-copy"></use></svg> لصق من الحافظة</button>
+              </article>
+              <div id="checkResult" class="check-result" hidden></div>
+            </div>
+          </section>
+
+          <section id="view-activity" class="view" data-view-panel="activity" hidden>
+            <div class="section-heading"><div><span class="eyebrow">السجل</span><h2>سجل النشاطات</h2><p>كل عملية إدارة تمت على أكواد Gold.</p></div><div class="heading-actions"><button class="button button-secondary" type="button" data-action="refresh"><svg><use href="#icon-refresh"></use></svg><span>تحديث</span></button></div></div>
+            <article class="panel activity-log-panel"><div id="activityList" class="activity-list"></div><div id="activityEmpty" class="empty-state" hidden><span class="empty-icon"><svg><use href="#icon-activity"></use></svg></span><h3>السجل فارغ</h3><p>ستظهر هنا كل عمليات الإنشاء والتفعيل والتمديد.</p></div></article>
+          </section>
+
+          <section id="view-settings" class="view" data-view-panel="settings" hidden>
+            <div class="section-heading"><div><span class="eyebrow">الإدارة</span><h2>البيانات والإعدادات</h2><p>نسخ احتياطي، استيراد، ومعلومات مساحة العمل.</p></div></div>
+            <div class="settings-grid">
+              <article class="panel settings-card"><div class="settings-icon"><svg><use href="#icon-shield"></use></svg></div><div class="settings-copy"><h3>الحماية والجلسة</h3><p>الوصول إلى اللوحة محمي بمفتاح إدارة سري، والجلسة صالحة لمدة 12 ساعة.</p><div class="settings-tags"><span>HttpOnly</span><span>SameSite</span><span>HMAC</span></div></div></article>
+              <article class="panel settings-card"><div class="settings-icon"><svg><use href="#icon-download"></use></svg></div><div class="settings-copy"><h3>نسخة احتياطية</h3><p>حمّل قاعدة البيانات الكاملة بصيغة JSON، أو صدّر جدول الأكواد بصيغة CSV.</p><div class="settings-actions"><button class="button button-secondary button-small" type="button" data-action="export-json"><svg><use href="#icon-download"></use></svg><span>JSON</span></button><button class="button button-secondary button-small" type="button" data-action="export-csv"><svg><use href="#icon-download"></use></svg><span>CSV</span></button></div></div></article>
+              <article class="panel settings-card"><div class="settings-icon"><svg><use href="#icon-upload"></use></svg></div><div class="settings-copy"><h3>استيراد من النسخة المحلية</h3><p>ارفع ملف <code>licenses.json</code> من تطبيق Windows. الأكواد المكررة لن تتغير.</p><div class="settings-actions"><input id="importFile" type="file" accept="application/json,.json" hidden /><button id="importButton" class="button button-gold button-small" type="button"><svg><use href="#icon-upload"></use></svg><span>اختيار ملف</span></button></div><p id="importHint" class="form-hint"></p></div></article>
+              <article class="panel settings-card"><div class="settings-icon"><svg><use href="#icon-activity"></use></svg></div><div class="settings-copy"><h3>ملخص مساحة العمل</h3><div id="dataSummary" class="data-summary"></div></div></article>
+            </div>
+          </section>
+        </main>
+        <footer class="app-footer"><span>Lin Go Gold Control · لوحة إدارة مركزية</span><span class="footer-status"><span class="online-dot"></span> <span id="footerStatus">جاهز</span></span></footer>
+      </div>
+    </div>
+
+    <div id="toastRegion" class="toast-region" aria-live="polite" aria-atomic="true"></div>
+    <div id="modalRoot"></div>
+
+    <div id="loadingScreen" class="loading-screen" hidden><div class="loading-mark"><span>G</span></div><p>جارٍ تحميل مساحة العمل…</p></div>
+  </body>
+</html>

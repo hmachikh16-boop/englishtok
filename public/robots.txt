@@ -1,4 +1,7 @@
 User-agent: *
 Allow: /
+Disallow: /control
+Disallow: /control/
+Disallow: /api/admin
 
 Sitemap: https://englishtok-eight.vercel.app/sitemap.xml

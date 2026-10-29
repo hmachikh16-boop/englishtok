@@ -177,28 +177,76 @@ const setupGoldForm = () => {
   const input = document.querySelector('[data-gold-input]');
   const message = document.querySelector('[data-gold-message]');
   const success = document.querySelector('[data-gold-success]');
+  const submit = form?.querySelector('button[type="submit"]');
   if (!form || !input) return;
 
-  form.addEventListener('submit', (event) => {
+  const setMessage = (text, isError) => {
+    if (!message) return;
+    message.classList.toggle('is-error', Boolean(isError));
+    message.textContent = text;
+  };
+
+  form.addEventListener('submit', async (event) => {
     event.preventDefault();
     const code = input.value.trim().toUpperCase();
 
+    if (!code) {
+      if (success) success.hidden = true;
+      setMessage('أدخل كود Gold أولًا. للمعاينة استخدم الكود التجريبي.', true);
+      input.focus();
+      return;
+    }
+
     if (code === GOLD_DEMO_CODE) {
-      if (message) {
-        message.classList.remove('is-error');
-        message.textContent = 'تم التحقق من كود المعاينة. يمكنك فتح Gold الآن.';
-      }
+      setMessage('تم التحقق من كود المعاينة. يمكنك فتح Gold الآن.', false);
       if (success) success.hidden = false;
       showToast('Gold جاهز للمعاينة');
       return;
     }
 
     if (success) success.hidden = true;
-    if (message) {
-      message.classList.add('is-error');
-      message.textContent = code
-        ? 'هذا الكود غير صالح للمعاينة. استخدم الكود التجريبي الموجود بالأعلى، أو انتظر التفعيل الرسمي.'
-        : 'أدخل كود Gold أولًا. للمعاينة استخدم الكود التجريبي.';
+    setMessage('جارٍ التحقق من الكود…', false);
+    if (submit) {
+      submit.disabled = true;
+      submit.dataset.label = submit.textContent;
+      submit.textContent = 'جارٍ التحقق…';
+    }
+    try {
+      const response = await fetch(
+        `/api/admin?action=check&code=${encodeURIComponent(code)}`,
+        { headers: { Accept: 'application/json' }, cache: 'no-store' },
+      );
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        throw new Error(payload.error || 'تعذر التحقق من الكود الآن.');
+      }
+      if (payload.valid) {
+        setMessage('تم التحقق — كود Gold صالح ويمكنك متابعة التحميل.', false);
+        if (success) success.hidden = false;
+        showToast('تم التحقق من كود Gold');
+      } else {
+        setMessage(
+          payload.status === 'revoked'
+            ? 'هذا الكود ملغى. تواصل مع الدعم أو استخدم كودًا آخر.'
+            : payload.status === 'expired'
+              ? 'هذا الكود منتهي الصلاحية. تواصل مع الدعم لتجديده.'
+              : 'هذا الكود غير موجود في مساحة العمل. تحقق من كتابته أو تواصل مع الدعم.',
+          true,
+        );
+        showToast('الكود غير صالح');
+      }
+    } catch (error) {
+      setMessage(
+        error instanceof Error
+          ? error.message
+          : 'تعذر التحقق من الكود الآن. حاول مرة أخرى.',
+        true,
+      );
+    } finally {
+      if (submit) {
+        submit.disabled = false;
+        submit.textContent = submit.dataset.label || 'تحقق';
+      }
     }
   });
 

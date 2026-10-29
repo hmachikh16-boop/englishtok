@@ -4,6 +4,7 @@ import { resolve } from 'node:path';
 import process from 'node:process';
 import express from 'express';
 import { createServer as createViteServer } from 'vite';
+import adminHandler from './api/admin';
 import chatHandler from './api/chat';
 import progressHandler from './api/progress';
 import ttsHandler from './api/tts';
@@ -14,7 +15,13 @@ const isProduction =
   process.argv.includes('--production') || process.env.NODE_ENV === 'production';
 const distDirectory = resolve(process.cwd(), 'dist');
 
-app.use(express.json({ limit: '64kb' }));
+app.use(express.json({ limit: '2mb' }));
+app.all('/api/admin', (request, response) => {
+  void adminHandler(
+    request as unknown as Parameters<typeof adminHandler>[0],
+    response as unknown as Parameters<typeof adminHandler>[1],
+  );
+});
 app.all('/api/progress', (request, response) => {
   void progressHandler(
     request as unknown as Parameters<typeof progressHandler>[0],
@@ -35,6 +42,11 @@ app.all('/api/tts', (request, response) => {
 });
 
 async function startServer() {
+  const controlPage = isProduction
+    ? resolve(distDirectory, 'control.html')
+    : resolve(process.cwd(), 'public', 'control.html');
+  app.get(['/control', '/control/'], (_req, res) => res.sendFile(controlPage));
+
   if (isProduction) {
     app.use(express.static(distDirectory));
     app.get(/.*/, (_req, res) => res.sendFile(resolve(distDirectory, 'index.html')));
