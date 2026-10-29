@@ -4,9 +4,9 @@ const LOCAL_APK = '/english-tok.apk';
 const GITHUB_APK = `https://github.com/${REPOSITORY}/releases/latest/download/english-tok.apk`;
 const GITHUB_RELEASE = `https://github.com/${REPOSITORY}/releases/latest`;
 const GOLD_DEMO_CODE = 'LINGO-GOLD-DEMO-2026';
-const GOLD_APK = '/lin-go-gold-1.1.1.apk';
+const GOLD_APK = '/lin-go-gold-1.1.2.apk';
 const GOLD_GITHUB_APK =
-  `https://github.com/${REPOSITORY}/releases/download/gold-v1.1.1/lin-go-gold-1.1.1.apk`;
+  `https://github.com/${REPOSITORY}/releases/download/gold-v1.1.2/lin-go-gold-1.1.2.apk`;
 
 const FALLBACK = {
   version: '1.8.5',
@@ -87,7 +87,7 @@ const setDownloadLinks = (version, target = LOCAL_APK) => {
 const setGoldLinks = (target = GOLD_APK) => {
   document.querySelectorAll('[data-gold-download]').forEach((link) => {
     link.setAttribute('href', target);
-    link.setAttribute('download', 'lin-go-gold-1.1.1.apk');
+    link.setAttribute('download', 'lin-go-gold-1.1.2.apk');
     link.setAttribute(
       'title',
       target === GOLD_APK ? 'تنزيل Gold+ من الموقع الرسمي' : 'تنزيل Gold+ من صفحة GitHub الرسمية',

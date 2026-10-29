@@ -175,7 +175,7 @@ export const ChatTab: React.FC<ChatTabProps> = ({ lessons, userProfile, onBack }
       void speakTutorText({
         text,
         language,
-        rate: Math.max(0.7, Math.min(1.1, userProfile.settings.playbackSpeed || 1)),
+        rate: Math.max(0.7, Math.min(0.9, userProfile.settings.playbackSpeed || 0.85)),
         onEnd: () => setSpeakingKey((current) => (current === key ? null : current)),
         onError: () => {
           setSpeakingKey((current) => (current === key ? null : current));

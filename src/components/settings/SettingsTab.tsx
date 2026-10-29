@@ -17,6 +17,8 @@ import {
   AlertCircle,
   AtSign,
   Phone,
+  MessageCircle,
+  ExternalLink,
   KeyRound,
   Upload,
   GraduationCap,
@@ -774,6 +776,53 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
               </div>
             )}
           </div>
+
+          {goldEdition && (
+            <section
+              className="rounded-2xl border border-emerald-500/20 bg-gradient-to-br from-slate-900 to-emerald-950/30 p-4 shadow-lg"
+              aria-labelledby="gold-support-heading"
+            >
+              <div className="flex items-center gap-2 text-emerald-300">
+                <MessageCircle className="h-4 w-4" aria-hidden="true" />
+                <h3 id="gold-support-heading" className="text-xs font-bold text-white">
+                  دعم Gold+
+                </h3>
+              </div>
+              <p className="mt-2 text-xs leading-6 text-slate-300">
+                تواصل معنا لأي مشكلة في التفعيل أو التحديث أو الصوت. كودك وحالة تفعيلك محفوظان على هذا الجهاز.
+              </p>
+              <div className="mt-3 flex flex-col gap-2 text-xs text-slate-300 sm:flex-row sm:flex-wrap sm:gap-x-5">
+                <a
+                  href="mailto:hmachikh16@gmail.com?subject=Gold%20Support"
+                  className="inline-flex items-center gap-2 hover:text-emerald-300"
+                  dir="ltr"
+                >
+                  <AtSign className="h-3.5 w-3.5 text-emerald-400" aria-hidden="true" />
+                  hmachikh16@gmail.com
+                </a>
+                <a
+                  href="https://wa.me/213665003037"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 hover:text-emerald-300"
+                  dir="ltr"
+                >
+                  <MessageCircle className="h-3.5 w-3.5 text-emerald-400" aria-hidden="true" />
+                  WhatsApp
+                </a>
+                <a
+                  href="https://englishtok-eight.vercel.app/control"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 hover:text-emerald-300"
+                  dir="ltr"
+                >
+                  <ExternalLink className="h-3.5 w-3.5 text-emerald-400" aria-hidden="true" />
+                  لوحة التحكم (للإدارة)
+                </a>
+              </div>
+            </section>
+          )}
 
           <section
             className="rounded-2xl border border-sky-500/20 bg-gradient-to-br from-slate-900 to-sky-950/30 p-4 shadow-lg"
