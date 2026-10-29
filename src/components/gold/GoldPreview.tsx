@@ -342,7 +342,7 @@ const CodePanel: React.FC<{
     {activated && (
       <p className="gold-code-success">
         <BadgeCheck className="mr-1 inline h-3 w-3" />
-        تم التحقق — استكشف Gold+ 1.1 داخل التطبيق.
+        تم التحقق — استكشف Gold+ 1.1 في المعاينة.
       </p>
     )}
     <a
@@ -739,7 +739,7 @@ export const GoldPreview: React.FC = () => {
               {activated ? (
                 <>
                   <BadgeCheck className="mr-1 inline h-3.5 w-3.5 text-emerald-700" />
-                  Gold مفعّل على هذا الجهاز
+                  تم التحقق — معاينة Gold جاهزة على هذا الجهاز
                 </>
               ) : (
                 'معاينة حقيقية لواجهة Lin Go — التفعيل متاح من الصفحة السابقة'
