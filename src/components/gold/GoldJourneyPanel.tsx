@@ -110,119 +110,115 @@ export const GoldJourneyPanel: React.FC<GoldJourneyPanelProps> = ({
     onUpdateProfile({ xp: userProfile.xp + 10 });
   };
 
+  const statCards = [
+    { icon: Heart, label: 'القلوب', value: '∞', note: 'بلا حدود', tone: 'text-rose-600' },
+    { icon: Gem, label: 'الجواهر', value: metrics.gems.toLocaleString('en-US'), note: 'من تقدمك', tone: 'text-cyan-700' },
+    { icon: Crown, label: 'التيجان', value: metrics.crowns.toLocaleString('en-US'), note: 'مشاريع واختبارات', tone: 'text-amber-700' },
+    { icon: Flame, label: 'السلسلة', value: userProfile.streakDays.toLocaleString('en-US'), note: 'يوم تعلّم', tone: 'text-orange-600' },
+  ];
+
   return (
     <section
-      className="gold-journey-panel relative overflow-hidden rounded-[2rem] border border-amber-300/25 bg-[#171b22] p-4 text-slate-100 shadow-2xl sm:p-5"
+      className="gold-journey-panel relative overflow-hidden rounded-[2rem] border-2 border-[var(--rt-gold-500)] bg-[var(--rt-cream-50)] p-4 text-[var(--rt-blue-900)] shadow-2xl sm:p-5"
       dir="rtl"
       aria-label="لوحة Gold+"
     >
-      <div className="pointer-events-none absolute -left-16 -top-24 h-64 w-64 rounded-full bg-amber-300/15 blur-3xl" />
-      <div className="pointer-events-none absolute -bottom-24 -right-16 h-56 w-56 rounded-full bg-emerald-300/10 blur-3xl" />
+      <div className="pointer-events-none absolute -left-16 -top-24 h-64 w-64 rounded-full bg-[var(--rt-gold-400)]/20 blur-3xl" />
+      <div className="pointer-events-none absolute -bottom-24 -right-16 h-56 w-56 rounded-full bg-[var(--rt-blue-300)]/20 blur-3xl" />
 
-      <div className="relative flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-300/40 bg-amber-300/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.16em] text-amber-200">
-            <Crown className="h-3 w-3" strokeWidth={2.8} aria-hidden="true" />
-            Gold+
+      <section className="games-hero">
+        <div className="games-hero-glow games-hero-glow-a" aria-hidden="true" />
+        <div className="games-hero-glow games-hero-glow-b" aria-hidden="true" />
+        <div className="relative z-10 flex items-start justify-between gap-3">
+          <div>
+            <span className="games-kicker">
+              <Crown className="h-4 w-4" aria-hidden="true" />
+              Gold+
+            </span>
+            <h2 className="games-hero-title">تجربتك الذهبية اليوم</h2>
+            <p className="games-hero-copy">
+              تدريب بصري، نطق موسّع، قلوب لا نهائية، ومكافآت إضافية — أكثر من 70% أنشطة إضافية داخل رحلتك.
+            </p>
+          </div>
+          <span className="games-hero-mascot" aria-hidden="true">
+            <Crown className="h-9 w-9" />
           </span>
-          <h2 className="mt-2 text-lg font-black text-white sm:text-xl">تجربتك الذهبية اليوم</h2>
-          <p className="mt-1 max-w-xl text-[11px] leading-5 text-slate-300">
-            تدريب بصري، نطق موسّع، قلوب لا نهائية، ومكافآت إضافية — أكثر من 70% أنشطة إضافية داخل رحلتك.
-          </p>
         </div>
-        <div className="flex flex-wrap gap-1.5" aria-label="مزايا Gold النشطة">
-          <span className="inline-flex items-center gap-1 rounded-full border border-rose-300/30 bg-rose-300/10 px-2 py-1 text-[9px] font-bold text-rose-100">
-            <Heart className="h-3 w-3" fill="currentColor" /> قلوب ∞
-          </span>
-          <span className="inline-flex items-center gap-1 rounded-full border border-amber-300/30 bg-amber-300/10 px-2 py-1 text-[9px] font-bold text-amber-100">
-            <Sparkles className="h-3 w-3" /> +25% XP
-          </span>
-        </div>
-      </div>
 
-      <div className="relative mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
-        {[
-          { icon: Heart, label: 'القلوب', value: '∞', note: 'بلا حدود', tone: 'text-rose-200' },
-          { icon: Gem, label: 'الجواهر', value: metrics.gems.toLocaleString('en-US'), note: 'من تقدمك', tone: 'text-cyan-200' },
-          { icon: Crown, label: 'التيجان', value: metrics.crowns.toLocaleString('en-US'), note: 'مشاريع واختبارات', tone: 'text-amber-200' },
-          { icon: Flame, label: 'السلسلة', value: userProfile.streakDays.toLocaleString('en-US'), note: 'يوم تعلّم', tone: 'text-orange-200' },
-        ].map((stat) => {
-          const Icon = stat.icon;
-          return (
-            <div
-              key={stat.label}
-              className="rounded-2xl border border-white/10 bg-white/[0.06] px-3 py-2.5 backdrop-blur-sm"
-            >
-              <div className={`flex items-center gap-1.5 text-[10px] font-bold ${stat.tone}`}>
-                <Icon className="h-3.5 w-3.5" aria-hidden="true" />
-                {stat.label}
+        <div className="games-stats" style={{ gridTemplateColumns: 'repeat(4, minmax(0, 1fr))' }}>
+          {statCards.map((stat) => {
+            const Icon = stat.icon;
+            return (
+              <div key={stat.label} className="games-stat">
+                <Icon className="h-4 w-4" aria-hidden="true" />
+                <strong>{stat.value}</strong>
+                <span>{stat.label}</span>
+                <span className="opacity-70">{stat.note}</span>
               </div>
-              <div className="mt-1 text-xl font-black font-mono-num text-white">{stat.value}</div>
-              <div className="text-[9px] text-slate-400">{stat.note}</div>
-            </div>
-          );
-        })}
-      </div>
+            );
+          })}
+        </div>
+      </section>
 
-      <div className="relative mt-3 grid gap-3 lg:grid-cols-[1.15fr_.85fr]">
-        <div className="rounded-2xl border border-amber-300/20 bg-gradient-to-l from-amber-300/[0.12] to-transparent p-3.5">
+      <div className="relative mt-4 grid gap-3 lg:grid-cols-[1.15fr_.85fr]">
+        <div className="rounded-2xl border-2 border-[var(--rt-gold-500)] bg-[var(--rt-cream-50)] p-3.5 shadow-[0_3px_0_var(--rt-gold-700)]">
           <div className="flex items-start justify-between gap-3">
             <div className="flex min-w-0 items-center gap-2.5">
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-amber-300 text-amber-950 shadow-lg shadow-amber-300/10">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[var(--rt-gold-500)] text-[var(--rt-blue-950)] shadow-lg shadow-amber-300/10">
                 <Trophy className="h-5 w-5" strokeWidth={2.6} aria-hidden="true" />
               </span>
               <div className="min-w-0">
                 <div className="flex flex-wrap items-center gap-1.5">
-                  <strong className="text-sm font-black text-white">{metrics.league.titleAr}</strong>
-                  <span className="rounded-full bg-white/10 px-1.5 py-0.5 text-[8px] font-black uppercase tracking-[0.12em] text-amber-200">
+                  <strong className="text-sm font-black text-[var(--rt-blue-950)]">{metrics.league.titleAr}</strong>
+                  <span className="rounded-full bg-[var(--rt-blue-100)] px-1.5 py-0.5 text-[8px] font-black uppercase tracking-[0.12em] text-[var(--rt-gold-700)]">
                     Gold League
                   </span>
                 </div>
-                <p className="mt-1 text-[10px] text-slate-300">
+                <p className="mt-1 text-[10px] text-[var(--rt-blue-700)]">
                   {metrics.league.isTopTier
                     ? 'وصلت إلى أعلى دوري — حافظ على سلسلتك.'
                     : `بقي ${Math.max(0, (metrics.league.nextXp ?? userProfile.xp) - userProfile.xp)} XP للدوري التالي`}
                 </p>
               </div>
             </div>
-            <div className="font-mono-num text-left text-lg font-black text-amber-200">
+            <div className="font-mono-num text-left text-lg font-black text-[var(--rt-gold-700)]">
               {userProfile.xp}
-              <span className="mr-1 text-[9px] font-bold text-slate-400">XP</span>
+              <span className="mr-1 text-[9px] font-bold text-[var(--rt-blue-700)]">XP</span>
             </div>
           </div>
-          <div className="mt-3 h-2 overflow-hidden rounded-full bg-black/30">
+          <div className="mt-3 h-2 overflow-hidden rounded-full bg-[var(--rt-cream-200)]">
             <div
-              className="h-full rounded-full bg-gradient-to-l from-amber-300 via-yellow-200 to-amber-400 transition-[width] duration-700"
+              className="h-full rounded-full bg-gradient-to-l from-[var(--rt-gold-500)] via-[var(--rt-gold-400)] to-[var(--rt-gold-600)] transition-[width] duration-700"
               style={{ width: `${metrics.league.progressPercent}%` }}
             />
           </div>
-          <div className="mt-2 flex items-center justify-between text-[9px] font-bold text-slate-400">
+          <div className="mt-2 flex items-center justify-between text-[9px] font-bold text-[var(--rt-blue-700)]">
             <span>{metrics.league.titleEn}</span>
             <span>{metrics.league.progressPercent}%</span>
             <span>{metrics.league.nextXp ? `${metrics.league.nextXp} XP` : 'القمة'}</span>
           </div>
         </div>
 
-        <div className="rounded-2xl border border-white/10 bg-white/[0.05] p-3.5">
+        <div className="rounded-2xl border border-[var(--rt-cream-300)] bg-[var(--rt-cream-100)] p-3.5 shadow-[0_3px_0_var(--rt-cream-300)]">
           <div className="flex items-center justify-between gap-2">
-            <div className="flex items-center gap-2 text-xs font-black text-white">
-              <Gift className="h-4 w-4 text-amber-300" aria-hidden="true" />
+            <div className="flex items-center gap-2 text-xs font-black text-[var(--rt-blue-950)]">
+              <Gift className="h-4 w-4 text-[var(--rt-gold-600)]" aria-hidden="true" />
               صندوق Gold اليومي
             </div>
-            <span className={`rounded-full px-2 py-0.5 text-[8px] font-black ${chestClaimed ? 'bg-emerald-300/15 text-emerald-200' : metrics.dailyChestReady ? 'bg-amber-300/20 text-amber-100' : 'bg-white/10 text-slate-300'}`}>
+            <span className={`rounded-full px-2 py-0.5 text-[8px] font-black ${chestClaimed ? 'bg-emerald-100 text-emerald-700' : metrics.dailyChestReady ? 'bg-[var(--rt-gold-200)] text-[var(--rt-gold-700)]' : 'bg-[var(--rt-cream-200)] text-[var(--rt-blue-700)]'}`}>
               {chestClaimed ? 'تم الفتح' : metrics.dailyChestReady ? 'جاهز' : 'قيد التقدم'}
             </span>
           </div>
-          <p className="mt-1 text-[10px] leading-5 text-slate-300">
+          <p className="mt-1 text-[10px] leading-5 text-[var(--rt-blue-700)]">
             {chestClaimed
               ? 'أحسنت، عد غدًا لصندوق جديد.'
               : metrics.dailyChestReady
                 ? 'أكملت هدف اليوم. افتح الصندوق لتحصل على +10 XP.'
                 : `أنجز ${Math.max(0, metrics.dailyGoal - metrics.dailyLessons)} درسًا إضافيًا لفتح الصندوق.`}
           </p>
-          <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-black/30">
+          <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-[var(--rt-cream-200)]">
             <div
-              className="h-full rounded-full bg-gradient-to-l from-emerald-300 to-lime-300 transition-[width] duration-700"
+              className="h-full rounded-full bg-gradient-to-l from-emerald-400 to-lime-400 transition-[width] duration-700"
               style={{ width: `${Math.min(100, (metrics.dailyLessons / metrics.dailyGoal) * 100)}%` }}
             />
           </div>
@@ -230,7 +226,7 @@ export const GoldJourneyPanel: React.FC<GoldJourneyPanelProps> = ({
             type="button"
             onClick={claimChest}
             disabled={!metrics.dailyChestReady || chestClaimed}
-            className="mt-2.5 inline-flex w-full items-center justify-center gap-1.5 rounded-xl bg-amber-300 px-3 py-2 text-[10px] font-black text-amber-950 shadow-sm transition-all hover:bg-amber-200 active:scale-[.98] disabled:cursor-not-allowed disabled:bg-white/10 disabled:text-slate-400"
+            className="mt-2.5 inline-flex w-full items-center justify-center gap-1.5 rounded-xl bg-[var(--rt-gold-500)] px-3 py-2 text-[10px] font-black text-[var(--rt-blue-950)] shadow-sm transition-all hover:bg-[var(--rt-gold-400)] active:scale-[.98] disabled:cursor-not-allowed disabled:bg-[var(--rt-cream-200)] disabled:text-[var(--rt-blue-700)]"
           >
             <Gift className="h-3.5 w-3.5" aria-hidden="true" />
             {chestClaimed ? 'تم فتح صندوق اليوم' : metrics.dailyChestReady ? 'افتح الصندوق' : `${metrics.dailyLessons}/${metrics.dailyGoal} دروس`}
@@ -239,46 +235,46 @@ export const GoldJourneyPanel: React.FC<GoldJourneyPanelProps> = ({
       </div>
 
       <div className="relative mt-3 grid gap-3 lg:grid-cols-[.9fr_1.1fr]">
-        <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-3.5">
+        <div className="rounded-2xl border border-[var(--rt-cream-300)] bg-[var(--rt-cream-100)] p-3.5 shadow-[0_3px_0_var(--rt-cream-300)]">
           <div className="flex items-center justify-between gap-2">
-            <div className="flex items-center gap-2 text-xs font-black text-white">
-              <Sparkles className="h-4 w-4 text-lime-300" aria-hidden="true" />
+            <div className="flex items-center gap-2 text-xs font-black text-[var(--rt-blue-950)]">
+              <Sparkles className="h-4 w-4 text-[var(--rt-gold-600)]" aria-hidden="true" />
               مهاراتك الأربع
             </div>
-            <span className="text-[9px] font-bold text-slate-400">Gold+</span>
+            <span className="text-[9px] font-bold text-[var(--rt-blue-700)]">Gold+</span>
           </div>
           <div className="mt-3 grid gap-2.5 sm:grid-cols-2">
             {metrics.skills.map((skill) => {
               const Icon = skillIcon[skill.id];
               return (
-                <div key={skill.id} className="rounded-xl border border-white/10 bg-black/15 p-2.5">
+                <div key={skill.id} className="rounded-xl border border-[var(--rt-cream-300)] bg-[var(--rt-cream-50)] p-2.5">
                   <div className="flex items-center justify-between gap-2">
-                    <span className="flex items-center gap-1.5 text-[10px] font-bold text-slate-200">
-                      <Icon className="h-3.5 w-3.5 text-amber-200" aria-hidden="true" />
+                    <span className="flex items-center gap-1.5 text-[10px] font-bold text-[var(--rt-blue-900)]">
+                      <Icon className="h-3.5 w-3.5 text-[var(--rt-gold-600)]" aria-hidden="true" />
                       {skill.titleAr}
                     </span>
-                    <span className="font-mono-num text-[10px] font-black text-amber-200">{skill.value}%</span>
+                    <span className="font-mono-num text-[10px] font-black text-[var(--rt-gold-700)]">{skill.value}%</span>
                   </div>
-                  <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-white/10">
+                  <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-[var(--rt-cream-200)]">
                     <div
-                      className="h-full rounded-full bg-gradient-to-l from-lime-300 to-emerald-300 transition-[width] duration-700"
+                      className="h-full rounded-full bg-gradient-to-l from-emerald-400 to-[var(--rt-gold-500)] transition-[width] duration-700"
                       style={{ width: `${skill.value}%` }}
                     />
                   </div>
-                  <p className="mt-1 text-[8px] text-slate-400">{skill.detailAr}</p>
+                  <p className="mt-1 text-[8px] text-[var(--rt-blue-700)]">{skill.detailAr}</p>
                 </div>
               );
             })}
           </div>
         </div>
 
-        <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-3.5">
+        <div className="rounded-2xl border border-[var(--rt-cream-300)] bg-[var(--rt-cream-100)] p-3.5 shadow-[0_3px_0_var(--rt-cream-300)]">
           <div className="flex items-center justify-between gap-2">
-            <div className="flex items-center gap-2 text-xs font-black text-white">
-              <Crown className="h-4 w-4 text-amber-300" aria-hidden="true" />
+            <div className="flex items-center gap-2 text-xs font-black text-[var(--rt-blue-950)]">
+              <Crown className="h-4 w-4 text-[var(--rt-gold-600)]" aria-hidden="true" />
               مشاريع Gold التطبيقية
             </div>
-            <span className="rounded-full bg-amber-300/10 px-2 py-0.5 text-[8px] font-bold text-amber-200">
+            <span className="rounded-full bg-[var(--rt-gold-200)] px-2 py-0.5 text-[8px] font-bold text-[var(--rt-gold-700)]">
               {metrics.goldProjectsCompleted}/{metrics.goldProjectsTotal || 4}
             </span>
           </div>
@@ -293,21 +289,21 @@ export const GoldJourneyPanel: React.FC<GoldJourneyPanelProps> = ({
                   type="button"
                   disabled={locked}
                   onClick={() => onSelectLesson(project.id)}
-                  className={`flex items-center gap-2 rounded-xl border px-2.5 py-2 text-right transition-all ${completed ? 'border-emerald-300/25 bg-emerald-300/10' : locked ? 'border-white/10 bg-black/10 opacity-60' : 'border-amber-300/25 bg-amber-300/[0.08] hover:border-amber-300/50 active:scale-[.99]'}`}
+                  className={`flex items-center gap-2 rounded-xl border px-2.5 py-2 text-right transition-all ${completed ? 'border-emerald-300 bg-emerald-50' : locked ? 'border-[var(--rt-cream-300)] bg-[var(--rt-cream-200)] opacity-60' : 'border-[var(--rt-gold-400)] bg-[var(--rt-cream-50)] hover:border-[var(--rt-gold-600)] active:scale-[.99]'}`}
                 >
-                  <span className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg ${completed ? 'bg-emerald-300 text-emerald-950' : locked ? 'bg-white/10 text-slate-400' : 'bg-amber-300 text-amber-950'}`}>
+                  <span className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg ${completed ? 'bg-emerald-500 text-white' : locked ? 'bg-[var(--rt-cream-300)] text-[var(--rt-blue-700)]' : 'bg-[var(--rt-gold-500)] text-[var(--rt-blue-950)]'}`}>
                     {completed ? <CheckCircle2 className="h-4 w-4" /> : locked ? <Lock className="h-3.5 w-3.5" /> : <Play className="h-3.5 w-3.5 fill-current" />}
                   </span>
                   <span className="min-w-0 flex-1">
-                    <span className="block truncate text-[10px] font-black text-white">{project.titleAr}</span>
-                    <span className="mt-0.5 block text-[8px] text-slate-400">مشروع المرحلة {project.curriculumStage} · {statusLabel(status)}</span>
+                    <span className="block truncate text-[10px] font-black text-[var(--rt-blue-950)]">{project.titleAr}</span>
+                    <span className="mt-0.5 block text-[8px] text-[var(--rt-blue-700)]">مشروع المرحلة {project.curriculumStage} · {statusLabel(status)}</span>
                   </span>
-                  <ChevronLeft className="h-3.5 w-3.5 shrink-0 text-slate-500" aria-hidden="true" />
+                  <ChevronLeft className="h-3.5 w-3.5 shrink-0 text-[var(--rt-blue-700)]" aria-hidden="true" />
                 </button>
               );
             })}
             {goldProjects.length === 0 && (
-              <p className="rounded-xl border border-dashed border-white/15 px-3 py-3 text-center text-[10px] text-slate-400">
+              <p className="rounded-xl border border-dashed border-[var(--rt-cream-300)] px-3 py-3 text-center text-[10px] text-[var(--rt-blue-700)]">
                 ستظهر مشاريع Gold هنا بعد تحميل المنهج.
               </p>
             )}
@@ -315,21 +311,21 @@ export const GoldJourneyPanel: React.FC<GoldJourneyPanelProps> = ({
         </div>
       </div>
 
-      <div className="relative mt-3 flex items-start gap-2.5 rounded-2xl border border-lime-300/20 bg-lime-300/[0.06] px-3 py-2.5">
-        <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-lime-300/15 text-lime-200">
+      <div className="relative mt-3 flex items-start gap-2.5 rounded-2xl border border-[var(--rt-gold-400)] bg-[var(--rt-cream-100)] px-3 py-2.5">
+        <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[var(--rt-gold-200)] text-[var(--rt-gold-700)]">
           <Lightbulb className="h-4 w-4" aria-hidden="true" />
         </span>
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
-            <strong className="text-[10px] font-black text-lime-100">نصيحة Gold: {tip.title}</strong>
-            <span className="rounded-full bg-white/10 px-1.5 py-0.5 text-[8px] text-slate-300">نصيحة {(tipIndex % TIPS.length) + 1}/{TIPS.length}</span>
+            <strong className="text-[10px] font-black text-[var(--rt-blue-950)]">نصيحة Gold: {tip.title}</strong>
+            <span className="rounded-full bg-[var(--rt-cream-200)] px-1.5 py-0.5 text-[8px] text-[var(--rt-blue-700)]">نصيحة {(tipIndex % TIPS.length) + 1}/{TIPS.length}</span>
           </div>
-          <p className="mt-0.5 text-[9px] leading-5 text-slate-300">{tip.body}</p>
+          <p className="mt-0.5 text-[9px] leading-5 text-[var(--rt-blue-700)]">{tip.body}</p>
         </div>
         <button
           type="button"
           onClick={() => setTipIndex((index) => (index + 1) % TIPS.length)}
-          className="shrink-0 rounded-lg border border-white/10 bg-white/5 p-1.5 text-slate-300 transition-colors hover:bg-white/10 hover:text-white"
+          className="shrink-0 rounded-lg border border-[var(--rt-cream-300)] bg-[var(--rt-cream-50)] p-1.5 text-[var(--rt-blue-700)] transition-colors hover:bg-[var(--rt-cream-200)] hover:text-[var(--rt-blue-950)]"
           aria-label="اعرض نصيحة Gold أخرى"
         >
           <ChevronLeft className="h-3.5 w-3.5" />
@@ -337,8 +333,8 @@ export const GoldJourneyPanel: React.FC<GoldJourneyPanelProps> = ({
       </div>
 
       {chestOpen && (
-        <div className="fixed inset-0 z-[120] flex items-center justify-center bg-slate-950/80 p-4 backdrop-blur-sm" role="dialog" aria-modal="true" aria-label="صندوق Gold اليومي">
-          <div className="gold-chest-dialog relative w-full max-w-sm overflow-hidden rounded-[2rem] border border-amber-300/40 bg-[#18221f] p-6 text-center shadow-2xl">
+        <div className="fixed inset-0 z-[120] flex items-center justify-center bg-[var(--rt-blue-950)]/70 p-4 backdrop-blur-sm" role="dialog" aria-modal="true" aria-label="صندوق Gold اليومي">
+          <div className="relative w-full max-w-sm overflow-hidden rounded-[2rem] border-2 border-[var(--rt-gold-500)] bg-[var(--rt-cream-50)] p-6 text-center shadow-2xl">
             <div className="gold-result-confetti" aria-hidden="true">
               {Array.from({ length: 14 }).map((_, index) => (
                 <span key={index} style={{ '--i': index } as React.CSSProperties} />
@@ -347,23 +343,23 @@ export const GoldJourneyPanel: React.FC<GoldJourneyPanelProps> = ({
             <button
               type="button"
               onClick={() => setChestOpen(false)}
-              className="absolute left-3 top-3 rounded-full bg-white/10 p-1.5 text-slate-300 hover:text-white"
+              className="absolute left-3 top-3 rounded-full bg-[var(--rt-cream-200)] p-1.5 text-[var(--rt-blue-700)] hover:text-[var(--rt-blue-950)]"
               aria-label="إغلاق صندوق Gold"
             >
               <X className="h-4 w-4" />
             </button>
-            <div className="relative mx-auto flex h-20 w-20 items-center justify-center rounded-3xl bg-amber-300 text-amber-950 shadow-2xl shadow-amber-300/25">
+            <div className="relative mx-auto flex h-20 w-20 items-center justify-center rounded-3xl bg-[var(--rt-gold-500)] text-[var(--rt-blue-950)] shadow-2xl shadow-amber-300/25">
               <Gift className="h-10 w-10" strokeWidth={2.2} />
             </div>
-            <span className="relative mt-4 inline-flex items-center gap-1 rounded-full border border-amber-300/40 bg-amber-300/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.14em] text-amber-200">
+            <span className="relative mt-4 inline-flex items-center gap-1 rounded-full border border-[var(--rt-gold-500)] bg-[var(--rt-gold-200)] px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.14em] text-[var(--rt-gold-700)]">
               <Crown className="h-3 w-3" /> Gold+ Reward
             </span>
-            <h3 className="relative mt-2 text-xl font-black text-white">فتحت صندوق اليوم!</h3>
-            <p className="relative mt-1 text-xs leading-6 text-slate-300">حصلت على <strong className="text-amber-200">+10 XP</strong> إضافية. عد غدًا بعد إكمال هدفك اليومي.</p>
+            <h3 className="relative mt-2 text-xl font-black text-[var(--rt-blue-950)]">فتحت صندوق اليوم!</h3>
+            <p className="relative mt-1 text-xs leading-6 text-[var(--rt-blue-700)]">حصلت على <strong className="text-[var(--rt-gold-700)]">+10 XP</strong> إضافية. عد غدًا بعد إكمال هدفك اليومي.</p>
             <button
               type="button"
               onClick={() => setChestOpen(false)}
-              className="relative mt-4 w-full rounded-xl bg-amber-300 px-4 py-2.5 text-xs font-black text-amber-950 hover:bg-amber-200 active:scale-[.98]"
+              className="relative mt-4 w-full rounded-xl bg-[var(--rt-gold-500)] px-4 py-2.5 text-xs font-black text-[var(--rt-blue-950)] hover:bg-[var(--rt-gold-400)] active:scale-[.98]"
             >
               رائع، تابع التعلّم
             </button>

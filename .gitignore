@@ -39,3 +39,5 @@ tools/
 # Desktop control build output and generated icon.
 desktop/lin-go-control/bin/
 desktop/lin-go-control/assets/app.ico
+desktop/lin-go-control-online/bin/
+desktop/lin-go-control-online/assets/app.ico
