@@ -28,6 +28,7 @@ import { openAppUpdateDownload } from './services/appUpdateLauncher';
 import { downloadAppUpdate, openDownloadsFolder } from './services/apkDownloadService';
 import { IS_STORE_BUILD } from './config/storeBuild';
 import { IS_GOLD_EDITION } from './config/edition';
+import { GoldLicenseGate } from './components/gold/GoldLicenseGate';
 import {
   SPEECH_STATUS_EVENT,
   SPEECH_UNAVAILABLE_EVENT,
@@ -348,7 +349,7 @@ export default function App() {
     setActiveTab('lesson');
   }, []);
 
-  return (
+  const appShell = (
     <div className="app-shell min-h-0 text-slate-100 flex flex-col items-center justify-start overflow-hidden journey-shell">
       {speechNotice && (
         <div
@@ -612,4 +613,7 @@ export default function App() {
       />}
     </div>
   );
+
+  if (!IS_GOLD_EDITION) return appShell;
+  return <GoldLicenseGate>{appShell}</GoldLicenseGate>;
 }
