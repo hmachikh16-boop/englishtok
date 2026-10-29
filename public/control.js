@@ -609,6 +609,8 @@ const eventMeta = (type) => {
       return { icon: 'upload', tone: 'var(--green)' };
     case 'update':
       return { icon: 'edit', tone: 'var(--muted)' };
+    case 'support':
+      return { icon: 'alert', tone: 'var(--gold)' };
     default:
       return { icon: 'activity', tone: 'var(--gold)' };
   }
