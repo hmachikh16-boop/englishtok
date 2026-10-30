@@ -11,9 +11,13 @@ interface ReelsViewerProps {
 }
 
 export const ReelsViewer: React.FC<ReelsViewerProps> = ({ userProfile, onClose }) => {
+  const [mode, setMode] = useState<'video' | 'story'>('video');
   const [index, setIndex] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
   const reel = EDUCATIONAL_STORIES[index];
+  const searchQuery = userProfile.targetLanguage === 'fr'
+    ? 'French English conversation dialogue story for learners'
+    : 'English conversation dialogue story for learners';
 
   const playReel = useCallback(() => {
     if (!reel) return;
@@ -52,13 +56,35 @@ export const ReelsViewer: React.FC<ReelsViewerProps> = ({ userProfile, onClose }
         <button type="button" className="reels-close" onClick={onClose} aria-label="إغلاق">
           <X />
         </button>
-        <div className="reels-progress">
-          {EDUCATIONAL_STORIES.map((_, itemIndex) => (
-            <span key={itemIndex} className={itemIndex === index ? 'is-active' : itemIndex < index ? 'is-done' : ''} />
-          ))}
+        <div className="reels-mode-switch" role="tablist" aria-label="وضع Reels">
+          <button type="button" className={mode === 'video' ? 'is-active' : ''} onClick={() => setMode('video')}>فيديو</button>
+          <button type="button" className={mode === 'story' ? 'is-active' : ''} onClick={() => setMode('story')}>قصص</button>
         </div>
 
-        <div className="reels-card" key={reel.titleEn}>
+        {mode === 'video' ? (
+          <div className="reels-video-wrap">
+            <p className="reels-kicker">Reels • فيديو (YouTube)</p>
+            <div className="reels-video-frame">
+              <iframe
+                title="Reels تعليمية"
+                src={`https://www.youtube.com/embed?listType=search&list=${encodeURIComponent(searchQuery)}`}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
+            </div>
+            <p className="reels-text">
+              فيديوهات حوار/قصة (1+ دقيقة) من YouTube. للعمل offline، استخدم وضع "قصص".
+            </p>
+          </div>
+        ) : (
+          <>
+            <div className="reels-progress">
+              {EDUCATIONAL_STORIES.map((_, itemIndex) => (
+                <span key={itemIndex} className={itemIndex === index ? 'is-active' : itemIndex < index ? 'is-done' : ''} />
+              ))}
+            </div>
+
+            <div className="reels-card" key={reel.titleEn}>
           <span className="reels-kicker">ريلز تعليمي • {index + 1}/{EDUCATIONAL_STORIES.length}</span>
           <h2>{reel.titleAr}</h2>
           <p className="reels-title-en" dir="ltr">{reel.titleEn}</p>
@@ -74,7 +100,9 @@ export const ReelsViewer: React.FC<ReelsViewerProps> = ({ userProfile, onClose }
               <ChevronDown /> التالي
             </button>
           </div>
-        </div>
+          </div>
+          </>
+        )}
       </div>
     </div>
   );

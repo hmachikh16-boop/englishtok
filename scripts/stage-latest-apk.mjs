@@ -34,7 +34,7 @@ const repository = process.env.GITHUB_REPOSITORY || 'hmachikh16-boop/englishtok'
 const url = `https://github.com/${repository}/releases/latest/download/english-tok.apk`;
 const manifestUrl = `https://github.com/${repository}/releases/latest/download/update-manifest.json`;
 const target = resolve(process.cwd(), 'public', 'english-tok.apk');
-const goldVersion = '1.1.13';
+const goldVersion = '1.1.14';
 const goldTarget = resolve(process.cwd(), 'public', `lin-go-gold-${goldVersion}.apk`);
 const goldUrl = `https://github.com/${repository}/releases/download/gold-v${goldVersion}/lin-go-gold-${goldVersion}.apk`;
 const latestDir = resolve(process.cwd(), 'public', 'download');
@@ -126,7 +126,7 @@ try {
     size: goldSize,
     minimumAndroidSdk: 24,
     notes:
-      'تحديث Gold+ 1.1.13: إصلاح فتح التطبيق عند تعذر الاتصال بلوحة التحكم (يبقى مفعّلًا)، وإبقاء host check للنطاقات القديم/الجديد. يتضمن Reels و17 لعبة.',
+      'تحديث Gold+ 1.1.14: Reels with real videos (YouTube dialogue/story) + stories. إصلاح فتح التطبيق. 17 لعبة + 500 درس.',
     releaseUrl: `https://github.com/${repository}/releases/tag/gold-v${goldVersion}`,
     publishedAt: new Date().toISOString(),
   };
