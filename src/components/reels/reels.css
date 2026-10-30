@@ -1,0 +1,160 @@
+.reels-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: radial-gradient(circle at 50% 0%, rgb(244 182 3 / 18%), transparent 45%), rgb(19 34 48 / 86%);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.reels-shell {
+  position: relative;
+  width: min(100%, 420px);
+  max-height: 92vh;
+  overflow: auto;
+  padding: 20px;
+  border: 1.5px solid var(--rt-gold-500);
+  border-radius: 26px;
+  color: #fff;
+  background: linear-gradient(180deg, #1f3950, #132230);
+  box-shadow: 0 5px 0 var(--rt-gold-700), 0 24px 60px rgb(0 0 0 / 35%);
+}
+
+.reels-close {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgb(255 255 255 / 18%);
+  border-radius: 50%;
+  color: #fff;
+  background: rgb(0 0 0 / 20%);
+}
+
+.reels-close svg {
+  width: 18px;
+  height: 18px;
+}
+
+.reels-progress {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 16px;
+}
+
+.reels-progress span {
+  flex: 1;
+  height: 4px;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 18%);
+}
+
+.reels-progress span.is-done {
+  background: var(--rt-gold-500);
+}
+
+.reels-progress span.is-active {
+  background: var(--rt-gold-400);
+  box-shadow: 0 0 8px var(--rt-gold-400);
+}
+
+.reels-card h2 {
+  margin: 6px 0 0;
+  font-size: 22px;
+  font-weight: 1000;
+  color: #fff;
+}
+
+.reels-kicker {
+  display: inline-flex;
+  padding: 3px 9px;
+  border-radius: 999px;
+  color: var(--rt-gold-200);
+  background: rgb(255 255 255 / 12%);
+  border: 1px solid rgb(255 211 77 / 32%);
+  font-size: 9px;
+  font-weight: 900;
+}
+
+.reels-title-en {
+  margin: 4px 0 12px;
+  color: #c7d7e4;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.reels-text {
+  color: #eaf1f7;
+  font-size: 13px;
+  line-height: 1.8;
+}
+
+.reels-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.reels-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 38px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 12px;
+  color: #fff;
+  background: linear-gradient(180deg, var(--rt-green-500), var(--rt-green-600));
+  box-shadow: 0 3px 0 #2e6f00;
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.reels-btn svg {
+  width: 14px;
+  height: 14px;
+}
+
+.reels-btn-secondary {
+  border: 1.5px solid rgb(255 255 255 / 18%);
+  color: #d8e4ed;
+  background: rgb(0 0 0 / 16%);
+  box-shadow: none;
+}
+
+.reels-fab {
+  position: fixed;
+  right: 16px;
+  bottom: 84px;
+  z-index: 40;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 999px;
+  color: #fff;
+  background: linear-gradient(135deg, #ff4d6d, #c9184a);
+  box-shadow: 0 6px 18px rgb(201 24 74 / 35%);
+  font-size: 12px;
+  font-weight: 1000;
+}
+
+.reels-fab svg {
+  width: 18px;
+  height: 18px;
+}
+
+.reels-btn:disabled {
+  opacity: 0.45;
+  cursor: default;
+}

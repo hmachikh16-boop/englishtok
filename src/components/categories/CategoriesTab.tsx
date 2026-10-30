@@ -17,6 +17,7 @@ import {
   StageMotivationalCards,
 } from '../learning/MotivationalCards';
 import { PrimaryAvatar } from '../video/PrimaryCharacterArt';
+import { ReelsViewer } from '../reels/ReelsViewer';
 import { GoldJourneyPanel } from '../gold/GoldJourneyPanel';
 import { GoldErrorBoundary } from '../gold/GoldErrorBoundary';
 import { EDUCATIONAL_PHASES, findSchoolYearRoute, SCHOOL_YEAR_ALIGNMENT_NOTE } from '../../data/educationalStructure';
@@ -107,6 +108,7 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
   const [searchQuery, setSearchQuery] = useState('');
   const deferredSearchQuery = useDeferredValue(searchQuery);
   const [examStage, setExamStage] = useState<number | null>(null);
+  const [showReels, setShowReels] = useState(false);
   const [selectedPhaseId, setSelectedPhaseId] = useState<string | null>(null);
   const [selectedSchoolYearId, setSelectedSchoolYearId] = useState<string | null>(null);
   const [goalCardDialog, setGoalCardDialog] = useState<{
@@ -858,6 +860,15 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
           progressByStage={cardProgressByStage}
           onClose={() => setGoalCardDialog(null)}
         />
+      )}
+      {IS_GOLD_EDITION && (
+        <>
+          <button type="button" className="reels-fab" onClick={() => setShowReels(true)} aria-label="ريلز تعليمية">
+            <Play className="h-5 w-5" />
+            <span>Reels</span>
+          </button>
+          {showReels && <ReelsViewer userProfile={userProfile} onClose={() => setShowReels(false)} />}
+        </>
       )}
     </div>
   );
