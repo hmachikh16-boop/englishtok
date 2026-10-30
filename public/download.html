@@ -20,7 +20,7 @@
     <meta property="og:title" content="تحميل Lin Go و Lin Go Gold — تعلّم بخطوة كل يوم" />
     <meta
       property="og:description"
-      content="مساران كاملان، دروس قصيرة، محادثات كرتونية، نطق، وبطاقات. حمّل Lin Go المجاني وGold+ التجريبي بنفس الواجهة والمسار، مع تحدٍّ بصري، قلوب لا نهائية، ومكافآت."
+      content="مساران كاملان، دروس قصيرة، محادثات كرتونية، نطق، وبطاقات. حمّل Lin Go المجاني وGold+ بنفس الواجهة والمسار، مع تحدٍّ بصري، قلوب لا نهائية، ومكافآت."
     />
     <meta property="og:url" content="https://englishtok-eight.vercel.app/download" />
     <meta property="og:image" content="https://englishtok-eight.vercel.app/og-download.png" />
@@ -252,7 +252,7 @@
               <span class="plan-ribbon">الأذكى</span>
               <div class="plan-card-head">
                 <span class="plan-kicker gold">GOLD</span>
-                <span class="plan-state">تجريبي متاح</span>
+                <span class="plan-state">متاح بكود التفعيل</span>
               </div>
               <h3>Lin Go Gold+</h3>
               <p class="plan-lead">نفس تطبيقك، مع تجربة أغنى بأكثر من 70%: تدريب، مكافآت، وقلوب لا نهائية.</p>
@@ -291,7 +291,7 @@
                   </span>
                 </a>
                 <a class="gold-compare-link" href="/gold-preview.html#gold-compare">
-                  قارن Free وGold
+                  قارن بين النسختين
                   <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6 9 12l6 6" /></svg>
                 </a>
               </div>
@@ -299,7 +299,6 @@
               <div class="gold-code-box">
                 <div class="gold-code-head">
                   <span>لديك كود Gold؟</span>
-                  <span class="demo-tag">تجريبي</span>
                 </div>
                 <form class="gold-code-form" data-gold-form>
                   <label class="sr-only" for="gold-code-download">كود Gold</label>
@@ -318,26 +317,47 @@
                 <p class="gold-code-message" id="gold-code-message" data-gold-message>
                   أدخل كود Gold مفعّلًا من لوحة التحكم للتحقق منه وفتح التحميل/المعاينة.
                 </p>
-                <div class="gold-code-success" data-gold-success hidden>
-                  <strong>تم التحقق — Gold جاهز للمعاينة.</strong>
-                  <a href="/gold-preview.html?app=1">افتح المعاينة <span aria-hidden="true">←</span></a>
+                <div class="gold-code-success" data-gold-success role="status" aria-live="polite" hidden>
+                  <div class="gold-success-status">
+                    <span class="gold-success-check" aria-hidden="true">
+                      <svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6" /></svg>
+                    </span>
+                    <span>
+                      <strong>تم تفعيل Gold+</strong>
+                      <small>الكود صالح — التحميل جاهز على هذا الجهاز</small>
+                    </span>
+                  </div>
                   <a
+                    class="gold-success-download"
                     data-gold-download
                     data-gold-download-unlocked
                     href="/lin-go-gold-1.1.8.apk"
                     download="lin-go-gold-1.1.8.apk"
                     rel="noopener"
                     hidden
-                  >حمّل Gold+ 1.1.8 <span aria-hidden="true">←</span></a>
+                  >
+                    <span class="gold-success-icon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24"><path d="M12 3v12m0 0 4.5-4.5M12 15l-4.5-4.5M4 19.5h16" /></svg>
+                    </span>
+                    <span class="gold-success-copy">
+                      <strong>تحميل Gold+ <span dir="ltr">1.1.8</span></strong>
+                      <small>APK موقّع • تحديث عبر مدير التنزيلات</small>
+                    </span>
+                    <svg class="gold-success-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6 9 12l6 6" /></svg>
+                  </a>
+                  <a class="gold-success-preview" href="/gold-preview.html?app=1">
+                    معاينة الواجهة أولًا
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6 9 12l6 6" /></svg>
+                  </a>
                 </div>
               </div>
             </article>
           </div>
 
           <p class="gold-footnote">
-            Gold+ 1.1.8 نسخة تجريبية مستقلة بحزمة <span dir="ltr">com.englishtok.gold</span>.
-            التفعيل التجاري المرتبط بالجهاز وشهادة الإتمام قيد التجهيز؛ النسخة المجانية 1.8.5
-            باقية كما هي دون أي تغيير. تحديثات Gold+ تُنزّل داخل التطبيق عبر مدير التنزيلات.
+            Gold+ 1.1.8 نسخة مستقلة بحزمة <span dir="ltr">com.englishtok.gold</span>.
+            التحميل يتم بكود تفعيل صالح من لوحة التحكم، والنسخة المجانية 1.8.5 باقية كما هي
+            دون أي تغيير. تحديثات Gold+ تُنزّل داخل التطبيق عبر مدير التنزيلات.
           </p>
         </div>
       </section>
@@ -550,11 +570,11 @@
               </span>
               <span class="btn-copy"><strong>إعادة تنزيل Free</strong><small>من الموقع الرسمي</small></span>
             </a>
-            <a class="btn btn-gold btn-small" data-gold-download href="/lin-go-gold-1.1.8.apk" download="lin-go-gold-1.1.8.apk" rel="noopener">
+            <a class="btn btn-gold btn-small" href="#gold">
               <span class="btn-icon">
-                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0 4.5-4.5M12 15l-4.5-4.5M4 19.5h16" /></svg>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 9.8 7.5 5 8.2l3.5 3.4-.8 4.9L12 14.2l4.3 2.3-.8-4.9L19 8.2l-4.8-.7L12 3Z" /></svg>
               </span>
-              <span class="btn-copy"><strong>إعادة تنزيل Gold</strong><small>من الموقع الرسمي</small></span>
+              <span class="btn-copy"><strong>فتح قسم Gold+</strong><small>يتطلب كود تفعيل</small></span>
             </a>
             <a class="btn btn-gold-outline btn-small" data-github-download href="https://github.com/hmachikh16-boop/englishtok/releases/download/v1.8.5/english-tok-1.8.5.apk" target="_blank" rel="noopener noreferrer">
               <span class="btn-icon">
@@ -608,7 +628,7 @@
         <div class="faq-list">
           <details>
             <summary>هل التطبيق مجاني فعلًا؟</summary>
-            <p>النسخة المجانية من Lin Go مجانية بالكامل، بلا اشتراك ولا مشتريات داخل التطبيق ولا إعلانات. Gold+ نسخة مميزة اختيارية تجريبية، تضيف طبقة أنشطة ومكافآت أغنى إلى نفس المنهج.</p>
+            <p>النسخة المجانية من Lin Go مجانية بالكامل، بلا اشتراك ولا مشتريات داخل التطبيق ولا إعلانات. Gold+ نسخة مميزة اختيارية، تضيف طبقة أنشطة ومكافآت أغنى إلى نفس المنهج.</p>
           </details>
           <details>
             <summary>ما هي Lin Go Gold+؟</summary>
@@ -684,15 +704,29 @@
           <h2>تواصل معنا لحل مشكلتك</h2>
           <p>أرسل شكواك وسنراجعها في لوحة التحكم (Lin Go Gold Control).</p>
         </div>
-        <div class="gold-code-box" style="max-width:640px;margin:0 auto;">
-          <form id="support-form" class="gold-code-form" style="flex-direction:column;align-items:stretch;">
-            <label class="gold-code-label" for="support-email">بريدك (اختياري)</label>
-            <input class="gold-code-input" id="support-email" type="email" placeholder="name@example.com" />
-            <label class="gold-code-label" for="support-message">تفاصيل المشكلة</label>
-            <textarea id="support-message" rows="4" placeholder="اشرح المشكلة (الصوت، التفعيل، التحديث، ...)" style="border:1px solid #d9c89e;border-radius:12px;padding:10px 11px;color:#293b42;background:#fffdf8;font-size:11px;resize:vertical;"></textarea>
-            <button class="gold-code-submit" type="submit" style="width:100%;">إرسال الشكوى</button>
+        <div class="support-card">
+          <form id="support-form" class="support-form">
+            <label for="support-email">بريدك (اختياري)</label>
+            <input id="support-email" type="email" placeholder="name@example.com" autocomplete="email" />
+            <label for="support-message">تفاصيل المشكلة</label>
+            <textarea id="support-message" rows="4" placeholder="اشرح المشكلة (الصوت، التفعيل، التحديث، ...)"></textarea>
+            <button type="submit">إرسال الشكوى</button>
           </form>
-          <p id="support-status" class="gold-code-hint"></p>
+          <p id="support-status" class="support-status"></p>
+          <div class="support-direct">
+            <span>أو تواصل معي مباشرة</span>
+            <a
+              class="support-facebook"
+              href="https://www.facebook.com/hma.chikh14/"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="تواصل مع حمادوش الشيخ على فيسبوك"
+            >
+              <svg class="facebook-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 8h3V4h-3c-2.76 0-5 2.24-5 5v3H6v4h3v8h4v-8h3l1-4h-4V9c0-.55.45-1 1-1Z" /></svg>
+              فيسبوك
+              <svg class="external-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8" /></svg>
+            </a>
+          </div>
         </div>
       </section>
     </main>
@@ -732,16 +766,29 @@
               <a href="mailto:hmachikh16@gmail.com">hmachikh16@gmail.com</a>
             </p>
           </div>
-          <a
-            class="developer-github"
-            href="https://github.com/hmachikh16-boop"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 19c-4.5 1.5-4.5-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.3 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.2 4.2 0 0 0-.1-3.2s-1-.3-3.4 1.3a11.6 11.6 0 0 0-6.2 0C6.6 2.8 5.6 3.1 5.6 3.1a4.2 4.2 0 0 0-.1 3.2A4.6 4.6 0 0 0 4.2 9.5c0 4.7 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21" /></svg>
-            GitHub
-            <svg class="external-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8" /></svg>
-          </a>
+          <div class="developer-actions">
+            <a
+              class="developer-facebook"
+              href="https://www.facebook.com/hma.chikh14/"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="صفحة حمادوش الشيخ على فيسبوك"
+            >
+              <svg class="facebook-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 8h3V4h-3c-2.76 0-5 2.24-5 5v3H6v4h3v8h4v-8h3l1-4h-4V9c0-.55.45-1 1-1Z" /></svg>
+              فيسبوك
+              <svg class="external-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8" /></svg>
+            </a>
+            <a
+              class="developer-github"
+              href="https://github.com/hmachikh16-boop"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 19c-4.5 1.5-4.5-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.3 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.2 4.2 0 0 0-.1-3.2s-1-.3-3.4 1.3a11.6 11.6 0 0 0-6.2 0C6.6 2.8 5.6 3.1 5.6 3.1a4.2 4.2 0 0 0-.1 3.2A4.6 4.6 0 0 0 4.2 9.5c0 4.7 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21" /></svg>
+              GitHub
+              <svg class="external-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8" /></svg>
+            </a>
+          </div>
         </div>
       </div>
 

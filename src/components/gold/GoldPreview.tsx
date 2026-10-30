@@ -41,8 +41,6 @@ const GoldAppPreview = React.lazy(() =>
 
 const GOLD_VERSION = '1.1.8';
 const GOLD_APK_URL = `/lin-go-gold-${GOLD_VERSION}.apk`;
-const GOLD_GITHUB_APK_URL =
-  `https://github.com/hmachikh16-boop/englishtok/releases/download/gold-v${GOLD_VERSION}/lin-go-gold-${GOLD_VERSION}.apk`;
 
 const stages = [
   {
@@ -316,8 +314,8 @@ const CodePanel: React.FC<{
     </span>
     <h3>لديك كود Gold؟</h3>
     <p>
-      أدخل الكود الذي حصلت عليه من لوحة التحكم للتحقق منه. كود المعاينة التجريبي يفتح
-      الواجهة التفاعلية فقط، بينما كود Gold المسجّل يتحقق من صلاحيته عبر الخادم.
+      أدخل الكود الذي حصلت عليه من لوحة التحكم. يتحقق الخادم من صلاحيته قبل فتح
+      التحميل والمعاينة التفاعلية.
     </p>
     <label className="gold-code-label" htmlFor="gold-code">
       كود Gold
@@ -339,21 +337,28 @@ const CodePanel: React.FC<{
     <p className="gold-code-hint">أدخل كود Gold مفعّلًا من لوحة التحكم.</p>
     {error && <p className="gold-code-error">{error}</p>}
     {activated && (
-      <p className="gold-code-success">
-        <BadgeCheck className="mr-1 inline h-3 w-3" />
-        تم التحقق — استكشف Gold+ 1.1 في المعاينة.
-      </p>
+      <>
+        <p className="gold-code-success">
+          <BadgeCheck className="mr-1 inline h-3 w-3" />
+          تم تفعيل Gold+ — التحميل جاهز.
+        </p>
+        <a
+          className="gold-download-button"
+          href={GOLD_APK_URL}
+          download={`lin-go-gold-${GOLD_VERSION}.apk`}
+          rel="noopener"
+        >
+          <span className="gold-download-button-icon" aria-hidden="true">
+            <Download className="h-4 w-4" />
+          </span>
+          <span>
+            <strong>تحميل <bdi>Gold+ {GOLD_VERSION}</bdi></strong>
+            <small>APK موقّع • تحديث عبر مدير التنزيلات</small>
+          </span>
+          <ChevronLeft className="h-4 w-4" aria-hidden="true" />
+        </a>
+      </>
     )}
-    <a
-      className="gold-preview-toggle"
-      href={GOLD_APK_URL}
-      download={`lin-go-gold-${GOLD_VERSION}.apk`}
-      rel="noopener"
-    >
-      <Download className="h-3.5 w-3.5" />
-      تحميل Gold+ {GOLD_VERSION} التجريبي
-      <ChevronLeft className="h-3 w-3" />
-    </a>
     <button type="button" className="gold-preview-toggle" onClick={onPreview}>
       <Smartphone className="h-3.5 w-3.5" />
       معاينة لوحة Gold+ داخل التطبيق
@@ -362,8 +367,8 @@ const CodePanel: React.FC<{
     <div className="gold-secure-note">
       <ShieldCheck className="h-3.5 w-3.5" />
       <span>
-        التفعيل الرسمي المرتبط بالجهاز ما زال قيد التجهيز. كود المعاينة لا يمنح ترخيصًا تجاريًا
-        ولا يرتبط بحساب أو جهاز.
+        التحميل متاح فقط بعد التحقق من كود Gold المفعّل. لا يبدأ أي تثبيت تلقائي،
+        وتتم التحديثات عبر مدير التنزيلات.
       </span>
     </div>
   </aside>
@@ -484,7 +489,7 @@ export const GoldPreview: React.FC = () => {
           )}
           <button type="button" className="gold-nav-action" onClick={scrollToActivate}>
             <KeyRound className="h-3.5 w-3.5" />
-            كود المعاينة
+            كود Gold
           </button>
         </div>
       </header>
@@ -500,34 +505,26 @@ export const GoldPreview: React.FC = () => {
               <h1>
                 نفس واجهة Lin Go.
                 <br />
-                <span>وGold+ يرفع التجربة 70%.</span>
+                <span>تجربة <bdi>Gold+</bdi> ترفع 70%.</span>
               </h1>
               <p className="gold-hero-copy">
-                Gold+ 1.1 هو نفس تطبيق Lin Go ومساره ودروسه، مع طبقة ذهبية داخل الرحلة:
+                <bdi>Gold+ {GOLD_VERSION}</bdi> هو نفس تطبيق <bdi>Lin Go</bdi> ومساره ودروسه، مع طبقة ذهبية داخل الرحلة:
                 تحدٍّ بصري، نطق بجملتين، قلوب لا نهائية، +25% XP، دوري ومهارات، صندوق يومي،
                 وأربعة مشاريع تطبيقية — أكثر من 70% أنشطة إضافية.
               </p>
               <div className="gold-hero-actions">
-                <a
-                  className="gold-btn gold-btn-gold"
-                  href={GOLD_APK_URL}
-                  download={`lin-go-gold-${GOLD_VERSION}.apk`}
-                  rel="noopener"
-                >
-                  <Download className="h-4 w-4" />
-                  حمّل Gold+ {GOLD_VERSION}
-                </a>
+                <button type="button" className="gold-btn gold-btn-gold" onClick={scrollToActivate}>
+                  <KeyRound className="h-4 w-4" />
+                  أدخل كود Gold للتحميل
+                </button>
                 <button type="button" className="gold-btn gold-btn-ghost" onClick={handlePreview}>
                   <Play className="h-4 w-4 fill-current" />
                   جرّب التطبيق
                 </button>
               </div>
               <p className="gold-download-note">
-                التحميل من الموقع الرسمي. إذا لم يبدأ،{' '}
-                <a href={GOLD_GITHUB_APK_URL} target="_blank" rel="noopener noreferrer">
-                  استخدم رابط GitHub الاحتياطي
-                </a>
-                .
+                التحميل متاح بعد التحقق من كود Gold المفعّل. التحديثات تُنزّل داخل التطبيق
+                عبر مدير التنزيلات.
               </p>
               <div className="gold-proof">
                 <span>
@@ -540,7 +537,7 @@ export const GoldPreview: React.FC = () => {
                 </span>
                 <span>
                   <Sparkles className="h-3.5 w-3.5 text-emerald-700" />
-                  Gold+ أكثر من 70% أنشطة إضافية
+                  <bdi>Gold+</bdi> أكثر من 70% أنشطة إضافية
                 </span>
               </div>
             </div>
@@ -713,7 +710,7 @@ export const GoldPreview: React.FC = () => {
 
           <div className="gold-shell">
             <footer className="gold-footer">
-              <span>© 2026 Lin Go · Gold+ {GOLD_VERSION} التجريبية</span>
+              <span>© 2026 Lin Go · Gold+ {GOLD_VERSION} — نسخة مستقلة</span>
               <strong>Lin Go Gold · Learn with direction</strong>
             </footer>
           </div>
@@ -743,7 +740,7 @@ export const GoldPreview: React.FC = () => {
                 <Smartphone className="h-3 w-3" />
                 داخل التطبيق
               </span>
-              <h2 style={{ marginTop: 14 }}>نفس التطبيق. تجربة Gold+ كاملة.</h2>
+              <h2 style={{ marginTop: 14 }}>نفس التطبيق. تجربة <bdi>Gold+</bdi> كاملة.</h2>
               <p>
                 هذه ليست واجهة Gold منفصلة. إنها شاشات Lin Go الحقيقية — الشريط العلوي، مسار
                 المراحل، درس المحادثة، والمعلم الذكي — مع لوحة Gold+، تحدٍّ بصري، نطق أوسع،
@@ -763,19 +760,22 @@ export const GoldPreview: React.FC = () => {
                 })}
               </div>
               <div className="gold-hero-actions">
-                <a
-                  className="gold-btn gold-btn-primary"
-                  href={GOLD_APK_URL}
-                  download={`lin-go-gold-${GOLD_VERSION}.apk`}
-                  rel="noopener"
-                >
-                  <Download className="h-4 w-4" />
-                  حمّل Gold+ {GOLD_VERSION}
-                </a>
-                <button type="button" className="gold-btn gold-btn-ghost" onClick={scrollToActivate}>
-                  <KeyRound className="h-4 w-4" />
-                  كود المعاينة
-                </button>
+                {activated ? (
+                  <a
+                    className="gold-btn gold-btn-primary"
+                    href={GOLD_APK_URL}
+                    download={`lin-go-gold-${GOLD_VERSION}.apk`}
+                    rel="noopener"
+                  >
+                    <Download className="h-4 w-4" />
+                    حمّل <bdi>Gold+ {GOLD_VERSION}</bdi>
+                  </a>
+                ) : (
+                  <button type="button" className="gold-btn gold-btn-primary" onClick={scrollToActivate}>
+                    <KeyRound className="h-4 w-4" />
+                    أدخل كود Gold للتحميل
+                  </button>
+                )}
               </div>
             </div>
             <GoldErrorBoundary

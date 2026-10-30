@@ -848,6 +848,20 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
                   WhatsApp
                 </a>
                 <a
+                  href="https://www.facebook.com/hma.chikh14/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 hover:text-emerald-300"
+                >
+                  <svg className="h-3.5 w-3.5 text-emerald-400" viewBox="0 0 24 24" aria-hidden="true">
+                    <path
+                      fill="currentColor"
+                      d="M14 8h3V4h-3c-2.76 0-5 2.24-5 5v3H6v4h3v8h4v-8h3l1-4h-4V9c0-.55.45-1 1-1Z"
+                    />
+                  </svg>
+                  فيسبوك
+                </a>
+                <a
                   href="https://englishtok-eight.vercel.app/control"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -922,6 +936,21 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
                 0665003037
               </a>
             </div>
+            <a
+              href="https://www.facebook.com/hma.chikh14/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-3 inline-flex min-h-9 items-center gap-2 rounded-xl border border-sky-500/30 bg-sky-500/10 px-3 py-1.5 text-[11px] font-bold text-sky-100 transition-colors hover:bg-sky-500/20"
+            >
+              <svg className="h-3.5 w-3.5 text-sky-300" viewBox="0 0 24 24" aria-hidden="true">
+                <path
+                  fill="currentColor"
+                  d="M14 8h3V4h-3c-2.76 0-5 2.24-5 5v3H6v4h3v8h4v-8h3l1-4h-4V9c0-.55.45-1 1-1Z"
+                />
+              </svg>
+              تواصل عبر فيسبوك
+              <ExternalLink className="h-3 w-3 opacity-60" aria-hidden="true" />
+            </a>
           </section>
 
           <section

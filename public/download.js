@@ -191,7 +191,7 @@ const setupGoldForm = () => {
 
     if (!code) {
       if (success) success.hidden = true;
-      setMessage('أدخل كود Gold أولًا. للمعاينة استخدم الكود التجريبي.', true);
+      setMessage('أدخل كود Gold المفعّل أولًا.', true);
       input.focus();
       return;
     }
@@ -213,16 +213,14 @@ const setupGoldForm = () => {
         throw new Error(payload.error || 'تعذر التحقق من الكود الآن.');
       }
       if (payload.valid) {
-        setMessage('تم التحقق — كود Gold صالح. يمكنك تحميل Gold+ 1.1.0.', false);
+        setMessage('', false);
         if (success) {
           success.hidden = false;
           success.querySelectorAll('[data-gold-download-unlocked]').forEach((link) => {
             link.hidden = false;
           });
-          const title = success.querySelector('strong');
-          if (title) title.textContent = 'تم التحقق — كود Gold صالح. التحميل متاح.';
         }
-        showToast('تم التحقق من كود Gold');
+        showToast('تم تفعيل Gold+ — التحميل جاهز');
       } else {
         setMessage(
           payload.status === 'revoked'
@@ -251,6 +249,7 @@ const setupGoldForm = () => {
 
   input.addEventListener('input', () => {
     message?.classList.remove('is-error');
+    if (success) success.hidden = true;
   });
 };
 
