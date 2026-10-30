@@ -36,6 +36,11 @@ import {
 } from '../../services/gameProgressService';
 import { GamePictureClue } from './GamePictureClue';
 import { WordChoiceGame } from './WordChoiceGame';
+import { MemoryMatchGame } from './MemoryMatchGame';
+import { ListenChooseGame } from './ListenChooseGame';
+import { FillBlankGame } from './FillBlankGame';
+import { SpeedQuizGame } from './SpeedQuizGame';
+import { HangmanGame } from './HangmanGame';
 
 interface GamesTabProps {
   lessons: Lesson[];
@@ -90,6 +95,7 @@ export const GamesTab: React.FC<GamesTabProps> = ({
   const [sessionSolved, setSessionSolved] = useState(0);
   const [roundComplete, setRoundComplete] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
+  const [activeExtraGame, setActiveExtraGame] = useState<string | null>(null);
   const resetTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const hintClickAtRef = useRef(0);
@@ -649,7 +655,34 @@ export const GamesTab: React.FC<GamesTabProps> = ({
         </section>
       </div>
 
-      <WordChoiceGame lessons={lessons} userProfile={userProfile} onUpdateProfile={onUpdateProfile} />
+      <section className="games-extra" aria-label="ألعاب إضافية">
+        <h2 className="games-extra-title">ألعاب تعليمية إضافية</h2>
+        <div className="games-extra-tabs">
+          {[
+            { id: 'choice', label: 'اختيار ترجمة' },
+            { id: 'memory', label: 'مطابقة ذاكرة' },
+            { id: 'listen', label: 'استمع واختر' },
+            { id: 'fill', label: 'أكمل جملة' },
+            { id: 'speed', label: 'لعبة سريعة' },
+            { id: 'hangman', label: 'خمن الحرف' },
+          ].map((game) => (
+            <button
+              key={game.id}
+              type="button"
+              className={`games-extra-tab ${activeExtraGame === game.id ? 'is-active' : ''}`}
+              onClick={() => setActiveExtraGame(activeExtraGame === game.id ? null : game.id)}
+            >
+              {game.label}
+            </button>
+          ))}
+        </div>
+        {activeExtraGame === 'choice' && <WordChoiceGame lessons={lessons} userProfile={userProfile} onUpdateProfile={onUpdateProfile} />}
+        {activeExtraGame === 'memory' && <MemoryMatchGame lessons={lessons} userProfile={userProfile} onUpdateProfile={onUpdateProfile} />}
+        {activeExtraGame === 'listen' && <ListenChooseGame lessons={lessons} userProfile={userProfile} onUpdateProfile={onUpdateProfile} />}
+        {activeExtraGame === 'fill' && <FillBlankGame lessons={lessons} userProfile={userProfile} onUpdateProfile={onUpdateProfile} />}
+        {activeExtraGame === 'speed' && <SpeedQuizGame lessons={lessons} userProfile={userProfile} onUpdateProfile={onUpdateProfile} />}
+        {activeExtraGame === 'hangman' && <HangmanGame lessons={lessons} userProfile={userProfile} onUpdateProfile={onUpdateProfile} />}
+      </section>
 
       {toast && (
         <div className="games-toast" role="status">

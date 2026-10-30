@@ -39,7 +39,7 @@ const GoldAppPreview = React.lazy(() =>
   import('./GoldAppPreview').then((module) => ({ default: module.GoldAppPreview })),
 );
 
-const GOLD_VERSION = '1.1.6';
+const GOLD_VERSION = '1.1.7';
 const GOLD_APK_URL = `/lin-go-gold-${GOLD_VERSION}.apk`;
 const GOLD_GITHUB_APK_URL =
   `https://github.com/hmachikh16-boop/englishtok/releases/download/gold-v${GOLD_VERSION}/lin-go-gold-${GOLD_VERSION}.apk`;
