@@ -1,5 +1,5 @@
 const STORAGE_KEY = 'lin-go-gold-license-code';
-const CHECK_URL = 'https://englishtok-eight.vercel.app/api/admin?action=check';
+const CHECK_URL = 'https://www.lingo.com/api/admin?action=check';
 
 export interface GoldLicenseResult {
   valid: boolean;

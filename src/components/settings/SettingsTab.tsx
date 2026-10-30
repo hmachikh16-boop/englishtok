@@ -862,7 +862,7 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
                   فيسبوك
                 </a>
                 <a
-                  href="https://englishtok-eight.vercel.app/control"
+                  href="https://www.lingo.com/control"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 hover:text-emerald-300"

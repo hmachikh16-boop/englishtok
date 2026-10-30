@@ -1,5 +1,5 @@
 const REPOSITORY = 'hmachikh16-boop/englishtok';
-const DOWNLOAD_PAGE = 'https://englishtok-eight.vercel.app/download';
+const DOWNLOAD_PAGE = 'https://www.lingo.com/download';
 const LOCAL_APK = '/english-tok.apk';
 const GITHUB_APK = `https://github.com/${REPOSITORY}/releases/latest/download/english-tok.apk`;
 const GITHUB_RELEASE = `https://github.com/${REPOSITORY}/releases/latest`;

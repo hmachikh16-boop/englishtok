@@ -1,4 +1,4 @@
-﻿import { createHash } from 'node:crypto';
+import { createHash } from 'node:crypto';
 import process from 'node:process';
 
 interface ChatRequest {
@@ -96,7 +96,7 @@ const writeCachedReply = (key: string, reply: TutorReply) => {
 export const config = { maxDuration: 60 };
 
 const ALLOWED_APP_ORIGINS = new Set([
-  'https://englishtok-eight.vercel.app',
+  'https://www.lingo.com',
   'https://localhost',
   'capacitor://localhost',
   'http://localhost',
@@ -518,7 +518,7 @@ const callProvider = async (
     'Content-Type': 'application/json',
   };
   if (provider.name === 'openrouter') {
-    headers['HTTP-Referer'] = 'https://englishtok-eight.vercel.app';
+    headers['HTTP-Referer'] = 'https://www.lingo.com';
     headers['X-Title'] = 'Lin Go AI Tutor';
   }
   const response = await withTimeout(endpoint, {

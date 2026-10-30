@@ -2,7 +2,7 @@
 
 تطبيق تعليمي متكامل للغتين الإنجليزية والفرنسية، مستوحى من أسلوب تيك توك في عرض الفيديوهات العمودية القصيرة، ومصمم خصيصاً لهواتف وتابلت Android مع دعم كامل للويب وتصدير APK عبر Capacitor.
 
-**⬇️ [تحميل أحدث إصدار APK](https://englishtok-eight.vercel.app/download)** · [الموقع الرسمي](https://englishtok-eight.vercel.app/) · [سياسة الخصوصية](https://englishtok-eight.vercel.app/legal/privacy.html)
+**⬇️ [تحميل أحدث إصدار APK](https://www.lingo.com/download)** · [الموقع الرسمي](https://www.lingo.com/) · [سياسة الخصوصية](https://www.lingo.com/legal/privacy.html)
 
 لإعداد النشر التلقائي، توقيع إصدارات Android، تحديث APK والمحتوى دون مسح تقدم المتعلم، راجع [دليل النشر والتحديث](./DEPLOYMENT.md).
 
@@ -180,7 +180,7 @@ android/app/src/main/java/com/englishtok/app/
    ```
 3. أعد نشر المشروع على Vercel. للتحقق من الإعداد افتح:
    ```text
-   https://englishtok-eight.vercel.app/api/chat
+   https://www.lingo.com/api/chat
    ```
    ويجب أن يعيد JSON يحتوي `configured: true` واسم طراز DeepSeek. عند وجود مفتاح Cloudflare يصبح هو المزوّد الأساسي تلقائيًا ويتوقف استخدام المزوّد المجاني الاحتياطي.
 4. بديل مدفوع اختياري: عيّن `AI_PROVIDER=deepseek` وأضف `DEEPSEEK_API_KEY` (أو استخدم OpenRouter عبر `AI_PROVIDER=openrouter` و`OPENROUTER_API_KEY`). لا يلزم إعادة بناء APK عند تغيير المزوّد أو المفتاح؛ يكفي نشر الخادم.
@@ -189,7 +189,7 @@ android/app/src/main/java/com/englishtok/app/
 - الطبقة المجانية في Cloudflare لها حصة يومية محدودة، وقد تتوقف الخدمة مؤقتًا عند استهلاكها. يمكن الانتقال إلى DeepSeek المدفوع لاحقًا دون تغيير التطبيق.
 - المزوّد الاحتياطي المجاني لا يحتوي مفتاحًا ولا يضمن الخصوصية أو الاستمرارية؛ للاستخدام الجاد أضف Cloudflare أو DeepSeek. يمكن ضبط الطراز عبر `POLLINATIONS_MODEL` (الافتراضي `openai-fast`).
 - يتضمن الخادم حدًا افتراضيًا قدره 8 رسائل في الدقيقة و40 رسالة في الساعة لكل عنوان IP، مع تخزين مؤقت في Upstash Redis إن كانت متغيرات `KV_REST_API_URL`/`KV_REST_API_TOKEN` مضبوطة.
-- تطبيق Android يستدعي الخادم على `https://englishtok-eight.vercel.app` افتراضيًا. إذا نُشر الموقع على نطاق آخر، ابنِ APK مع `VITE_API_BASE_URL=https://your-domain.example`. في الويب تُستخدم نفس أصول الموقع (`/api/chat`).
+- تطبيق Android يستدعي الخادم على `https://www.lingo.com` افتراضيًا. إذا نُشر الموقع على نطاق آخر، ابنِ APK مع `VITE_API_BASE_URL=https://your-domain.example`. في الويب تُستخدم نفس أصول الموقع (`/api/chat`).
 - تقييم النطق تقريبي لأنه يعتمد على النص الذي يتعرف عليه الميكروفون، وليس على تحليل صوتي احترافي. الصوت نفسه يُشغّل عبر `TextToSpeechPlugin` الأصلي في Android، ويبقى صوت المتصفح خطة احتياطية على الويب.
 
 ### المنهج الحالي: 4 مستويات و100 درس لكل مستوى (400 درس)

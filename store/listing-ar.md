@@ -16,9 +16,9 @@
 | الجمهور | 13+ (مقترح) |
 | البريد | hmachikh16@gmail.com |
 | المطوّر | حمادوش الشيخ |
-| الخصوصية | https://englishtok-eight.vercel.app/legal/privacy.html |
-| الشروط | https://englishtok-eight.vercel.app/legal/terms.html |
-| الترخيص | https://englishtok-eight.vercel.app/legal/license.html |
+| الخصوصية | https://www.lingo.com/legal/privacy.html |
+| الشروط | https://www.lingo.com/legal/terms.html |
+| الترخيص | https://www.lingo.com/legal/license.html |
 
 ## الوصف الكامل
 

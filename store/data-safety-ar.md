@@ -53,6 +53,6 @@
 
 ## الروابط
 
-- الخصوصية: https://englishtok-eight.vercel.app/legal/privacy.html
-- الشروط: https://englishtok-eight.vercel.app/legal/terms.html
-- الترخيص: https://englishtok-eight.vercel.app/legal/license.html
+- الخصوصية: https://www.lingo.com/legal/privacy.html
+- الشروط: https://www.lingo.com/legal/terms.html
+- الترخيص: https://www.lingo.com/legal/license.html

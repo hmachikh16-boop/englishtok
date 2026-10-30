@@ -57,12 +57,12 @@
 
 ## روابط إلزامية
 
-- الموقع: https://englishtok-eight.vercel.app
-- صفحة التنزيل والتحديث: https://englishtok-eight.vercel.app/download
-- التنزيل المباشر: https://englishtok-eight.vercel.app/english-tok.apk
-- الخصوصية: https://englishtok-eight.vercel.app/legal/privacy.html
-- الشروط: https://englishtok-eight.vercel.app/legal/terms.html
-- الترخيص: https://englishtok-eight.vercel.app/legal/license.html
+- الموقع: https://www.lingo.com
+- صفحة التنزيل والتحديث: https://www.lingo.com/download
+- التنزيل المباشر: https://www.lingo.com/english-tok.apk
+- الخصوصية: https://www.lingo.com/legal/privacy.html
+- الشروط: https://www.lingo.com/legal/terms.html
+- الترخيص: https://www.lingo.com/legal/license.html
 - البريد: hmachikh16@gmail.com
 - المطوّر: حمادوش الشيخ
 - الحزمة: `com.englishtok.app`

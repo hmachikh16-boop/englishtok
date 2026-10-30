@@ -26,7 +26,7 @@ import com.getcapacitor.annotation.CapacitorPlugin;
 @CapacitorPlugin(name = "ApkDownloader")
 public class ApkDownloaderPlugin extends Plugin {
 
-    private static final String OFFICIAL_HOST = "englishtok-eight.vercel.app";
+    private static final String OFFICIAL_HOST = "www.lingo.com";
     private static final java.util.regex.Pattern OFFICIAL_PATH =
         java.util.regex.Pattern.compile("^/(english-tok|lin-go-gold-\\d+\\.\\d+\\.\\d+)\\.apk$");
 

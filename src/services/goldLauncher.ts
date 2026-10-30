@@ -2,7 +2,7 @@ import { Browser } from '@capacitor/browser';
 import { Capacitor } from '@capacitor/core';
 
 /** Official Gold landing page shown from the free Lin Go app. */
-export const GOLD_PAGE_URL = 'https://englishtok-eight.vercel.app/gold';
+export const GOLD_PAGE_URL = 'https://www.lingo.com/gold';
 
 /**
  * Opens the Gold page in the system browser on Android, or in a new tab on

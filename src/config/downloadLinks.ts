@@ -9,7 +9,7 @@ import { IS_GOLD_EDITION } from './edition';
  * in-app updater safe: Gold can never receive the Free package (and Free can
  * never receive a Gold package) even though both editions share the same code.
  */
-export const OFFICIAL_SITE_URL = 'https://englishtok-eight.vercel.app';
+export const OFFICIAL_SITE_URL = 'https://www.lingo.com';
 export const OFFICIAL_DOWNLOAD_PAGE_URL = `${OFFICIAL_SITE_URL}/download`;
 export const OFFICIAL_APK_URL = `${OFFICIAL_SITE_URL}/english-tok.apk`;
 export const OFFICIAL_GOLD_APK_URL = `${OFFICIAL_SITE_URL}/lin-go-gold-1.1.8.apk`;
