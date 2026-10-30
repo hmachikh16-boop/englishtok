@@ -1,11 +1,11 @@
 {
-  "version": "1.1.8",
+  "version": "1.1.9",
   "packageId": "com.englishtok.gold",
-  "apkUrl": "/lin-go-gold-1.1.8.apk",
-  "sha256": "219DE892F117741E9D5B2EB112F97C2B95D4AC89C37513EEA50551716F7C8447",
-  "size": 58241891,
+  "apkUrl": "/lin-go-gold-1.1.9.apk",
+  "sha256": "FE0C7023B3F1791BEED26C05FAA9EA0EC1C6F195D2405EB94EC5CEFF5D4CFFB6",
+  "size": 58252564,
   "minimumAndroidSdk": 24,
-  "notes": "تحديث Gold+ 1.1.8: إصلاح تشغيل أصوات الدروس داخل تطبيق Android عبر تشغيل المقاطع المضمّنة كـ Blob، مع صوت احتياطي من محرك الجهاز. يشمل أيضًا 500 درس، القصص التعليمية، والألعاب الخمسة.",
-  "releaseUrl": "https://github.com/hmachikh16-boop/englishtok/releases/tag/gold-v1.1.8",
-  "publishedAt": "2026-10-30T09:30:00.000Z"
+  "notes": "تحديث Gold+ 1.1.9: إعادة تصميم قسم الألعاب (مكتبة ألعاب، شاشات موحدة، تغذية راجعة، ملخص جلسة)، تحسين جودة الألعاب التعليمية، ودعم أفضل للفرنسية. يتضمن أيضًا 500 درس والقصص التعليمية.",
+  "releaseUrl": "https://github.com/hmachikh16-boop/englishtok/releases/tag/gold-v1.1.9",
+  "publishedAt": "2026-10-30T20:00:00.000Z"
 }

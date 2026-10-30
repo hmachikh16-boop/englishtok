@@ -34,7 +34,7 @@ const repository = process.env.GITHUB_REPOSITORY || 'hmachikh16-boop/englishtok'
 const url = `https://github.com/${repository}/releases/latest/download/english-tok.apk`;
 const manifestUrl = `https://github.com/${repository}/releases/latest/download/update-manifest.json`;
 const target = resolve(process.cwd(), 'public', 'english-tok.apk');
-const goldVersion = '1.1.8';
+const goldVersion = '1.1.9';
 const goldTarget = resolve(process.cwd(), 'public', `lin-go-gold-${goldVersion}.apk`);
 const goldUrl = `https://github.com/${repository}/releases/download/gold-v${goldVersion}/lin-go-gold-${goldVersion}.apk`;
 const latestDir = resolve(process.cwd(), 'public', 'download');
@@ -126,7 +126,7 @@ try {
     size: goldSize,
     minimumAndroidSdk: 24,
     notes:
-      'تحديث Gold+ 1.1.8: إصلاح تشغيل أصوات الدروس داخل تطبيق Android عبر تشغيل المقاطع المضمّنة كـ Blob، مع صوت احتياطي من محرك الجهاز. يشمل أيضًا 500 درس، القصص التعليمية، والألعاب الخمسة.',
+      'تحديث Gold+ 1.1.9: إعادة تصميم قسم الألعاب (مكتبة ألعاب، شاشات موحدة، تغذية راجعة، ملخص جلسة)، تحسين جودة الألعاب التعليمية، ودعم أفضل للفرنسية. يتضمن أيضًا 500 درس والقصص التعليمية.',
     releaseUrl: `https://github.com/${repository}/releases/tag/gold-v${goldVersion}`,
     publishedAt: new Date().toISOString(),
   };

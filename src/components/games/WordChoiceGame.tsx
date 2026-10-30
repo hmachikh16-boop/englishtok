@@ -1,106 +1,203 @@
 import React, { useMemo, useState } from 'react';
-import { BookOpen, CheckCircle2, XCircle } from 'lucide-react';
+import { BookOpen, Check, Volume2, X } from 'lucide-react';
 import type { Lesson, UserProfile } from '../../types';
 import { buildGamePuzzles } from '../../services/gamePuzzles';
 import { speechService } from '../../services/speechService';
+import { GameFeedback, GameFrame, GameResult, GameEmpty } from './GameBits';
+import {
+  buildGameOptions,
+  buildRound,
+  targetLanguageLabel,
+} from './gameUtils';
 
 interface WordChoiceGameProps {
   lessons: Lesson[];
   userProfile: UserProfile;
   onUpdateProfile: (updated: Partial<UserProfile>) => void;
+  onBack: () => void;
 }
 
-export const WordChoiceGame: React.FC<WordChoiceGameProps> = ({ lessons, userProfile, onUpdateProfile }) => {
-  const puzzles = useMemo(() => buildGamePuzzles(lessons).filter((puzzle) => puzzle.picture !== null), [lessons]);
+const ROUND_SIZE = 8;
+const XP_PER_CORRECT = 5;
+const LETTERS = ['A', 'B', 'C', 'D'];
+
+export const WordChoiceGame: React.FC<WordChoiceGameProps> = ({
+  lessons,
+  userProfile,
+  onUpdateProfile,
+  onBack,
+}) => {
+  const puzzles = useMemo(() => buildGamePuzzles(lessons), [lessons]);
+  const [roundKey, setRoundKey] = useState(0);
+  const round = useMemo(() => buildRound(puzzles, ROUND_SIZE), [puzzles, roundKey]);
   const [index, setIndex] = useState(0);
   const [score, setScore] = useState(0);
+  const [xp, setXp] = useState(0);
+  const [streak, setStreak] = useState(0);
+  const [bestStreak, setBestStreak] = useState(0);
   const [selected, setSelected] = useState<string | null>(null);
   const [answered, setAnswered] = useState(false);
+  const [finished, setFinished] = useState(false);
 
-  const current = puzzles.length ? puzzles[index % puzzles.length] : null;
-  const options = useMemo(() => {
-    if (!current) return [];
-    const wrong = puzzles
-      .filter((puzzle) => puzzle.id !== current.id)
-      .sort(() => Math.random() - 0.5)
-      .slice(0, 3)
-      .map((puzzle) => puzzle.translationAr);
-    return [...wrong, current.translationAr].sort(() => Math.random() - 0.5);
-  }, [current, puzzles]);
+  const current = round[index] ?? null;
+  const options = useMemo(
+    () => (current ? buildGameOptions(puzzles, current, 'translationAr') : []),
+    [current, puzzles],
+  );
+  const language = targetLanguageLabel(userProfile.targetLanguage);
 
-  if (!current) {
+  if (!current && !finished) return <GameEmpty onBack={onBack} />;
+
+  if (finished) {
     return (
-      <section className="games-choice-empty">
-        <p>ستظهر الألغاز بعد تحميل المنهج.</p>
-      </section>
+      <div className="gg-game-wrap">
+        <GameResult
+          score={score}
+          total={round.length}
+          xp={xp}
+          bestStreak={bestStreak}
+          onReplay={() => {
+            setRoundKey((value) => value + 1);
+            setIndex(0);
+            setScore(0);
+            setXp(0);
+            setStreak(0);
+            setBestStreak(0);
+            setSelected(null);
+            setAnswered(false);
+            setFinished(false);
+          }}
+          onBack={onBack}
+        />
+      </div>
     );
   }
+
+  if (!current) return <GameEmpty onBack={onBack} />;
+
+  const playWord = (word: string) => {
+    speechService.speakText({
+      source: 'games-word-choice',
+      text: word.toLowerCase(),
+      rate: 0.9,
+      gender: 'female',
+      accent: userProfile.targetLanguage ?? 'en',
+    });
+  };
+
+  const correct = selected === current.translationAr;
 
   const handleSelect = (option: string) => {
     if (answered) return;
     setSelected(option);
     setAnswered(true);
-    const correct = option === current.translationAr;
-    if (correct) {
+    if (option === current.translationAr) {
+      const nextStreak = streak + 1;
       setScore((value) => value + 1);
-      onUpdateProfile({ xp: userProfile.xp + 5 });
+      setXp((value) => value + XP_PER_CORRECT);
+      setStreak(nextStreak);
+      setBestStreak((value) => Math.max(value, nextStreak));
+      onUpdateProfile({ xp: userProfile.xp + XP_PER_CORRECT });
       speechService.playSuccessChime();
-    } else {
-      speechService.playErrorBuzz();
+      return;
     }
+    setStreak(0);
+    speechService.playErrorBuzz();
   };
 
   const handleNext = () => {
+    if (index + 1 >= round.length) {
+      setFinished(true);
+      return;
+    }
+    setIndex((value) => value + 1);
     setSelected(null);
     setAnswered(false);
-    setIndex((value) => value + 1);
   };
 
   return (
-    <section className="games-choice" aria-label="لعبة اختيار الترجمة">
-      <div className="games-choice-head">
-        <div>
-          <span className="games-kicker">
-            <BookOpen className="h-4 w-4" aria-hidden="true" />
-            لعبة جديدة
-          </span>
-          <h2 className="games-hero-title">اختر الترجمة الصحيحة</h2>
-          <p className="games-hero-copy">اقرأ الكلمة الإنجليزية واختر معناها العربي. +5 XP لكل إجابة صحيحة.</p>
-        </div>
-        <div className="games-choice-score">
-          <strong>{score}</strong>
-          <span>نقاط</span>
-        </div>
-      </div>
+    <div className="gg-game-wrap">
+      <GameFrame
+        icon={BookOpen}
+        eyebrow="تحدي المفردات"
+        title="اختر المعنى الصحيح"
+        description={`اقرأ الكلمة ${language} واختر معناها العربي. بعد كل سؤال سترى الكلمة في جملة كاملة.`}
+        onBack={onBack}
+        current={index + 1}
+        total={round.length}
+        score={score}
+        accent="gold"
+        footerNote={`كل إجابة صحيحة = ${XP_PER_CORRECT} XP. الجملة التي تظهر بعد الإجابة تساعدك على تثبيت المعنى في السياق.`}
+      >
+        <section className="gg-panel">
+          <div className="gg-question">
+            <span className="gg-question-kicker">ما معنى هذه الكلمة؟</span>
+            <h2 className="gg-word" dir="ltr">
+              {current.word.toLowerCase()}
+            </h2>
+            {current.phonetic && (
+              <p className="gg-phonetic" dir="ltr">
+                {current.phonetic}
+              </p>
+            )}
+            <button
+              type="button"
+              className="gg-listen-chip"
+              onClick={() => playWord(current.word)}
+            >
+              <Volume2 aria-hidden="true" />
+              استمع للنطق
+            </button>
+          </div>
 
-      <div className="games-choice-card">
-        <p className="games-choice-word" dir="ltr">{current.word.toLowerCase()}</p>
-        {current.phonetic && <p className="games-choice-phonetic" dir="ltr">{current.phonetic}</p>}
-        <div className="games-choice-options">
-          {options.map((option) => {
-            const isCorrect = option === current.translationAr;
-            const isSelected = option === selected;
-            return (
-              <button
-                key={option}
-                type="button"
-                disabled={answered}
-                onClick={() => handleSelect(option)}
-                className={`games-choice-option ${answered ? (isCorrect ? 'is-correct' : isSelected ? 'is-wrong' : '') : ''}`}
-              >
-                {answered && isCorrect && <CheckCircle2 className="h-4 w-4" />}
-                {answered && isSelected && !isCorrect && <XCircle className="h-4 w-4" />}
-                <span>{option}</span>
-              </button>
-            );
-          })}
-        </div>
-        {answered && (
-          <button type="button" className="games-choice-next" onClick={handleNext}>
-            التالي
-          </button>
-        )}
-      </div>
-    </section>
+          <div className="gg-options" role="group" aria-label="اختر الترجمة الصحيحة">
+            {options.map((option, optionIndex) => {
+              const isCorrect = option === current.translationAr;
+              const isSelected = option === selected;
+              const stateClass = answered
+                ? isCorrect
+                  ? 'is-correct'
+                  : isSelected
+                    ? 'is-wrong'
+                    : ''
+                : '';
+              return (
+                <button
+                  key={option}
+                  type="button"
+                  className={`gg-option ${stateClass}`}
+                  onClick={() => handleSelect(option)}
+                  disabled={answered}
+                >
+                  <span className="gg-option-key" aria-hidden="true">
+                    {answered && isCorrect ? (
+                      <Check />
+                    ) : answered && isSelected ? (
+                      <X />
+                    ) : (
+                      LETTERS[optionIndex] ?? optionIndex + 1
+                    )}
+                  </span>
+                  <span className="gg-option-value">{option}</span>
+                </button>
+              );
+            })}
+          </div>
+
+          {answered && (
+            <GameFeedback
+              correct={correct}
+              answer={current.word}
+              translation={current.translationAr}
+              example={current.exampleSentence}
+              exampleAr={current.exampleSentenceAr}
+              onListen={() => playWord(current.word)}
+              onNext={handleNext}
+              nextLabel={index + 1 >= round.length ? 'عرض النتيجة' : 'السؤال التالي'}
+            />
+          )}
+        </section>
+      </GameFrame>
+    </div>
   );
 };
