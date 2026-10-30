@@ -3,12 +3,22 @@ import {
   ChevronLeft,
   Flame,
   Gamepad2,
+  HelpCircle,
+  ImageIcon,
+  Keyboard,
+  Layers,
   Lightbulb,
+  Link2,
+  MessageSquareText,
   RotateCcw,
+  Shuffle,
   Sparkles,
   Star,
+  Tags,
   Timer,
+  TrendingUp,
   Trophy,
+  Volume2,
   type LucideIcon,
 } from 'lucide-react';
 import type { Lesson, UserProfile } from '../../types';
@@ -17,13 +27,23 @@ import {
   loadGameProgress,
   resetGameProgress,
 } from '../../services/gameProgressService';
+import { CategorySortGame } from './CategorySortGame';
+import { DictationGame } from './DictationGame';
 import { FillBlankGame } from './FillBlankGame';
+import { FlashcardGame } from './FlashcardGame';
 import { HangmanGame } from './HangmanGame';
 import { ListenChooseGame } from './ListenChooseGame';
 import { MemoryMatchGame } from './MemoryMatchGame';
+import { OddOneOutGame } from './OddOneOutGame';
+import { PhoneticMatchGame } from './PhoneticMatchGame';
+import { PictureQuizGame } from './PictureQuizGame';
+import { SentenceBuilderGame } from './SentenceBuilderGame';
 import { SpeedQuizGame } from './SpeedQuizGame';
 import { SpellingGame } from './SpellingGame';
+import { VocabularyLadderGame } from './VocabularyLadderGame';
+import { WordChainGame } from './WordChainGame';
 import { WordChoiceGame } from './WordChoiceGame';
+import { WordScrambleGame } from './WordScrambleGame';
 import './games.css';
 
 interface GamesTabProps {
@@ -39,7 +59,17 @@ type GameKey =
   | 'listen'
   | 'fill'
   | 'speed'
-  | 'hangman';
+  | 'hangman'
+  | 'flashcards'
+  | 'scramble'
+  | 'picture'
+  | 'category'
+  | 'odd'
+  | 'sentence'
+  | 'dictation'
+  | 'phonetic'
+  | 'chain'
+  | 'ladder';
 
 interface GameCard {
   id: GameKey;
@@ -116,6 +146,98 @@ const GAME_CATALOG: GameCard[] = [
     description: 'اكتشف الكلمة حرفًا حرفًا قبل نفاد المحاولات.',
     skill: 'تهجئة',
     duration: '3–5 دقائق',
+  },
+  {
+    id: 'flashcards',
+    icon: Layers,
+    tone: 'blue',
+    title: 'بطاقات ذكية',
+    description: 'راجع المفردات ببطاقات تتكيف: غير المتقنة تُعاد لاحقًا.',
+    skill: 'مراجعة',
+    duration: '3–4 دقائق',
+    badge: 'ذكي',
+  },
+  {
+    id: 'scramble',
+    icon: Shuffle,
+    tone: 'gold',
+    title: 'خلط الحروف',
+    description: 'أعد ترتيب الحروف مخلوطة لتكوين الكلمة.',
+    skill: 'تهجئة',
+    duration: '2–3 دقائق',
+  },
+  {
+    id: 'picture',
+    icon: ImageIcon,
+    tone: 'rose',
+    title: 'تخمين الصورة',
+    description: 'اقرأ الكلمة واختر الصورة التي تمثلها.',
+    skill: 'ربط بصري',
+    duration: '2–3 دقائق',
+  },
+  {
+    id: 'category',
+    icon: Tags,
+    tone: 'teal',
+    title: 'صنّف المفردة',
+    description: 'حدد الفئة (طعام، سفر، عمل…) للكلمة.',
+    skill: 'تصنيف',
+    duration: '2–3 دقائق',
+  },
+  {
+    id: 'odd',
+    icon: HelpCircle,
+    tone: 'violet',
+    title: 'الشاذ',
+    description: 'جد الكلمة التي لا تنتمي إلى نفس الفئة.',
+    skill: 'تفكير',
+    duration: '2–4 دقائق',
+  },
+  {
+    id: 'sentence',
+    icon: MessageSquareText,
+    tone: 'gold',
+    title: 'رتّب الجملة',
+    description: 'أعد ترتيب الكلمات لتكوين جملة صحيحة.',
+    skill: 'نحو',
+    duration: '3–4 دقائق',
+  },
+  {
+    id: 'dictation',
+    icon: Keyboard,
+    tone: 'blue',
+    title: 'استمع واكتب',
+    description: 'استمع للكلمة واكتبها (إملاء).',
+    skill: 'استماع+كتابة',
+    duration: '3–4 دقائق',
+  },
+  {
+    id: 'phonetic',
+    icon: Volume2,
+    tone: 'rose',
+    title: 'طابق النطق',
+    description: 'اختر التهجئة الصوتية (IPA) الصحيحة.',
+    skill: 'نطق',
+    duration: '2–3 دقائق',
+  },
+  {
+    id: 'chain',
+    icon: Link2,
+    tone: 'amber',
+    title: 'سلسلة كلمات',
+    description: 'اختر كلمة تبدأ بآخر حرف من الكلمة الحالية.',
+    skill: 'سرعة استرجاع',
+    duration: '2–3 دقائق',
+  },
+  {
+    id: 'ladder',
+    icon: TrendingUp,
+    tone: 'emerald',
+    title: 'سلم المفردات',
+    description: 'تسلّق 10 درجات؛ خطأ = فقدان حياة وإعادة الدرجة.',
+    skill: 'تحدي',
+    duration: '3–5 دقائق',
+    badge: 'جديد',
   },
 ];
 
@@ -209,6 +331,26 @@ export const GamesTab: React.FC<GamesTabProps> = ({ lessons, userProfile, onUpda
             onBack={backToLibrary}
           />
         );
+      case 'flashcards':
+        return <FlashcardGame lessons={lessons} userProfile={userProfile} onUpdateProfile={onUpdateProfile} onBack={backToLibrary} />;
+      case 'scramble':
+        return <WordScrambleGame lessons={lessons} userProfile={userProfile} onUpdateProfile={onUpdateProfile} onBack={backToLibrary} />;
+      case 'picture':
+        return <PictureQuizGame lessons={lessons} userProfile={userProfile} onUpdateProfile={onUpdateProfile} onBack={backToLibrary} />;
+      case 'category':
+        return <CategorySortGame lessons={lessons} userProfile={userProfile} onUpdateProfile={onUpdateProfile} onBack={backToLibrary} />;
+      case 'odd':
+        return <OddOneOutGame lessons={lessons} userProfile={userProfile} onUpdateProfile={onUpdateProfile} onBack={backToLibrary} />;
+      case 'sentence':
+        return <SentenceBuilderGame lessons={lessons} userProfile={userProfile} onUpdateProfile={onUpdateProfile} onBack={backToLibrary} />;
+      case 'dictation':
+        return <DictationGame lessons={lessons} userProfile={userProfile} onUpdateProfile={onUpdateProfile} onBack={backToLibrary} />;
+      case 'phonetic':
+        return <PhoneticMatchGame lessons={lessons} userProfile={userProfile} onUpdateProfile={onUpdateProfile} onBack={backToLibrary} />;
+      case 'chain':
+        return <WordChainGame lessons={lessons} userProfile={userProfile} onUpdateProfile={onUpdateProfile} onBack={backToLibrary} />;
+      case 'ladder':
+        return <VocabularyLadderGame lessons={lessons} userProfile={userProfile} onUpdateProfile={onUpdateProfile} onBack={backToLibrary} />;
       default:
         return null;
     }
@@ -228,7 +370,7 @@ export const GamesTab: React.FC<GamesTabProps> = ({ lessons, userProfile, onUpda
               </span>
               <h1 id="games-hub-title">تعلّم باللعب، وثبّت كل كلمة.</h1>
               <p>
-                سبع ألعاب قصيرة، كل منها تدرّب مهارة مختلفة: التهجئة، المفردات،
+                سبعة عشر لعبة، كل منها تدرّب مهارة مختلفة: التهجئة، المفردات،
                 الاستماع، السياق، الذاكرة، والسرعة. كل إجابة صحيحة تمنح XP وتجعل
                 الدرس أكثر ثباتًا.
               </p>

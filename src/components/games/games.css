@@ -1524,6 +1524,185 @@
   }
 }
 
+/* ---------- Flashcards ---------- */
+.gg-flashcard-wrap {
+  perspective: 900px;
+  cursor: pointer;
+}
+.gg-flashcard {
+  position: relative;
+  min-height: 180px;
+  transform-style: preserve-3d;
+  transition: transform 420ms ease;
+}
+.gg-flashcard.is-flipped {
+  transform: rotateY(180deg);
+}
+.gg-flashcard-face {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 18px;
+  border-radius: 20px;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  text-align: center;
+}
+.gg-flashcard-front {
+  color: var(--rt-ink);
+  background: linear-gradient(180deg, #fffdf7, #fff8e8);
+  border: 1.5px solid var(--rt-cream-300);
+}
+.gg-flashcard-back {
+  transform: rotateY(180deg);
+  color: var(--rt-ink);
+  background: linear-gradient(180deg, #f2fbe9, #fffdf7);
+  border: 1.5px solid var(--rt-green-500);
+}
+.gg-flashcard-hint {
+  color: var(--rt-ink-soft);
+  font-size: 9.5px;
+  font-weight: 800;
+}
+.gg-flashcard-translation {
+  font-size: 22px;
+  font-weight: 1000;
+  color: var(--rt-blue-950);
+}
+.gg-flashcard-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+  justify-content: center;
+}
+
+/* ---------- Picture quiz ---------- */
+.gg-picture-options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 16px;
+}
+.gg-picture-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  min-height: 96px;
+  padding: 12px;
+  border: 1.5px solid var(--rt-cream-300);
+  border-radius: 16px;
+  background: #fffdf7;
+  color: var(--rt-ink);
+  box-shadow: 0 2px 0 var(--rt-cream-300);
+}
+.gg-picture-option:hover:not(:disabled) {
+  border-color: var(--rt-gold-500);
+  background: #fff8e3;
+}
+.gg-picture-emoji {
+  font-size: 34px;
+  line-height: 1;
+}
+.gg-picture-swatch {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 2px solid rgb(27 46 63 / 18%);
+}
+.gg-picture-label {
+  font-size: 9.5px;
+  font-weight: 800;
+  color: var(--rt-ink-soft);
+}
+.gg-picture-option.is-correct {
+  border-color: var(--rt-green-500);
+  background: #f0fbe7;
+}
+.gg-picture-option.is-wrong {
+  border-color: var(--rt-red-500);
+  background: #fdf0f0;
+}
+
+/* ---------- Ladder ---------- */
+.gg-ladder {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+.gg-ladder-rung {
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  border: 1.5px solid var(--rt-cream-300);
+  background: #fffdf7;
+  color: var(--rt-ink-soft);
+  font-size: 10px;
+  font-weight: 900;
+}
+.gg-ladder-rung.is-done {
+  border-color: var(--rt-green-500);
+  background: #e9f8df;
+  color: #2f6b00;
+}
+.gg-ladder-rung.is-current {
+  border-color: var(--rt-gold-500);
+  background: #fff3cf;
+  color: #7a4a00;
+  animation: ggPulse 900ms infinite;
+}
+.gg-ladder-status {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  color: var(--rt-ink-soft);
+  font-size: 10px;
+  font-weight: 800;
+}
+
+/* ---------- Odd one out / chain ---------- */
+.gg-option-translation {
+  display: block;
+  margin-top: 2px;
+  color: var(--rt-ink-soft);
+  font-size: 9px;
+  font-weight: 700;
+}
+.gg-chain-hint {
+  margin: 6px 0;
+  color: var(--rt-ink-soft);
+  font-size: 10.5px;
+  font-weight: 800;
+}
+.gg-chain-hint strong {
+  color: var(--rt-gold-700);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+/* ---------- Scramble slots ---------- */
+.gg-scramble-slots {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  margin: 12px 0;
+}
+.gg-scramble-keyboard {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  margin: 12px 0;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .gg-game-card,
   .gg-option,

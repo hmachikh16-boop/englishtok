@@ -1,11 +1,11 @@
 {
-  "version": "1.1.9",
+  "version": "1.1.10",
   "packageId": "com.englishtok.gold",
-  "apkUrl": "/lin-go-gold-1.1.9.apk",
-  "sha256": "FE0C7023B3F1791BEED26C05FAA9EA0EC1C6F195D2405EB94EC5CEFF5D4CFFB6",
-  "size": 58252564,
+  "apkUrl": "/lin-go-gold-1.1.10.apk",
+  "sha256": "C651B4C63643DBAD0B4A12A1892FAEB82812FA77E4025A9B298413EF23E5DB01",
+  "size": 58259604,
   "minimumAndroidSdk": 24,
-  "notes": "تحديث Gold+ 1.1.9: إعادة تصميم قسم الألعاب (مكتبة ألعاب، شاشات موحدة، تغذية راجعة، ملخص جلسة)، تحسين جودة الألعاب التعليمية، ودعم أفضل للفرنسية. يتضمن أيضًا 500 درس والقصص التعليمية.",
-  "releaseUrl": "https://github.com/hmachikh16-boop/englishtok/releases/tag/gold-v1.1.9",
-  "publishedAt": "2026-10-30T20:00:00.000Z"
+  "notes": "تحديث Gold+ 1.1.10: إضافة 10 ألعاب تعليمية ذكية (بطاقات، خلط حروف، تخمين صورة، تصنيف، شاذ، بناء جملة، إملاء، نطق، سلسلة كلمات، سلم مفردات) مع تكيف ومراجعة. إجمالي 17 لعبة. يتضمن 500 درس والقصص.",
+  "releaseUrl": "https://github.com/hmachikh16-boop/englishtok/releases/tag/gold-v1.1.10",
+  "publishedAt": "2026-10-30T21:00:00.000Z"
 }
