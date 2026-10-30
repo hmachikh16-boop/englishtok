@@ -1,6 +1,8 @@
 /** Studio English speech playback (bundled clips) plus synthesized UI sound effects. */
 
+import { Capacitor } from '@capacitor/core';
 import { apiUrl } from './apiBase';
+import { NativeTextToSpeech } from './nativeTextToSpeech';
 import {
   normalizeSpeechLanguage,
   normalizeSpeechText as normalizeClipText,
@@ -83,6 +85,7 @@ class SpeechService {
   private currentAudio: HTMLAudioElement | null = null;
   private currentUtterance: SpeechSynthesisUtterance | null = null;
   private currentSource: string | null = null;
+  private currentBlobUrl: string | null = null;
   private requestId = 0;
   private generatedAudio = new Map<string, Blob>();
   private generatedAudioBytes = 0;
@@ -171,6 +174,9 @@ class SpeechService {
         window.speechSynthesis.cancel();
       }
     }
+    if (Capacitor.getPlatform() === 'android') {
+      void NativeTextToSpeech.stop().catch(() => undefined);
+    }
     this.setStatus('idle');
   };
 
@@ -183,6 +189,10 @@ class SpeechService {
       this.currentAudio.removeAttribute('src');
       this.currentAudio.load();
       this.currentAudio = null;
+    }
+    if (this.currentBlobUrl) {
+      URL.revokeObjectURL(this.currentBlobUrl);
+      this.currentBlobUrl = null;
     }
   }
 
@@ -491,6 +501,14 @@ class SpeechService {
     return normalizeClipText(text);
   }
 
+  /** Ensure a cached or fetched clip has an audio MIME type for <audio>. */
+  private normalizeAudioBlob(blob: Blob, sourceUrl: string): Blob {
+    if (blob.type.startsWith('audio/')) return blob;
+    return new Blob([blob], {
+      type: sourceUrl.toLowerCase().endsWith('.mp3') ? 'audio/mpeg' : 'audio/ogg',
+    });
+  }
+
   /** True when this browser exposes a usable speech synthesiser. */
   private canUseDeviceSpeech() {
     return (
@@ -524,8 +542,9 @@ class SpeechService {
         console.warn('[speechService] Could not read persistent speech cache:', error);
       }
       if (persisted) {
-        this.cacheAudio(key, persisted);
-        return persisted;
+        const normalized = this.normalizeAudioBlob(persisted, audioAssetUrl);
+        this.cacheAudio(key, normalized);
+        return normalized;
       }
 
       const response = await fetch(audioAssetUrl, { cache: 'force-cache' });
@@ -533,11 +552,26 @@ class SpeechService {
         this.missingAudioKeys.add(key);
         throw new Error(`Bundled speech clip request failed (${response.status}).`);
       }
-      const audio = await response.blob();
-      if (!audio.type.startsWith('audio/')) {
+      const rawAudio = await response.blob();
+      if (!rawAudio.size) {
         this.missingAudioKeys.add(key);
-        throw new Error(`Unexpected bundled speech clip type: ${audio.type || 'unknown'}.`);
+        throw new Error('Bundled speech clip was empty.');
       }
+      // Capacitor's local asset server can answer a missing asset with the
+      // HTML shell (status 200). Reject that before wrapping it as audio.
+      if (audioAssetUrl.toLowerCase().endsWith('.ogg')) {
+        const signature = new Uint8Array(await rawAudio.slice(0, 4).arrayBuffer());
+        const isOgg =
+          signature[0] === 0x4f &&
+          signature[1] === 0x67 &&
+          signature[2] === 0x67 &&
+          signature[3] === 0x53;
+        if (!isOgg) {
+          this.missingAudioKeys.add(key);
+          throw new Error('Bundled speech clip was not an Ogg file.');
+        }
+      }
+      const audio = this.normalizeAudioBlob(rawAudio, audioAssetUrl);
       this.cacheAudio(key, audio);
       try {
         await this.writePersistentAudio(key, audio);
@@ -552,9 +586,123 @@ class SpeechService {
   }
 
   /**
-   * Play a bundled clip directly from its URL. Starting the media element
-   * synchronously keeps the browser's user gesture alive; fetching a Blob first
-   * can make Android WebView reject the later play() call.
+   * Play a bundled clip from a Blob URL inside the Android WebView.
+   *
+   * Capacitor's local asset server does not reliably answer the byte-range
+   * requests a media element sends for an .ogg file, so pointing <audio> at
+   * /audio/tts/... fails with MEDIA_ERR_SRC_NOT_SUPPORTED on Android even
+   * though the clip is present. Fetching the clip and playing its Blob works
+   * on both Android and the web.
+   */
+  private playBlobAudio(
+    audioBlob: Blob,
+    handlers: PlaybackHandlers,
+    onFailure: (reason: unknown) => void
+  ) {
+    const { requestId } = handlers;
+    this.clearPlayback();
+    this.currentSource = handlers.source;
+
+    const objectUrl = URL.createObjectURL(audioBlob);
+    this.currentBlobUrl = objectUrl;
+    const audio = new Audio();
+    audio.preload = 'auto';
+    audio.src = objectUrl;
+    audio.playbackRate = Math.max(0.5, Math.min(1.2, handlers.rate));
+    audio.preservesPitch = true;
+    this.currentAudio = audio;
+
+    let failed = false;
+    const fail = (error: unknown) => {
+      if (failed || requestId !== this.requestId) return;
+      failed = true;
+      this.clearPlayback();
+      onFailure(error);
+    };
+
+    audio.onplaying = () => {
+      if (requestId !== this.requestId) return;
+      this.setStatus('playing');
+      handlers.onStart?.();
+    };
+    audio.onended = () => {
+      if (requestId !== this.requestId) return;
+      this.clearPlayback();
+      this.currentSource = null;
+      this.requestId += 1;
+      this.setStatus('idle');
+      handlers.onEnd?.();
+    };
+    audio.onerror = () => fail(new Error('The bundled speech audio file could not be played.'));
+
+    void audio.play().catch(fail);
+  }
+
+  private playBundledClipAsBlob(
+    audioAssetUrl: string,
+    handlers: PlaybackHandlers,
+    onFailure: (reason: unknown) => void
+  ) {
+    const voice = this.getVoice(handlers.accent, handlers.gender);
+    const speed = Math.max(0.5, Math.min(1.2, handlers.rate));
+    this.setStatus('loading');
+    void this.loadRecordedAudio(audioAssetUrl, voice, speed, handlers.accent)
+      .then((audio) => {
+        if (handlers.requestId !== this.requestId) return;
+        this.playBlobAudio(audio, handlers, onFailure);
+      })
+      .catch((error: unknown) => {
+        if (handlers.requestId !== this.requestId) return;
+        onFailure(error);
+      });
+  }
+
+  /** Android WebView has no Web Speech API; use the native TTS bridge. */
+  private playNativeDeviceSpeech(handlers: PlaybackHandlers) {
+    const language = normalizeSpeechLanguage(handlers.accent) === 'fr' ? 'fr-FR' : 'en-US';
+    const text = speechTextForTts(
+      handlers.text,
+      language === 'fr-FR' ? 'fr' : 'en',
+    );
+    this.clearPlayback();
+    this.currentSource = handlers.source;
+    this.setStatus('loading');
+    handlers.onStart?.();
+
+    void NativeTextToSpeech.speak({
+      text,
+      rate: Math.max(0.5, Math.min(1.3, handlers.rate)),
+      pitch: Math.max(0.7, Math.min(1.3, handlers.pitch)),
+      language,
+    })
+      .then(() => {
+        if (handlers.requestId !== this.requestId) return;
+        this.currentSource = null;
+        this.setStatus('idle');
+        handlers.onEnd?.();
+      })
+      .catch((error: unknown) => {
+        if (handlers.requestId !== this.requestId) return;
+        const code = (error as { code?: string } | undefined)?.code;
+        if (code === 'TTS_STOPPED') {
+          this.currentSource = null;
+          this.setStatus('idle');
+          handlers.onEnd?.();
+          return;
+        }
+        // French can fall back to the server-side voice. English keeps the
+        // normal device-voice path (if the WebView exposes one).
+        if (normalizeSpeechLanguage(handlers.accent) === 'fr' || this.canUseDeviceSpeech()) {
+          this.playBrowserSpeech({ ...handlers, reason: error });
+          return;
+        }
+        this.finishWithError('تعذر تشغيل هذا الصوت على الجهاز. حاول مرة أخرى.', handlers.onError);
+      });
+  }
+
+  /**
+   * Play a bundled clip directly from its URL on the web. Starting the media
+   * element synchronously keeps the browser's user gesture alive.
    */
   private playAudioUrl(
     audioUrl: string,
@@ -572,6 +720,13 @@ class SpeechService {
     audio.preservesPitch = true;
     this.currentAudio = audio;
 
+    let failed = false;
+    const fail = (error: unknown) => {
+      if (failed || requestId !== this.requestId) return;
+      failed = true;
+      onFailure(error);
+    };
+
     audio.onplaying = () => {
       if (requestId !== this.requestId) return;
       this.setStatus('playing');
@@ -585,15 +740,9 @@ class SpeechService {
       this.setStatus('idle');
       handlers.onEnd?.();
     };
-    audio.onerror = () => {
-      if (requestId !== this.requestId) return;
-      onFailure(new Error('The speech audio file could not be played.'));
-    };
+    audio.onerror = () => fail(new Error('The speech audio file could not be played.'));
 
-    void audio.play().catch((error: unknown) => {
-      if (requestId !== this.requestId) return;
-      onFailure(error);
-    });
+    void audio.play().catch(fail);
   }
 
   /**
@@ -603,6 +752,10 @@ class SpeechService {
   private playFastPath(handlers: PlaybackHandlers, audioAssetUrl?: string) {
     const useDeviceVoice = (reason: unknown) => {
       if (handlers.requestId !== this.requestId) return;
+      if (Capacitor.getPlatform() === 'android') {
+        this.playNativeDeviceSpeech(handlers);
+        return;
+      }
       if (
         this.canUseDeviceSpeech() ||
         normalizeSpeechLanguage(handlers.accent) === 'fr'
@@ -618,7 +771,16 @@ class SpeechService {
       return;
     }
 
-    this.playAudioUrl(audioAssetUrl, handlers, useDeviceVoice);
+    if (Capacitor.getPlatform() === 'android') {
+      this.playBundledClipAsBlob(audioAssetUrl, handlers, useDeviceVoice);
+      return;
+    }
+
+    // Some static hosts do not honour Range requests for .ogg files. Retry the
+    // same clip as a Blob before falling back to the device voice.
+    this.playAudioUrl(audioAssetUrl, handlers, () => {
+      this.playBundledClipAsBlob(audioAssetUrl, handlers, useDeviceVoice);
+    });
   }
 
 

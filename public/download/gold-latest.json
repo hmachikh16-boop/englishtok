@@ -1,11 +1,11 @@
 {
-  "version": "1.1.7",
+  "version": "1.1.8",
   "packageId": "com.englishtok.gold",
-  "apkUrl": "/lin-go-gold-1.1.7.apk",
-  "sha256": "0B964A01FC2AFCC97EF1B0EF023E729F071A4D3165BCBBA553B914CA65228631",
-  "size": 58241411,
+  "apkUrl": "/lin-go-gold-1.1.8.apk",
+  "sha256": "219DE892F117741E9D5B2EB112F97C2B95D4AC89C37513EEA50551716F7C8447",
+  "size": 58241891,
   "minimumAndroidSdk": 24,
-  "notes": "تحديث Gold+ 1.1.0: لوحة رحلة Gold+، تحدٍّ بصري، نطق موسّع، قلوب لا نهائية، +25% XP، دوري، صندوق يومي، واحتفال إنجاز — مع تحديث داخل التطبيق دون متصفح.",
-  "releaseUrl": "https://github.com/hmachikh16-boop/englishtok/releases/tag/gold-v1.1.7",
-  "publishedAt": "2026-10-29T21:30:00.000Z"
+  "notes": "تحديث Gold+ 1.1.8: إصلاح تشغيل أصوات الدروس داخل تطبيق Android عبر تشغيل المقاطع المضمّنة كـ Blob، مع صوت احتياطي من محرك الجهاز. يشمل أيضًا 500 درس، القصص التعليمية، والألعاب الخمسة.",
+  "releaseUrl": "https://github.com/hmachikh16-boop/englishtok/releases/tag/gold-v1.1.8",
+  "publishedAt": "2026-10-30T09:30:00.000Z"
 }

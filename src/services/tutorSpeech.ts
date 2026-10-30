@@ -1,17 +1,6 @@
-import { Capacitor, registerPlugin } from '@capacitor/core';
+import { Capacitor } from '@capacitor/core';
+import { NativeTextToSpeech } from './nativeTextToSpeech';
 import { speechService } from './speechService';
-
-interface NativeTextToSpeechPlugin {
-  speak(options: {
-    text: string;
-    rate?: number;
-    pitch?: number;
-    language?: string;
-  }): Promise<void>;
-  stop(): Promise<void>;
-}
-
-const NativeTextToSpeech = registerPlugin<NativeTextToSpeechPlugin>('TextToSpeech');
 
 export interface TutorSpeechOptions {
   text: string;

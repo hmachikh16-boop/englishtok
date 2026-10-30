@@ -12,7 +12,7 @@ import { IS_GOLD_EDITION } from './edition';
 export const OFFICIAL_SITE_URL = 'https://englishtok-eight.vercel.app';
 export const OFFICIAL_DOWNLOAD_PAGE_URL = `${OFFICIAL_SITE_URL}/download`;
 export const OFFICIAL_APK_URL = `${OFFICIAL_SITE_URL}/english-tok.apk`;
-export const OFFICIAL_GOLD_APK_URL = `${OFFICIAL_SITE_URL}/lin-go-gold-1.1.7.apk`;
+export const OFFICIAL_GOLD_APK_URL = `${OFFICIAL_SITE_URL}/lin-go-gold-1.1.8.apk`;
 
 export const officialApkUrl = (version: string): string => {
   if (IS_GOLD_EDITION) {
