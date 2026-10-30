@@ -26,7 +26,8 @@ import com.getcapacitor.annotation.CapacitorPlugin;
 @CapacitorPlugin(name = "ApkDownloader")
 public class ApkDownloaderPlugin extends Plugin {
 
-    private static final String OFFICIAL_HOST = "www.lingo.com";
+    private static final String OFFICIAL_HOST = "englishtok-eight.vercel.app";
+    private static final String OFFICIAL_HOST_ALT = "www.lingo.com";
     private static final java.util.regex.Pattern OFFICIAL_PATH =
         java.util.regex.Pattern.compile("^/(english-tok|lin-go-gold-\\d+\\.\\d+\\.\\d+)\\.apk$");
 
@@ -50,7 +51,8 @@ public class ApkDownloaderPlugin extends Plugin {
         }
 
         if (!"https".equalsIgnoreCase(uri.getScheme())
-            || !OFFICIAL_HOST.equalsIgnoreCase(uri.getHost())
+            || (!OFFICIAL_HOST.equalsIgnoreCase(uri.getHost())
+                && !OFFICIAL_HOST_ALT.equalsIgnoreCase(uri.getHost()))
             || uri.getPath() == null
             || !OFFICIAL_PATH.matcher(uri.getPath()).matches()) {
             call.reject("يُسمح فقط برابط التنزيل الرسمي من موقع Lin Go.", "UNTRUSTED_URL");

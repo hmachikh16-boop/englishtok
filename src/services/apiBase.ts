@@ -8,7 +8,7 @@ import { Capacitor } from '@capacitor/core';
  */
 const configuredBaseUrl = (import.meta.env.VITE_API_BASE_URL as string | undefined)?.trim() ?? '';
 
-const defaultNativeBaseUrl = 'https://www.lingo.com';
+const defaultNativeBaseUrl = 'https://englishtok-eight.vercel.app';
 
 export const getApiBaseUrl = (): string => {
   if (configuredBaseUrl) return configuredBaseUrl.replace(/\/$/, '');

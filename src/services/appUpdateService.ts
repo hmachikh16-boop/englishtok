@@ -5,7 +5,7 @@ const GITHUB_RELEASE_PREFIX = IS_GOLD_EDITION ? 'gold-v' : 'v';
 const MINIMUM_ANDROID_SDK = 24;
 const GITHUB_REPOSITORY = import.meta.env.VITE_GITHUB_REPOSITORY;
 const GOLD_UPDATE_MANIFEST_URL =
-  'https://www.lingo.com/download/gold-latest.json';
+  'https://englishtok-eight.vercel.app/download/gold-latest.json';
 
 export interface AppUpdateManifest {
   version: string;

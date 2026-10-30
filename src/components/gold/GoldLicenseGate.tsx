@@ -25,6 +25,11 @@ export const GoldLicenseGate: React.FC<GoldLicenseGateProps> = ({ children }) =>
 
     if (result.networkError) {
       setMessage('تعذر الاتصال بلوحة التحكم. سيتم إعادة المحاولة لاحقًا، والتطبيق يبقى مفعّلًا.');
+      const stored = getStoredGoldLicenseCode();
+      if (stored && stored === candidate.trim().toUpperCase()) {
+        setStatus('licensed');
+        return true;
+      }
       return status === 'licensed';
     }
 

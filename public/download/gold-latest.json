@@ -1,11 +1,11 @@
 {
-  "version": "1.1.12",
+  "version": "1.1.13",
   "packageId": "com.englishtok.gold",
-  "apkUrl": "/lin-go-gold-1.1.12.apk",
-  "sha256": "E36479C074DE26888C64FE39DF317493019AD04B02D5007D058446C4008FDFAA",
-  "size": 58260416,
+  "apkUrl": "/lin-go-gold-1.1.13.apk",
+  "sha256": "62F329B609F4CAB922BBCBA0B97569CE33B28D42036A61F6E2E111635522D03D",
+  "size": 58260456,
   "minimumAndroidSdk": 24,
-  "notes": "تحديث Gold+ 1.1.12: إضافة Reels (ريلز تعليمية) + 17 لعبة + 500 درس. ربط الموقع بـ www.lingo.com.",
-  "releaseUrl": "https://github.com/hmachikh16-boop/englishtok/releases/tag/gold-v1.1.12",
-  "publishedAt": "2026-10-30T22:00:00.000Z"
+  "notes": "تحديث Gold+ 1.1.13: إصلاح فتح التطبيق عند تعذر الاتصال بلوحة التحكم (يبقى مفعّلًا). يتضمن Reels و17 لعبة و500 درس.",
+  "releaseUrl": "https://github.com/hmachikh16-boop/englishtok/releases/tag/gold-v1.1.13",
+  "publishedAt": "2026-10-30T23:00:00.000Z"
 }
