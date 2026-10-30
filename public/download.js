@@ -3,7 +3,6 @@ const DOWNLOAD_PAGE = 'https://englishtok-eight.vercel.app/download';
 const LOCAL_APK = '/english-tok.apk';
 const GITHUB_APK = `https://github.com/${REPOSITORY}/releases/latest/download/english-tok.apk`;
 const GITHUB_RELEASE = `https://github.com/${REPOSITORY}/releases/latest`;
-const GOLD_DEMO_CODE = 'LINGO-GOLD-DEMO-2026';
 const GOLD_APK = '/lin-go-gold-1.1.6.apk';
 const GOLD_GITHUB_APK =
   `https://github.com/${REPOSITORY}/releases/download/gold-v1.1.6/lin-go-gold-1.1.6.apk`;
@@ -194,18 +193,6 @@ const setupGoldForm = () => {
       if (success) success.hidden = true;
       setMessage('أدخل كود Gold أولًا. للمعاينة استخدم الكود التجريبي.', true);
       input.focus();
-      return;
-    }
-
-    if (code === GOLD_DEMO_CODE) {
-      setMessage('تم التحقق من كود المعاينة. يمكنك فتح Gold Preview فقط — التحميل يتطلب كودًا مفعّلًا من لوحة التحكم.', false);
-      if (success) {
-        success.hidden = false;
-        success.querySelectorAll('[data-gold-download-unlocked]').forEach((link) => {
-          link.hidden = true;
-        });
-      }
-      showToast('Gold جاهز للمعاينة');
       return;
     }
 

@@ -39,7 +39,6 @@ const GoldAppPreview = React.lazy(() =>
   import('./GoldAppPreview').then((module) => ({ default: module.GoldAppPreview })),
 );
 
-const DEMO_CODE = 'LINGO-GOLD-DEMO-2026';
 const GOLD_VERSION = '1.1.6';
 const GOLD_APK_URL = `/lin-go-gold-${GOLD_VERSION}.apk`;
 const GOLD_GITHUB_APK_URL =
@@ -337,7 +336,7 @@ const CodePanel: React.FC<{
         {checking ? 'جارٍ التحقق…' : 'تحقق'}
       </button>
     </div>
-    <p className="gold-code-hint">كود المعاينة: {DEMO_CODE}</p>
+    <p className="gold-code-hint">أدخل كود Gold مفعّلًا من لوحة التحكم.</p>
     {error && <p className="gold-code-error">{error}</p>}
     {activated && (
       <p className="gold-code-success">
@@ -396,15 +395,6 @@ export const GoldPreview: React.FC = () => {
 
   const handleActivate = async () => {
     if (checking) return;
-    if (normalizedCode === DEMO_CODE) {
-      setError(null);
-      setActivated(true);
-      setView('dashboard');
-      window.setTimeout(() => {
-        dashboardTop.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }, 120);
-      return;
-    }
     if (!normalizedCode) {
       setError('أدخل كود Gold أولًا.');
       return;
