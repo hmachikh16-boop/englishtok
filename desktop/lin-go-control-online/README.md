@@ -2,7 +2,7 @@
 
 نسخة مركزية (أونلاين) من تطبيق التحكم، تعمل كتطبيق Windows (EXE) وتعرض لوحة التحكم المركزية:
 
-https://www.lingo.com/control
+https://englishtok-eight.vercel.app/control
 
 ## البناء
 

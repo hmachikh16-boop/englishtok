@@ -22,8 +22,8 @@ namespace LinGoGoldOnline
     internal static class Program
     {
         internal const string AppTitle = "Lin Go Gold Control — التحكم المركزي";
-        internal const string StartUrl = "https://www.lingo.com/control";
-        internal const string AllowedHost = "www.lingo.com";
+        internal const string StartUrl = "https://englishtok-eight.vercel.app/control";
+        internal const string AllowedHost = "englishtok-eight.vercel.app";
 
         [STAThread]
         private static void Main()

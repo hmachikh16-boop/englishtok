@@ -97,7 +97,7 @@ Get-FileHash releases\english-tok-1.8.3-store.aab -Algorithm SHA256
    - `store/screenshots/02-tutor.png`
    - `store/screenshots/03-placement.png`
    - `store/assets/feature-graphic-1024x500.png`
-8. أدخل رابط الخصوصية: `https://www.lingo.com/legal/privacy.html`.
+8. أدخل رابط الخصوصية: `https://englishtok-eight.vercel.app/legal/privacy.html`.
 9. أكمل تقييم المحتوى والجمهور المستهدف (راجع `content-rating-ar.md`؛ المقترح 13+).
 10. أرسل للمراجعة. بعد القبول، ثبّت النسخة من المتجر واختبر التثبيت والتشغيل.
 
@@ -163,9 +163,9 @@ Get-FileHash releases\english-tok-1.8.3-store.aab -Algorithm SHA256
 ## 8. الخصوصية والحقوق
 
 - الصفحات القانونية منشورة على:
-  - `https://www.lingo.com/legal/privacy.html`
-  - `https://www.lingo.com/legal/terms.html`
-  - `https://www.lingo.com/legal/license.html`
+  - `https://englishtok-eight.vercel.app/legal/privacy.html`
+  - `https://englishtok-eight.vercel.app/legal/terms.html`
+  - `https://englishtok-eight.vercel.app/legal/license.html`
 - الترخيص: جميع الحقوق محفوظة، مع الإشارة إلى تراخيص المكونات مفتوحة المصدر وخط Cairo (OFL 1.1).
 - لا تدرج بيانات اعتماد أو مفاتيح خدمة في المتجر أو المستودع.
 - احتفظ بنسخة من المفتاح و`keystore.properties` في مكان آمن؛ لا ترفعهما إلى Git.

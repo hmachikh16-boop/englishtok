@@ -96,7 +96,7 @@ const writeCachedReply = (key: string, reply: TutorReply) => {
 export const config = { maxDuration: 60 };
 
 const ALLOWED_APP_ORIGINS = new Set([
-  'https://www.lingo.com',
+  'https://englishtok-eight.vercel.app',
   'https://localhost',
   'capacitor://localhost',
   'http://localhost',
@@ -518,7 +518,7 @@ const callProvider = async (
     'Content-Type': 'application/json',
   };
   if (provider.name === 'openrouter') {
-    headers['HTTP-Referer'] = 'https://www.lingo.com';
+    headers['HTTP-Referer'] = 'https://englishtok-eight.vercel.app';
     headers['X-Title'] = 'Lin Go AI Tutor';
   }
   const response = await withTimeout(endpoint, {

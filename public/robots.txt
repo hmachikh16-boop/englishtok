@@ -4,4 +4,4 @@ Disallow: /control
 Disallow: /control/
 Disallow: /api/admin
 
-Sitemap: https://www.lingo.com/sitemap.xml
+Sitemap: https://englishtok-eight.vercel.app/sitemap.xml
