@@ -34,7 +34,7 @@ const repository = process.env.GITHUB_REPOSITORY || 'hmachikh16-boop/englishtok'
 const url = `https://github.com/${repository}/releases/latest/download/english-tok.apk`;
 const manifestUrl = `https://github.com/${repository}/releases/latest/download/update-manifest.json`;
 const target = resolve(process.cwd(), 'public', 'english-tok.apk');
-const goldVersion = '1.1.15';
+const goldVersion = '1.1.16';
 const goldTarget = resolve(process.cwd(), 'public', `lin-go-gold-${goldVersion}.apk`);
 const goldUrl = `https://github.com/${repository}/releases/download/gold-v${goldVersion}/lin-go-gold-${goldVersion}.apk`;
 const latestDir = resolve(process.cwd(), 'public', 'download');
@@ -126,7 +126,7 @@ try {
     size: goldSize,
     minimumAndroidSdk: 24,
     notes:
-      'تحديث Gold+ 1.1.15: إصلاح زر التحديث (in-app DownloadManager) + UI احترافي. Reels + 17 لعبة + 500 درس.',
+      'تحديث Gold+ 1.1.16: توسيع جميع الدروس (500) إلى 15 حوار + 5 اختبارات + صوت. Reels + 17 لعبة.',
     releaseUrl: `https://github.com/${repository}/releases/tag/gold-v${goldVersion}`,
     publishedAt: new Date().toISOString(),
   };
