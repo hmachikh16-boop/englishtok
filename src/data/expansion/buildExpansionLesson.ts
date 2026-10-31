@@ -162,6 +162,53 @@ export const buildExpansionLesson = (
     explanationAr: `${fourthWord[0]} تعني «${fourthWord[2]}». مثال: ${fourthWord[3]}`,
   };
 
+  // Stage 1 pilot: expand to 15 dialogue lines and 5 quiz questions.
+  if (spec.stage === 1) {
+    const wordEntries = spec.words;
+    let i = 0;
+    while (lines.length < 15 && wordEntries.length) {
+      const entry = wordEntries[i % wordEntries.length];
+      lines.push({
+        speaker: i % 2 === 0 ? 'A' : 'B',
+        en: `Can you say ${entry[0]}?`,
+        ar: `هل يمكنك قول ${entry[2]}؟`,
+        emotion: 'curious',
+      });
+      if (lines.length < 15) {
+        lines.push({
+          speaker: i % 2 === 0 ? 'B' : 'A',
+          en: `${entry[0]}! ${entry[3]}`,
+          ar: `${entry[2]}! ${entry[4]}`,
+          emotion: 'happy',
+          highlight: [entry[0]],
+        });
+      }
+      i += 1;
+    }
+
+  }
+
+  const expandedQuiz =
+    spec.stage === 1
+      ? [
+          meaningQuestion,
+          fillQuestion,
+          arrangeQuestion,
+          reverseQuestion,
+          {
+            id: `${spec.id}-q5`,
+            type: 'multiple_choice',
+            questionAr: `ما معنى كلمة «${(spec.words[1] ?? spec.words[0])[0]}»؟`,
+            options: rotate(
+              unique(spec.words.map((word) => word[2])),
+              hash(`${spec.id}:extra`) % Math.max(1, translations.length),
+            ),
+            correctAnswer: (spec.words[1] ?? spec.words[0])[2],
+            explanationAr: `${(spec.words[1] ?? spec.words[0])[0]} تعني «${(spec.words[1] ?? spec.words[0])[2]}». مثال: ${(spec.words[1] ?? spec.words[0])[3]}`,
+          },
+        ]
+      : [meaningQuestion, fillQuestion, arrangeQuestion, reverseQuestion];
+
   return {
     id: spec.id,
     slug: spec.slug,
@@ -185,7 +232,7 @@ export const buildExpansionLesson = (
       ...(line.highlight ? { highlightWords: line.highlight } : {}),
     })),
     vocabulary,
-    quiz: [meaningQuestion, fillQuestion, arrangeQuestion, reverseQuestion],
+    quiz: expandedQuiz,
     likesCount: 180 + spec.stage * 40 + (hash(spec.id) % 120),
     sharesCount: 45 + spec.stage * 12 + (hash(`${spec.id}:share`) % 40),
     savedCount: 130 + spec.stage * 25 + (hash(`${spec.id}:save`) % 80),

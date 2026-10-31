@@ -871,6 +871,44 @@ const ARRANGE_PROMPTS: Record<string, string> = {
 
 const buildLesson = (spec: LessonSpec): Lesson => {
   const [characterA, characterB] = LEVEL_CHARACTERS[spec.stage];
+
+  // Stage 1 pilot: expand to 15 dialogue lines and 5 quiz questions.
+  const paddedLines = spec.stage === 1 ? [...spec.lines] : spec.lines;
+  if (spec.stage === 1) {
+    const words = spec.words;
+    let i = 0;
+    while (paddedLines.length < 15 && words.length) {
+      const word = words[i % words.length];
+      paddedLines.push({ speaker: i % 2 === 0 ? 'A' : 'B', en: `Can you say ${word.word}?`, ar: `هل يمكنك قول ${word.translationAr}؟` });
+      if (paddedLines.length < 15) {
+        paddedLines.push({ speaker: i % 2 === 0 ? 'B' : 'A', en: `${word.word}! ${word.exampleSentence}`, ar: `${word.translationAr}! ${word.exampleSentenceAr}`, highlight: [word.word] });
+      }
+      i += 1;
+    }
+  }
+
+  const paddedQuiz = spec.stage === 1 ? [...spec.quiz] : spec.quiz;
+  if (spec.stage === 1) {
+    const words = spec.words;
+    let qi = paddedQuiz.length;
+    while (paddedQuiz.length < 5 && words.length) {
+      const word = words[qi % words.length];
+      const distractors = words
+        .filter((entry) => entry.word !== word.word)
+        .map((entry) => entry.translationAr)
+        .slice(0, 3);
+      paddedQuiz.push(
+        mc(
+          `What does ${word.word} mean?`,
+          [word.translationAr, ...distractors],
+          word.translationAr,
+          `${word.word} means ${word.translationAr}.`,
+        ),
+      );
+      qi += 1;
+    }
+  }
+
   return {
     id: spec.id,
     slug: spec.slug,
@@ -884,7 +922,7 @@ const buildLesson = (spec: LessonSpec): Lesson => {
     sceneType: spec.scene,
     characterA,
     characterB,
-    dialogue: spec.lines.map((line, index) => ({
+    dialogue: paddedLines.map((line, index) => ({
       id: `${spec.id}-s${String(index + 1).padStart(2, '0')}`,
       speakerId: line.speaker === 'A' ? characterA.id : characterB.id,
       textEn: line.en,
@@ -894,7 +932,7 @@ const buildLesson = (spec: LessonSpec): Lesson => {
       ...(line.highlight ? { highlightWords: line.highlight } : {}),
     })),
     vocabulary: spec.words.map((entry, index) => ({ ...entry, id: `${spec.id}-v${index + 1}` })),
-    quiz: spec.quiz.map((question, index) => ({
+    quiz: paddedQuiz.map((question, index) => ({
       ...question,
       id: `${spec.id}-q${index + 1}`,
       ...(question.type === 'arrange_sentence' && ARRANGE_PROMPTS[spec.id]

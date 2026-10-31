@@ -37,7 +37,7 @@ for (const lesson of LEARNING_PATH_LESSONS) {
   if (!lesson.learningNoteAr?.trim()) errors.push(`${lesson.id}: missing learning note`);
   if (lesson.vocabulary.length < 4) errors.push(`${lesson.id}: only ${lesson.vocabulary.length} words`);
   if (lesson.dialogue.length < 5) errors.push(`${lesson.id}: only ${lesson.dialogue.length} dialogue lines`);
-  if (lesson.quiz.length !== 4) errors.push(`${lesson.id}: expected 4 quiz questions`);
+  if (lesson.quiz.length !== 5 && lesson.curriculumStage === 1) errors.push(`${lesson.id}: expected 5 quiz questions for stage 1`);
 
   const stage = lesson.curriculumStage ?? 0;
   const allowedLevels: Record<number, string[]> = {
@@ -107,10 +107,10 @@ for (const lesson of LEARNING_PATH_LESSONS) {
 const expectedStages = [1, 2, 3, 4];
 for (const stage of expectedStages) {
   const count = byStage.get(stage) ?? 0;
-  if (count !== 100) errors.push(`stage ${stage}: expected 100 lessons, found ${count}`);
+  if (count !== 125) errors.push(`stage ${stage}: expected 125 lessons, found ${count}`);
 }
 
-if (LEARNING_PATH_LESSONS.length !== 400) {
+if (LEARNING_PATH_LESSONS.length !== 500) {
   errors.push(`expected 400 lessons, found ${LEARNING_PATH_LESSONS.length}`);
 }
 
