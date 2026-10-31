@@ -107,6 +107,8 @@
           <button class="nav-item" type="button" data-view="users"><span class="nav-icon"><svg><use href="#icon-users"></use></svg></span><span>المستخدمون</span></button>
           <button class="nav-item" type="button" data-view="check"><span class="nav-icon"><svg><use href="#icon-search"></use></svg></span><span>فحص كود</span></button>
           <button class="nav-item" type="button" data-view="activity"><span class="nav-icon"><svg><use href="#icon-activity"></use></svg></span><span>السجل</span></button>
+          <button class="nav-item" type="button" data-view="complaints"><span class="nav-icon"><svg><use href="#icon-alert"></use></svg></span><span>الشكاوي</span><span class="nav-count" id="navComplaintCount">0</span></button>
+          <button class="nav-item" type="button" data-view="complaints"><span class="nav-icon"><svg><use href="#icon-alert"></use></svg></span><span>الشكاوي</span><span class="nav-count" id="navComplaintCount">0</span></button>
         </nav>
         <div class="side-nav-label">الإدارة</div>
         <nav class="side-nav" aria-label="إدارة البيانات">
@@ -215,6 +217,13 @@
             <div class="section-heading"><div><span class="eyebrow">السجل</span><h2>سجل النشاطات</h2><p>كل عملية إدارة تمت على أكواد Gold.</p></div><div class="heading-actions"><button class="button button-secondary" type="button" data-action="refresh"><svg><use href="#icon-refresh"></use></svg><span>تحديث</span></button></div></div>
             <article class="panel activity-log-panel"><div id="activityList" class="activity-list"></div><div id="activityEmpty" class="empty-state" hidden><span class="empty-icon"><svg><use href="#icon-activity"></use></svg></span><h3>السجل فارغ</h3><p>ستظهر هنا كل عمليات الإنشاء والتفعيل والتمديد.</p></div></article>
           </section>
+           <section id="view-complaints" class="view" data-view-panel="complaints" hidden>
+             <div class="section-heading"><div><span class="eyebrow">الشكاوي</span><h2>انشغالات وشكاوي المستخدمين</h2><p>رسائل الدعم (support) الواردة من التطبيق، مع الكود والوقت.</p></div><div class="heading-actions"><button class="button button-secondary" type="button" data-action="refresh"><svg><use href="#icon-refresh"></use></svg><span>تحديث</span></button></div></div>
+             <article class="panel activity-log-panel">
+               <div id="complaintsList" class="activity-list"></div>
+               <div id="complaintsEmpty" class="empty-state" hidden><span class="empty-icon"><svg><use href="#icon-alert"></use></svg></span><h3>لا توجد شكاوي</h3><p>ستظهر هنا رسائل الدعم من المستخدمين (الصوت، التفعيل، التحديث، ...).</p></div>
+             </article>
+           </section>
 
           <section id="view-settings" class="view" data-view-panel="settings" hidden>
             <div class="section-heading"><div><span class="eyebrow">الإدارة</span><h2>البيانات والإعدادات</h2><p>نسخ احتياطي، استيراد، ومعلومات مساحة العمل.</p></div></div>

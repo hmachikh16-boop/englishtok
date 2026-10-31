@@ -350,6 +350,7 @@ const viewMeta = {
   users: { title: 'المستخدمون', subtitle: 'الأشخاص المرتبطون بأكواد Gold النشطة.' },
   check: { title: 'فحص كود', subtitle: 'تحقق من صلاحية أي كود ومعلومات المستخدم.' },
   activity: { title: 'السجل', subtitle: 'كل عملية إدارة تمت على أكواد Gold.' },
+  complaints: { title: 'الشكاوي', subtitle: 'انشغالات وشكاوي المستخدمين (support).' },
   settings: { title: 'البيانات والإعدادات', subtitle: 'نسخ احتياطي، استيراد، ومعلومات مساحة العمل.' },
 };
 
@@ -881,6 +882,37 @@ const renderCheck = () => {
     </div>`;
 };
 
+const complaints = () => allActivity().filter((event) => event.type === 'support');
+
+const renderComplaints = () => {
+  if (!STATE.db) return;
+  const list = $('#complaintsList');
+  const empty = $('#complaintsEmpty');
+  const count = complaints().length;
+  const navCount = $('#navComplaintCount');
+  if (navCount) navCount.textContent = formatNumber(count);
+  if (!list) return;
+  if (empty) empty.hidden = count !== 0;
+  list.hidden = count === 0;
+  list.innerHTML = complaints()
+    .map((event) => {
+      const meta = eventMeta(event.type);
+      return `
+        <div class="activity-row">
+          <span class="activity-bullet" style="--event-tone:${meta.tone}">${icon(meta.icon)}</span>
+          <div class="activity-row-copy">
+            <strong>${html(event.message)}</strong>
+            ${event.code ? `<span class="activity-code">${html(event.code)}</span>` : ''}
+            <span>${formatDateTime(event.at)}</span>
+            ${event.userName ? `<span>المستخدم: ${html(event.userName)}</span>` : ''}
+            ${event.userEmail ? `<span>البريد: ${html(event.userEmail)}</span>` : ''}
+          </div>
+          <time datetime="${html(event.at)}" title="${html(formatDateTime(event.at))}">${html(formatRelative(event.at))}</time>
+        </div>`;
+    })
+    .join('');
+};
+
 const renderActivityLog = () => {
   if (!STATE.db) return;
   const list = $('#activityList');
@@ -930,6 +962,7 @@ const renderAll = () => {
   renderUsers();
   renderCheck();
   renderActivityLog();
+  renderComplaints();
   renderSettings();
   renderMeta();
 };
