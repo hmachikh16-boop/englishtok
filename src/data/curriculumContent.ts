@@ -873,8 +873,8 @@ const buildLesson = (spec: LessonSpec): Lesson => {
   const [characterA, characterB] = LEVEL_CHARACTERS[spec.stage];
 
   // Stage 1 pilot: expand to 15 dialogue lines and 5 quiz questions.
-  const paddedLines = spec.stage === 1 ? [...spec.lines] : spec.lines;
-  if (spec.stage === 1) {
+  const paddedLines = [...spec.lines];
+  if (true) {
     const words = spec.words;
     let i = 0;
     while (paddedLines.length < 15 && words.length) {
@@ -887,8 +887,8 @@ const buildLesson = (spec: LessonSpec): Lesson => {
     }
   }
 
-  const paddedQuiz = spec.stage === 1 ? [...spec.quiz] : spec.quiz;
-  if (spec.stage === 1) {
+  const paddedQuiz = [...spec.quiz];
+  if (true) {
     const words = spec.words;
     let qi = paddedQuiz.length;
     while (paddedQuiz.length < 5 && words.length) {

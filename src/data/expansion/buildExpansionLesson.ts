@@ -163,7 +163,7 @@ export const buildExpansionLesson = (
   };
 
   // Stage 1 pilot: expand to 15 dialogue lines and 5 quiz questions.
-  if (spec.stage === 1) {
+  if (true) {
     const wordEntries = spec.words;
     let i = 0;
     while (lines.length < 15 && wordEntries.length) {
@@ -189,7 +189,7 @@ export const buildExpansionLesson = (
   }
 
   const expandedQuiz =
-    spec.stage === 1
+    true
       ? [
           meaningQuestion,
           fillQuestion,
