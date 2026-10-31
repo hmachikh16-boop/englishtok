@@ -40,6 +40,13 @@ export const GoldLicenseGate: React.FC<GoldLicenseGateProps> = ({ children }) =>
       return true;
     }
 
+    if (result.status === 'device_mismatch') {
+      clearStoredGoldLicenseCode();
+      setStatus('locked');
+      setMessage('هذا الكود مستخدم على جهاز آخر. تواصل مع الدعم.');
+      return false;
+    }
+
     clearStoredGoldLicenseCode();
     setStatus('locked');
     if (result.status === 'revoked') {

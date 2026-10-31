@@ -745,29 +745,68 @@ const handlePublicCheck = async (request: AdminRequest, rawCode: unknown) => {
     throw new HttpError(400, 'أدخل كود Gold صالحًا.');
   }
   await enforceCheckRateLimit(request);
-  const database = await loadDatabase();
-  const record = database.licenses.find((item) => item.code === code);
-  if (!record) {
+  const incomingDeviceId = asString(
+    (request.method?.toUpperCase() === 'GET'
+      ? queryValue(request.query, 'deviceId')
+      : (readBody(request.body).deviceId as unknown)) ?? '',
+    240,
+  );
+
+  return withDatabaseLock(async () => {
+    const database = await loadDatabase();
+    const record = database.licenses.find((item) => item.code === code);
+    if (!record) {
+      return {
+        valid: false,
+        status: 'not_found',
+        message: 'هذا الكود غير موجود في مساحة العمل.',
+      };
+    }
+
+    // Bind the code to the first device that activates it. A second device
+    // using the same code is rejected (and logged) while the original owner
+    // keeps working. This fights code sharing without revoking the original.
+    if (incomingDeviceId) {
+      if (!record.deviceId) {
+        record.deviceId = incomingDeviceId;
+        record.activatedAtUtc = record.activatedAtUtc || nowIso();
+        addActivity(database, 'device_bind', `تم ربط الكود ${code} بالجهاز ${incomingDeviceId}.`, code);
+      } else if (record.deviceId !== incomingDeviceId) {
+        addActivity(
+          database,
+          'device_mismatch',
+          `محاولة استخدام الكود ${code} من جهاز ثانٍ (${incomingDeviceId}) — مرفوضة. الجهاز الأصلي: ${record.deviceId}.`,
+          code,
+        );
+        await saveDatabase(database);
+        return {
+          valid: false,
+          status: 'device_mismatch',
+          plan: record.plan,
+          durationDays: record.durationDays,
+          expiresAtUtc: record.expiresAtUtc,
+          message: 'هذا الكود مستخدم على جهاز آخر. تواصل مع الدعم.',
+        };
+      }
+    }
+
+    record.lastSeenAtUtc = nowIso();
+    const status = readRecordStatus(record);
+    const valid = status === 'valid' || status === 'active';
+    await saveDatabase(database);
     return {
-      valid: false,
-      status: 'not_found',
-      message: 'هذا الكود غير موجود في مساحة العمل.',
+      valid,
+      status,
+      plan: record.plan,
+      durationDays: record.durationDays,
+      expiresAtUtc: record.expiresAtUtc,
+      message: valid
+        ? 'تم التحقق من كود Gold بنجاح.'
+        : status === 'revoked'
+          ? 'هذا الكود ملغى.'
+          : 'هذا الكود منتهي الصلاحية.',
     };
-  }
-  const status = readRecordStatus(record);
-  const valid = status === 'valid' || status === 'active';
-  return {
-    valid,
-    status,
-    plan: record.plan,
-    durationDays: record.durationDays,
-    expiresAtUtc: record.expiresAtUtc,
-    message: valid
-      ? 'تم التحقق من كود Gold بنجاح.'
-      : status === 'revoked'
-        ? 'هذا الكود ملغى.'
-        : 'هذا الكود منتهي الصلاحية.',
-  };
+  });
 };
 
 const handleSupportSubmit = async (request: AdminRequest, body: Record<string, unknown>): Promise<{ ok: boolean; id: string }> => {

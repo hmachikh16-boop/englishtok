@@ -1,5 +1,21 @@
 const STORAGE_KEY = 'lin-go-gold-license-code';
+const DEVICE_KEY = 'lin-go-device-id';
 const CHECK_URL = 'https://englishtok-eight.vercel.app/api/admin?action=check';
+
+const getDeviceId = (): string => {
+  try {
+    const stored = window.localStorage.getItem(DEVICE_KEY);
+    if (stored && stored.trim()) return stored.trim();
+    const generated =
+      typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'
+        ? crypto.randomUUID()
+        : `dev-${Math.random().toString(36).slice(2)}-${Date.now().toString(36)}`;
+    window.localStorage.setItem(DEVICE_KEY, generated);
+    return generated;
+  } catch {
+    return `dev-${Math.random().toString(36).slice(2)}-${Date.now().toString(36)}`;
+  }
+};
 
 export interface GoldLicenseResult {
   valid: boolean;
@@ -42,7 +58,9 @@ export const verifyGoldLicense = async (code: string): Promise<GoldLicenseResult
   }
 
   try {
-    const response = await fetch(`${CHECK_URL}&code=${encodeURIComponent(normalized)}`, {
+    const response = await fetch(
+      `${CHECK_URL}&code=${encodeURIComponent(normalized)}&deviceId=${encodeURIComponent(getDeviceId())}`,
+      {
       cache: 'no-store',
       headers: { Accept: 'application/json' },
     });

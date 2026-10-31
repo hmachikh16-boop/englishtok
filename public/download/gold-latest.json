@@ -1,11 +1,11 @@
 {
-  "version": "1.1.16",
+  "version": "1.1.17",
   "packageId": "com.englishtok.gold",
-  "apkUrl": "/lin-go-gold-1.1.16.apk",
-  "sha256": "B1AB1B5065793D56A8C8C17A61C70438938E8A1BB6DD31DE54F6C65AE52515E0",
-  "size": 90059308,
+  "apkUrl": "/lin-go-gold-1.1.17.apk",
+  "sha256": "E4D28E31A78459359D732D33D1CB2625CD637E7F1CD0A562255CF0C181A1CE23",
+  "size": 90059492,
   "minimumAndroidSdk": 24,
-  "notes": "تحديث Gold+ 1.1.16: توسيع جميع الدروس (500) إلى 15 حوار + 5 اختبارات + صوت. Reels + 17 لعبة.",
-  "releaseUrl": "https://github.com/hmachikh16-boop/englishtok/releases/tag/gold-v1.1.16",
-  "publishedAt": "2026-10-31T01:00:00.000Z"
+  "notes": "تحديث Gold+ 1.1.17: إصلاح anti-cheat (device binding) + فتح التطبيق عند تعذر الاتصال. Reels + 17 لعبة + 500 درس (15 حوار + 5 اختبارات).",
+  "releaseUrl": "https://github.com/hmachikh16-boop/englishtok/releases/tag/gold-v1.1.17",
+  "publishedAt": "2026-10-31T02:00:00.000Z"
 }
