@@ -3,9 +3,9 @@ const DOWNLOAD_PAGE = 'https://englishtok-eight.vercel.app/download';
 const LOCAL_APK = '/english-tok.apk';
 const GITHUB_APK = `https://github.com/${REPOSITORY}/releases/latest/download/english-tok.apk`;
 const GITHUB_RELEASE = `https://github.com/${REPOSITORY}/releases/latest`;
-const GOLD_APK = '/lin-go-gold-1.1.18.apk';
+const GOLD_APK = '/lin-go-gold-1.1.19.apk';
 const GOLD_GITHUB_APK =
-  `https://github.com/${REPOSITORY}/releases/download/gold-v1.1.18/lin-go-gold-1.1.18.apk`;
+  `https://github.com/${REPOSITORY}/releases/download/gold-v1.1.19/lin-go-gold-1.1.19.apk`;
 
 const FALLBACK = {
   version: '1.8.5',
