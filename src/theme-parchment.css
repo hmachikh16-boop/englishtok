@@ -311,3 +311,73 @@ html [class*='ring-sky-'],
 html [class*='ring-blue-'] {
   --tw-ring-color: #b8862b !important;
 }
+
+/* ---------- Remove every blue/green/purple accent ---------- */
+html [class*='text-green-'],
+html [class*='text-lime-'],
+html [class*='text-cyan-'],
+html [class*='text-indigo-'],
+html [class*='text-violet-'],
+html [class*='text-purple-'] {
+  color: #5b4a36 !important;
+}
+
+html [class*='bg-green-'],
+html [class*='bg-lime-'],
+html [class*='bg-cyan-'],
+html [class*='bg-indigo-'],
+html [class*='bg-violet-'],
+html [class*='bg-purple-'] {
+  background-color: #e6d3ae !important;
+  background-image: var(--paper-noise) !important;
+  background-blend-mode: multiply !important;
+  color: #2b2118 !important;
+}
+
+html [class*='border-green-'],
+html [class*='border-lime-'],
+html [class*='border-cyan-'],
+html [class*='border-indigo-'],
+html [class*='border-violet-'],
+html [class*='border-purple-'] {
+  border-color: rgba(70, 50, 30, 0.24) !important;
+}
+
+html [class*='from-green-'], html [class*='from-lime-'], html [class*='from-cyan-'],
+html [class*='from-indigo-'], html [class*='from-violet-'], html [class*='from-purple-'],
+html [class*='to-green-'], html [class*='to-lime-'], html [class*='to-cyan-'],
+html [class*='to-indigo-'], html [class*='to-violet-'], html [class*='to-purple-'] {
+  background-image: linear-gradient(135deg, #f4e7cb, #ebd9b7) !important;
+  color: #2b2118 !important;
+}
+
+html [class*='ring-green-'], html [class*='ring-lime-'], html [class*='ring-cyan-'],
+html [class*='ring-indigo-'], html [class*='ring-violet-'], html [class*='ring-purple-'] {
+  --tw-ring-color: #b8862b !important;
+}
+
+/* Hardcoded cool-color hexes used in Gold components */
+html [class*='#132230'], html [class*='#171b22'], html [class*='#172a3b'],
+html [class*='#182c3f'], html [class*='#1e374d'], html [class*='#1f3950'],
+html [class*='#213d56'], html [class*='#284965'], html [class*='#315a7c'],
+html [class*='#3d7198'], html [class*='#0f7a5c'], html [class*='#0a5b46'],
+html [class*='#073d30'], html [class*='#0a4d3d'], html [class*='#0d5b49'],
+html [class*='#074335'], html [class*='#032e25'], html [class*='#04362b'],
+html [class*='#084b3b'], html [class*='#116a55'], html [class*='#082d49'],
+html [class*='#53e09a'], html [class*='#84c93e'], html [class*='#5ab600'],
+html [class*='#3f8f00'], html [class*='#c9e6ff'], html [class*='#88bde3'],
+html [class*='#5a93bd'], html [class*='#6fb1ff'], html [class*='#b58cff'],
+html [class*='#60748c'] {
+  background-color: #f4e7cb !important;
+  background-image: var(--paper-noise) !important;
+  background-blend-mode: multiply !important;
+  border-color: rgba(70, 50, 30, 0.24) !important;
+  color: #2b2118 !important;
+}
+
+/* Inline-style color overrides (best effort) */
+html [style*='#132230'], html [style*='#1f3950'], html [style*='#315a7c'],
+html [style*='#0f7a5c'], html [style*='#0a5b46'] {
+  color: #2b2118 !important;
+  background-color: #f4e7cb !important;
+}
