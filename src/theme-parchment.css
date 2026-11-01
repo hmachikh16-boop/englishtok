@@ -8,7 +8,7 @@
   --paper-noise: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.28'/%3E%3C/svg%3E");
 }
 
-html {
+:root {
   --rt-blue-950: #2b2118;
   --rt-blue-900: #3a2a1d;
   --rt-blue-850: #4a3524;
@@ -436,6 +436,45 @@ html .topbar-icon-rank svg * { color: #f4e7cb !important; }
 html .journey-stats .topbar-rank svg { color: #f4e7cb !important; }
 html .lesson-library-chevron { color: #5b4a36 !important; }
 html .ai-topbar-subtitle svg { color: #5b4a36 !important; }
+
+/* ---------- All remaining slate shades ---------- */
+html [class*='text-slate-500'],
+html [class*='text-slate-600'],
+html [class*='text-slate-700'],
+html [class*='text-slate-800'],
+html [class*='text-slate-900'] {
+  color: #5b4a36 !important;
+}
+
+html [class*='bg-slate-50'],
+html [class*='bg-slate-100'],
+html [class*='bg-slate-200'],
+html [class*='bg-slate-300'] {
+  background-color: #f4e7cb !important;
+  color: #2b2118 !important;
+}
+
+html [class*='border-slate-200'],
+html [class*='border-slate-300'],
+html [class*='border-slate-400'],
+html [class*='border-slate-500'] {
+  border-color: rgba(70, 50, 30, 0.24) !important;
+}
+
+/* index.css hardcoded blues/greens */
+html .path-hero .text-teal-200 { color: #5b4a36 !important; }
+html .path-hero .text-slate-300,
+html .path-hero .text-slate-400 { color: #5b4a36 !important; }
+html .path-node-orb { color: #b9a78a !important; background-color: #e6d3ae !important; }
+html .path-node-number,
+html .path-node-title { color: #2b2118 !important; }
+html .stage-goal-count,
+html .stage-goal-footnote { color: #5b4a36 !important; }
+html .goal-quest-count-label,
+html .goal-quest-whisper,
+html .journey-center-label { color: #5b4a36 !important; }
+html .lesson-library-count { color: #5b4a36 !important; }
+html .text-\[11px\].text-slate-500 { color: #5b4a36 !important; }
 
 /* ---------- Path hero (green) ---------- */
 html .path-hero {
