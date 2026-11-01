@@ -417,6 +417,17 @@ html .stage-goal-head-actions,
 html .stage-goal-browse { color: #5b4a36 !important; }
 html .stage-goal-browse { border-color: rgba(70, 50, 30, 0.24) !important; background-color: #f4e7cb !important; }
 
+/* Goal card dark overlays */
+html .goal-card-stage,
+html .goal-card-art,
+html .stage-goal-progress,
+html .goal-card-art.is-secret {
+  background-color: rgba(247, 236, 203, 0.7) !important;
+  background-image: none !important;
+  color: #2b2118 !important;
+  border-color: rgba(70, 50, 30, 0.24) !important;
+}
+
 /* SVG icon colors that ignored parent color */
 html .topbar-icon-xp svg,
 html .topbar-icon-xp svg * { color: #4a3000 !important; }
