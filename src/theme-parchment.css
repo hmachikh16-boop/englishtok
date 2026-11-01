@@ -401,3 +401,12 @@ html .stage-goal-title,
 html .stage-goal-head-actions,
 html .stage-goal-browse { color: #5b4a36 !important; }
 html .stage-goal-browse { border-color: rgba(70, 50, 30, 0.24) !important; background-color: #f4e7cb !important; }
+
+/* SVG icon colors that ignored parent color */
+html .topbar-icon-xp svg,
+html .topbar-icon-xp svg * { color: #4a3000 !important; }
+html .topbar-icon-rank svg,
+html .topbar-icon-rank svg * { color: #f4e7cb !important; }
+html .journey-stats .topbar-rank svg { color: #f4e7cb !important; }
+html .lesson-library-chevron { color: #5b4a36 !important; }
+html .ai-topbar-subtitle svg { color: #5b4a36 !important; }
