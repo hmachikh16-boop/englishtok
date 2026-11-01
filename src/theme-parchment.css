@@ -312,6 +312,15 @@ html [class*='ring-blue-'] {
   --tw-ring-color: #b8862b !important;
 }
 
+/* Body and selection */
+html body.bg-\[#f7f7f7\],
+html body {
+  background-color: #f4e7cb !important;
+  background-image: var(--paper-noise) !important;
+  background-blend-mode: multiply !important;
+  color: #2b2118 !important;
+}
+
 /* ---------- Remove every blue/green/purple accent ---------- */
 html [class*='text-green-'],
 html [class*='text-lime-'],
