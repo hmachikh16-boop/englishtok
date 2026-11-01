@@ -1,6 +1,6 @@
 'use strict';
 
-const CACHE_NAME = 'lin-go-control-v1';
+const CACHE_NAME = 'lin-go-control-v2';
 const CONTROL_SHELL = [
   '/control',
   '/control.html',
@@ -8,9 +8,10 @@ const CONTROL_SHELL = [
   '/control.js',
   '/control-manifest.webmanifest',
   '/favicon.png',
-  '/download-icon.png',
-  '/icon-192.png',
-  '/icon-512.png',
+  '/control-icon-180.png',
+  '/control-icon-192.png',
+  '/control-icon-512.png',
+  '/control-icon-maskable-512.png',
   '/fonts/cairo-arabic.woff2',
 ];
 
@@ -21,9 +22,10 @@ const isControlAsset = (url) =>
   url.pathname === '/control.js' ||
   url.pathname === '/control-manifest.webmanifest' ||
   url.pathname === '/favicon.png' ||
-  url.pathname === '/download-icon.png' ||
-  url.pathname === '/icon-192.png' ||
-  url.pathname === '/icon-512.png' ||
+  url.pathname === '/control-icon-180.png' ||
+  url.pathname === '/control-icon-192.png' ||
+  url.pathname === '/control-icon-512.png' ||
+  url.pathname === '/control-icon-maskable-512.png' ||
   url.pathname.startsWith('/fonts/');
 
 const networkFirst = async (request, fallbackUrl) => {
