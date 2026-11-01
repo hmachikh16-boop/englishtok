@@ -6,8 +6,15 @@
     <meta name="robots" content="noindex, nofollow, noarchive" />
     <meta name="theme-color" content="#070d18" />
     <meta name="color-scheme" content="dark" />
+    <meta name="application-name" content="Lin Go Gold Control" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="Lin Go Control" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="mobile-web-app-capable" content="yes" />
     <title>Lin Go Gold Control — لوحة الإدارة المركزية</title>
     <link rel="icon" type="image/png" href="/download-icon.png" />
+    <link rel="apple-touch-icon" href="/icon-192.png" />
+    <link rel="manifest" href="/control-manifest.webmanifest" />
     <link rel="preload" href="/fonts/cairo-arabic.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="stylesheet" href="/control.css" />
     <script src="/control.js" defer></script>
@@ -108,7 +115,6 @@
           <button class="nav-item" type="button" data-view="check"><span class="nav-icon"><svg><use href="#icon-search"></use></svg></span><span>فحص كود</span></button>
           <button class="nav-item" type="button" data-view="activity"><span class="nav-icon"><svg><use href="#icon-activity"></use></svg></span><span>السجل</span></button>
           <button class="nav-item" type="button" data-view="complaints"><span class="nav-icon"><svg><use href="#icon-alert"></use></svg></span><span>الشكاوي</span><span class="nav-count" id="navComplaintCount">0</span></button>
-          <button class="nav-item" type="button" data-view="complaints"><span class="nav-icon"><svg><use href="#icon-alert"></use></svg></span><span>الشكاوي</span><span class="nav-count" id="navComplaintCount">0</span></button>
         </nav>
         <div class="side-nav-label">الإدارة</div>
         <nav class="side-nav" aria-label="إدارة البيانات">
@@ -129,6 +135,7 @@
           </div>
           <div class="topbar-actions">
             <label class="top-search" for="globalSearch"><svg><use href="#icon-search"></use></svg><input id="globalSearch" type="search" placeholder="ابحث بالكود أو المستخدم…" autocomplete="off" /><kbd>⌘ K</kbd></label>
+            <button id="installAppButton" class="button button-gold button-small topbar-install" type="button" aria-label="تثبيت لوحة التحكم على هذا الجهاز" title="تثبيت التطبيق" hidden><svg><use href="#icon-download"></use></svg><span>تثبيت</span></button>
             <button id="refreshButton" class="icon-button tool-button" type="button" aria-label="تحديث البيانات" title="تحديث البيانات"><svg><use href="#icon-refresh"></use></svg></button>
             <div class="sync-meta"><span class="online-dot"></span><div><strong>متزامن</strong><span id="lastUpdated">الآن</span></div></div>
             <button id="logoutButton" class="icon-button tool-button" type="button" aria-label="تسجيل الخروج" title="تسجيل الخروج"><svg><use href="#icon-logout"></use></svg></button>

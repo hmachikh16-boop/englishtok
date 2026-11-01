@@ -33,6 +33,29 @@ const html = (value) =>
     }
   });
 
+let deferredInstallPrompt = null;
+
+const isStandaloneApp = () =>
+  window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+
+const syncInstallUi = () => {
+  const button = $('#installAppButton');
+  if (!button) return;
+  button.hidden = !deferredInstallPrompt || isStandaloneApp();
+};
+
+window.addEventListener('beforeinstallprompt', (event) => {
+  event.preventDefault();
+  deferredInstallPrompt = event;
+  syncInstallUi();
+});
+
+window.addEventListener('appinstalled', () => {
+  deferredInstallPrompt = null;
+  syncInstallUi();
+  toast('تم تثبيت Lin Go Gold Control على هذا الجهاز.');
+});
+
 const numberFormatter = new Intl.NumberFormat('en-US');
 const dateFormatter = new Intl.DateTimeFormat('ar-EG-u-nu-latn', {
   day: '2-digit',
@@ -1452,6 +1475,20 @@ const logout = async () => {
 
 const bindEvents = () => {
   $('#loginYear').textContent = String(new Date().getFullYear());
+
+  $('#installAppButton')?.addEventListener('click', async () => {
+    if (!deferredInstallPrompt) {
+      toast('التثبيت غير متاح الآن. استخدم أيقونة التثبيت في شريط عنوان المتصفح.', 'info');
+      return;
+    }
+    deferredInstallPrompt.prompt();
+    const choice = await deferredInstallPrompt.userChoice;
+    if (choice.outcome === 'accepted') {
+      deferredInstallPrompt = null;
+      syncInstallUi();
+    }
+  });
+
   $('#loginForm')?.addEventListener('submit', async (event) => {
     event.preventDefault();
     const input = $('#adminKey');
@@ -1652,6 +1689,14 @@ const boot = async () => {
     showLoading(false);
   }
 };
+
+if ('serviceWorker' in navigator && window.isSecureContext) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/control-sw.js', { scope: '/control' }).catch(() => {
+      // The panel keeps working without offline support.
+    });
+  });
+}
 
 document.addEventListener('DOMContentLoaded', () => {
   void boot();
