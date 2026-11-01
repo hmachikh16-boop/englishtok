@@ -1,0 +1,56 @@
+/* Parchment skin for Lin Go Gold Control */
+:root {
+  --bg: #f4e7cb;
+  --bg-soft: #ebd9b7;
+  --panel: rgba(247, 236, 203, 0.82);
+  --panel-solid: #f7ecd3;
+  --panel-raised: #f2e2b2;
+  --panel-soft: rgba(235, 217, 183, 0.62);
+  --line: rgba(70, 50, 30, 0.16);
+  --line-strong: rgba(70, 50, 30, 0.28);
+  --text: #2b2118;
+  --text-soft: #4a3a28;
+  --muted: #7a664a;
+  --dim: #9b8566;
+  --gold: #b8862b;
+  --gold-deep: #8a601f;
+  --gold-pale: #ffe9a6;
+  --gold-soft: rgba(184, 134, 43, 0.14);
+  --green: #5f6b3c;
+  --green-soft: rgba(95, 107, 60, 0.14);
+  --blue: #8a6542;
+  --blue-soft: rgba(138, 101, 66, 0.14);
+  --orange: #c45a44;
+  --orange-soft: rgba(196, 90, 68, 0.14);
+  --red: #9f2f23;
+  --red-soft: rgba(159, 47, 35, 0.14);
+  --purple: #9b8058;
+  --purple-soft: rgba(155, 128, 88, 0.14);
+  --shadow: 0 30px 80px -40px rgba(70, 50, 30, 0.35);
+  --shadow-soft: 0 18px 45px -28px rgba(70, 50, 30, 0.25);
+}
+
+html, body {
+  background: #f4e7cb !important;
+  color: #2b2118 !important;
+}
+
+body::before {
+  background:
+    radial-gradient(circle at 12% 0%, rgba(184, 134, 43, 0.12), transparent 30rem),
+    radial-gradient(circle at 100% 18%, rgba(95, 107, 60, 0.10), transparent 34rem),
+    linear-gradient(150deg, #f4e7cb 0%, #ebd9b7 44%, #e6d3ae 100%) !important;
+}
+
+.ambient-two { background: #9f2f23 !important; }
+.ambient-grid {
+  background-image:
+    linear-gradient(rgba(70, 50, 30, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(70, 50, 30, 0.06) 1px, transparent 1px) !important;
+}
+
+::-webkit-scrollbar-track { background: #ebd9b7 !important; }
+::-webkit-scrollbar-thumb { background: #b9a78a !important; border-color: #ebd9b7 !important; }
+::-webkit-scrollbar-thumb:hover { background: #9b8566 !important; }
+
+::selection { background: #b8862b; color: #fffaf0; }
