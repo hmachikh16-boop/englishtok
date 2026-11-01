@@ -410,3 +410,20 @@ html .topbar-icon-rank svg * { color: #f4e7cb !important; }
 html .journey-stats .topbar-rank svg { color: #f4e7cb !important; }
 html .lesson-library-chevron { color: #5b4a36 !important; }
 html .ai-topbar-subtitle svg { color: #5b4a36 !important; }
+
+/* ---------- Path hero (green) ---------- */
+html .path-hero {
+  border-color: rgba(70, 50, 30, 0.2) !important;
+  background: linear-gradient(145deg, #f4e7cb 0%, #fffaf0 48%, #ebd9b7 100%) !important;
+  box-shadow: 0 14px 34px rgba(70, 50, 30, 0.08) !important;
+}
+html .path-hero .text-white { color: #2b2118 !important; }
+html .path-hero .text-slate-300,
+html .path-hero .text-slate-400 { color: #5b4a36 !important; }
+html .path-hero .text-teal-200 { color: #5b4a36 !important; }
+html .path-hero [class*='bg-white/'] { background-color: rgba(255, 255, 255, 0.78) !important; }
+html .path-hero [class*='border-white/'] { border-color: rgba(70, 50, 30, 0.2) !important; }
+html .path-hero .daily-goal-card { background: #f8ecd3 !important; border-color: rgba(70, 50, 30, 0.2) !important; }
+html .path-stage { border-color: rgba(70, 50, 30, 0.2) !important; background: #fffaf0 !important; box-shadow: 0 5px 0 rgba(70, 50, 30, 0.1), 0 12px 24px rgba(70, 50, 30, 0.05) !important; }
+html .path-stage[data-stage='1'] .path-stage-heading,
+html .path-stage[data-stage='2'] .path-stage-heading { background: linear-gradient(100deg, #f4e7cb, #ebd9b7) !important; }
