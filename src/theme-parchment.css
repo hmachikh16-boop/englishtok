@@ -390,3 +390,14 @@ html [style*='#0f7a5c'], html [style*='#0a5b46'] {
   color: #2b2118 !important;
   background-color: #f4e7cb !important;
 }
+
+/* ---------- Remaining blue/green UI pieces ---------- */
+html .ai-topbar-subtitle { color: #5b4a36 !important; }
+html .buddy-bubble { border-color: rgba(70, 50, 30, 0.24) !important; background-color: rgba(247, 236, 203, 0.7) !important; }
+html .path-start-button { border-color: #b8862b !important; background-color: #e6d3ae !important; color: #2b2118 !important; }
+html .goal-quest-orb-two { background-color: rgba(184, 134, 43, 0.16) !important; }
+html .stage-goal-head,
+html .stage-goal-title,
+html .stage-goal-head-actions,
+html .stage-goal-browse { color: #5b4a36 !important; }
+html .stage-goal-browse { border-color: rgba(70, 50, 30, 0.24) !important; background-color: #f4e7cb !important; }
