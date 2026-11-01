@@ -54,3 +54,134 @@ body::before {
 ::-webkit-scrollbar-thumb:hover { background: #9b8566 !important; }
 
 ::selection { background: #b8862b; color: #fffaf0; }
+
+/* Broad parchment overrides for the control panel */
+.login-frame,
+.login-card,
+.login-story,
+.hero-card,
+.panel,
+.settings-card,
+.empty-state,
+.check-panel,
+.check-result,
+.user-card,
+.cloud-card {
+  background:
+    radial-gradient(circle at 100% 0%, rgba(184, 134, 43, 0.08), transparent 18rem),
+    rgba(247, 236, 203, 0.82) !important;
+  color: var(--text) !important;
+  border-color: var(--line) !important;
+  box-shadow: var(--shadow-soft) !important;
+}
+
+.login-frame {
+  background: rgba(244, 231, 203, 0.74) !important;
+  backdrop-filter: blur(18px);
+}
+
+.login-story {
+  background:
+    radial-gradient(circle at 14% 6%, rgba(184, 134, 43, 0.12), transparent 20rem),
+    radial-gradient(circle at 105% 88%, rgba(95, 107, 60, 0.10), transparent 23rem),
+    linear-gradient(155deg, rgba(244, 231, 203, 0.95), rgba(235, 217, 183, 0.95)) !important;
+  border-inline-end-color: var(--line) !important;
+}
+
+.sidebar,
+.workspace,
+.topbar,
+.main-content,
+.table-wrap,
+.activity-feed,
+.users-grid,
+.settings-grid {
+  background: transparent !important;
+  color: var(--text) !important;
+}
+
+.sidebar {
+  background: rgba(244, 231, 203, 0.72) !important;
+  border-color: var(--line) !important;
+}
+
+.topbar {
+  background: rgba(247, 236, 203, 0.78) !important;
+  border-color: var(--line) !important;
+}
+
+.hero-card::before,
+.hero-glow {
+  background: rgba(184, 134, 43, 0.12) !important;
+}
+
+.story-point:hover {
+  background: rgba(255, 255, 255, 0.35) !important;
+  border-color: var(--line) !important;
+}
+
+.story-point strong,
+.panel-head h3,
+.view-title h1,
+.page-title h1,
+.section-heading h2 {
+  color: var(--text) !important;
+}
+
+.story-copy p,
+.panel-head p,
+.view-subtitle,
+.breadcrumb {
+  color: var(--muted) !important;
+}
+
+.nav-item {
+  color: var(--text-soft) !important;
+}
+
+.nav-item.is-active {
+  color: var(--gold-deep) !important;
+  background: var(--gold-soft) !important;
+}
+
+.button.button-gold {
+  color: #fffaf0 !important;
+  background: linear-gradient(135deg, #b8862b, #8a601f) !important;
+}
+
+.button.button-secondary,
+.button.button-ghost {
+  color: var(--text) !important;
+  background: rgba(247, 236, 203, 0.7) !important;
+  border-color: var(--line-strong) !important;
+}
+
+.icon-button,
+.text-button {
+  color: var(--text-soft) !important;
+}
+
+.table-wrap,
+.data-table,
+.data-table th,
+.data-table td {
+  background: transparent !important;
+  color: var(--text) !important;
+  border-color: var(--line) !important;
+}
+
+.data-table thead th {
+  background: rgba(247, 236, 203, 0.9) !important;
+  color: var(--text-soft) !important;
+}
+
+.empty-state {
+  color: var(--text-soft) !important;
+}
+
+.toast-region .toast,
+.modal-card {
+  background: rgba(247, 236, 203, 0.95) !important;
+  color: var(--text) !important;
+  border-color: var(--line-strong) !important;
+}
