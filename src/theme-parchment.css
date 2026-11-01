@@ -186,6 +186,21 @@ html [class*='bg-slate-700'] {
   background-color: #dbc29a !important;
 }
 
+html [class*='bg-slate-200'],
+html [class*='bg-slate-100'] {
+  background-color: #f4e7cb !important;
+  color: #2b2118 !important;
+}
+
+/* Dark teal overlays on goal cards */
+html .goal-card-serial,
+html .goal-card-state,
+html .stage-goal-lock {
+  background-color: rgba(70, 50, 30, 0.18) !important;
+  color: #5b4a36 !important;
+  border-color: rgba(70, 50, 30, 0.24) !important;
+}
+
 html [class*='text-slate-100'],
 html [class*='text-slate-200'] {
   color: #2b2118 !important;
