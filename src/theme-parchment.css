@@ -476,6 +476,15 @@ html .journey-center-label { color: #5b4a36 !important; }
 html .lesson-library-count { color: #5b4a36 !important; }
 html .text-\[11px\].text-slate-500 { color: #5b4a36 !important; }
 
+/* ---------- Remaining blue text in path/goal ---------- */
+html .topbar-language-badge { color: #2b2118 !important; background: linear-gradient(145deg, #ffe9a6, #d9b25a 58%, #b8862b) !important; }
+html .path-stage-chip.is-locked,
+html .path-stage-chip.is-locked * { color: #5b4a36 !important; background-color: #e6d3ae !important; }
+html .goal-quest-next-line,
+html .goal-quest-next,
+html .goal-quest-next * { color: #5b4a36 !important; }
+html .journey-center-wrap { color: #5b4a36 !important; }
+
 /* ---------- Path hero (green) ---------- */
 html .path-hero {
   border-color: rgba(70, 50, 30, 0.2) !important;
