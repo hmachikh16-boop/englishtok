@@ -406,6 +406,36 @@ html [style*='#0f7a5c'], html [style*='#0a5b46'] {
   background-color: #f4e7cb !important;
 }
 
+/* ---------- Text overflow fixes ---------- */
+html .path-hero,
+html .path-hero-intro-zone,
+html .goal-quest-panel,
+html .goal-quest-card-wrap,
+html .goal-card-face,
+html .goal-card-art,
+html .path-stage,
+html .path-stage-heading,
+html .path-nodes,
+html .continuous-route,
+html .gg-hub-hero,
+html .ai-topbar-mark {
+  overflow-wrap: anywhere !important;
+  word-break: break-word !important;
+  min-width: 0 !important;
+}
+html .path-node {
+  max-width: 100% !important;
+  margin-inline-end: 0 !important;
+}
+html .goal-card-rays {
+  max-width: 100% !important;
+  right: auto !important;
+  left: auto !important;
+}
+html .ai-topbar-mark {
+  width: auto !important;
+  min-width: 32px !important;
+}
 /* ---------- Remaining blue/green UI pieces ---------- */
 html .ai-topbar-subtitle { color: #5b4a36 !important; }
 html .buddy-bubble { border-color: rgba(70, 50, 30, 0.24) !important; background-color: rgba(247, 236, 203, 0.7) !important; }
