@@ -35,6 +35,12 @@ html, body {
   color: #2b2118 !important;
 }
 
+.login-view,
+.app-view {
+  background: #f4e7cb !important;
+  color: #2b2118 !important;
+}
+
 body::before {
   background:
     radial-gradient(circle at 12% 0%, rgba(184, 134, 43, 0.12), transparent 30rem),
