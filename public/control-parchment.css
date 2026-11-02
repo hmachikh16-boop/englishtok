@@ -231,19 +231,24 @@ body::before {
   word-break: break-word !important;
 }
 
-.activity-row-copy strong,
-.activity-row-copy .activity-code,
-.activity-row-copy span {
-  overflow-wrap: anywhere !important;
-  word-break: break-all !important;
+.activity-row-copy strong {
+  display: -webkit-box !important;
+  -webkit-line-clamp: 2 !important;
+  -webkit-box-orient: vertical !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
   white-space: normal !important;
   font-size: 10px !important;
   line-height: 1.3 !important;
 }
 
-.activity-row-copy .activity-code {
+.activity-row-copy .activity-code,
+.activity-row-copy span {
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+  max-width: 100% !important;
   font-size: 9px !important;
-  word-break: break-all !important;
 }
 
 @media (max-width: 640px) {
