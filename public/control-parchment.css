@@ -362,3 +362,24 @@ body::before {
   background: var(--panel) !important;
   color: var(--text) !important;
 }
+
+/* ---------- Remove dark frames from art-chips and security-pill ---------- */
+.art-chip {
+  background: var(--panel) !important;
+  border-color: var(--line-strong) !important;
+  box-shadow: var(--shadow-soft) !important;
+  color: var(--text-soft) !important;
+  backdrop-filter: none !important;
+}
+
+.art-chip svg {
+  color: var(--gold) !important;
+}
+
+.security-pill {
+  color: var(--text-soft) !important;
+}
+
+.security-pill svg {
+  color: var(--gold) !important;
+}
