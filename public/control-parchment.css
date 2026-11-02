@@ -326,3 +326,13 @@ body::before {
   background: var(--gold) !important;
   box-shadow: 0 0 8px var(--gold) !important;
 }
+
+/* ---------- Remove gray from search/select ---------- */
+.search-field input::placeholder {
+  color: var(--muted) !important;
+}
+
+.select-wrap select option {
+  background: var(--panel) !important;
+  color: var(--text) !important;
+}
