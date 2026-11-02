@@ -34,7 +34,14 @@ const repository = process.env.GITHUB_REPOSITORY || 'hmachikh16-boop/englishtok'
 const url = `https://github.com/${repository}/releases/latest/download/english-tok.apk`;
 const manifestUrl = `https://github.com/${repository}/releases/latest/download/update-manifest.json`;
 const target = resolve(process.cwd(), 'public', 'english-tok.apk');
-const goldVersion = '1.1.22';
+// Read the Gold flavor version from Gradle so the staged manifest cannot drift
+// after a version bump (this previously caused stale 1.1.19 manifests).
+const gradleSource = readFileSync(resolve(process.cwd(), 'android', 'app', 'build.gradle'), 'utf8');
+const goldFlavor = /gold\s*\{([\s\S]*?)\}/.exec(gradleSource)?.[1] ?? '';
+const goldVersion = /versionName\s+["']([^"']+)["']/.exec(goldFlavor)?.[1];
+if (!goldVersion || !/^\d+\.\d+\.\d+$/.test(goldVersion)) {
+  throw new Error('Could not read Gold versionName from android/app/build.gradle');
+}
 const goldTarget = resolve(process.cwd(), 'public', `lin-go-gold-${goldVersion}.apk`);
 const goldUrl = `https://github.com/${repository}/releases/download/gold-v${goldVersion}/lin-go-gold-${goldVersion}.apk`;
 const latestDir = resolve(process.cwd(), 'public', 'download');
@@ -126,7 +133,7 @@ try {
     size: goldSize,
     minimumAndroidSdk: 24,
     notes:
-      'تحديث Gold 1.1.22: جلد ورقي (parchment) على كل الشاشات + إصلاح تجاوز النص + anti-cheat (device binding). Reels + 17 لعبة + 500 درس.',
+      'تحديث Gold ' + goldVersion + ': جلد ورقي (parchment) على كل الشاشات + تحسين الأداء + anti-cheat (device binding). Reels + 17 لعبة + 500 درس.',
     releaseUrl: `https://github.com/${repository}/releases/tag/gold-v${goldVersion}`,
     publishedAt: new Date().toISOString(),
   };
