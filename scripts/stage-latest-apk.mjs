@@ -34,13 +34,30 @@ const repository = process.env.GITHUB_REPOSITORY || 'hmachikh16-boop/englishtok'
 const url = `https://github.com/${repository}/releases/latest/download/english-tok.apk`;
 const manifestUrl = `https://github.com/${repository}/releases/latest/download/update-manifest.json`;
 const target = resolve(process.cwd(), 'public', 'english-tok.apk');
-// Read the Gold flavor version from Gradle so the staged manifest cannot drift
-// after a version bump (this previously caused stale 1.1.19 manifests).
-const gradleSource = readFileSync(resolve(process.cwd(), 'android', 'app', 'build.gradle'), 'utf8');
-const goldFlavor = /gold\s*\{([\s\S]*?)\}/.exec(gradleSource)?.[1] ?? '';
-const goldVersion = /versionName\s+["']([^"']+)["']/.exec(goldFlavor)?.[1];
+// Read the Gold flavor version from Gradle when available (local builds). On
+// Vercel the android/ folder is not present, so fall back to the committed
+// manifest to avoid breaking the build.
+let goldVersion = null;
+const gradlePath = resolve(process.cwd(), 'android', 'app', 'build.gradle');
+if (existsSync(gradlePath)) {
+  try {
+    const gradleSource = readFileSync(gradlePath, 'utf8');
+    const goldFlavor = /gold\s*\{([\s\S]*?)\}/.exec(gradleSource)?.[1] ?? '';
+    goldVersion = /versionName\s+["']([^"']+)["']/.exec(goldFlavor)?.[1] ?? null;
+  } catch {
+    goldVersion = null;
+  }
+}
 if (!goldVersion || !/^\d+\.\d+\.\d+$/.test(goldVersion)) {
-  throw new Error('Could not read Gold versionName from android/app/build.gradle');
+  try {
+    const committed = JSON.parse(readFileSync(resolve(process.cwd(), 'public', 'download', 'gold-latest.json'), 'utf8'));
+    if (/^\d+\.\d+\.\d+$/.test(committed.version)) goldVersion = committed.version;
+  } catch {
+    // ignore
+  }
+}
+if (!goldVersion || !/^\d+\.\d+\.\d+$/.test(goldVersion)) {
+  goldVersion = '1.1.22';
 }
 const goldTarget = resolve(process.cwd(), 'public', `lin-go-gold-${goldVersion}.apk`);
 const goldUrl = `https://github.com/${repository}/releases/download/gold-v${goldVersion}/lin-go-gold-${goldVersion}.apk`;
