@@ -146,7 +146,8 @@ export const PremiumIcon: React.FC<PremiumIconProps> = ({
 }) => (
   <span
     aria-hidden="true"
-    className={`relative inline-flex shrink-0 items-center justify-center rounded-full border border-white/35 shadow-lg shadow-slate-950/35 ${className}`}
+    data-premium-icon={name}
+    className={`premium-icon relative inline-flex shrink-0 items-center justify-center rounded-full border border-white/35 shadow-lg shadow-slate-950/35 ${className}`}
     style={{ width: size, height: size, background: iconGradients[name] }}
   >
     <span className="pointer-events-none absolute inset-[2px] rounded-full bg-[radial-gradient(ellipse_at_28%_20%,rgba(255,255,255,0.68),rgba(255,255,255,0.12)_45%,transparent_72%)]" />

@@ -111,9 +111,9 @@ export const GoldLicenseGate: React.FC<GoldLicenseGateProps> = ({ children }) =>
 
   if (status === 'checking') {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#fffaf0] px-6 text-center">
+      <div className="gold-license-screen flex min-h-screen items-center justify-center bg-[#fffaf0] px-6 text-center">
         <div className="max-w-sm">
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-3xl bg-[#f4b603] text-[#132230] shadow-lg">
+          <div className="gold-license-mark mx-auto flex h-16 w-16 items-center justify-center rounded-3xl bg-[#f4b603] text-[#132230] shadow-lg">
             <ShieldCheck className="h-8 w-8" />
           </div>
           <h1 className="mt-5 text-xl font-black text-[#132230]">Lin Go Gold</h1>
@@ -128,10 +128,10 @@ export const GoldLicenseGate: React.FC<GoldLicenseGateProps> = ({ children }) =>
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[#fffaf0] px-6">
-      <div className="w-full max-w-md rounded-[2rem] border-2 border-[#f4b603] bg-white p-6 shadow-2xl">
+    <div className="gold-license-screen flex min-h-screen items-center justify-center bg-[#fffaf0] px-6">
+      <div className="gold-license-card w-full max-w-md rounded-[2rem] border-2 border-[#f4b603] bg-white p-6 shadow-2xl">
         <div className="flex items-center gap-3">
-          <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#f4b603] text-[#132230]">
+          <span className="gold-license-mark flex h-12 w-12 items-center justify-center rounded-2xl bg-[#f4b603] text-[#132230]">
             <KeyRound className="h-6 w-6" />
           </span>
           <div>
@@ -172,7 +172,7 @@ export const GoldLicenseGate: React.FC<GoldLicenseGateProps> = ({ children }) =>
           <button
             type="button"
             onClick={handleExit}
-            className="inline-flex items-center gap-2 rounded-xl border border-[#d9c58f] bg-[#fffaf0] px-3 py-2 text-xs font-black text-[#315a7c] transition hover:bg-[#f2e2b2]"
+            className="gold-license-secondary inline-flex items-center gap-2 rounded-xl border border-[#d9c58f] bg-[#fffaf0] px-3 py-2 text-xs font-black text-[#315a7c] transition hover:bg-[#f2e2b2]"
           >
             <XCircle className="h-4 w-4" />
             إغلاق التطبيق
