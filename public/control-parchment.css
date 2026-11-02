@@ -185,6 +185,32 @@ body::before {
   color: var(--text-soft) !important;
 }
 
+.stat-card {
+  background: var(--panel) !important;
+  border-color: var(--line) !important;
+  box-shadow: var(--shadow-soft) !important;
+  color: var(--text) !important;
+}
+
+.stat-card::after {
+  background: var(--gold) !important;
+  opacity: 0.08 !important;
+}
+
+.stat-label,
+.stat-sub {
+  color: var(--muted) !important;
+}
+
+.stat-value {
+  color: var(--text) !important;
+}
+
+.stat-icon {
+  background: var(--gold-soft) !important;
+  color: var(--gold-deep) !important;
+}
+
 .toast-region .toast,
 .modal-card {
   background: rgba(247, 236, 203, 0.95) !important;
