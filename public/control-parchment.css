@@ -290,3 +290,39 @@ body::before {
   background: var(--gold-soft) !important;
   color: var(--gold) !important;
 }
+
+/* ---------- Remove dark frames from sync/cloud/workspace ---------- */
+.sync-meta,
+.cloud-card,
+.workspace-badge {
+  background: var(--panel) !important;
+  border-color: var(--line) !important;
+  box-shadow: var(--shadow-soft) !important;
+  color: var(--text) !important;
+}
+
+.cloud-icon {
+  background: var(--gold-soft) !important;
+  color: var(--gold-deep) !important;
+}
+
+.sync-meta div strong,
+.workspace-badge strong {
+  color: var(--text-soft) !important;
+}
+
+.sync-meta div span,
+.workspace-badge div span,
+.cloud-card div span {
+  color: var(--muted) !important;
+}
+
+.online-dot {
+  background: var(--gold) !important;
+  box-shadow: 0 0 8px var(--gold) !important;
+}
+
+.pulse-dot {
+  background: var(--gold) !important;
+  box-shadow: 0 0 8px var(--gold) !important;
+}
