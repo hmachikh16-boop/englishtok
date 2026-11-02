@@ -237,6 +237,26 @@ body::before {
   word-break: break-all !important;
 }
 
+@media (max-width: 640px) {
+  .activity-row {
+    flex-direction: column !important;
+    gap: 8px !important;
+  }
+  .activity-row .activity-bullet {
+    width: 28px !important;
+    height: 28px !important;
+  }
+  .activity-row-copy strong,
+  .activity-row-copy .activity-code,
+  .activity-row-copy span {
+    font-size: 9px !important;
+    line-height: 1.25 !important;
+  }
+  .activity-row-copy .activity-code {
+    font-size: 8px !important;
+  }
+}
+
 .toast-region .toast,
 .modal-card {
   background: rgba(247, 236, 203, 0.95) !important;
