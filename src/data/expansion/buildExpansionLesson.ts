@@ -188,8 +188,7 @@ export const buildExpansionLesson = (
 
   }
 
-  const expandedQuiz =
-    true
+   const expandedQuiz = (true
       ? [
           meaningQuestion,
           fillQuestion,
@@ -197,7 +196,7 @@ export const buildExpansionLesson = (
           reverseQuestion,
           {
             id: `${spec.id}-q5`,
-            type: 'multiple_choice',
+            type: 'multiple_choice' as const,
             questionAr: `ما معنى كلمة «${(spec.words[1] ?? spec.words[0])[0]}»؟`,
             options: rotate(
               unique(spec.words.map((word) => word[2])),
@@ -207,7 +206,7 @@ export const buildExpansionLesson = (
             explanationAr: `${(spec.words[1] ?? spec.words[0])[0]} تعني «${(spec.words[1] ?? spec.words[0])[2]}». مثال: ${(spec.words[1] ?? spec.words[0])[3]}`,
           },
         ]
-      : [meaningQuestion, fillQuestion, arrangeQuestion, reverseQuestion];
+      : [meaningQuestion, fillQuestion, arrangeQuestion, reverseQuestion]) as QuizQuestion[];
 
   return {
     id: spec.id,

@@ -77,7 +77,7 @@ body::before {
 
 .login-frame {
   background: rgba(244, 231, 203, 0.74) !important;
-  backdrop-filter: blur(18px);
+  backdrop-filter: none;
 }
 
 .login-story {
