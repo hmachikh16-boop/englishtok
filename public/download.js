@@ -3,9 +3,27 @@ const DOWNLOAD_PAGE = 'https://englishtok-eight.vercel.app/download';
 const LOCAL_APK = '/english-tok.apk';
 const GITHUB_APK = `https://github.com/${REPOSITORY}/releases/latest/download/english-tok.apk`;
 const GITHUB_RELEASE = `https://github.com/${REPOSITORY}/releases/latest`;
-const GOLD_APK = '/lin-go-gold-1.1.19.apk';
-const GOLD_GITHUB_APK =
-  `https://github.com/${REPOSITORY}/releases/download/gold-v1.1.19/lin-go-gold-1.1.19.apk`;
+let GOLD_VERSION = '1.1.22';
+let GOLD_APK = `/lin-go-gold-${GOLD_VERSION}.apk`;
+let GOLD_GITHUB_APK =
+  `https://github.com/${REPOSITORY}/releases/download/gold-v${GOLD_VERSION}/lin-go-gold-${GOLD_VERSION}.apk`;
+
+const loadGoldManifest = async () => {
+  try {
+    const response = await fetch('/download/gold-latest.json', { cache: 'no-store' });
+    if (!response.ok) return;
+    const data = await response.json();
+    if (isValidVersion(data?.version)) {
+      GOLD_VERSION = data.version;
+      GOLD_APK = `/lin-go-gold-${GOLD_VERSION}.apk`;
+      GOLD_GITHUB_APK =
+        `https://github.com/${REPOSITORY}/releases/download/gold-v${GOLD_VERSION}/lin-go-gold-${GOLD_VERSION}.apk`;
+      setGoldLinks(GOLD_APK);
+    }
+  } catch {
+    /* keep fallback */
+  }
+};
 
 const FALLBACK = {
   version: '1.8.5',
@@ -86,7 +104,7 @@ const setDownloadLinks = (version, target = LOCAL_APK) => {
 const setGoldLinks = (target = GOLD_APK) => {
   document.querySelectorAll('[data-gold-download]').forEach((link) => {
     link.setAttribute('href', target);
-    link.setAttribute('download', 'lin-go-gold-1.1.17.apk');
+    link.setAttribute('download', `lin-go-gold-${GOLD_VERSION}.apk`);
     link.setAttribute(
       'title',
       target === GOLD_APK ? 'تنزيل Gold+ من الموقع الرسمي' : 'تنزيل Gold+ من صفحة GitHub الرسمية',
@@ -344,8 +362,9 @@ const setupSupport = () => {
 };
 
 void loadLatest().then(() => ensureDownloadTarget());
-setGoldLinks();
+void loadGoldManifest().then(() => setGoldLinks());
 void ensureGoldTarget();
+setGoldLinks();
 setupGoldForm();
 setupSupport();
 setupShare();
