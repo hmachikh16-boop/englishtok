@@ -436,6 +436,20 @@ html .ai-topbar-mark {
   width: auto !important;
   min-width: 32px !important;
 }
+
+
+/* ---------- Remove remaining gray borders ---------- */
+html .stage-goal-art,
+html .goal-animal-art,
+html .stage-goal-animal,
+html .goal-animal-halo,
+html .goal-animal-image,
+html .stage-goal-copy,
+html .path-node,
+html .path-exam-node {
+  border-color: var(--parchment-edge) !important;
+}
+
 /* ---------- Remaining blue/green UI pieces ---------- */
 html .ai-topbar-subtitle { color: #5b4a36 !important; }
 html .buddy-bubble { border-color: rgba(70, 50, 30, 0.24) !important; background-color: rgba(247, 236, 203, 0.7) !important; }
