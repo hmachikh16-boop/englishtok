@@ -328,6 +328,12 @@ body::before {
 }
 
 /* ---------- Remove gray from search/select ---------- */
+.search-field {
+  background: var(--panel) !important;
+  border-color: var(--line) !important;
+  color: var(--text) !important;
+}
+
 .search-field input::placeholder {
   color: var(--muted) !important;
 }
