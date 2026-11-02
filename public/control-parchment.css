@@ -334,6 +334,26 @@ body::before {
   color: var(--text) !important;
 }
 
+.top-search {
+  background: var(--panel) !important;
+  border-color: var(--line) !important;
+  color: var(--text) !important;
+}
+
+.top-search:focus-within {
+  background: var(--panel-solid) !important;
+  border-color: var(--line-strong) !important;
+}
+
+.top-search input::placeholder {
+  color: var(--muted) !important;
+}
+
+.top-search input {
+  background: transparent !important;
+  color: var(--text) !important;
+}
+
 .search-field input::placeholder {
   color: var(--muted) !important;
 }
