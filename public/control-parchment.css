@@ -226,8 +226,15 @@ body::before {
 .activity-row-copy .activity-code,
 .activity-row-copy span {
   overflow-wrap: anywhere !important;
-  word-break: break-word !important;
+  word-break: break-all !important;
   white-space: normal !important;
+  font-size: 10px !important;
+  line-height: 1.3 !important;
+}
+
+.activity-row-copy .activity-code {
+  font-size: 9px !important;
+  word-break: break-all !important;
 }
 
 .toast-region .toast,
