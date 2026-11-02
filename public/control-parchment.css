@@ -165,6 +165,15 @@ body::before {
 .icon-button,
 .text-button {
   color: var(--text-soft) !important;
+  background: rgba(247, 236, 203, 0.7) !important;
+  border-color: var(--line-strong) !important;
+}
+
+.icon-button:hover,
+.text-button:hover {
+  background: rgba(247, 236, 203, 0.9) !important;
+  color: var(--text) !important;
+  border-color: var(--line-strong) !important;
 }
 
 .table-wrap,
