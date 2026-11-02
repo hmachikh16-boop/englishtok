@@ -211,6 +211,25 @@ body::before {
   color: var(--gold-deep) !important;
 }
 
+.activity-row {
+  align-items: flex-start !important;
+}
+
+.activity-row-copy {
+  flex: 1 1 0 !important;
+  min-width: 0 !important;
+  overflow-wrap: anywhere !important;
+  word-break: break-word !important;
+}
+
+.activity-row-copy strong,
+.activity-row-copy .activity-code,
+.activity-row-copy span {
+  overflow-wrap: anywhere !important;
+  word-break: break-word !important;
+  white-space: normal !important;
+}
+
 .toast-region .toast,
 .modal-card {
   background: rgba(247, 236, 203, 0.95) !important;
