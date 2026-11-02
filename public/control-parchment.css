@@ -6,12 +6,12 @@
   --panel-solid: #f7ecd3;
   --panel-raised: #f2e2b2;
   --panel-soft: rgba(235, 217, 183, 0.62);
-  --line: rgba(70, 50, 30, 0.16);
-  --line-strong: rgba(70, 50, 30, 0.28);
+  --line: rgba(126, 91, 43, 0.28);
+  --line-strong: rgba(126, 91, 43, 0.42);
   --text: #2b2118;
-  --text-soft: #4a3a28;
-  --muted: #7a664a;
-  --dim: #9b8566;
+  --text-soft: #3a2a1d;
+  --muted: #5b4a36;
+  --dim: #6d5129;
   --gold: #b8862b;
   --gold-deep: #8a601f;
   --gold-pale: #ffe9a6;
