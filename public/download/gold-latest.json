@@ -1,11 +1,11 @@
 {
-  "version": "1.1.24",
+  "version": "1.1.25",
   "packageId": "com.englishtok.gold",
-  "apkUrl": "/lin-go-gold-1.1.24.apk",
-  "sha256": "FA366B40F3F1077C9756968106E2D646888969D7D05627C07FB9F3C1D6EF2A54",
-  "size": 90501057,
+  "apkUrl": "/lin-go-gold-1.1.25.apk",
+  "sha256": "8016AFF5FA884F212AE0D90391818119083C714CBD9C8468FB66E4C93FB40A84",
+  "size": 90501293,
   "minimumAndroidSdk": 24,
-  "notes": "تحديث Gold 1.1.24: إزالة اللون الرمادي من الإطارات (app + control panel) + parchment + anti-cheat (device binding). Reels + 17 لعبة + 500 درس.",
-  "releaseUrl": "https://github.com/hmachikh16-boop/englishtok/releases/tag/gold-v1.1.24",
+  "notes": "تحديث Gold 1.1.25: إزالة اللون الرمادي من الإطارات (app + control panel) + parchment + anti-cheat (device binding). Reels + 17 لعبة + 500 درس.",
+  "releaseUrl": "https://github.com/hmachikh16-boop/englishtok/releases/tag/gold-v1.1.25",
   "publishedAt": "2026-11-02T00:00:00.000Z"
 }
