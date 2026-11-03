@@ -88,6 +88,12 @@ export default defineConfig(() => {
       },
     ],
     build: {
+      modulePreload: {
+        resolveDependencies: (_filename, deps) =>
+          deps.filter(
+            (dep) => !dep.includes('curriculum') && !dep.includes('CategoriesTab'),
+          ),
+      },
       rolldownOptions: {
         input: {
           main: path.resolve(__dirname, 'index.html'),
