@@ -388,3 +388,39 @@ body::before {
 .security-pill svg {
   color: var(--gold) !important;
 }
+
+/* ---------- Keep long text inside its frame (activity log, panels) ---------- */
+.split-grid,
+.split-grid > *,
+.panel,
+.activity-panel,
+.activity-feed,
+.activity-row,
+.activity-row-copy {
+  min-width: 0 !important;
+}
+
+.activity-feed,
+.activity-row,
+.activity-row-copy {
+  overflow: hidden !important;
+}
+
+.activity-row {
+  align-items: flex-start !important;
+}
+
+.activity-row-copy {
+  flex: 1 1 auto !important;
+}
+
+.activity-row-copy strong,
+.activity-row-copy span,
+.activity-row-copy .activity-code {
+  max-width: 100% !important;
+}
+
+.activity-row time {
+  flex: 0 0 auto !important;
+  white-space: nowrap !important;
+}
