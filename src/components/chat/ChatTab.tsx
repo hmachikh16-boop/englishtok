@@ -94,16 +94,16 @@ const suggestedPromptsFor = (language: 'en' | 'fr'): SuggestedPrompt[] =>
       ];
 
 const formatScoreColor = (score: number): string => {
-  if (score >= 80) return 'text-emerald-700 bg-emerald-50 border-emerald-200';
-  if (score >= 55) return 'text-amber-700 bg-amber-50 border-amber-200';
-  return 'text-rose-700 bg-rose-50 border-rose-200';
+  if (score >= 80) return 'text-[#a56c18] bg-[#f4e8cc] border-[#d8c49a]';
+  if (score >= 55) return 'text-[#a56c18] bg-[#f4e8cc] border-[#d8c49a]';
+  return 'text-[#8d2f24] bg-[#fbf0d7] border-[#d8c49a]';
 };
 
 const TypingDots: React.FC = () => (
   <span className="inline-flex items-center gap-1" aria-label="المعلم يكتب">
-    <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-[#2f8f7d] [animation-delay:-0.25s]" />
-    <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-[#2f8f7d] [animation-delay:-0.12s]" />
-    <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-[#2f8f7d]" />
+    <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-[#a56c18] [animation-delay:-0.25s]" />
+    <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-[#a56c18] [animation-delay:-0.12s]" />
+    <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-[#a56c18]" />
   </span>
 );
 
@@ -324,10 +324,10 @@ export const ChatTab: React.FC<ChatTabProps> = ({ lessons, userProfile, onBack }
             </div>
             <div className="min-w-0">
               <div className="flex items-center gap-1.5">
-                <h1 className="truncate text-[15px] font-black text-[#173b32]">المعلم الذكي</h1>
-                <Sparkles className="h-3.5 w-3.5 shrink-0 text-[#d39b35]" aria-hidden="true" />
+                <h1 className="truncate text-[15px] font-black text-[#2c2114]">المعلم الذكي</h1>
+                <Sparkles className="h-3.5 w-3.5 shrink-0 text-[#a56c18]" aria-hidden="true" />
               </div>
-              <p className="truncate text-[10px] font-semibold text-[#72847a]">
+              <p className="truncate text-[10px] font-semibold text-[#5b4730]">
                 محادثة {targetNameAr} · تصحيح وترجمة ونطق
               </p>
             </div>
@@ -371,17 +371,17 @@ export const ChatTab: React.FC<ChatTabProps> = ({ lessons, userProfile, onBack }
             <Trash2 className="h-4 w-4" />
           </button>
         </div>
-        <div className="ai-tutor-level-line mx-auto flex w-full max-w-4xl items-center gap-2 px-4 pb-2 text-[10px] font-bold text-[#6d8277] sm:px-6">
+        <div className="ai-tutor-level-line mx-auto flex w-full max-w-4xl items-center gap-2 px-4 pb-2 text-[10px] font-bold text-[#5b4730] sm:px-6">
           <span className="inline-flex items-center gap-1">
-            <span className="h-1.5 w-1.5 rounded-full bg-[#59b59d]" />
+            <span className="h-1.5 w-1.5 rounded-full bg-[#a56c18]" />
             المستوى {level}
           </span>
-          <span className="text-[#b1c0b6]">•</span>
+          <span className="text-[#c9b38a]">•</span>
           <span>المرحلة {stage} من 4</span>
           {serviceState === 'unconfigured' && (
             <>
-              <span className="text-[#b1c0b6]">•</span>
-              <span className="text-amber-700">الخدمة تحتاج إعدادًا</span>
+              <span className="text-[#c9b38a]">•</span>
+              <span className="text-[#8d2f24]">الخدمة تحتاج إعدادًا</span>
             </>
           )}
         </div>
@@ -395,11 +395,11 @@ export const ChatTab: React.FC<ChatTabProps> = ({ lessons, userProfile, onBack }
                 <img src="/images/game-emojis/1f43c.svg" alt="" aria-hidden="true" />
                 <span className="ai-tutor-welcome-sparkle" aria-hidden="true">✦</span>
               </div>
-              <p className="mt-3 text-[11px] font-black uppercase tracking-[0.18em] text-[#2b8b78]">
+              <p className="mt-3 text-[11px] font-black uppercase tracking-[0.18em] text-[#a56c18]">
                 Lin Go AI Tutor
               </p>
-              <h2 className="mt-1 text-xl font-black text-[#173b32]">هيا نتحدث {targetNameAr}</h2>
-              <p className="mx-auto mt-2 max-w-[340px] text-[12px] font-semibold leading-6 text-[#61766b]">
+              <h2 className="mt-1 text-xl font-black text-[#2c2114]">هيا نتحدث {targetNameAr}</h2>
+              <p className="mx-auto mt-2 max-w-[340px] text-[12px] font-semibold leading-6 text-[#5b4730]">
                 اكتب أو تحدث {language === 'fr' ? 'بالفرنسية' : 'بالإنجليزية'}. سأرد عليك حسب مستواك، أصحح الأخطاء بلطف،
                 وأعرض الترجمة والكلمات الجديدة، ونساعدك على النطق.
               </p>
@@ -422,7 +422,7 @@ export const ChatTab: React.FC<ChatTabProps> = ({ lessons, userProfile, onBack }
                     disabled={isSending}
                   >
                     <span>{prompt.labelAr}</span>
-                    <span className="text-[#9aab9f]" aria-hidden="true">↗</span>
+                    <span className="text-[#5b4730]" aria-hidden="true">↗</span>
                   </button>
                 ))}
               </div>
@@ -489,14 +489,14 @@ export const ChatTab: React.FC<ChatTabProps> = ({ lessons, userProfile, onBack }
                         <div className="space-y-2">
                           {message.corrections.map((correction, index) => (
                             <div key={`${message.id}-correction-${index}`} className="ai-tutor-correction">
-                              <p className="text-[11px] font-bold text-rose-700 line-through decoration-rose-300" dir="ltr">
+                              <p className="text-[11px] font-bold text-[#8d2f24] line-through decoration-[#d8c49a]" dir="ltr">
                                 {correction.wrong}
                               </p>
-                              <p className="text-[11px] font-black text-emerald-800" dir="ltr">
+                              <p className="text-[11px] font-black text-[#a56c18]" dir="ltr">
                                 {correction.correct}
                               </p>
                               {correction.explanationAr && (
-                                <p className="mt-1 text-[10px] font-semibold leading-5 text-[#6b7e72]">
+                                <p className="mt-1 text-[10px] font-semibold leading-5 text-[#5b4730]">
                                   {correction.explanationAr}
                                 </p>
                               )}
@@ -518,11 +518,11 @@ export const ChatTab: React.FC<ChatTabProps> = ({ lessons, userProfile, onBack }
                             return (
                               <div key={vocabularyKey} className="ai-tutor-word">
                                 <div className="flex min-w-0 items-center gap-1.5" dir="ltr">
-                                  <span className="truncate text-[12px] font-black text-[#184c41]">
+                                  <span className="truncate text-[12px] font-black text-[#2c2114]">
                                     {vocabulary.word}
                                   </span>
                                   {vocabulary.phonetic && (
-                                    <span className="truncate text-[9px] font-semibold text-[#8a9b90]">
+                                    <span className="truncate text-[9px] font-semibold text-[#5b4730]">
                                       {vocabulary.phonetic}
                                     </span>
                                   )}
@@ -539,7 +539,7 @@ export const ChatTab: React.FC<ChatTabProps> = ({ lessons, userProfile, onBack }
                                     )}
                                   </button>
                                 </div>
-                                <p className="mt-1 text-[10px] font-semibold leading-5 text-[#657a6d]">
+                                <p className="mt-1 text-[10px] font-semibold leading-5 text-[#5b4730]">
                                   {vocabulary.meaningAr}
                                 </p>
                               </div>
@@ -560,16 +560,16 @@ export const ChatTab: React.FC<ChatTabProps> = ({ lessons, userProfile, onBack }
                             {message.pronunciation.score}/100
                           </span>
                         </div>
-                        <p className="mt-2 text-[11px] font-bold leading-5 text-[#46685b]">
+                        <p className="mt-2 text-[11px] font-bold leading-5 text-[#5b4730]">
                           {message.pronunciation.feedbackAr}
                         </p>
                         {message.pronunciation.tipAr && (
-                          <p className="mt-1.5 flex items-start gap-1.5 text-[10px] font-semibold leading-5 text-[#7a6b3f]">
+                          <p className="mt-1.5 flex items-start gap-1.5 text-[10px] font-semibold leading-5 text-[#5b4730]">
                             <Lightbulb className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden="true" />
                             {message.pronunciation.tipAr}
                           </p>
                         )}
-                        <p className="mt-1.5 text-[9px] font-medium text-[#91a398]">
+                        <p className="mt-1.5 text-[9px] font-medium text-[#5b4730]">
                           تقييم تقريبي وفق ما فهمه الميكروفون من نطقك.
                         </p>
                         <button
@@ -615,7 +615,7 @@ export const ChatTab: React.FC<ChatTabProps> = ({ lessons, userProfile, onBack }
               </div>
               <div className="ai-tutor-bubble ai-tutor-bubble-assistant flex items-center gap-2 px-4 py-3">
                 <TypingDots />
-                <span className="text-[11px] font-semibold text-[#7b9185]">أفكر معك…</span>
+                <span className="text-[11px] font-semibold text-[#5b4730]">أفكر معك…</span>
               </div>
             </div>
           )}
@@ -630,7 +630,7 @@ export const ChatTab: React.FC<ChatTabProps> = ({ lessons, userProfile, onBack }
                     type="button"
                     onClick={handleRetry}
                     disabled={isSending}
-                    className="mt-2 inline-flex items-center gap-1.5 rounded-lg bg-white/70 px-2.5 py-1.5 text-[10px] font-black text-rose-700 hover:bg-white"
+                    className="mt-2 inline-flex items-center gap-1.5 rounded-lg bg-[#fbf0d7]/70 px-2.5 py-1.5 text-[10px] font-black text-[#8d2f24] hover:bg-[#fbf0d7]"
                   >
                     <RefreshCw className="h-3 w-3" aria-hidden="true" />
                     إعادة المحاولة
@@ -640,7 +640,7 @@ export const ChatTab: React.FC<ChatTabProps> = ({ lessons, userProfile, onBack }
               <button
                 type="button"
                 onClick={() => setError(null)}
-                className="shrink-0 rounded-md p-1 text-rose-500 hover:bg-white/60"
+                className="shrink-0 rounded-md p-1 text-[#8d2f24] hover:bg-[#fbf0d7]/60"
                 aria-label="إغلاق الخطأ"
               >
                 <X className="h-3.5 w-3.5" />
@@ -655,12 +655,12 @@ export const ChatTab: React.FC<ChatTabProps> = ({ lessons, userProfile, onBack }
         {practiceTarget && (
           <div className="ai-tutor-practice-card" dir="rtl">
             <div className="flex min-w-0 flex-1 items-start gap-2">
-              <Mic className="mt-0.5 h-4 w-4 shrink-0 text-[#2f8f7d]" aria-hidden="true" />
+              <Mic className="mt-0.5 h-4 w-4 shrink-0 text-[#a56c18]" aria-hidden="true" />
               <div className="min-w-0">
-                <p className="text-[9px] font-black uppercase tracking-wide text-[#2f8f7d]">
+                <p className="text-[9px] font-black uppercase tracking-wide text-[#a56c18]">
                   تدريب النطق
                 </p>
-                <p className="truncate text-[11px] font-bold text-[#294d42]" dir="ltr">
+                <p className="truncate text-[11px] font-bold text-[#2c2114]" dir="ltr">
                   {practiceTarget}
                 </p>
               </div>
@@ -677,7 +677,7 @@ export const ChatTab: React.FC<ChatTabProps> = ({ lessons, userProfile, onBack }
             <button
               type="button"
               onClick={() => setPracticeTarget(null)}
-              className="shrink-0 rounded-md p-1 text-[#91a398] hover:bg-[#edf5ee]"
+              className="shrink-0 rounded-md p-1 text-[#5b4730] hover:bg-[#f4e8cc]"
               aria-label="إلغاء تدريب النطق"
             >
               <X className="h-3.5 w-3.5" />
@@ -737,10 +737,10 @@ export const ChatTab: React.FC<ChatTabProps> = ({ lessons, userProfile, onBack }
               </button>
             </div>
           </div>
-          <div className="mt-2 flex items-center justify-between gap-2 px-1 text-[9px] font-semibold text-[#90a196]" dir="rtl">
+          <div className="mt-2 flex items-center justify-between gap-2 px-1 text-[9px] font-semibold text-[#5b4730]" dir="rtl">
             <span>المعلم الذكي قد يخطئ؛ راجع التصحيحات دائمًا.</span>
             <span className="inline-flex items-center gap-1">
-              <span className="h-1 w-1 rounded-full bg-[#7ab7a5]" />
+              <span className="h-1 w-1 rounded-full bg-[#a56c18]" />
               محادثة آمنة للتعلم
             </span>
           </div>
