@@ -1,11 +1,11 @@
 {
-  "version": "1.1.26",
+  "version": "1.1.27",
   "packageId": "com.englishtok.gold",
-  "apkUrl": "/lin-go-gold-1.1.26.apk",
-  "sha256": "9CF31E788BD39E909F108328329F3F83F997D938339E436919BB97785ADF77D8",
+  "apkUrl": "/lin-go-gold-1.1.27.apk",
+  "sha256": "73CDFAB3DF581565EF5C27CE0B137C3461BCA791FA667CEAA08475B3B6D7705C",
   "size": 91486378,
   "minimumAndroidSdk": 24,
-  "notes": "تحديث Gold 1.1.26: Phase 1+2 performance (manifest check, no 5.4MB fetch every launch, inline splash, lazy screens, backdrop-blur removed). Reels + 17 لعبة + 500 درس.",
-  "releaseUrl": "https://github.com/hmachikh16-boop/englishtok/releases/tag/gold-v1.1.26",
+  "notes": "تحديث Gold 1.1.27: جلد ورقي (parchment) على المعلم الذكي + Phase 1+2 performance (manifest check, splash, lazy screens, backdrop-blur removed). Reels + 17 لعبة + 500 درس.",
+  "releaseUrl": "https://github.com/hmachikh16-boop/englishtok/releases/tag/gold-v1.1.27",
   "publishedAt": "2026-11-03T00:00:00.000Z"
 }
