@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-11-03T16:38:42.903Z",
+  "en": {
+    "version": "33a5dfcf3cb10da1",
+    "url": "/content/learning-path.json",
+    "bytes": 5685258
+  },
+  "fr": {
+    "version": "8337119640e72667",
+    "url": "/content/learning-path-fr.json",
+    "bytes": 3229622
+  }
+}

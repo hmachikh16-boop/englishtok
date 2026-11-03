@@ -1,12 +1,44 @@
+import { Capacitor } from '@capacitor/core';
 import type { Lesson } from '../types';
 
 const CONTENT_CACHE_KEYS = {
   en: 'englishtok_learning_path_content_v7',
   fr: 'englishtok_learning_path_content_fr_v1',
 } as const;
+const CONTENT_VERSION_KEYS = {
+  en: 'englishtok_learning_path_version_en_v1',
+  fr: 'englishtok_learning_path_version_fr_v1',
+} as const;
+const CONTENT_LAST_CHECK_KEYS = {
+  en: 'englishtok_learning_path_checked_en_v1',
+  fr: 'englishtok_learning_path_checked_fr_v1',
+} as const;
 const GITHUB_REPOSITORY = import.meta.env.VITE_GITHUB_REPOSITORY;
+const CONTENT_REMOTE_BASE = (
+  import.meta.env.VITE_CONTENT_BASE_URL || 'https://englishtok-eight.vercel.app'
+).replace(/\/+$/, '');
+
+/** The web build re-checks the published content once a day. */
+const WEB_CHECK_INTERVAL_MS = 24 * 60 * 60 * 1000;
+/** Native builds already ship the curriculum, so a weekly check is enough. */
+const NATIVE_CHECK_INTERVAL_MS = 7 * 24 * 60 * 60 * 1000;
+const MANIFEST_TIMEOUT_MS = 8_000;
+const CONTENT_TIMEOUT_MS = 20_000;
 
 type ContentLanguage = keyof typeof CONTENT_CACHE_KEYS;
+
+interface ContentManifestEntry {
+  version: string;
+  url: string;
+  bytes?: number;
+}
+
+interface ContentManifest {
+  schemaVersion: number;
+  generatedAt?: string;
+  en?: ContentManifestEntry;
+  fr?: ContentManifestEntry;
+}
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null && !Array.isArray(value);
@@ -85,6 +117,94 @@ const parseContent = (value: unknown): Lesson[] | null => {
   return lessons;
 };
 
+const parseManifest = (value: unknown): ContentManifest | null => {
+  if (!isRecord(value) || value.schemaVersion !== 1) return null;
+  const parseEntry = (entry: unknown): ContentManifestEntry | null => {
+    if (!isRecord(entry) || !hasText(entry.version) || !hasText(entry.url)) return null;
+    return {
+      version: entry.version,
+      url: entry.url,
+      bytes: typeof entry.bytes === 'number' ? entry.bytes : undefined,
+    };
+  };
+  return {
+    schemaVersion: 1,
+    generatedAt: hasText(value.generatedAt) ? value.generatedAt : undefined,
+    en: parseEntry(value.en) ?? undefined,
+    fr: parseEntry(value.fr) ?? undefined,
+  };
+};
+
+const readStorage = (key: string): string | null => {
+  if (typeof window === 'undefined') return null;
+  try {
+    return window.localStorage.getItem(key);
+  } catch {
+    return null;
+  }
+};
+
+const writeStorage = (key: string, value: string) => {
+  if (typeof window === 'undefined') return;
+  try {
+    window.localStorage.setItem(key, value);
+  } catch (error) {
+    console.warn('Unable to update the Lin Go content state:', error);
+  }
+};
+
+const readVersion = (language: ContentLanguage): string | null =>
+  readStorage(CONTENT_VERSION_KEYS[language]);
+
+const writeVersion = (language: ContentLanguage, version: string) =>
+  writeStorage(CONTENT_VERSION_KEYS[language], version);
+
+const readLastCheck = (language: ContentLanguage): number => {
+  const raw = readStorage(CONTENT_LAST_CHECK_KEYS[language]);
+  const parsed = raw ? Number(raw) : 0;
+  return Number.isFinite(parsed) ? parsed : 0;
+};
+
+const writeLastCheck = (language: ContentLanguage) =>
+  writeStorage(CONTENT_LAST_CHECK_KEYS[language], String(Date.now()));
+
+const isNativePlatform = (): boolean => {
+  try {
+    return Capacitor.getPlatform() !== 'web';
+  } catch {
+    return false;
+  }
+};
+
+const contentFileName = (language: ContentLanguage): string =>
+  language === 'fr' ? 'learning-path-fr.json' : 'learning-path.json';
+
+const defaultContentUrl = (base: string, language: ContentLanguage): string =>
+  `${base}/content/${contentFileName(language)}`;
+
+const resolveContentUrl = (base: string, url: string): string => {
+  if (/^https?:\/\//i.test(url)) return url;
+  return `${base}${url.startsWith('/') ? '' : '/'}${url}`;
+};
+
+const getRepository = () => {
+  const repository = GITHUB_REPOSITORY;
+  if (typeof repository !== 'string' || !/^[\w.-]+\/[\w.-]+$/.test(repository)) {
+    return null;
+  }
+  return repository;
+};
+
+const fetchManifest = async (base: string): Promise<ContentManifest | null> => {
+  const response = await fetch(`${base}/content/content-manifest.json`, {
+    cache: 'no-cache',
+    headers: { Accept: 'application/json' },
+    signal: timeoutSignal(MANIFEST_TIMEOUT_MS),
+  });
+  if (!response.ok) return null;
+  return parseManifest(await response.json());
+};
+
 export const getCachedLearningPath = (language: ContentLanguage = 'en'): Lesson[] | null => {
   if (typeof window === 'undefined') return null;
   try {
@@ -108,86 +228,111 @@ const saveContent = (lessons: Lesson[], language: ContentLanguage) => {
   }
 };
 
-const getRepository = () => {
-  const repository = GITHUB_REPOSITORY;
-  if (typeof repository !== 'string' || !/^[\w.-]+\/[\w.-]+$/.test(repository)) {
-    return null;
-  }
-  return repository;
+const downloadContent = async (
+  url: string,
+  language: ContentLanguage,
+  version: string | null,
+  useNoStore: boolean,
+): Promise<Lesson[] | null> => {
+  const response = await fetch(url, {
+    cache: useNoStore ? 'no-store' : 'default',
+    headers: { Accept: 'application/json' },
+    signal: timeoutSignal(CONTENT_TIMEOUT_MS),
+  });
+  if (!response.ok) return null;
+
+  const lessons = parseContent(await response.json());
+  if (!lessons) return null;
+
+  saveContent(lessons, language);
+  writeVersion(language, version ?? `local-${Date.now()}`);
+  writeLastCheck(language);
+  return lessons;
 };
+
+export interface FetchLatestLearningPathOptions {
+  /** Manual refresh from Settings: bypasses the interval and the version check. */
+  force?: boolean;
+}
 
 /**
- * Lesson content lives in the repository (public/content/learning-path.json)
- * and is also mirrored to jsDelivr. Both endpoints send CORS headers, unlike
- * GitHub release assets whose download redirect is blocked inside the WebView.
+ * Returns updated lesson content, or `null` when there is nothing new.
+ *
+ * The app already ships the full English curriculum in its JavaScript bundle,
+ * so native builds never download it again. The web build checks a tiny
+ * manifest once a day and only downloads the large JSON when its version
+ * actually changed. This removes a 0.5–5 MB request from every launch.
  */
-const contentUrls = (
-  repository: string,
-  language: ContentLanguage,
-): { url: string; githubApi: boolean }[] => {
-  const fileName = language === 'fr' ? 'learning-path-fr.json' : 'learning-path.json';
-  const local = { url: `/content/${fileName}`, githubApi: false };
-  const remote = [
-    {
-      url: `https://api.github.com/repos/${repository}/contents/public/content/${fileName}?ref=main`,
-      githubApi: true,
-    },
-    {
-      url: `https://cdn.jsdelivr.net/gh/${repository}@main/public/content/${fileName}`,
-      githubApi: false,
-    },
-  ];
-  // French is loaded from the bundled/site file first so a preview always
-  // matches the generated curriculum. English keeps its existing update chain.
-  return language === 'fr' ? [local, ...remote] : [...remote, local];
-};
-
 export const fetchLatestLearningPath = async (
   language: ContentLanguage = 'en',
+  options: FetchLatestLearningPathOptions = {},
 ): Promise<Lesson[] | null> => {
-  const repository = getRepository();
-  if (!repository) {
-    if (language === 'fr') {
-      const response = await fetch('/content/learning-path-fr.json', { cache: 'no-store' });
-      if (!response.ok) return null;
-      const lessons = parseContent(await response.json());
-      if (lessons) saveContent(lessons, 'fr');
-      return lessons;
+  const force = options.force === true;
+  const native = isNativePlatform();
+
+  // Native English: the curriculum is compiled into the app.
+  if (native && language === 'en' && !force) return null;
+
+  // Native French: read the bundled asset once, never touch the network.
+  if (native && language === 'fr' && !force) {
+    if (readStorage(CONTENT_CACHE_KEYS.fr)) return null;
+    try {
+      return await downloadContent('/content/learning-path-fr.json', 'fr', null, false);
+    } catch (error) {
+      console.warn('Unable to load the bundled Lin Go French content:', error);
+      return null;
     }
+  }
+
+  const hasCachedContent = Boolean(readStorage(CONTENT_CACHE_KEYS[language]));
+
+  if (!force && hasCachedContent) {
+    const interval = native ? NATIVE_CHECK_INTERVAL_MS : WEB_CHECK_INTERVAL_MS;
+    if (Date.now() - readLastCheck(language) < interval) return null;
+  }
+
+  const base = native ? CONTENT_REMOTE_BASE : '';
+  let manifest: ContentManifest | null = null;
+  try {
+    manifest = await fetchManifest(base);
+  } catch {
+    manifest = null;
+  }
+
+  const entry = manifest?.[language] ?? null;
+  const cachedVersion = readVersion(language);
+
+  if (!force && hasCachedContent && entry?.version && cachedVersion === entry.version) {
+    writeLastCheck(language);
     return null;
   }
 
-  let lastError: unknown = new Error('تعذر تحميل محتوى الدروس.');
+  const urls: string[] = [];
+  if (entry?.url) urls.push(resolveContentUrl(base, entry.url));
+  urls.push(defaultContentUrl(base, language));
 
-  for (const candidate of contentUrls(repository, language)) {
-    try {
-      const contentResponse = await fetch(candidate.url, {
-        cache: 'no-store',
-        headers: candidate.githubApi
-          ? { Accept: 'application/vnd.github.raw', 'X-GitHub-Api-Version': '2022-11-28' }
-          : { Accept: 'application/json' },
-        signal: timeoutSignal(20_000),
-      });
-      if (!contentResponse.ok) {
-        lastError = new Error(`Lesson content download failed (${contentResponse.status}).`);
-        continue;
-      }
-
-      const lessons = parseContent(await contentResponse.json());
-      if (!lessons) {
-        lastError = new Error('The downloaded lesson content has an unsupported or invalid format.');
-        continue;
-      }
-
-      saveContent(lessons, language);
-      return lessons;
-    } catch (error) {
-      lastError = error;
+  if (native && language === 'fr') {
+    urls.push('/content/learning-path-fr.json');
+  } else if (!native) {
+    const repository = getRepository();
+    if (repository) {
+      urls.push(
+        `https://cdn.jsdelivr.net/gh/${repository}@main/public/content/${contentFileName(language)}`,
+      );
     }
   }
 
-  throw lastError instanceof Error
-    ? lastError
-    : new Error('Unable to download the latest lesson content.');
-};
+  for (const url of urls) {
+    try {
+      const lessons = await downloadContent(url, language, entry?.version ?? null, force);
+      if (lessons) return lessons;
+    } catch {
+      /* Try the next mirror. */
+    }
+  }
 
+  // A failed background refresh must never interrupt the app. Remember the
+  // attempt so an offline device does not retry on every single launch.
+  writeLastCheck(language);
+  return null;
+};

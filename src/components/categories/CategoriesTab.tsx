@@ -1,4 +1,4 @@
-import React, { useCallback, useDeferredValue, useEffect, useMemo, useRef, useState, useTransition } from 'react';
+import React, { lazy, Suspense, useCallback, useDeferredValue, useEffect, useMemo, useRef, useState, useTransition } from 'react';
 import { Search, Sparkles, Play, BookOpen, Clock, Heart, Lock, CheckCircle2, Trophy, Star, ArrowDown, ArrowLeft, Crown, Footprints } from 'lucide-react';
 import { Lesson, CategoryKey, UserProfile } from '../../types';
 import { CATEGORIES } from '../../data/lessons';
@@ -17,7 +17,9 @@ import {
   StageMotivationalCards,
 } from '../learning/MotivationalCards';
 import { PrimaryAvatar } from '../video/PrimaryCharacterArt';
-import { ReelsViewer } from '../reels/ReelsViewer';
+const ReelsViewer = lazy(() =>
+  import('../reels/ReelsViewer').then((module) => ({ default: module.ReelsViewer })),
+);
 import { GoldJourneyPanel } from '../gold/GoldJourneyPanel';
 import { GoldErrorBoundary } from '../gold/GoldErrorBoundary';
 import { EDUCATIONAL_PHASES, findSchoolYearRoute, SCHOOL_YEAR_ALIGNMENT_NOTE } from '../../data/educationalStructure';
@@ -867,7 +869,11 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
             <Play className="h-5 w-5" />
             <span>Reels</span>
           </button>
-          {showReels && <ReelsViewer userProfile={userProfile} onClose={() => setShowReels(false)} />}
+          {showReels && (
+            <Suspense fallback={null}>
+              <ReelsViewer userProfile={userProfile} onClose={() => setShowReels(false)} />
+            </Suspense>
+          )}
         </>
       )}
     </div>

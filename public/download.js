@@ -3,7 +3,7 @@ const DOWNLOAD_PAGE = 'https://englishtok-eight.vercel.app/download';
 const LOCAL_APK = '/english-tok.apk';
 const GITHUB_APK = `https://github.com/${REPOSITORY}/releases/latest/download/english-tok.apk`;
 const GITHUB_RELEASE = `https://github.com/${REPOSITORY}/releases/latest`;
-let GOLD_VERSION = '1.1.22';
+let GOLD_VERSION = '1.1.25';
 let GOLD_APK = `/lin-go-gold-${GOLD_VERSION}.apk`;
 let GOLD_GITHUB_APK =
   `https://github.com/${REPOSITORY}/releases/download/gold-v${GOLD_VERSION}/lin-go-gold-${GOLD_VERSION}.apk`;
@@ -120,7 +120,14 @@ const ensureGoldTarget = async () => {
   let target = GOLD_APK;
   try {
     const response = await fetch(GOLD_APK, { method: 'HEAD', cache: 'no-store' });
-    if (!response.ok && response.status !== 405) {
+    const contentType = response.headers.get('content-type') || '';
+    const isApk =
+      response.ok &&
+      (contentType.includes('android.package-archive') ||
+        contentType.includes('application/octet-stream'));
+    // The SPA rewrite answers unknown paths with index.html, so a 200 alone is
+    // not enough: without an APK content type we must use the GitHub release.
+    if (!isApk && response.status !== 405) {
       target = GOLD_GITHUB_APK;
     }
   } catch {

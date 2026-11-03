@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { App as CapacitorApp } from '@capacitor/app';
 import { Capacitor } from '@capacitor/core';
 import { ActiveTab, Lesson, TargetLanguage, UserProfile } from './types';
@@ -37,13 +37,41 @@ import {
 import { TopBar } from './components/navigation/TopBar';
 import { BottomTabBar } from './components/navigation/BottomTabBar';
 import { CategoriesTab } from './components/categories/CategoriesTab';
-import { VocabTab } from './components/vocab/VocabTab';
-import { GamesTab } from './components/games/GamesTab';
-import { ProgressTab } from './components/progress/ProgressTab';
-import { SettingsTab } from './components/settings/SettingsTab';
-import { ChatTab } from './components/chat/ChatTab';
-import { LessonSession } from './components/learning/LessonSession';
-import { PlacementAssessmentGate } from './components/placement/PlacementAssessmentGate';
+
+// Secondary screens are split into their own chunks so the home path paints
+// before games, settings, chat, progress or a full lesson are needed.
+const VocabTab = lazy(() =>
+  import('./components/vocab/VocabTab').then((module) => ({ default: module.VocabTab })),
+);
+const GamesTab = lazy(() =>
+  import('./components/games/GamesTab').then((module) => ({ default: module.GamesTab })),
+);
+const ProgressTab = lazy(() =>
+  import('./components/progress/ProgressTab').then((module) => ({ default: module.ProgressTab })),
+);
+const SettingsTab = lazy(() =>
+  import('./components/settings/SettingsTab').then((module) => ({ default: module.SettingsTab })),
+);
+const ChatTab = lazy(() =>
+  import('./components/chat/ChatTab').then((module) => ({ default: module.ChatTab })),
+);
+const LessonSession = lazy(() =>
+  import('./components/learning/LessonSession').then((module) => ({
+    default: module.LessonSession,
+  })),
+);
+const PlacementAssessmentGate = lazy(() =>
+  import('./components/placement/PlacementAssessmentGate').then((module) => ({
+    default: module.PlacementAssessmentGate,
+  })),
+);
+
+const TabLoadingFallback: React.FC = () => (
+  <div className="flex flex-1 items-center justify-center p-8" role="status" aria-live="polite">
+    <span className="h-8 w-8 animate-spin rounded-full border-2 border-amber-800/25 border-t-amber-800" />
+    <span className="sr-only">جارٍ التحميل…</span>
+  </div>
+);
 
 export default function App() {
   const [userProfile, setUserProfile] = useState<UserProfile>(() => getStoredProfile());
@@ -96,6 +124,15 @@ export default function App() {
     if (!IS_GOLD_EDITION) return;
     document.title = 'Lin Go Gold — نفس التطبيق، مع تجربة Gold+';
     document.documentElement.dataset.linGoEdition = 'gold';
+  }, []);
+
+  // The inline splash in index.html covers the blank WebView until React paints.
+  useEffect(() => {
+    const splash = document.getElementById('boot-splash');
+    if (!splash) return;
+    splash.classList.add('is-hidden');
+    const timer = window.setTimeout(() => splash.remove(), 320);
+    return () => window.clearTimeout(timer);
   }, []);
 
   useEffect(() => {
@@ -192,25 +229,51 @@ export default function App() {
     setContentLoading(!cached && language === 'fr');
     setSelectedLessonId(null);
 
-    void fetchLatestLearningPath(language)
-      .then((latestLessons) => {
-        if (isMounted && latestLessons) {
-          setLessons(
-            IS_GOLD_EDITION
-              ? applyGoldCurriculum(latestLessons, language)
-              : latestLessons,
-          );
-        }
-      })
-      .catch((error: unknown) => {
-        console.warn(`Using locally cached ${language} Lin Go lesson content:`, error);
-      })
-      .finally(() => {
-        if (isMounted) setContentLoading(false);
-      });
+    const runUpdate = () => {
+      void fetchLatestLearningPath(language)
+        .then((latestLessons) => {
+          if (isMounted && latestLessons) {
+            setLessons(
+              IS_GOLD_EDITION
+                ? applyGoldCurriculum(latestLessons, language)
+                : latestLessons,
+            );
+          }
+        })
+        .catch((error: unknown) => {
+          console.warn(`Using locally cached ${language} Lin Go lesson content:`, error);
+        })
+        .finally(() => {
+          if (isMounted) setContentLoading(false);
+        });
+    };
+
+    // French has no bundled lessons, so its very first load must not wait.
+    const mustLoadNow = language === 'fr' && !cached;
+    let cancelScheduled: (() => void) | null = null;
+
+    if (mustLoadNow) {
+      runUpdate();
+    } else {
+      const idleWindow = window as Window & {
+        requestIdleCallback?: (
+          callback: () => void,
+          options?: { timeout: number },
+        ) => number;
+        cancelIdleCallback?: (handle: number) => void;
+      };
+      if (typeof idleWindow.requestIdleCallback === 'function') {
+        const handle = idleWindow.requestIdleCallback(runUpdate, { timeout: 4000 });
+        cancelScheduled = () => idleWindow.cancelIdleCallback?.(handle);
+      } else {
+        const handle = window.setTimeout(runUpdate, 1200);
+        cancelScheduled = () => window.clearTimeout(handle);
+      }
+    }
 
     return () => {
       isMounted = false;
+      cancelScheduled?.();
     };
   }, [userProfile.targetLanguage]);
 
@@ -336,7 +399,7 @@ export default function App() {
 
   const handleRefreshContent = async () => {
     const language = userProfile.targetLanguage ?? 'en';
-    const latestLessons = await fetchLatestLearningPath(language);
+    const latestLessons = await fetchLatestLearningPath(language, { force: true });
     if (!latestLessons) return false;
     setLessons(
       IS_GOLD_EDITION ? applyGoldCurriculum(latestLessons, language) : latestLessons,
@@ -520,6 +583,7 @@ export default function App() {
 
         {/* Main Content Area */}
         <main className="flex-1 min-h-0 relative overflow-hidden flex flex-col">
+          <Suspense fallback={<TabLoadingFallback />}>
           {activeTab === 'categories' && (
             <CategoriesTab
               lessons={lessons}
@@ -594,6 +658,7 @@ export default function App() {
               onBack={() => handleChangeTab('categories')}
             />
           )}
+          </Suspense>
         </main>
 
         {/* Fixed Mobile Bottom Tab Bar */}
@@ -605,12 +670,26 @@ export default function App() {
         />}
 
       </div>
-      {placementGateOpen && <PlacementAssessmentGate
-        profile={userProfile}
-        onUpdateProfile={handleUpdateProfile}
-        onSelectLanguage={handleSelectLanguage}
-        onContinue={() => setPlacementGateOpen(false)}
-      />}
+      {placementGateOpen && (
+        <Suspense
+          fallback={
+            <div
+              className="fixed inset-0 z-[80] grid place-items-center bg-[#efd9ad]"
+              role="status"
+              aria-live="polite"
+            >
+              <span className="h-9 w-9 animate-spin rounded-full border-2 border-amber-800/25 border-t-amber-800" />
+            </div>
+          }
+        >
+          <PlacementAssessmentGate
+            profile={userProfile}
+            onUpdateProfile={handleUpdateProfile}
+            onSelectLanguage={handleSelectLanguage}
+            onContinue={() => setPlacementGateOpen(false)}
+          />
+        </Suspense>
+      )}
     </div>
   );
 
