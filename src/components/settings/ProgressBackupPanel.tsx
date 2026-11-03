@@ -556,7 +556,7 @@ export const ProgressBackupPanel: React.FC<ProgressBackupPanelProps> = ({
 
       {preview && previewSummary && (
         <div
-          className="fixed inset-0 z-[250] flex items-center justify-center overflow-y-auto bg-slate-950/80 p-3 backdrop-blur-sm"
+          className="fixed inset-0 z-[250] flex items-center justify-center overflow-y-auto bg-slate-950/90 p-3"
           role="dialog"
           aria-modal="true"
           aria-labelledby="progress-preview-title"

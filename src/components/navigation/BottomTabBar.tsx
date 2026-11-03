@@ -73,7 +73,7 @@ export const BottomTabBar: React.FC<BottomTabBarProps> = ({
 
   return (
     <nav
-      className="journey-nav relative z-40 w-full shrink-0 backdrop-blur-md border-t safe-area-pb"
+      className="journey-nav relative z-40 w-full shrink-0 border-t safe-area-pb"
       aria-label="التنقل الرئيسي"
     >
       <div className="mx-auto grid h-[68px] w-full max-w-2xl grid-cols-5 items-center px-2 sm:px-4">

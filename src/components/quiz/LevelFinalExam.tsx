@@ -357,7 +357,7 @@ export const LevelFinalExam: React.FC<LevelFinalExamProps> = ({
 
   return (
     <div
-      className="journey-exam fixed inset-0 z-[80] flex items-center justify-center bg-black/65 p-3 backdrop-blur-sm"
+      className="journey-exam fixed inset-0 z-[80] flex items-center justify-center bg-black/75 p-3"
       role="dialog"
       aria-modal="true"
       aria-label={`الاختبار النهائي: ${titleAr}`}

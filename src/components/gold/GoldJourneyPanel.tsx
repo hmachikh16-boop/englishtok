@@ -335,7 +335,7 @@ export const GoldJourneyPanel: React.FC<GoldJourneyPanelProps> = ({
       </div>
 
       {chestOpen && (
-        <div className="fixed inset-0 z-[120] flex items-center justify-center bg-[var(--rt-blue-950)]/70 p-4 backdrop-blur-sm" role="dialog" aria-modal="true" aria-label="صندوق Gold اليومي">
+        <div className="fixed inset-0 z-[120] flex items-center justify-center bg-[var(--rt-blue-950)]/85 p-4" role="dialog" aria-modal="true" aria-label="صندوق Gold اليومي">
           <div className="relative w-full max-w-sm overflow-hidden rounded-[2rem] border-2 border-[var(--rt-gold-500)] bg-[#182c3f] p-6 text-center shadow-2xl">
             <div className="gold-result-confetti" aria-hidden="true">
               {Array.from({ length: 14 }).map((_, index) => (
