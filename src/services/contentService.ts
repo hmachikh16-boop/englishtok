@@ -294,7 +294,7 @@ export const fetchLatestLearningPath = async (
   const hasCachedContent = Boolean(readStorage(CONTENT_CACHE_KEYS[language]));
   const bundledVersion = BUNDLED_CONTENT_VERSIONS[language] || '';
 
-  if (!force && hasCachedContent) {
+  if (!force) {
     const interval = native ? NATIVE_CHECK_INTERVAL_MS : WEB_CHECK_INTERVAL_MS;
     if (Date.now() - readLastCheck(language) < interval) return null;
   }
