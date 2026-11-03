@@ -2194,8 +2194,8 @@ button.journey-frame-toggle svg {
   background:
     radial-gradient(ellipse at 50% 0%, rgb(244 182 3 / 16%), transparent 42%),
     rgb(19 34 48 / 82%);
-  backdrop-filter: blur(9px);
-  -webkit-backdrop-filter: blur(9px);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
 }
 
 .placement-panel {
@@ -2563,7 +2563,7 @@ button.journey-frame-toggle svg {
   border-color: rgb(255 211 77 / 30%);
   background: rgb(255 255 255 / 9%);
   box-shadow: inset 0 1px rgb(255 255 255 / 8%);
-  backdrop-filter: blur(8px);
+  backdrop-filter: none;
 }
 
 .path-hero-intro-zone > .relative.mt-6 {

@@ -593,7 +593,7 @@ button.journey-frame-toggle:hover { border-color: #d9f99d; color: #1e5900; }
 .lesson-library[open] > :not(summary) { margin-inline: 12px; }
 .lesson-library[open] > .lesson-card-grid { margin-bottom: 12px; }
 .lesson-library > .relative { margin-top: 12px; }
-.placement-gate { background: rgb(13 27 20 / 76%); backdrop-filter: blur(8px); padding-block: max(12px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-bottom)); }
+.placement-gate { background: rgb(13 27 20 / 76%); backdrop-filter: none; padding-block: max(12px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-bottom)); }
 .placement-panel { border-color: #dcebe0; color: #273b32; }
 .placement-panel-top { color: #fff; background: linear-gradient(105deg, #1f6b00, #2f8000); }
 .placement-logo { display: grid; width: 38px; height: 38px; place-items: center; border-radius: 13px; color: #188720; background: #fff; }
@@ -927,8 +927,8 @@ svg {
 /* Stage rail: quick, thumb-friendly navigation across the long learning path. */
 .path-stage-rail {
   background: rgb(243 248 238 / 94%);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
 }
 .path-stage-rail-label {
   color: #5d7364;
@@ -2529,7 +2529,7 @@ button.journey-frame-toggle svg { color: var(--duo-blue); }
   box-shadow: 0 2px 0 rgb(15 23 42 / 5%);
   font-size: 9px;
   font-weight: 1000;
-  backdrop-filter: blur(4px);
+  backdrop-filter: none;
 }
 .games-picture-stage {
   position: relative;
@@ -2667,7 +2667,7 @@ button.journey-frame-toggle svg { color: var(--duo-blue); }
   border-bottom: 1px solid #e0eadf;
   background: rgb(255 255 255 / 92%);
   box-shadow: 0 4px 16px rgb(23 59 50 / 5%);
-  backdrop-filter: blur(14px);
+  backdrop-filter: none;
 }
 .ai-tutor-icon-button {
   display: grid;
@@ -2970,7 +2970,7 @@ button.journey-frame-toggle svg { color: var(--duo-blue); }
   border-top: 1px solid #dfeae1;
   background: rgb(250 253 249 / 96%);
   box-shadow: 0 -6px 18px rgb(27 64 48 / 4%);
-  backdrop-filter: blur(12px);
+  backdrop-filter: none;
 }
 .ai-tutor-practice-card {
   display: flex;
@@ -3682,7 +3682,7 @@ button.journey-frame-toggle svg { color: var(--duo-blue); }
   font-size: clamp(5px, 2.45cqw, 8px);
   font-weight: 1000;
   line-height: 1;
-  backdrop-filter: blur(4px);
+  backdrop-filter: none;
 }
 .goal-card-state svg { width: clamp(6px, 2.6cqw, 9px); height: clamp(6px, 2.6cqw, 9px); }
 .goal-card-state.is-unlocked { color: #173b2b; border-color: rgb(253 230 138 / 70%); background: rgb(254 240 138 / 93%); }
@@ -4048,7 +4048,7 @@ button.journey-frame-toggle svg { color: var(--duo-blue); }
   border-radius: 999px;
   color: #fff;
   background: rgb(3 22 24 / 52%);
-  backdrop-filter: blur(3px);
+  backdrop-filter: none;
 }
 .stage-goal-lock svg { width: 9px; height: 9px; }
 .stage-goal-open-mark { color: #173b2b; border-color: rgb(253 230 138 / 70%); background: rgb(254 240 138 / 95%); }
@@ -4114,8 +4114,8 @@ button.journey-frame-toggle svg { color: var(--duo-blue); }
   justify-content: center;
   padding: max(10px, env(safe-area-inset-top)) 10px max(10px, env(safe-area-inset-bottom));
   background: rgb(6 27 24 / 78%);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
   animation: goalModalFade .2s ease-out both;
 }
 .goal-card-modal {
