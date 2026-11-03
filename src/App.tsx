@@ -263,10 +263,10 @@ export default function App() {
         cancelIdleCallback?: (handle: number) => void;
       };
       if (typeof idleWindow.requestIdleCallback === 'function') {
-        const handle = idleWindow.requestIdleCallback(runUpdate, { timeout: 4000 });
+        const handle = idleWindow.requestIdleCallback(runUpdate, { timeout: 8000 });
         cancelScheduled = () => idleWindow.cancelIdleCallback?.(handle);
       } else {
-        const handle = window.setTimeout(runUpdate, 1200);
+        const handle = window.setTimeout(runUpdate, 2500);
         cancelScheduled = () => window.clearTimeout(handle);
       }
     }

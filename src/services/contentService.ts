@@ -18,6 +18,13 @@ const CONTENT_REMOTE_BASE = (
   import.meta.env.VITE_CONTENT_BASE_URL || 'https://englishtok-eight.vercel.app'
 ).replace(/\/+$/, '');
 
+// The English curriculum is compiled into the app bundle. Matching this version
+// to the published manifest lets us skip the very first download entirely.
+const BUNDLED_CONTENT_VERSIONS: Record<ContentLanguage, string> = {
+  en: __CONTENT_VERSION_EN__,
+  fr: __CONTENT_VERSION_FR__,
+};
+
 /** The web build re-checks the published content once a day. */
 const WEB_CHECK_INTERVAL_MS = 24 * 60 * 60 * 1000;
 /** Native builds already ship the curriculum, so a weekly check is enough. */
@@ -285,6 +292,7 @@ export const fetchLatestLearningPath = async (
   }
 
   const hasCachedContent = Boolean(readStorage(CONTENT_CACHE_KEYS[language]));
+  const bundledVersion = BUNDLED_CONTENT_VERSIONS[language] || '';
 
   if (!force && hasCachedContent) {
     const interval = native ? NATIVE_CHECK_INTERVAL_MS : WEB_CHECK_INTERVAL_MS;
@@ -301,10 +309,28 @@ export const fetchLatestLearningPath = async (
 
   const entry = manifest?.[language] ?? null;
   const cachedVersion = readVersion(language);
+  const publishedVersion = entry?.version || '';
+  const matchesBundled =
+    Boolean(bundledVersion) && publishedVersion === bundledVersion;
 
-  if (!force && hasCachedContent && entry?.version && cachedVersion === entry.version) {
-    writeLastCheck(language);
-    return null;
+  if (!force && publishedVersion) {
+    if (
+      hasCachedContent &&
+      (cachedVersion === publishedVersion || matchesBundled)
+    ) {
+      if (cachedVersion !== publishedVersion) {
+        writeVersion(language, publishedVersion);
+      }
+      writeLastCheck(language);
+      return null;
+    }
+    if (!hasCachedContent && language === 'en' && matchesBundled) {
+      // The English curriculum is compiled into the bundle, so there is
+      // nothing to download on the first launch.
+      writeVersion(language, publishedVersion);
+      writeLastCheck(language);
+      return null;
+    }
   }
 
   const urls: string[] = [];

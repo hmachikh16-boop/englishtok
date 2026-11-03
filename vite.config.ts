@@ -1,11 +1,27 @@
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import { readdir, rm } from 'node:fs/promises';
+import { readFileSync } from 'node:fs';
 import path from 'path';
 import {defineConfig} from 'vite';
 
+const readContentVersions = () => {
+  try {
+    const manifest = JSON.parse(
+      readFileSync(path.resolve(__dirname, 'public', 'content', 'content-manifest.json'), 'utf8'),
+    );
+    return {
+      en: typeof manifest?.en?.version === 'string' ? manifest.en.version : '',
+      fr: typeof manifest?.fr?.version === 'string' ? manifest.fr.version : '',
+    };
+  } catch {
+    return { en: '', fr: '' };
+  }
+};
+
 export default defineConfig(() => {
   let outDir = path.resolve(__dirname, 'dist');
+  const contentVersions = readContentVersions();
   return {
     plugins: [
       react(),
@@ -81,6 +97,10 @@ export default defineConfig(() => {
     },
     worker: {
       format: 'es' as const,
+    },
+    define: {
+      __CONTENT_VERSION_EN__: JSON.stringify(contentVersions.en),
+      __CONTENT_VERSION_FR__: JSON.stringify(contentVersions.fr),
     },
     resolve: {
       alias: {
