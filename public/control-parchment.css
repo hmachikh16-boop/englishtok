@@ -395,17 +395,38 @@ body::before {
 .panel,
 .activity-panel,
 .activity-feed,
+.activity-item,
+.activity-copy,
 .activity-row,
 .activity-row-copy {
   min-width: 0 !important;
 }
 
-.activity-feed,
 .activity-row,
 .activity-row-copy {
   overflow: hidden !important;
 }
 
+/* --- Overview panel: last activity (long codes / device ids) --- */
+.activity-item {
+  align-items: flex-start !important;
+}
+
+.activity-copy {
+  flex: 1 1 auto !important;
+  overflow: hidden !important;
+}
+
+.activity-copy strong,
+.activity-copy span {
+  display: block !important;
+  max-width: 100% !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+/* --- Full activity view --- */
 .activity-row {
   align-items: flex-start !important;
 }
