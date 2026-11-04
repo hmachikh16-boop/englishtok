@@ -2503,7 +2503,7 @@ html .path-story-node.is-complete .path-story-hint {
   color: var(--parchment-ink) !important;
 }
 html .path-story-node.is-locked .path-story-avatar-wrap {
-  filter: sepia(0.55) opacity(0.6) !important;
+  filter: saturate(0.62) brightness(0.95) opacity(0.82) !important;
 }
 html .path-story-node.is-locked .path-story-badge {
   background: var(--parchment-faint) !important;

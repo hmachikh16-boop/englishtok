@@ -141,7 +141,8 @@ const PathStoryNode = React.memo(function PathStoryNode({
           <StoryAvatar scene={story.scene} className="path-story-avatar" />
         </span>
         <span className="path-story-badge" aria-hidden="true">
-          {locked ? <Lock className="h-3 w-3" /> : <BookOpen className="h-3 w-3" />}
+          {locked ? <Lock className="h-2.5 w-2.5" /> : <BookOpen className="h-2.5 w-2.5" />}
+          قصة
         </span>
       </span>
       <span className="path-node-title">{story.titleAr}</span>
@@ -353,13 +354,12 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
         else slots.set(slot, [story]);
       });
       const nodes: StageNode[] = [];
-      let precedingUnlocked = level.isUnlocked;
       level.lessons.forEach((entry, index) => {
         nodes.push({ type: 'lesson', entry, index });
-        if (entry.status === 'locked') precedingUnlocked = false;
         const bucket = slots.get(index);
         if (bucket) {
-          bucket.forEach((story) => nodes.push({ type: 'story', story, locked: !precedingUnlocked }));
+          const storyLocked = !level.isUnlocked || entry.status !== 'completed';
+          bucket.forEach((story) => nodes.push({ type: 'story', story, locked: storyLocked }));
         }
       });
       if (lessonCount === 0) {

@@ -1,11 +1,11 @@
 {
-  "version": "1.1.28",
+  "version": "1.1.29",
   "packageId": "com.englishtok.gold",
-  "apkUrl": "/lin-go-gold-1.1.28.apk",
-  "sha256": "2F0D20ABA6611DD38090A08D7D1F5B748B623CC0A7055502B2F674CA78A7397F",
+  "apkUrl": "/lin-go-gold-1.1.29.apk",
+  "sha256": "6A17E2275730C90BCA1A7EA4B87ADF44B90A200D630D60792DF33CF96EDC1736",
   "size": 91498579,
   "minimumAndroidSdk": 24,
-  "notes": "تحديث Gold 1.1.28: محطات قصص مصوّرة داخل المسار + قارئ قصص تفاعلي (اضغط الكلمة لسماعها وترجمتها) + 8 قصص A1–B2 + جلد ورقي كامل لواجهة القصص والمعلم الذكي. Reels + 17 لعبة + 500 درس.",
-  "releaseUrl": "https://github.com/hmachikh16-boop/englishtok/releases/tag/gold-v1.1.28",
+  "notes": "تحديث Gold 1.1.29: محطات القصص في المسار أصبحت أوضح وأجمل (إطار ذهبي + شارة «قصة») وتُفتح فقط بعد إكمال الدرس الذي قبلها + قارئ قصص تفاعلي (اضغط الكلمة لسماعها وترجمتها) + 8 قصص A1–B2 + جلد ورقي كامل لواجهة القصص والمعلم الذكي. Reels + 17 لعبة + 500 درس.",
+  "releaseUrl": "https://github.com/hmachikh16-boop/englishtok/releases/tag/gold-v1.1.29",
   "publishedAt": "2026-11-04T00:00:00.000Z"
 }

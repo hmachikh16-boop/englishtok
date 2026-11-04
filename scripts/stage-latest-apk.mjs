@@ -150,7 +150,7 @@ try {
     size: goldSize,
     minimumAndroidSdk: 24,
     notes:
-      'تحديث Gold ' + goldVersion + ': محطات قصص مصوّرة داخل المسار + قارئ قصص تفاعلي (اضغط الكلمة لسماعها وترجمتها) + 8 قصص A1–B2 + جلد ورقي كامل لواجهة القصص والمعلم الذكي. Reels + 17 لعبة + 500 درس.',
+      'تحديث Gold ' + goldVersion + ': محطات القصص في المسار أصبحت أوضح وأجمل (إطار ذهبي + شارة «قصة») وتُفتح فقط بعد إكمال الدرس الذي قبلها + قارئ قصص تفاعلي (اضغط الكلمة لسماعها وترجمتها) + 8 قصص A1–B2 + جلد ورقي كامل لواجهة القصص والمعلم الذكي. Reels + 17 لعبة + 500 درس.',
     releaseUrl: `https://github.com/${repository}/releases/tag/gold-v${goldVersion}`,
     publishedAt: new Date().toISOString(),
   };
