@@ -196,6 +196,14 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
     cardId: string | null;
     stage: number | null;
   } | null>(null);
+  // Single overlay manager: opening one overlay closes the others to avoid
+  // stacked windows and keep the UI professional and light.
+  const openExclusive = useCallback((next: 'reels' | 'story' | 'exam' | 'goalCard') => {
+    if (next !== 'reels') setShowReels(false);
+    if (next !== 'story') setActiveStoryId(null);
+    if (next !== 'exam') setExamStage(null);
+    if (next !== 'goalCard') setGoalCardDialog(null);
+  }, []);
   const path = learningPath;
   const isFrenchCourse = userProfile.targetLanguage === 'fr';
   const currentStageNumber = useMemo(
@@ -495,16 +503,19 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
   };
 
   const openGoalCard = useCallback((cardId: string) => {
+    openExclusive('goalCard');
     setGoalCardDialog({ cardId, stage: null });
-  }, []);
+  }, [openExclusive]);
 
   const openGoalGallery = useCallback((stage: number) => {
+    openExclusive('goalCard');
     setGoalCardDialog({ cardId: null, stage });
-  }, []);
+  }, [openExclusive]);
 
   const openGoalBrowser = useCallback(() => {
+    openExclusive('goalCard');
     setGoalCardDialog({ cardId: null, stage: null });
-  }, []);
+  }, [openExclusive]);
 
   const saveLevelExamResult = (
     stage: number,
@@ -763,7 +774,7 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
                       shiftPercent={routeLayout.shiftByStoryId.get(node.story.id) ?? 0}
                       completed={completedStoryIds.has(node.story.id)}
                       locked={node.locked}
-                      onSelect={setActiveStoryId}
+                      onSelect={(id) => { openExclusive('story'); setActiveStoryId(id); }}
                     />
                   );
                 })}
@@ -783,7 +794,7 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
                 {!isSchoolYearCourse && visibleLessonCount >= level.lessons.length && <button
                   type="button"
                   disabled={!level.canTakeExam}
-                  onClick={() => setExamStage(level.stage)}
+                  onClick={() => { openExclusive('exam'); setExamStage(level.stage); }}
                   style={{ transform: `translateX(${routeLayout.shiftByExamStage.get(level.stage) ?? 0}%)` }}
                   className={`path-node path-exam-node ${examNodeClass}`}
                   aria-label={`اختبار المرحلة ${level.stage}${level.examPassed ? '، مكتمل' : level.canTakeExam ? '، متاح' : '، أكمل الدروس أولًا'}`}
@@ -1077,7 +1088,7 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
       )}
       {IS_GOLD_EDITION && (
         <>
-          <button type="button" className="reels-fab" onClick={() => setShowReels(true)} aria-label="ريلز تعليمية">
+          <button type="button" className="reels-fab" onClick={() => { openExclusive('reels'); setShowReels(true); }} aria-label="ريلز تعليمية">
             <Play className="h-5 w-5" />
             <span>Reels</span>
           </button>
