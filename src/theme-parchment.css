@@ -2382,3 +2382,353 @@ html .journey-secondary .bg-sky-500[class*='rounded-lg'] {
   background: linear-gradient(170deg, #c99734, #a56c18 62%, #7c4a0e) !important;
   box-shadow: 0 2px 0 #4a2f09 !important;
 }
+
+/* ---------- Stories (قصص): parchment reading room ---------- */
+html .story-shelf {
+  background-color: var(--parchment-light) !important;
+  background-image:
+    linear-gradient(150deg, rgba(255, 250, 238, 0.7), rgba(232, 207, 160, 0.38)),
+    url('/textures/parchment.svg') !important;
+  background-size: auto, cover !important;
+  border-color: var(--parchment-edge) !important;
+  color: var(--parchment-ink) !important;
+}
+html .story-shelf-title,
+html .story-shelf-name { color: var(--parchment-ink) !important; }
+html .story-shelf-sub,
+html .story-shelf-en,
+html .story-shelf-meta { color: var(--parchment-soft) !important; }
+html .story-shelf-count,
+html .story-shelf-level {
+  background: var(--parchment-mid) !important;
+  border-color: rgba(126, 91, 43, 0.3) !important;
+  color: var(--parchment-brass-deep) !important;
+}
+html .story-shelf-card {
+  background: var(--parchment-light) !important;
+  border-color: rgba(126, 91, 43, 0.28) !important;
+}
+html .story-shelf-card:hover { border-color: var(--parchment-brass) !important; }
+html .story-shelf-done { background: var(--parchment-deep) !important; color: var(--parchment-brass-deep) !important; }
+
+html .story-reader {
+  background-color: var(--parchment-paper) !important;
+  background-image:
+    linear-gradient(180deg, rgba(255, 250, 238, 0.55), rgba(214, 181, 123, 0.32)),
+    url('/textures/parchment.svg') !important;
+  background-size: auto, cover !important;
+  border-color: var(--parchment-edge) !important;
+  color: var(--parchment-ink) !important;
+}
+html .story-reader-title { color: var(--parchment-light) !important; }
+html .story-reader-kicker { color: var(--parchment-brass-light) !important; }
+html .story-reader-meta { color: var(--parchment-mid) !important; }
+html .story-paragraph { color: var(--parchment-ink) !important; }
+html .story-reader-lead {
+  background: rgba(251, 240, 215, 0.72) !important;
+  border-color: rgba(109, 70, 16, 0.36) !important;
+  color: var(--parchment-soft) !important;
+}
+html .story-word {
+  color: var(--parchment-brass-deep) !important;
+  background: rgba(165, 108, 24, 0.14) !important;
+}
+html .story-word:hover,
+html .story-word:focus-visible {
+  background: var(--parchment-brass) !important;
+  color: var(--parchment-light) !important;
+}
+html .story-icon-button {
+  background: rgba(251, 240, 215, 0.88) !important;
+  border-color: rgba(109, 70, 16, 0.35) !important;
+  color: var(--parchment-soft) !important;
+}
+html .story-icon-button.is-reading {
+  background: var(--parchment-oxblood) !important;
+  border-color: var(--parchment-oxblood-deep) !important;
+  color: var(--parchment-light) !important;
+}
+html .story-level-chip {
+  background: rgba(251, 240, 215, 0.85) !important;
+  border-color: rgba(109, 70, 16, 0.3) !important;
+  color: var(--parchment-brass-deep) !important;
+}
+html .story-word-card {
+  background: var(--parchment-light) !important;
+  border-color: rgba(109, 70, 16, 0.4) !important;
+}
+html .story-word-term { color: var(--parchment-oxblood) !important; }
+html .story-word-translation { color: var(--parchment-ink) !important; }
+html .story-reader-footer {
+  background: rgba(251, 240, 215, 0.9) !important;
+  border-color: rgba(109, 70, 16, 0.22) !important;
+}
+html .story-secondary-button {
+  background: var(--parchment-mid) !important;
+  border-color: rgba(109, 70, 16, 0.4) !important;
+  color: var(--parchment-brass-deep) !important;
+}
+html .story-primary-button {
+  background: linear-gradient(160deg, #a33a2d, #7c271e) !important;
+  border-color: var(--parchment-oxblood-deep) !important;
+  color: var(--parchment-light) !important;
+}
+html .story-primary-button.is-done {
+  background: linear-gradient(160deg, #d9b25a, #b8862b) !important;
+  border-color: var(--parchment-brass-deep) !important;
+  color: var(--parchment-ink) !important;
+}
+html .path-story-orb {
+  background: var(--parchment-light) !important;
+  border-color: var(--parchment-edge) !important;
+  box-shadow: 0 6px 0 rgba(140, 104, 53, 0.42) !important;
+}
+html .path-story-node.is-complete .path-story-orb,
+html .path-story-node.is-open .path-story-orb {
+  background: var(--parchment-light) !important;
+  border-color: var(--parchment-brass) !important;
+}
+html .path-story-badge {
+  background: var(--parchment-oxblood) !important;
+  border-color: var(--parchment-light) !important;
+  color: var(--parchment-light) !important;
+}
+html .path-story-node .path-story-hint {
+  background: var(--parchment-mid) !important;
+  border-color: rgba(109, 70, 16, 0.3) !important;
+  color: var(--parchment-brass-deep) !important;
+}
+html .path-story-node.is-complete .path-story-hint {
+  background: var(--parchment-brass-light) !important;
+  color: var(--parchment-ink) !important;
+}
+html .path-story-node.is-locked .path-story-avatar-wrap {
+  filter: sepia(0.55) opacity(0.6) !important;
+}
+html .path-story-node.is-locked .path-story-badge {
+  background: var(--parchment-faint) !important;
+  border-color: var(--parchment-deep) !important;
+}
+
+/* ---------- AI tutor (المعلم الذكي): parchment study room ---------- */
+html .ai-tutor {
+  background:
+    radial-gradient(ellipse at 100% 0%, rgba(217, 178, 90, 0.16), transparent 34%),
+    radial-gradient(ellipse at 0% 100%, rgba(141, 47, 36, 0.07), transparent 36%),
+    linear-gradient(180deg, #fbf0d7 0%, #f2e2c0 55%, #e8d9b0 100%) !important;
+  color: var(--parchment-ink) !important;
+}
+
+html .ai-tutor-header {
+  border-bottom: 3px solid var(--parchment-brass) !important;
+  background:
+    radial-gradient(ellipse at 100% 0%, rgba(217, 178, 90, 0.22), transparent 38%),
+    linear-gradient(110deg, #f7ecd3, #e8d9b0 58%, #d9c097) !important;
+  box-shadow: 0 4px 16px rgba(74, 51, 25, 0.14) !important;
+  color: var(--parchment-ink) !important;
+}
+html .ai-tutor-header h1 { color: var(--parchment-ink) !important; }
+html .ai-tutor-header p,
+html .ai-tutor-level-line { color: var(--parchment-soft) !important; }
+html .ai-tutor-level-line .text-\[\#b1c0b6\] { color: var(--parchment-faint) !important; }
+html .ai-tutor-level-line .text-amber-700 { color: var(--parchment-brass-deep) !important; }
+
+html .ai-tutor-icon-button {
+  border-color: rgba(126, 91, 43, 0.34) !important;
+  color: var(--parchment-soft) !important;
+  background: rgba(251, 240, 215, 0.86) !important;
+  box-shadow: 0 2px 0 rgba(109, 70, 16, 0.2) !important;
+}
+html .ai-tutor-icon-button:hover:not(:disabled) {
+  border-color: var(--parchment-brass) !important;
+  color: var(--parchment-brass-deep) !important;
+  background: var(--parchment-light) !important;
+}
+html .ai-tutor-icon-button.is-active {
+  border-color: var(--parchment-brass) !important;
+  color: var(--parchment-light) !important;
+  background: var(--parchment-brass) !important;
+}
+
+html .ai-tutor-avatar {
+  border-color: var(--parchment-light) !important;
+  background: linear-gradient(145deg, #f8ecd3, var(--parchment-mid)) !important;
+  box-shadow: 0 3px 0 var(--parchment-edge), 0 5px 13px rgba(74, 51, 25, 0.14) !important;
+}
+html .ai-tutor-online {
+  border-color: var(--parchment-light) !important;
+  background: var(--parchment-brass) !important;
+  box-shadow: 0 0 0 2px rgba(165, 108, 24, 0.18) !important;
+}
+
+html .ai-tutor-level-select {
+  border-color: rgba(126, 91, 43, 0.34) !important;
+  color: var(--parchment-brass-deep) !important;
+  background: rgba(251, 240, 215, 0.86) !important;
+  box-shadow: 0 2px 0 rgba(109, 70, 16, 0.2) !important;
+}
+html .ai-tutor-level-select select { color: var(--parchment-ink) !important; }
+
+html .ai-tutor-scroll {
+  scrollbar-color: var(--parchment-edge) transparent !important;
+  background-image: radial-gradient(rgba(126, 91, 43, 0.14) 0.65px, transparent 0.65px) !important;
+}
+html .ai-tutor-scroll::-webkit-scrollbar-thumb { background: var(--parchment-edge) !important; }
+
+html .ai-tutor-welcome {
+  border-color: var(--parchment-brass) !important;
+  background: var(--parchment-light) !important;
+  box-shadow: 0 5px 0 var(--parchment-deep), 0 16px 34px rgba(74, 51, 25, 0.1) !important;
+}
+html .ai-tutor-welcome-orb {
+  border-color: var(--parchment-light) !important;
+  background: linear-gradient(145deg, #f8ecd3, var(--parchment-brass-light)) !important;
+  box-shadow: 0 5px 0 var(--parchment-brass-deep), 0 10px 24px rgba(74, 51, 25, 0.14) !important;
+}
+html .ai-tutor-welcome .text-\[\#2b8b78\] { color: var(--parchment-brass-deep) !important; }
+html .ai-tutor-welcome h2 { color: var(--parchment-ink) !important; }
+html .ai-tutor-welcome p { color: var(--parchment-soft) !important; }
+
+html .ai-tutor-setup-note {
+  border-color: var(--parchment-edge) !important;
+  color: var(--parchment-brass-deep) !important;
+  background: var(--parchment-mid) !important;
+}
+
+html .ai-tutor-suggestion {
+  border-color: var(--parchment-edge) !important;
+  color: var(--parchment-ink) !important;
+  background: var(--parchment-light) !important;
+  box-shadow: 0 2px 0 var(--parchment-edge) !important;
+}
+html .ai-tutor-suggestion:hover:not(:disabled) {
+  border-color: var(--parchment-brass) !important;
+  background: var(--parchment-mid) !important;
+}
+html .ai-tutor-suggestion .text-\[\#9aab9f\] { color: var(--parchment-brass-deep) !important; }
+
+html .ai-tutor-mini-avatar {
+  border-color: var(--parchment-edge) !important;
+  background: var(--parchment-mid) !important;
+}
+
+html .ai-tutor-bubble-assistant {
+  border-color: var(--parchment-edge) !important;
+  color: var(--parchment-ink) !important;
+  background: var(--parchment-light) !important;
+}
+html .ai-tutor-bubble-user {
+  color: var(--parchment-light) !important;
+  background: linear-gradient(145deg, #a33a2d, #7c271e) !important;
+  box-shadow: 0 4px 0 var(--parchment-oxblood-deep), 0 7px 16px rgba(93, 28, 21, 0.22) !important;
+}
+
+html .ai-tutor-speak-button {
+  color: var(--parchment-brass-deep) !important;
+  background: var(--parchment-mid) !important;
+}
+html .ai-tutor-speak-button:hover {
+  color: var(--parchment-ink) !important;
+  background: var(--parchment-deep) !important;
+}
+html .ai-tutor-speak-button.is-speaking {
+  color: var(--parchment-light) !important;
+  background: var(--parchment-brass) !important;
+}
+
+html .ai-tutor-translation {
+  border-color: var(--parchment-edge) !important;
+  background: var(--parchment-mid) !important;
+}
+html .ai-tutor-translation-label { color: var(--parchment-brass-deep) !important; }
+html .ai-tutor-translation p { color: var(--parchment-soft) !important; }
+
+html .ai-tutor-corrections {
+  border-color: var(--parchment-edge) !important;
+  background: var(--parchment-mid) !important;
+}
+html .ai-tutor-section-title { color: var(--parchment-brass-deep) !important; }
+
+html .ai-tutor-vocabulary {
+  border-color: var(--parchment-edge) !important;
+  background: var(--parchment-mid) !important;
+}
+html .ai-tutor-word {
+  border-color: var(--parchment-edge) !important;
+  background: var(--parchment-light) !important;
+}
+html .ai-tutor-word-speak {
+  color: var(--parchment-brass-deep) !important;
+  background: var(--parchment-mid) !important;
+}
+html .ai-tutor-word-speak:hover { background: var(--parchment-deep) !important; }
+html .ai-tutor-word-speak.is-speaking {
+  color: var(--parchment-light) !important;
+  background: var(--parchment-brass) !important;
+}
+html .ai-tutor-pronunciation {
+  border-color: var(--parchment-edge) !important;
+  background: var(--parchment-mid) !important;
+}
+html .ai-tutor-practice-button {
+  border-color: var(--parchment-edge) !important;
+  color: var(--parchment-brass-deep) !important;
+  background: var(--parchment-mid) !important;
+}
+html .ai-tutor-practice-button:hover { background: var(--parchment-deep) !important; }
+
+html .ai-tutor-composer {
+  border-top-color: var(--parchment-edge) !important;
+  background: rgba(251, 240, 215, 0.97) !important;
+  box-shadow: 0 -6px 18px rgba(74, 51, 25, 0.08) !important;
+}
+html .ai-tutor-practice-card {
+  border-color: var(--parchment-edge) !important;
+  background: var(--parchment-mid) !important;
+}
+html .ai-tutor-input-shell {
+  border-color: var(--parchment-edge) !important;
+  background: var(--parchment-light) !important;
+  box-shadow: 0 3px 0 var(--parchment-edge) !important;
+}
+html .ai-tutor-input-shell:focus-within {
+  border-color: var(--parchment-brass) !important;
+  box-shadow: 0 3px 0 var(--parchment-mid), 0 0 0 3px rgba(165, 108, 24, 0.14) !important;
+}
+html .ai-tutor-input { color: var(--parchment-ink) !important; }
+html .ai-tutor-input::placeholder { color: var(--parchment-faint) !important; }
+
+html .ai-tutor-mic-button {
+  color: var(--parchment-brass-deep) !important;
+  background: var(--parchment-mid) !important;
+}
+html .ai-tutor-mic-button:hover {
+  color: var(--parchment-ink) !important;
+  background: var(--parchment-deep) !important;
+}
+html .ai-tutor-mic-button.is-listening {
+  color: var(--parchment-light) !important;
+  background: var(--parchment-oxblood) !important;
+  box-shadow: 0 0 0 4px rgba(141, 47, 36, 0.16) !important;
+}
+html .ai-tutor-send-button {
+  color: var(--parchment-ink) !important;
+  background: linear-gradient(145deg, #d9b25a, var(--parchment-brass)) !important;
+  box-shadow: 0 3px 0 var(--parchment-brass-deep) !important;
+}
+html .ai-tutor-send-button:hover:not(:disabled) {
+  background: linear-gradient(145deg, #e6c877, #b8862b) !important;
+}
+
+html .ai-tutor .text-\[\#184c41\],
+html .ai-tutor .text-\[\#294d42\],
+html .ai-tutor .text-\[\#46685b\] { color: var(--parchment-ink) !important; }
+html .ai-tutor .text-\[\#657a6d\],
+html .ai-tutor .text-\[\#6b7e72\],
+html .ai-tutor .text-\[\#7b9185\],
+html .ai-tutor .text-\[\#8a9b90\],
+html .ai-tutor .text-\[\#90a196\],
+html .ai-tutor .text-\[\#91a398\] { color: var(--parchment-soft) !important; }
+html .ai-tutor .text-\[\#2f8f7d\],
+html .ai-tutor .text-\[\#7a6b3f\] { color: var(--parchment-brass-deep) !important; }
+html .ai-tutor .bg-\[\#2f8f7d\] { background: var(--parchment-brass) !important; }

@@ -7,7 +7,14 @@ import { speechService } from '../../services/speechService';
 import { IS_GOLD_EDITION } from '../../config/edition';
 import { IS_STORE_BUILD } from '../../config/storeBuild';
 import { openGoldPage } from '../../services/goldLauncher';
-import type { LearningPathState, LessonPathStatus } from '../../services/learningPath';
+import type { LearningPathState, LessonPathEntry, LessonPathStatus } from '../../services/learningPath';
+import {
+  EDUCATIONAL_STORIES,
+  getStoryById,
+  type EducationalStory,
+} from '../../data/stories';
+import { StoryAvatar, StoryScene } from '../stories/StoryScene';
+import { StoryReader } from '../stories/StoryReader';
 import { LevelFinalExam } from '../quiz/LevelFinalExam';
 import { PremiumIcon } from '../icons/PremiumIcon';
 import { LearningBuddy } from '../learning/LearningBuddy';
@@ -23,7 +30,6 @@ const ReelsViewer = lazy(() =>
 import { GoldJourneyPanel } from '../gold/GoldJourneyPanel';
 import { GoldErrorBoundary } from '../gold/GoldErrorBoundary';
 import { EDUCATIONAL_PHASES, findSchoolYearRoute, SCHOOL_YEAR_ALIGNMENT_NOTE } from '../../data/educationalStructure';
-import { EDUCATIONAL_STORIES } from '../../data/stories';
 
 const ROUTE_SHIFTS = [0, 30, 44, 30, 0, -30, -44, -30, 0, 30];
 
@@ -82,6 +88,76 @@ const PathLessonNode = React.memo(function PathLessonNode({
   );
 });
 
+const STORY_PROGRESS_KEY = 'lingo.completedStories.v1';
+
+const readCompletedStories = (): Set<string> => {
+  try {
+    if (typeof window === 'undefined') return new Set();
+    const raw = window.localStorage.getItem(STORY_PROGRESS_KEY);
+    const parsed = raw ? JSON.parse(raw) : [];
+    return new Set(
+      Array.isArray(parsed) ? parsed.filter((id): id is string => typeof id === 'string') : [],
+    );
+  } catch {
+    return new Set();
+  }
+};
+
+const writeCompletedStories = (ids: Set<string>) => {
+  try {
+    if (typeof window === 'undefined') return;
+    window.localStorage.setItem(STORY_PROGRESS_KEY, JSON.stringify([...ids]));
+  } catch {
+    /* storage is optional */
+  }
+};
+
+interface PathStoryNodeProps {
+  story: EducationalStory;
+  shiftPercent: number;
+  completed: boolean;
+  locked: boolean;
+  onSelect: (storyId: string) => void;
+}
+
+const PathStoryNode = React.memo(function PathStoryNode({
+  story,
+  shiftPercent,
+  completed,
+  locked,
+  onSelect,
+}: PathStoryNodeProps) {
+  return (
+    <button
+      type="button"
+      disabled={locked}
+      onClick={() => onSelect(story.id)}
+      style={{ transform: `translateX(${shiftPercent}%)` }}
+      className={`path-node path-story-node group ${locked ? 'is-locked' : completed ? 'is-complete' : 'is-open'}`}
+      aria-label={`قصة ${story.titleAr}، ${story.level}${locked ? '، مقفلة' : completed ? '، أُكملت' : ''}`}
+    >
+      <span className="path-node-orb path-story-orb">
+        <span className="path-story-avatar-wrap" aria-hidden="true">
+          <StoryAvatar scene={story.scene} className="path-story-avatar" />
+        </span>
+        <span className="path-story-badge" aria-hidden="true">
+          {locked ? <Lock className="h-3 w-3" /> : <BookOpen className="h-3 w-3" />}
+        </span>
+      </span>
+      <span className="path-node-title">{story.titleAr}</span>
+      <span className="path-node-hint path-story-hint">
+        {completed ? (
+          <>
+            <CheckCircle2 className="h-3 w-3" /> أُكملت
+          </>
+        ) : (
+          'قصة قصيرة'
+        )}
+      </span>
+    </button>
+  );
+});
+
 
 interface CategoriesTabProps {
   lessons: Lesson[];
@@ -111,6 +187,8 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
   const deferredSearchQuery = useDeferredValue(searchQuery);
   const [examStage, setExamStage] = useState<number | null>(null);
   const [showReels, setShowReels] = useState(false);
+  const [activeStoryId, setActiveStoryId] = useState<string | null>(null);
+  const [completedStoryIds, setCompletedStoryIds] = useState<Set<string>>(() => readCompletedStories());
   const [selectedPhaseId, setSelectedPhaseId] = useState<string | null>(null);
   const [selectedSchoolYearId, setSelectedSchoolYearId] = useState<string | null>(null);
   const [goalCardDialog, setGoalCardDialog] = useState<{
@@ -242,14 +320,84 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
       : path.nextLessonId;
   }, [completedLessonIds, getSchoolYearProgress, path.nextLessonId, selectedSchoolYear]);
 
+  const storiesByStage = useMemo(() => {
+    const map = new Map<number, EducationalStory[]>();
+    for (const story of EDUCATIONAL_STORIES) {
+      const bucket = map.get(story.stage);
+      if (bucket) bucket.push(story);
+      else map.set(story.stage, [story]);
+    }
+    return map;
+  }, []);
+
+  type StageNode =
+    | { type: 'lesson'; entry: LessonPathEntry; index: number }
+    | { type: 'story'; story: EducationalStory; locked: boolean };
+
+  /** Lessons with story medallions woven in between, like Duolingo stories. */
+  const stageNodes = useMemo(() => {
+    const map = new Map<number, StageNode[]>();
+    for (const level of visibleLevels) {
+      const stories = storiesByStage.get(level.stage) ?? [];
+      const lessonCount = level.lessons.length;
+      const slots = new Map<number, EducationalStory[]>();
+      stories.forEach((story, storyIndex) => {
+        const slot = lessonCount === 0
+          ? 0
+          : Math.min(
+              lessonCount - 1,
+              Math.max(0, Math.round(((storyIndex + 1) * lessonCount) / (stories.length + 1)) - 1),
+            );
+        const bucket = slots.get(slot);
+        if (bucket) bucket.push(story);
+        else slots.set(slot, [story]);
+      });
+      const nodes: StageNode[] = [];
+      let precedingUnlocked = level.isUnlocked;
+      level.lessons.forEach((entry, index) => {
+        nodes.push({ type: 'lesson', entry, index });
+        if (entry.status === 'locked') precedingUnlocked = false;
+        const bucket = slots.get(index);
+        if (bucket) {
+          bucket.forEach((story) => nodes.push({ type: 'story', story, locked: !precedingUnlocked }));
+        }
+      });
+      if (lessonCount === 0) {
+        (slots.get(0) ?? []).forEach((story) =>
+          nodes.push({ type: 'story', story, locked: !level.isUnlocked }),
+        );
+      }
+      map.set(level.stage, nodes);
+    }
+    return map;
+  }, [storiesByStage, visibleLevels]);
+
+  const activeStory = getStoryById(activeStoryId);
+
+  const handleStoryComplete = useCallback((storyId: string) => {
+    setCompletedStoryIds((previous) => {
+      if (previous.has(storyId)) return previous;
+      const next = new Set(previous);
+      next.add(storyId);
+      writeCompletedStories(next);
+      return next;
+    });
+    speechService.playPop();
+  }, []);
+
   const routeLayout = useMemo(() => {
     const rows = visibleLevels.flatMap((level) => [
       { type: 'unit' as const, level },
-      ...level.lessons.map((entry, index) => ({ type: 'lesson' as const, level, entry, index })),
+      ...(stageNodes.get(level.stage) ?? []).map((node) =>
+        node.type === 'lesson'
+          ? { type: 'lesson' as const, level, entry: node.entry, index: node.index }
+          : { type: 'story' as const, level, story: node.story },
+      ),
       ...(!isSchoolYearCourse ? [{ type: 'exam' as const, level }] : []),
     ]);
     let nodeIndex = 0;
     const shiftByLessonId = new Map<string, number>();
+    const shiftByStoryId = new Map<string, number>();
     const shiftByExamStage = new Map<number, number>();
     const pointsByStage = new Map<number, Array<{ x: number; y: number }>>();
 
@@ -258,6 +406,7 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
       const shift = ROUTE_SHIFTS[nodeIndex % ROUTE_SHIFTS.length];
       const shiftPercent = (shift * 100) / 470;
       if (row.type === 'lesson') shiftByLessonId.set(row.entry.lesson.id, shiftPercent);
+      else if (row.type === 'story') shiftByStoryId.set(row.story.id, shiftPercent);
       else shiftByExamStage.set(row.level.stage, shiftPercent);
       const points = pointsByStage.get(row.level.stage) ?? [];
       points.push({ x: 50 + shiftPercent, y: points.length * 112 + 56 });
@@ -282,8 +431,8 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
       stageRoutes.set(level.stage, { path, height: points.length * 112 });
     }
 
-    return { shiftByLessonId, shiftByExamStage, stageRoutes };
-  }, [isSchoolYearCourse, visibleLevels]);
+    return { shiftByLessonId, shiftByStoryId, shiftByExamStage, stageRoutes };
+  }, [isSchoolYearCourse, stageNodes, visibleLevels]);
 
   const filteredLessons = useMemo(() => {
     const query = deferredSearchQuery.trim().toLowerCase();
@@ -583,17 +732,29 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
                     <path d={stageRoute.path} />
                   </svg>
                 )}
-                {level.lessons.map((entry, index) => {
-                  const { lesson, status } = entry;
+                {(stageNodes.get(level.stage) ?? []).map((node) => {
+                  if (node.type === 'lesson') {
+                    const { lesson, status } = node.entry;
+                    return (
+                      <PathLessonNode
+                        key={lesson.id}
+                        lesson={lesson}
+                        index={node.index}
+                        status={status}
+                        bestScore={userProfile.quizScores[lesson.id] ?? 0}
+                        shiftPercent={routeLayout.shiftByLessonId.get(lesson.id) ?? 0}
+                        onSelect={handlePathLessonClick}
+                      />
+                    );
+                  }
                   return (
-                    <PathLessonNode
-                      key={lesson.id}
-                      lesson={lesson}
-                      index={index}
-                      status={status}
-                      bestScore={userProfile.quizScores[lesson.id] ?? 0}
-                      shiftPercent={routeLayout.shiftByLessonId.get(lesson.id) ?? 0}
-                      onSelect={handlePathLessonClick}
+                    <PathStoryNode
+                      key={node.story.id}
+                      story={node.story}
+                      shiftPercent={routeLayout.shiftByStoryId.get(node.story.id) ?? 0}
+                      completed={completedStoryIds.has(node.story.id)}
+                      locked={node.locked}
+                      onSelect={setActiveStoryId}
                     />
                   );
                 })}
@@ -615,34 +776,63 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
             </div>;
           })}
         </div>
-        <aside className="mt-6 rounded-2xl border border-teal-200/10 bg-white/[0.04] p-4" aria-label="قصص تعليمية">
-          <div className="flex items-center gap-2 text-sm font-black text-white">
-            <BookOpen className="h-4 w-4 text-lime-200" aria-hidden="true" />
-            قصص تعليمية
+        <aside className="story-shelf mt-6" aria-label="قصص تعليمية">
+          <div className="story-shelf-head">
+            <div className="min-w-0">
+              <div className="story-shelf-title">
+                <BookOpen className="h-4 w-4" aria-hidden="true" />
+                قصص تعليمية
+              </div>
+              <p className="story-shelf-sub">
+                قصص قصيرة مصوّرة (إنجليزية/فرنسية) لتحسين الفهم والاستماع. اضغط على أي محطة قصة في المسار أو هنا.
+              </p>
+            </div>
+            <span className="story-shelf-count">{EDUCATIONAL_STORIES.length} قصص</span>
           </div>
-          <p className="mt-1 text-[10px] text-slate-400">قصص قصيرة (إنجليزية/فرنسية) لتحسين الفهم والاستماع.</p>
-          <div className="mt-3 grid gap-3 sm:grid-cols-2">
+          <div className="story-shelf-grid">
             {EDUCATIONAL_STORIES.map((story) => {
-              const text = isFrenchCourse ? story.textFr : story.textEn;
+              const done = completedStoryIds.has(story.id);
               return (
-                <article key={story.id} className="rounded-xl border border-white/[0.08] bg-white/[0.05] p-3">
-                  <div className="flex items-center justify-between gap-2">
-                    <strong className="text-xs font-black text-white">{story.titleEn}</strong>
-                    <span className="rounded-full bg-white/[0.08] px-2 py-0.5 text-[8px] font-bold text-slate-300">{story.level}</span>
-                  </div>
-                  <p className="mt-1 text-[10px] leading-5 text-slate-300">{text}</p>
-                  <button
-                    type="button"
-                    onClick={() => speechService.speakText({ source: 'stories', text: text.toLowerCase(), rate: 0.9, gender: 'female', accent: isFrenchCourse ? 'fr' : 'en' })}
-                    className="mt-2 inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/5 px-2.5 py-1.5 text-[9px] font-bold text-slate-200 hover:bg-white/10"
-                  >
-                    <Play className="h-3 w-3 fill-current" /> استمع
-                  </button>
-                </article>
+                <button
+                  key={story.id}
+                  type="button"
+                  className={`story-shelf-card ${done ? 'is-done' : ''}`}
+                  onClick={() => setActiveStoryId(story.id)}
+                  aria-label={`اقرأ قصة ${story.titleAr}`}
+                >
+                  <span className="story-shelf-art" aria-hidden="true">
+                    <StoryScene scene={story.scene} className="story-shelf-scene" />
+                    <span className="story-shelf-level">{story.level}</span>
+                  </span>
+                  <span className="story-shelf-body">
+                    <strong className="story-shelf-name">{story.titleAr}</strong>
+                    <span className="story-shelf-en">
+                      {isFrenchCourse ? story.titleFr : story.titleEn}
+                    </span>
+                    <span className="story-shelf-meta">
+                      <BookOpen className="h-3 w-3" />
+                      {story.minutes} دقائق
+                      {done && (
+                        <span className="story-shelf-done">
+                          <CheckCircle2 className="h-3 w-3" /> أُكملت
+                        </span>
+                      )}
+                    </span>
+                  </span>
+                </button>
               );
             })}
           </div>
         </aside>
+        {activeStory && (
+          <StoryReader
+            story={activeStory}
+            language={isFrenchCourse ? 'fr' : 'en'}
+            completed={completedStoryIds.has(activeStory.id)}
+            onClose={() => setActiveStoryId(null)}
+            onComplete={handleStoryComplete}
+          />
+        )}
         <div className="mt-4 flex items-center justify-center gap-2 text-[10px] text-slate-400"><ArrowDown className="h-3.5 w-3.5 text-lime-200" />أكمل الدروس بالترتيب لفتح محطات جديدة</div>
         </>)}
       </section>
