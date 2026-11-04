@@ -25,12 +25,12 @@ const cleanText = (value: string): string =>
     .trim();
 
 /**
- * Small server-side proxy for French lesson speech. The app prefers a French
- * voice installed on the device; this endpoint is the fallback for browsers and
+ * Small server-side proxy for lesson/story speech. The app prefers a voice
+ * installed on the device; this endpoint is the fallback for browsers and
  * Android WebViews that only have an English or Arabic voice installed.
  *
- * It is deliberately limited to French and short lesson sentences. Dynamic
- * tutor replies must not be routed through this endpoint.
+ * It supports English and French and short lesson sentences. Dynamic tutor
+ * replies must not be routed through this endpoint.
  */
 export default async function handler(
   request: TtsRequest,
@@ -56,12 +56,15 @@ export default async function handler(
   }
 
   let text = '';
+  let lang = 'fr';
   try {
     const url = new URL(request.url ?? '', 'https://englishtok.local');
-    if (url.searchParams.get('lang') !== 'fr') {
-      response.status(400).json({ error: 'Only French speech is supported.' });
+    const requestedLang = url.searchParams.get('lang');
+    if (requestedLang !== 'fr' && requestedLang !== 'en') {
+      response.status(400).json({ error: 'Only English and French speech are supported.' });
       return;
     }
+    lang = requestedLang || 'fr';
     text = cleanText(url.searchParams.get('q') ?? '');
   } catch {
     response.status(400).json({ error: 'Invalid speech request.' });
@@ -75,7 +78,7 @@ export default async function handler(
 
   const upstreamUrl =
     'https://translate.google.com/translate_tts' +
-    `?ie=UTF-8&client=tw-ob&tl=fr&q=${encodeURIComponent(text)}`;
+    `?ie=UTF-8&client=tw-ob&tl=${lang}&q=${encodeURIComponent(text)}`;
 
   try {
     const upstream = await fetch(upstreamUrl, {
@@ -114,7 +117,7 @@ export default async function handler(
     }
     response.status(200).send(audio);
   } catch (error) {
-    console.error('[tts] French speech fallback failed:', error);
+    console.error('[tts] Speech fallback failed:', error);
     response.status(502).json({ error: 'French speech is temporarily unavailable.' });
   }
 }

@@ -196,13 +196,14 @@ class SpeechService {
     }
   }
 
-  /** Play French lesson text through the same-origin fallback voice. */
-  private playRemoteFrenchSpeech(
+  /** Play lesson/story text through the same-origin fallback voice. */
+  private playRemoteSpeech(
+    language: 'en' | 'fr',
     handlers: PlaybackHandlers,
     onFailure: (error: unknown) => void,
   ) {
     const { requestId, source, text, rate, onStart, onEnd } = handlers;
-    const chunks = splitSpeechChunks(speechTextForTts(text, 'fr'));
+    const chunks = splitSpeechChunks(speechTextForTts(text, language));
     if (!chunks.length) {
       onFailure(new Error('There is no text to speak.'));
       return;
@@ -240,7 +241,7 @@ class SpeechService {
       index += 1;
       const audio = new Audio();
       audio.preload = 'auto';
-      audio.src = apiUrl(`/api/tts?lang=fr&q=${encodeURIComponent(chunk)}`);
+      audio.src = apiUrl(`/api/tts?lang=${language}&q=${encodeURIComponent(chunk)}`);
       audio.playbackRate = Math.max(0.5, Math.min(1.2, rate));
       audio.preservesPitch = true;
       this.currentAudio = audio;
@@ -256,7 +257,7 @@ class SpeechService {
         if (failed || requestId !== this.requestId) return;
         playNext();
       };
-      audio.onerror = () => fail(new Error('The French speech fallback could not be played.'));
+      audio.onerror = () => fail(new Error('The speech fallback could not be played.'));
 
       void audio.play().catch(fail);
     };
@@ -303,7 +304,7 @@ class SpeechService {
         availableVoices.length === 0 ||
         voices.length === 0)
     ) {
-      this.playRemoteFrenchSpeech(
+      this.playRemoteSpeech('fr',
         { requestId, source, text, rate, pitch, gender, accent, onStart, onEnd, onError },
         (error: unknown) => {
           if (requestId !== this.requestId) return;
@@ -317,6 +318,30 @@ class SpeechService {
           }
           this.finishWithError(
             'تعذر تحميل الصوت الفرنسي. تحقق من اتصال الإنترنت وحاول مرة أخرى، أو ثبّت حزمة الصوت الفرنسية من إعدادات النظام.',
+            onError
+          );
+        },
+      );
+      return;
+    }
+
+    // English has no device voice available (common in headless/locked-down
+    // WebViews). Use the same-origin server fallback instead of failing
+    // silently, so stories and other generated text can still be spoken.
+    if (
+      language === 'en-US' &&
+      allowRemote &&
+      (!synthesis ||
+        typeof SpeechSynthesisUtterance === 'undefined' ||
+        availableVoices.length === 0 ||
+        voices.length === 0)
+    ) {
+      this.playRemoteSpeech('en',
+        { requestId, source, text, rate, pitch, gender, accent, onStart, onEnd, onError },
+        (error: unknown) => {
+          if (requestId !== this.requestId) return;
+          this.finishWithError(
+            'تعذر تحميل الصوت. تحقق من اتصال الإنترنت وحاول مرة أخرى.',
             onError
           );
         },
@@ -690,13 +715,22 @@ class SpeechService {
           handlers.onEnd?.();
           return;
         }
-        // French can fall back to the server-side voice. English keeps the
-        // normal device-voice path (if the WebView exposes one).
-        if (normalizeSpeechLanguage(handlers.accent) === 'fr' || this.canUseDeviceSpeech()) {
-          this.playBrowserSpeech({ ...handlers, reason: error });
-          return;
-        }
-        this.finishWithError('تعذر تشغيل هذا الصوت على الجهاز. حاول مرة أخرى.', handlers.onError);
+        // Try the server-side voice before giving up. This keeps stories and
+        // other generated text speakable on devices without a working TTS
+        // engine and in the web preview.
+        const remoteLanguage = normalizeSpeechLanguage(handlers.accent) === 'fr' ? 'fr' : 'en';
+        this.playRemoteSpeech(remoteLanguage,
+          { requestId: handlers.requestId, source: handlers.source, text: handlers.text, rate: handlers.rate, pitch: handlers.pitch, gender: handlers.gender, accent: handlers.accent, onStart: handlers.onStart, onEnd: handlers.onEnd, onError: handlers.onError },
+          (remoteError: unknown) => {
+            if (handlers.requestId !== this.requestId) return;
+            if (normalizeSpeechLanguage(handlers.accent) === 'fr' || this.canUseDeviceSpeech()) {
+              this.playBrowserSpeech({ ...handlers, reason: remoteError });
+              return;
+            }
+            this.finishWithError('تعذر تشغيل هذا الصوت على الجهاز. حاول مرة أخرى.', handlers.onError);
+          },
+        );
+        return;
       });
   }
 
@@ -765,6 +799,13 @@ class SpeechService {
       }
       this.finishWithError('لا يوجد صوت مضمّن لهذه الجملة، وصوت الجهاز غير متاح.', handlers.onError);
     };
+
+    // Story text is generated and has no bundled clip; go straight to the
+    // device/server voice instead of probing a missing .ogg file.
+    if (handlers.source === 'stories') {
+      useDeviceVoice(new Error('Stories use the device or server voice.'));
+      return;
+    }
 
     if (!audioAssetUrl) {
       useDeviceVoice(new Error('Instant playback with the device voice.'));
