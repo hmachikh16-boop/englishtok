@@ -7,7 +7,8 @@ import React, { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useStat
 import { App as CapacitorApp } from '@capacitor/app';
 import { Capacitor } from '@capacitor/core';
 import { ActiveTab, Lesson, TargetLanguage, UserProfile } from './types';
-import { LEARNING_PATH_LESSONS } from './data/curriculum';
+// Bundled English curriculum is loaded lazily (see useEffect below) so it no
+// longer blocks the first paint of the app shell.
 import { applyGoldCurriculum } from './data/goldCurriculum';
 import { getLearningPathState } from './services/learningPath';
 import { getStoredProfile, saveProfile } from './services/storageService';
@@ -80,8 +81,11 @@ export default function App() {
   const [lessons, setLessons] = useState<Lesson[]>(() => {
     const language = userProfile.targetLanguage ?? 'en';
     const cached = getCachedLearningPath(language);
-    const base = cached ?? (language === 'fr' ? [] : LEARNING_PATH_LESSONS);
-    return IS_GOLD_EDITION ? applyGoldCurriculum(base, language) : base;
+    if (cached) {
+      return IS_GOLD_EDITION ? applyGoldCurriculum(cached, language) : cached;
+    }
+    // Bundled English curriculum is fetched lazily (see useEffect below).
+    return [];
   });
   const [placementGateOpen, setPlacementGateOpen] = useState(
     () => !userProfile.targetLanguage || !userProfile.placementAssessment?.result,
@@ -224,7 +228,7 @@ export default function App() {
 
     let isMounted = true;
     const cached = getCachedLearningPath(language);
-    const cachedLessons = cached ?? (language === 'fr' ? [] : LEARNING_PATH_LESSONS);
+    const cachedLessons = cached ?? [];
     setLessons(
       IS_GOLD_EDITION ? applyGoldCurriculum(cachedLessons, language) : cachedLessons,
     );
@@ -276,6 +280,47 @@ export default function App() {
     return () => {
       isMounted = false;
       cancelScheduled?.();
+    };
+  }, [userProfile.targetLanguage]);
+
+  // Load the bundled English curriculum lazily so it does not block first paint.
+  useEffect(() => {
+    const language = userProfile.targetLanguage;
+    if (language !== 'en') return;
+    if (getCachedLearningPath('en')) return;
+    let mounted = true;
+    setContentLoading(true);
+    import('./data/stage1')
+      .then((module) => module.loadStageLessons())
+      .then((stage1) => {
+        if (!mounted) return;
+        setLessons(IS_GOLD_EDITION ? applyGoldCurriculum(stage1, 'en') : stage1);
+        setContentLoading(false);
+        // Load the remaining stages in the background so the full path is
+        // available without blocking the first paint.
+        Promise.all([
+          import('./data/stage2').then((m) => m.loadStageLessons()),
+          import('./data/stage3').then((m) => m.loadStageLessons()),
+          import('./data/stage4').then((m) => m.loadStageLessons()),
+        ])
+          .then((rest) => {
+            if (!mounted) return;
+            const all = [...stage1, ...rest.flat()].sort(
+              (left, right) => (left.curriculumStage ?? 0) - (right.curriculumStage ?? 0),
+            );
+            setLessons(IS_GOLD_EDITION ? applyGoldCurriculum(all, 'en') : all);
+          })
+          .catch((error: unknown) => {
+            console.warn('Failed to load remaining curriculum stages:', error);
+          });
+      })
+      .catch((error: unknown) => {
+        if (!mounted) return;
+        console.warn('Failed to load bundled English curriculum:', error);
+        setContentLoading(false);
+      });
+    return () => {
+      mounted = false;
     };
   }, [userProfile.targetLanguage]);
 

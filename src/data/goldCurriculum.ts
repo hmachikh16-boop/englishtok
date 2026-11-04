@@ -245,7 +245,13 @@ export const applyGoldCurriculum = (
   language: TargetLanguage = 'en',
 ): Lesson[] => {
   if (lessons.length === 0) return lessons;
-  if (lessons.some((lesson) => lesson.id.startsWith('gold-project-stage-'))) return lessons;
+  // Only skip stages that already have a Gold project inserted; keep inserting
+  // the remaining ones so partial (stage-by-stage) loads stay complete.
+  const insertedStages = new Set(
+    lessons
+      .filter((lesson) => lesson.id.startsWith('gold-project-stage-'))
+      .map((lesson) => Number(lesson.id.replace('gold-project-stage-', ''))),
+  );
 
   const specs = SPECS[language] ?? SPECS.en;
   const projects = new Map<number, Lesson>();
@@ -260,7 +266,7 @@ export const applyGoldCurriculum = (
     );
   }
 
-  const inserted = new Set<number>();
+  const inserted = new Set<number>(insertedStages);
   const result: Lesson[] = [];
 
   for (const lesson of lessons) {

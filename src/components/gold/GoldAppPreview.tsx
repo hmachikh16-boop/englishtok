@@ -1,7 +1,42 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { BookOpen, Loader2, Play, Sparkles } from 'lucide-react';
 import type { ActiveTab, Lesson, TargetLanguage, UserProfile } from '../../types';
-import { LEARNING_PATH_LESSONS } from '../../data/curriculum';
+import {
+  LESSON_SPECS,
+  LEVEL_CHARACTERS,
+  buildLesson,
+} from '../../data/curriculumContent';
+import { buildExpansionLesson } from '../../data/expansion/buildExpansionLesson';
+import { STAGE_1A_LESSONS } from '../../data/expansion/stage1a';
+import { STAGE_1B_LESSONS } from '../../data/expansion/stage1b';
+import { STAGE_2A_LESSONS } from '../../data/expansion/stage2a';
+import { STAGE_2B_LESSONS } from '../../data/expansion/stage2b';
+import { STAGE_3A_LESSONS } from '../../data/expansion/stage3a';
+import { STAGE_3B_LESSONS } from '../../data/expansion/stage3b';
+import { STAGE_4A_LESSONS } from '../../data/expansion/stage4a';
+import { STAGE_4B_LESSONS } from '../../data/expansion/stage4b';
+import { STAGE_1_PLUS_LESSONS } from '../../data/expansionPlus/stage1';
+import { STAGE_2_PLUS_LESSONS } from '../../data/expansionPlus/stage2';
+import { STAGE_3_PLUS_LESSONS } from '../../data/expansionPlus/stage3';
+import { STAGE_4_PLUS_LESSONS } from '../../data/expansionPlus/stage4';
+import { STAGE_1_PLUS2_LESSONS } from '../../data/expansionPlus2/stage1';
+import { STAGE_2_PLUS2_LESSONS } from '../../data/expansionPlus2/stage2';
+import { STAGE_3_PLUS2_LESSONS } from '../../data/expansionPlus2/stage3';
+import { STAGE_4_PLUS2_LESSONS } from '../../data/expansionPlus2/stage4';
+
+const LEARNING_PATH_LESSONS = [
+  ...LESSON_SPECS.map(buildLesson),
+  ...[
+    ...STAGE_1A_LESSONS, ...STAGE_1B_LESSONS,
+    ...STAGE_2A_LESSONS, ...STAGE_2B_LESSONS,
+    ...STAGE_3A_LESSONS, ...STAGE_3B_LESSONS,
+    ...STAGE_4A_LESSONS, ...STAGE_4B_LESSONS,
+    ...STAGE_1_PLUS_LESSONS, ...STAGE_2_PLUS_LESSONS,
+    ...STAGE_3_PLUS_LESSONS, ...STAGE_4_PLUS_LESSONS,
+    ...STAGE_1_PLUS2_LESSONS, ...STAGE_2_PLUS2_LESSONS,
+    ...STAGE_3_PLUS2_LESSONS, ...STAGE_4_PLUS2_LESSONS,
+  ].map((spec) => buildExpansionLesson(spec, LEVEL_CHARACTERS[spec.stage])),
+].sort((left, right) => (left.curriculumStage ?? 0) - (right.curriculumStage ?? 0));
 import { applyGoldCurriculum } from '../../data/goldCurriculum';
 import { getLearningPathState } from '../../services/learningPath';
 import { TopBar } from '../navigation/TopBar';

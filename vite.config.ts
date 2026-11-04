@@ -95,6 +95,31 @@ export default defineConfig(() => {
           ),
       },
       rolldownOptions: {
+        output: {
+          manualChunks(id) {
+            const n = id.replace(/\\\\/g, '/');
+            if (n.includes('/src/data/stage1.')) return 'curriculum-stage1';
+            if (n.includes('/src/data/stage2.')) return 'curriculum-stage2';
+            if (n.includes('/src/data/stage3.')) return 'curriculum-stage3';
+            if (n.includes('/src/data/stage4.')) return 'curriculum-stage4';
+            if (n.includes('/src/data/expansion/stage1')) return 'curriculum-stage1';
+            if (n.includes('/src/data/expansion/stage2')) return 'curriculum-stage2';
+            if (n.includes('/src/data/expansion/stage3')) return 'curriculum-stage3';
+            if (n.includes('/src/data/expansion/stage4')) return 'curriculum-stage4';
+            if (n.includes('/src/data/expansionPlus/stage1')) return 'curriculum-stage1';
+            if (n.includes('/src/data/expansionPlus/stage2')) return 'curriculum-stage2';
+            if (n.includes('/src/data/expansionPlus/stage3')) return 'curriculum-stage3';
+            if (n.includes('/src/data/expansionPlus/stage4')) return 'curriculum-stage4';
+            if (n.includes('/src/data/expansionPlus2/stage1')) return 'curriculum-stage1';
+            if (n.includes('/src/data/expansionPlus2/stage2')) return 'curriculum-stage2';
+            if (n.includes('/src/data/expansionPlus2/stage3')) return 'curriculum-stage3';
+            if (n.includes('/src/data/expansionPlus2/stage4')) return 'curriculum-stage4';
+            if (n.includes('/src/data/curriculumContent')) return 'curriculum-core';
+            if (n.includes('/src/data/curriculum.ts')) return 'curriculum-core';
+            if (n.includes('/src/data/curriculumExpansion')) return 'curriculum-core';
+            return undefined;
+          },
+        },
         input: {
           main: path.resolve(__dirname, 'index.html'),
           goldPreview: path.resolve(__dirname, 'gold-preview.html'),

@@ -8,7 +8,6 @@ import type {
   SceneType,
   VocabularyWord,
 } from '../types';
-import { EXPANSION_LESSONS } from './curriculumExpansion';
 import { buildExpansionLesson } from './expansion/buildExpansionLesson';
 
 /**
@@ -192,7 +191,7 @@ export const ELENA: Character = {
   design: 'girl-green-hat',
 };
 
-const LEVEL_CHARACTERS: Record<number, [Character, Character]> = {
+export const LEVEL_CHARACTERS: Record<number, [Character, Character]> = {
   1: [LEO, GIGI],
   2: [ALEX, MAYA],
   3: [SARAH, DAVID],
@@ -261,7 +260,7 @@ const arrange = (
   explanationAr: string,
 ): QuizSpec => ({ type: 'arrange_sentence', questionAr, options, correctAnswer, explanationAr });
 
-const LESSON_SPECS: LessonSpec[] = [
+export const LESSON_SPECS: LessonSpec[] = [
   // ───────────────────────── Level 1 · A1 ─────────────────────────
   {
     id: 'a1-l1-alphabet',
@@ -869,7 +868,7 @@ const ARRANGE_PROMPTS: Record<string, string> = {
   'c1-l4-speech': 'اسألوا أنفسكم إن لم نكن نحن فمن.',
 };
 
-const buildLesson = (spec: LessonSpec): Lesson => {
+export const buildLesson = (spec: LessonSpec): Lesson => {
   const [characterA, characterB] = LEVEL_CHARACTERS[spec.stage];
 
   // Stage 1 pilot: expand to 15 dialogue lines and 5 quiz questions.
@@ -945,9 +944,6 @@ const buildLesson = (spec: LessonSpec): Lesson => {
   };
 };
 
-export const CURRICULUM_LESSONS: Lesson[] = [
-  ...LESSON_SPECS.map(buildLesson),
-  ...EXPANSION_LESSONS.map((spec) =>
-    buildExpansionLesson(spec, LEVEL_CHARACTERS[spec.stage]),
-  ),
-].sort((left, right) => (left.curriculumStage ?? 0) - (right.curriculumStage ?? 0));
+// Base lessons only. Full curriculum (incl. expansions) is assembled lazily by
+// src/data/stage1..4.ts so each stage ships as its own chunk.
+export const CURRICULUM_LESSONS: Lesson[] = LESSON_SPECS.map(buildLesson);
