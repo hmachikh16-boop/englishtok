@@ -1,11 +1,11 @@
 {
-  "version": "1.1.30",
+  "version": "1.1.31",
   "packageId": "com.englishtok.gold",
-  "apkUrl": "/lin-go-gold-1.1.30.apk",
-  "sha256": "4F114F42C968309632E6C0029482393FDA5FF2D8AFAF6D18AD7F8C1DA33A9F48",
-  "size": 91498579,
+  "apkUrl": "/lin-go-gold-1.1.31.apk",
+  "sha256": "6833B8194F093E2A3B8FE54E088F58416D2AC57ED81C4B66702F86BA3AED7F19",
+  "size": 91504427,
   "minimumAndroidSdk": 24,
-  "notes": "تحديث Gold 1.1.30: إصلاح صوت القصص (TTS جهاز/خادم) + تجاوز فحص .ogg + دعم صوت إنجليزي/فرنسي + محطات قصص أوضح (إطار ذهبي + شارة «قصة») + جلد ورقي كامل. Reels + 17 لعبة + 500 درس.",
-  "releaseUrl": "https://github.com/hmachikh16-boop/englishtok/releases/tag/gold-v1.1.30",
+  "notes": "تحديث Gold 1.1.31: تحسين الأداء (تحميل lazy للمسار) + إصلاح صوت القصص (TTS) + محطات قصص أوضح (إطار ذهبي + شارة «قصة») + جلد ورقي كامل. Reels + 17 لعبة + 500 درس.",
+  "releaseUrl": "https://github.com/hmachikh16-boop/englishtok/releases/tag/gold-v1.1.31",
   "publishedAt": "2026-11-04T00:00:00.000Z"
 }

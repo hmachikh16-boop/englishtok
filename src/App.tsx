@@ -36,7 +36,9 @@ import {
 } from './services/speechService';
 import { TopBar } from './components/navigation/TopBar';
 import { BottomTabBar } from './components/navigation/BottomTabBar';
-import { CategoriesTab } from './components/categories/CategoriesTab';
+const CategoriesTab = lazy(() =>
+  import('./components/categories/CategoriesTab').then((module) => ({ default: module.CategoriesTab })),
+);
 
 // Secondary screens are split into their own chunks so the home path paints
 // before games, settings, chat, progress or a full lesson are needed.
