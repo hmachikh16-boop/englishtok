@@ -205,6 +205,7 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
     [path.levels, path.nextLessonId],
   );
   const [selectedPathStage, setSelectedPathStage] = useState<number | 'all'>(currentStageNumber);
+  const [visibleLessonCount, setVisibleLessonCount] = useState(5);
   const [libraryPageSize, setLibraryPageSize] = useState(24);
   const [isPending, startTransition] = useTransition();
   const selectedPhase = EDUCATIONAL_PHASES.find((phase) => phase.id === selectedPhaseId);
@@ -301,6 +302,13 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
         : path.levels.filter((level) => level.stage === selectedPathStage);
   }, [completedLessonIds, getSchoolYearProgress, path.levels, selectedPathStage, selectedSchoolYear]);
 
+  useEffect(() => {
+    const shouldExpand = visibleLevels.some(
+      (level) => level.completedCount >= visibleLessonCount && visibleLessonCount < 125,
+    );
+    if (shouldExpand) setVisibleLessonCount((count) => Math.min(count + 5, 125));
+  }, [visibleLevels, visibleLessonCount]);
+
   const isSchoolYearCourse = Boolean(selectedSchoolYear?.grade);
   const schoolYearLessonCount = useMemo(
     () => lessons.reduce((count, lesson) => count + (lesson.schoolYearId ? 1 : 0), 0),
@@ -354,7 +362,8 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
         else slots.set(slot, [story]);
       });
       const nodes: StageNode[] = [];
-      level.lessons.forEach((entry, index) => {
+      const visibleLessons = level.lessons.slice(0, visibleLessonCount);
+      visibleLessons.forEach((entry, index) => {
         nodes.push({ type: 'lesson', entry, index });
         const bucket = slots.get(index);
         if (bucket) {
@@ -370,7 +379,7 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
       map.set(level.stage, nodes);
     }
     return map;
-  }, [storiesByStage, visibleLevels]);
+  }, [storiesByStage, visibleLevels, visibleLessonCount]);
 
   const activeStory = getStoryById(activeStoryId);
 
@@ -758,7 +767,20 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
                     />
                   );
                 })}
-                {!isSchoolYearCourse && <button
+                {visibleLessonCount < level.lessons.length && (
+                  <button
+                    type="button"
+                    onClick={() => setVisibleLessonCount((count) => Math.min(count + 5, 125))}
+                    className="path-node path-show-more-node"
+                    aria-label="عرض 5 دروس إضافية"
+                  >
+                    <span className="path-node-orb path-show-more-orb">
+                      <span className="text-lg font-black">+5</span>
+                    </span>
+                    <span className="path-node-title">عرض المزيد</span>
+                  </button>
+                )}
+                {!isSchoolYearCourse && visibleLessonCount >= level.lessons.length && <button
                   type="button"
                   disabled={!level.canTakeExam}
                   onClick={() => setExamStage(level.stage)}

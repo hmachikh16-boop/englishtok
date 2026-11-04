@@ -5134,6 +5134,17 @@ button.journey-frame-toggle svg { color: var(--duo-blue); }
   border-color: #e6d3ae;
 }
 
+.path-show-more-node {
+  cursor: pointer;
+}
+.path-show-more-orb {
+  background: linear-gradient(160deg, #d9b25a, #a56c18);
+  color: #2c2114;
+  font-weight: 900;
+  display: grid;
+  place-items: center;
+}
+
 .path-story-node.is-complete .path-story-hint {
   background: #d9b25a;
   color: #2c2114;

@@ -1,11 +1,11 @@
 {
-  "version": "1.1.32",
+  "version": "1.1.33",
   "packageId": "com.englishtok.gold",
-  "apkUrl": "/lin-go-gold-1.1.32.apk",
-  "sha256": "9A9F1934857B88E244F296D07B19EAAE06EDB131BB1B69E2A5A2CDE64B9DB219",
+  "apkUrl": "/lin-go-gold-1.1.33.apk",
+  "sha256": "B36591478C6BFF3A8180DD02922B7A533B3721E721D714CCE1CDD0A928F4BDC2",
   "size": 91513097,
   "minimumAndroidSdk": 24,
-  "notes": "تحديث Gold 1.1.32: تقسيم curriculum (177 KB مرحلة 1 أولاً،其余 في الخلفية) + إصلاح صوت القصص (TTS) + محطات قصص أوضح (إطار ذهبي + شارة «قصة») + lazy loading للمسار + جلد ورقي كامل. Reels + 17 لعبة + 500 درس.",
-  "releaseUrl": "https://github.com/hmachikh16-boop/englishtok/releases/tag/gold-v1.1.32",
+  "notes": "تحديث Gold 1.1.33: مسار تعلم مختصر (5 دروس في كل مرة + «عرض المزيد») + تقسيم curriculum (177 KB مرحلة 1) + إصلاح صوت القصص (TTS) + محطات قصص أوضح + lazy loading + جلد ورقي. Reels + 17 لعبة + 500 درس.",
+  "releaseUrl": "https://github.com/hmachikh16-boop/englishtok/releases/tag/gold-v1.1.33",
   "publishedAt": "2026-11-04T00:00:00.000Z"
 }
