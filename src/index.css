@@ -79,6 +79,7 @@
   background: transparent;
   transform: translateX(var(--node-shift, 0));
   direction: rtl;
+  contain: layout style;
 }
 
 .path-node:nth-of-type(1) { --node-shift: 0%; }
@@ -425,8 +426,6 @@ button.journey-frame-toggle:hover { border-color: #d9f99d; color: #1e5900; }
   max-width: 470px;
   margin-inline: auto;
   padding-block: 8px 18px;
-  content-visibility: auto;
-  contain-intrinsic-size: 0 600px;
 }
 .path-node:nth-of-type(1) { --node-shift: 0px; }
 .path-node:nth-of-type(2) { --node-shift: 30px; }

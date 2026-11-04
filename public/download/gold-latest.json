@@ -1,11 +1,11 @@
 {
-  "version": "1.1.34",
+  "version": "1.1.35",
   "packageId": "com.englishtok.gold",
-  "apkUrl": "/lin-go-gold-1.1.34.apk",
-  "sha256": "B3137EF3655F98C19D83E917871E660C67321A05A7A65D756B118EF1D0AB8FCF",
+  "apkUrl": "/lin-go-gold-1.1.35.apk",
+  "sha256": "589564F05CFEEF9458BD76E5C5EB684B433EDB7E265DEFF4923BFF3787499ED8",
   "size": 91513097,
   "minimumAndroidSdk": 24,
-  "notes": "تحديث Gold 1.1.34: content-visibility (تسريع رسم المسار) + مسار مختصر (5 دروس) + تقسيم curriculum (177 KB) + إصلاح صوت القصص (TTS) + محطات قصص + lazy loading + جلد ورقي. Reels + 17 لعبة + 500 درس.",
-  "releaseUrl": "https://github.com/hmachikh16-boop/englishtok/releases/tag/gold-v1.1.34",
+  "notes": "تحديث Gold 1.1.35: إصلاح تقطيع التمرير (إلغاء content-visibility + contain: layout style) + مسار مختصر (5 دروس) + تقسيم curriculum (177 KB) + إصلاح صوت القصص + محطات قصص + lazy loading + جلد ورقي. Reels + 17 لعبة + 500 درس.",
+  "releaseUrl": "https://github.com/hmachikh16-boop/englishtok/releases/tag/gold-v1.1.35",
   "publishedAt": "2026-11-04T00:00:00.000Z"
 }
