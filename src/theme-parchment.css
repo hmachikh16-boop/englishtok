@@ -2732,3 +2732,20 @@ html .ai-tutor .text-\[\#91a398\] { color: var(--parchment-soft) !important; }
 html .ai-tutor .text-\[\#2f8f7d\],
 html .ai-tutor .text-\[\#7a6b3f\] { color: var(--parchment-brass-deep) !important; }
 html .ai-tutor .bg-\[\#2f8f7d\] { background: var(--parchment-brass) !important; }
+
+/* Home: fewer nested windows — the intro summary and daily goal read as
+   plain rows inside the path hero instead of separate cards. */
+html .path-hero-intro-zone .path-hero-summary {
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+html .path-hero-intro-zone .daily-goal-card {
+  border: 0 !important;
+  border-top: 1px dashed rgba(126, 91, 43, 0.24) !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  padding: 10px 0 0 !important;
+}

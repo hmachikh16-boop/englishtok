@@ -1,5 +1,5 @@
 import React, { lazy, Suspense, useCallback, useDeferredValue, useEffect, useMemo, useRef, useState, useTransition } from 'react';
-import { Search, Sparkles, Play, BookOpen, Clock, Heart, Lock, CheckCircle2, Trophy, Star, ArrowDown, ArrowLeft, Crown, Footprints } from 'lucide-react';
+import { Search, Sparkles, Play, BookOpen, Clock, Heart, Lock, CheckCircle2, Trophy, Star, ArrowDown, Crown, Footprints } from 'lucide-react';
 import { Lesson, CategoryKey, UserProfile } from '../../types';
 import { CATEGORIES } from '../../data/lessons';
 import { CURRICULUM_CONFIG, CURRICULUM_LEVELS } from '../../data/curriculum';
@@ -193,6 +193,9 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
   const [selectedPhaseId, setSelectedPhaseId] = useState<string | null>(null);
   const [selectedSchoolYearId, setSelectedSchoolYearId] = useState<string | null>(null);
   const [shelfVisibleCount, setShelfVisibleCount] = useState(6);
+  // Only one secondary panel is open at a time so the home screen stays a
+  // single, calm path instead of a stack of cards.
+  const [homePanel, setHomePanel] = useState<'stories' | 'goals' | 'gold' | 'school' | null>(null);
   const [goalCardDialog, setGoalCardDialog] = useState<{
     cardId: string | null;
     stage: number | null;
@@ -205,6 +208,19 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
     if (next !== 'exam') setExamStage(null);
     if (next !== 'goalCard') setGoalCardDialog(null);
   }, []);
+  const toggleHomePanel = useCallback(
+    (panel: 'stories' | 'goals' | 'gold' | 'school') => {
+      const willOpen = homePanel !== panel;
+      setHomePanel(willOpen ? panel : null);
+      speechService.playPop();
+      if (willOpen && panel === 'stories') {
+        window.setTimeout(() => {
+          document.querySelector('.story-shelf')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 180);
+      }
+    },
+    [homePanel],
+  );
   const path = learningPath;
   const isFrenchCourse = userProfile.targetLanguage === 'fr';
   const currentStageNumber = useMemo(
@@ -319,10 +335,6 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
   }, [visibleLevels, visibleLessonCount]);
 
   const isSchoolYearCourse = Boolean(selectedSchoolYear?.grade);
-  const schoolYearLessonCount = useMemo(
-    () => lessons.reduce((count, lesson) => count + (lesson.schoolYearId ? 1 : 0), 0),
-    [lessons],
-  );
   const today = new Date().toISOString().slice(0, 10);
   const dailyLessonCount = userProfile.dailyProgress.date === today ? userProfile.dailyProgress.completedLessonIds.length : 0;
   const dailyGoal = Math.max(1, userProfile.dailyGoalLessons);
@@ -641,11 +653,9 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
               )}
             </p>
             <h2 className="mt-2 text-2xl font-black tracking-tight text-white sm:text-3xl">كل يوم، خطوة أقرب للطلاقة</h2>
-            <p className="mt-2 max-w-lg text-xs leading-6 text-slate-300">{lessons.length === 0 ? 'المحتوى فارغ حالياً: حُذفت جميع الدروس والمستويات السابقة، وسيُضاف المنهج الجديد هنا بعد اعتماده.' : `${path.levels.length} مستويات و${path.totalLessons} درسًا في المسار ${isFrenchCourse ? 'الفرنسي' : 'العام'}${schoolYearLessonCount ? `، إضافة إلى ${schoolYearLessonCount} درسًا في مسارات الأطوار الدراسية` : ''}.`}</p>
+            <p className="mt-2 max-w-lg text-xs leading-6 text-slate-300">{lessons.length === 0 ? 'المحتوى فارغ حالياً: حُذفت جميع الدروس والمستويات السابقة، وسيُضاف المنهج الجديد هنا بعد اعتماده.' : `${path.levels.length} مستويات و${path.totalLessons} درسًا في المسار ${isFrenchCourse ? 'الفرنسي' : 'العام'}.`}</p>
           </div>
-          <div className="path-hero-summary flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.06] px-4 py-3">
-            <LearningBuddy message="يلا نتعلم!" />
-            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-lime-300 text-slate-950"><Sparkles className="h-5 w-5" /></div>
+          <div className="path-hero-summary flex items-center gap-3">
             <div><div className="text-lg font-black text-white">{path.completedCount}<span className="text-slate-400">/{path.totalLessons}</span></div><div className="text-[10px] text-slate-300">درس مكتمل</div></div>
             <button type="button" disabled={!nextLessonId} onClick={() => nextLessonId && handleCardClick(nextLessonId)} className="path-start-button mr-1 flex items-center gap-2 rounded-xl bg-lime-300 px-4 py-3 text-xs font-black text-slate-950 shadow-lg shadow-lime-300/20 hover:bg-lime-200 active:scale-95 disabled:cursor-not-allowed disabled:opacity-40"><Play className="h-4 w-4 fill-current" /> {path.completedCount > 0 ? 'تابع التعلّم' : 'ابدأ الآن'}</button>
           </div>
@@ -657,57 +667,8 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
           {dailyLessonCount >= dailyGoal && <span className="daily-goal-done"><CheckCircle2 className="h-4 w-4" /> اكتمل</span>}
         </div>
 
-        {!goldEdition && !IS_STORE_BUILD && (
-          <button
-            type="button"
-            onClick={() => void openGoldPage()}
-            className="gold-path-entry relative z-[1] mt-3 flex w-full items-center gap-3 rounded-2xl border border-amber-300/70 bg-gradient-to-l from-amber-300 via-yellow-200 to-amber-100 px-3 py-2.5 text-right text-emerald-950 shadow-lg shadow-black/15 transition-all hover:brightness-105 active:scale-[.99]"
-            aria-label="اكتشف Lin Go Gold — النسخة المميزة بتدريب Gold+ وقلوب لا نهائية"
-          >
-            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-emerald-950 text-amber-300 shadow-inner">
-              <Crown className="h-5 w-5" strokeWidth={2.5} aria-hidden="true" />
-            </span>
-            <span className="min-w-0 flex-1">
-              <span className="block text-xs font-black">اكتشف Lin Go Gold</span>
-              <span className="mt-0.5 block text-[10px] font-bold text-emerald-900/70">
-                نفس التطبيق + قلوب لا نهائية وتدريب Gold+ أغنى
-              </span>
-            </span>
-            <span className="flex shrink-0 items-center gap-1 text-[10px] font-black">
-              <span className="hidden sm:inline">جرّب الآن</span>
-              <ArrowLeft className="h-4 w-4" strokeWidth={2.6} aria-hidden="true" />
-            </span>
-          </button>
-        )}
-
-        {goldEdition && (
-          <div className="relative z-[1] mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 rounded-2xl border border-amber-300/35 bg-amber-300/10 px-3 py-2 text-[10px] font-bold text-amber-100">
-            <span className="inline-flex items-center gap-1 text-[9px] font-black uppercase tracking-[0.16em] text-amber-200">
-              <Crown className="h-3 w-3" strokeWidth={2.8} aria-hidden="true" />
-              Gold+ Edition
-            </span>
-            <span className="text-amber-100/70">قلوب لا نهائية · +25% XP · تحدٍّ بصري · نطق موسّع · دوري ومكافآت</span>
-          </div>
-        )}
         </div>
-        {goldEdition && (
-          <GoldErrorBoundary>
-            <GoldJourneyPanel
-              userProfile={userProfile}
-              lessons={lessons}
-              learningPath={path}
-              onSelectLesson={handlePathLessonClick}
-              onUpdateProfile={onUpdateProfile}
-            />
-          </GoldErrorBoundary>
-        )}
-        {!isSchoolYearCourse && path.levels.length > 0 && (
-          <MotivationalGoalSpotlight
-            progressByStage={cardProgressByStage}
-            onBrowse={openGoalBrowser}
-          />
-        )}
-        {EDUCATIONAL_PHASES.length > 0 && <section className="school-phase-explorer mt-5" aria-labelledby="school-phase-title">
+        {EDUCATIONAL_PHASES.length > 0 && homePanel === 'school' && <section className="school-phase-explorer home-panel mt-5" aria-labelledby="school-phase-title">
           <div className="mb-3 flex items-start justify-between gap-3">
             <div><h3 id="school-phase-title" className="text-sm font-black text-slate-800">التعلّم حسب الطور الدراسي أو المستوى</h3><p className="mt-1 text-[11px] leading-5 text-slate-500">اختر طورًا أو مستوى، ثم السنة أو الوحدة، لعرض وحدات المحتوى المرتبطة بها.</p></div>
             {selectedPhase && <button type="button" onClick={() => { setSelectedPhaseId(null); setSelectedSchoolYearId(null); }} className="school-phase-back">كل الأطوار</button>}
@@ -743,6 +704,81 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
             </div>
           )}
         </section>}
+        <nav className="home-tools" aria-label="أدوات الصفحة الرئيسية">
+          <button
+            type="button"
+            className={`home-tool ${homePanel === 'stories' ? 'is-active' : ''}`}
+            onClick={() => toggleHomePanel('stories')}
+            aria-pressed={homePanel === 'stories'}
+          >
+            <BookOpen className="h-3.5 w-3.5" aria-hidden="true" />
+            القصص
+            <span className="home-tool-count">{shelfStories.length}</span>
+          </button>
+          {!isSchoolYearCourse && path.levels.length > 0 && (
+            <button
+              type="button"
+              className={`home-tool ${homePanel === 'goals' ? 'is-active' : ''}`}
+              onClick={() => toggleHomePanel('goals')}
+              aria-pressed={homePanel === 'goals'}
+            >
+              <Trophy className="h-3.5 w-3.5" aria-hidden="true" />
+              الأهداف
+            </button>
+          )}
+          {goldEdition ? (
+            <button
+              type="button"
+              className={`home-tool ${homePanel === 'gold' ? 'is-active' : ''}`}
+              onClick={() => toggleHomePanel('gold')}
+              aria-pressed={homePanel === 'gold'}
+            >
+              <Crown className="h-3.5 w-3.5" aria-hidden="true" />
+              Gold+
+            </button>
+          ) : !IS_STORE_BUILD ? (
+            <button type="button" className="home-tool" onClick={() => void openGoldPage()}>
+              <Crown className="h-3.5 w-3.5" aria-hidden="true" />
+              Gold
+            </button>
+          ) : null}
+          {EDUCATIONAL_PHASES.length > 0 && (
+            <button
+              type="button"
+              className={`home-tool ${homePanel === 'school' ? 'is-active' : ''}`}
+              onClick={() => toggleHomePanel('school')}
+              aria-pressed={homePanel === 'school'}
+            >
+              <Footprints className="h-3.5 w-3.5" aria-hidden="true" />
+              المسارات
+            </button>
+          )}
+        </nav>
+        {homePanel === 'goals' && !isSchoolYearCourse && path.levels.length > 0 && (
+          <section className="home-panel home-panel-goals" aria-label="الأهداف والبطاقات">
+            <MotivationalGoalSpotlight
+              progressByStage={cardProgressByStage}
+              onBrowse={openGoalBrowser}
+            />
+            <StageMotivationalCards
+              stage={currentStageNumber}
+              completedLessons={path.levels.find((level) => level.stage === currentStageNumber)?.completedCount ?? 0}
+              onOpenCard={openGoalCard}
+              onOpenGallery={openGoalGallery}
+            />
+          </section>
+        )}
+        {homePanel === 'gold' && goldEdition && (
+          <GoldErrorBoundary>
+            <GoldJourneyPanel
+              userProfile={userProfile}
+              lessons={lessons}
+              learningPath={path}
+              onSelectLesson={handlePathLessonClick}
+              onUpdateProfile={onUpdateProfile}
+            />
+          </GoldErrorBoundary>
+        )}
         {selectedSchoolYear && <div className="mt-4 flex items-center justify-between gap-2 rounded-xl bg-emerald-50 px-3 py-2 text-[11px] font-bold text-emerald-800"><span>{selectedSchoolYear.labelAr}</span><button type="button" onClick={() => setSelectedSchoolYearId(null)} className="underline">عرض المسار كاملًا</button></div>}
         {lessons.length === 0 ? (
           <div className="rounded-3xl border border-dashed border-white/20 bg-white/[0.04] p-8 text-center" dir="rtl">
@@ -766,14 +802,6 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
                 <div><div className="flex items-center gap-2 text-sm font-black text-white"><span className={`flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br ${color} text-slate-950`}>{locked ? <Lock className="h-4 w-4" /> : level.stage}</span>{isSchoolYearCourse ? level.titleAr : <>المرحلة {level.stage} <span className="text-teal-100">· {level.titleAr}</span></>}</div><p className="mt-1 text-[10px] text-slate-400">{level.subtitleAr}</p></div>
                 <span className="rounded-full bg-white/[0.06] px-3 py-1 text-[10px] font-bold text-slate-300">{level.completedCount}/{level.lessons.length} درس</span>
               </div>
-              {!isSchoolYearCourse && (
-                <StageMotivationalCards
-                  stage={level.stage}
-                  completedLessons={level.completedCount}
-                  onOpenCard={openGoalCard}
-                  onOpenGallery={openGoalGallery}
-                />
-              )}
               <div className="path-nodes continuous-route-nodes" aria-label={`دروس المرحلة ${level.stage}`}>
                 {stageRoute.path && (
                   <svg
@@ -842,7 +870,7 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
             </div>;
           })}
         </div>
-        <aside className="story-shelf mt-6" aria-label="قصص تعليمية">
+        {homePanel === 'stories' && <aside className="story-shelf home-panel mt-6" aria-label="قصص تعليمية">
           <div className="story-shelf-head">
             <div className="min-w-0">
               <div className="story-shelf-title">
@@ -909,7 +937,7 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
               عرض المزيد ({shelfStories.length - shelfVisibleCount})
             </button>
           )}
-        </aside>
+        </aside>}
         {activeStory && (
           <StoryReader
             story={activeStory}
