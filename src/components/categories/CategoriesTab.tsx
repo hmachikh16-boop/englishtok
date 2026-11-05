@@ -192,6 +192,7 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
   const [completedStoryIds, setCompletedStoryIds] = useState<Set<string>>(() => readCompletedStories());
   const [selectedPhaseId, setSelectedPhaseId] = useState<string | null>(null);
   const [selectedSchoolYearId, setSelectedSchoolYearId] = useState<string | null>(null);
+  const [shelfVisibleCount, setShelfVisibleCount] = useState(6);
   const [goalCardDialog, setGoalCardDialog] = useState<{
     cardId: string | null;
     stage: number | null;
@@ -346,6 +347,38 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
     }
     return map;
   }, []);
+
+  // Only the current stage's stories are shown in the shelf, and they load in
+  // small chunks. This keeps the shelf light even with dozens of stories and
+  // avoids rendering every illustration at once.
+  const shelfStage = selectedPathStage === 'all' ? currentStageNumber : selectedPathStage;
+  const shelfStories = useMemo(
+    () => storiesByStage.get(shelfStage) ?? [],
+    [shelfStage, storiesByStage],
+  );
+  // Shelf cards follow the same rule as the path: a story opens only after the
+  // lesson it sits after has been completed.
+  const storyLockById = useMemo(() => {
+    const map = new Map<string, boolean>();
+    for (const level of path.levels) {
+      const stories = storiesByStage.get(level.stage) ?? [];
+      const lessonCount = level.lessons.length;
+      stories.forEach((story, storyIndex) => {
+        const slot = lessonCount === 0
+          ? 0
+          : Math.min(
+              lessonCount - 1,
+              Math.max(0, Math.round(((storyIndex + 1) * lessonCount) / (stories.length + 1)) - 1),
+            );
+        const entry = level.lessons[slot];
+        map.set(story.id, !level.isUnlocked || !entry || entry.status !== 'completed');
+      });
+    }
+    return map;
+  }, [storiesByStage, path.levels]);
+  useEffect(() => {
+    setShelfVisibleCount(6);
+  }, [shelfStage]);
 
   type StageNode =
     | { type: 'lesson'; entry: LessonPathEntry; index: number }
@@ -820,22 +853,33 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
                 قصص قصيرة مصوّرة (إنجليزية/فرنسية) لتحسين الفهم والاستماع. اضغط على أي محطة قصة في المسار أو هنا.
               </p>
             </div>
-            <span className="story-shelf-count">{EDUCATIONAL_STORIES.length} قصص</span>
+            <span className="story-shelf-count">{shelfStories.length} قصص · المرحلة {shelfStage}</span>
           </div>
           <div className="story-shelf-grid">
-            {EDUCATIONAL_STORIES.map((story) => {
+            {shelfStories.slice(0, shelfVisibleCount).map((story) => {
               const done = completedStoryIds.has(story.id);
+              const locked = storyLockById.get(story.id) ?? false;
               return (
                 <button
                   key={story.id}
                   type="button"
-                  className={`story-shelf-card ${done ? 'is-done' : ''}`}
-                  onClick={() => setActiveStoryId(story.id)}
-                  aria-label={`اقرأ قصة ${story.titleAr}`}
+                  disabled={locked}
+                  className={`story-shelf-card ${done ? 'is-done' : ''} ${locked ? 'is-locked' : ''}`}
+                  onClick={() => {
+                    if (locked) return;
+                    openExclusive('story');
+                    setActiveStoryId(story.id);
+                  }}
+                  aria-label={`اقرأ قصة ${story.titleAr}${locked ? '، مقفلة حتى تصل إليها' : ''}`}
                 >
                   <span className="story-shelf-art" aria-hidden="true">
                     <StoryScene scene={story.scene} className="story-shelf-scene" />
                     <span className="story-shelf-level">{story.level}</span>
+                    {locked && (
+                      <span className="story-shelf-lock">
+                        <Lock className="h-3.5 w-3.5" />
+                      </span>
+                    )}
                   </span>
                   <span className="story-shelf-body">
                     <strong className="story-shelf-name">{story.titleAr}</strong>
@@ -856,6 +900,15 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
               );
             })}
           </div>
+          {shelfVisibleCount < shelfStories.length && (
+            <button
+              type="button"
+              className="story-shelf-more"
+              onClick={() => setShelfVisibleCount((value) => value + 6)}
+            >
+              عرض المزيد ({shelfStories.length - shelfVisibleCount})
+            </button>
+          )}
         </aside>
         {activeStory && (
           <StoryReader

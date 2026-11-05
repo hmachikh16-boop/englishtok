@@ -19,11 +19,14 @@ interface ActiveWord {
 
 const WORD_PATTERN = /([A-Za-zÀ-ÖØ-öø-ÿ]+(?:[’'-][A-Za-zÀ-ÖØ-öø-ÿ]+)*)([^A-Za-zÀ-ÖØ-öø-ÿ]*)/g;
 
-const normalizeWord = (raw: string) =>
-  raw
+const normalizeWord = (raw: string) => {
+  const lower = raw
     .toLowerCase()
     .replace(/[’]/g, "'")
     .replace(/^[^a-zà-öø-ÿ]+|[^a-zà-öø-ÿ]+$/g, '');
+  // French elisions: l'eau -> eau, qu'il -> il, d'abord -> abord.
+  return lower.replace(/^(qu|l|d|j|n|s|c|m|t)'(?=[a-zà-öø-ÿ])/, '');
+};
 
 const tokenize = (text: string): Array<{ text: string; word: string | null }> => {
   const tokens: Array<{ text: string; word: string | null }> = [];

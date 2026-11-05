@@ -1,11 +1,11 @@
 {
-  "version": "1.1.36",
+  "version": "1.1.37",
   "packageId": "com.englishtok.gold",
-  "apkUrl": "/lin-go-gold-1.1.36.apk",
-  "sha256": "EB4B2D62F0D9FF4C42DAB6A1D4226644447203F70F1352944A45ED47D14385DC",
-  "size": 91513097,
+  "apkUrl": "/lin-go-gold-1.1.37.apk",
+  "sha256": "07455173E95081B951245B710E09677ADB84D1CEBE4B79A90D27C95F508FFF41",
+  "size": 91537673,
   "minimumAndroidSdk": 24,
-  "notes": "تحديث Gold 1.1.36: مدير نوافذ (overlay واحد في كل مرة) + contain: layout style + مسار مختصر (5 دروس) + تقسيم curriculum (177 KB) + إصلاح صوت القصص + محطات قصص + lazy loading + جلد ورقي. Reels + 17 لعبة + 500 درس.",
-  "releaseUrl": "https://github.com/hmachikh16-boop/englishtok/releases/tag/gold-v1.1.36",
-  "publishedAt": "2026-11-04T00:00:00.000Z"
+  "notes": "تحديث Gold 1.1.37: 50 قصة جديدة (58 قصة إجمالاً) موزعة على المراحل الأربعة داخل المسار + صوت القصص يعمل (جهاز/خادم) + رف قصص أخف يعرض قصص المرحلة فقط بتحميل تدريجي (6 في كل مرة) + قفل القصص حتى إكمال الدرس السابق + مدير نوافذ (نافذة واحدة في كل مرة) + مسار مختصر (5 دروس) + تقسيم curriculum (177 KB) + جلد ورقي. Reels + 17 لعبة + 500 درس.",
+  "releaseUrl": "https://github.com/hmachikh16-boop/englishtok/releases/tag/gold-v1.1.37",
+  "publishedAt": "2026-11-05T00:00:00.000Z"
 }
