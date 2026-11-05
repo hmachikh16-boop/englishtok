@@ -150,7 +150,7 @@ try {
     size: goldSize,
     minimumAndroidSdk: 24,
     notes:
-      'تحديث Gold ' + goldVersion + ': إصلاح صوت القصص (TTS جهاز/خادم) + تجاوز فحص .ogg + دعم صوت إنجليزي/فرنسي + محطات قصص أوضح (إطار ذهبي + شارة «قصة») + قارئ قصص تفاعلي + 8 قصص A1–B2 + جلد ورقي كامل. Reels + 17 لعبة + 500 درس.',
+      'تحديث Gold ' + goldVersion + ': واجهة رئيسية أخف (بطاقات الأهداف/القصص/Gold+/المسارات تفتح بنقرة، الافتراضي: المسار فقط) + جلد ورقي + 58 قصة + 500 درس. Reels + 17 لعبة.',
     releaseUrl: `https://github.com/${repository}/releases/tag/gold-v${goldVersion}`,
     publishedAt: new Date().toISOString(),
   };
