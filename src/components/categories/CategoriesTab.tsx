@@ -1,5 +1,5 @@
 import React, { lazy, Suspense, useCallback, useDeferredValue, useEffect, useMemo, useRef, useState, useTransition } from 'react';
-import { Search, Sparkles, Play, BookOpen, Clock, Heart, Lock, CheckCircle2, Trophy, Star, ArrowDown, Crown, Footprints } from 'lucide-react';
+import { Search, Sparkles, Play, BookOpen, Clock, Heart, Lock, CheckCircle2, Trophy, Star, ArrowDown, Crown, Footprints, Youtube } from 'lucide-react';
 import { Lesson, CategoryKey, UserProfile } from '../../types';
 import { CATEGORIES } from '../../data/lessons';
 import { CURRICULUM_CONFIG, CURRICULUM_LEVELS } from '../../data/curriculum';
@@ -1169,9 +1169,10 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
       )}
       {IS_GOLD_EDITION && (
         <>
-          <button type="button" className="reels-fab" onClick={() => { openExclusive('reels'); setShowReels(true); }} aria-label="ريلز تعليمية">
-            <Play className="h-5 w-5" />
+          <button type="button" className="reels-fab" onClick={() => { openExclusive('reels'); setShowReels(true); }} aria-label="ريلز Lin Go من يوتيوب">
+            <Youtube className="h-5 w-5" />
             <span>Reels</span>
+            <span className="reels-fab-live" aria-hidden="true" />
           </button>
           {showReels && (
             <Suspense fallback={null}>

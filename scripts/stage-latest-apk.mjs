@@ -150,7 +150,7 @@ try {
     size: goldSize,
     minimumAndroidSdk: 24,
     notes:
-      'تحديث Gold ' + goldVersion + ': واجهة رئيسية أخف (بطاقات الأهداف/القصص/Gold+/المسارات تفتح بنقرة، الافتراضي: المسار فقط) + جلد ورقي + 58 قصة + 500 درس. Reels + 17 لعبة.',
+      'تحديث Gold ' + goldVersion + ': ريلز احترافية تعرض شورتات قناة @lingogold مباشرة من يوتيوب وتتحدث تلقائيًا عند فتحها + إحصاءات القناة (المشتركون/المشاهدات) في لوحة التحكم. مع جلد ورقي، 58 قصة، 500 درس، و17 لعبة.',
     releaseUrl: `https://github.com/${repository}/releases/tag/gold-v${goldVersion}`,
     publishedAt: new Date().toISOString(),
   };

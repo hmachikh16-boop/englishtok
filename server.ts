@@ -8,6 +8,7 @@ import adminHandler from './api/admin';
 import chatHandler from './api/chat';
 import progressHandler from './api/progress';
 import ttsHandler from './api/tts';
+import youtubeHandler from './api/youtube';
 
 const app = express();
 const httpServer = createServer(app);
@@ -38,6 +39,12 @@ app.all('/api/tts', (request, response) => {
   void ttsHandler(
     request as unknown as Parameters<typeof ttsHandler>[0],
     response as unknown as Parameters<typeof ttsHandler>[1],
+  );
+});
+app.all('/api/youtube', (request, response) => {
+  void youtubeHandler(
+    request as unknown as Parameters<typeof youtubeHandler>[0],
+    response as unknown as Parameters<typeof youtubeHandler>[1],
   );
 });
 

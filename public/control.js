@@ -16,11 +16,29 @@ const STATE = {
   lastUpdated: null,
   pendingImport: null,
   lastFocused: null,
+  youtube: null,
+  youtubeAt: 0,
 };
 
 const $ = (selector, root = document) => root.querySelector(selector);
 const $$ = (selector, root = document) => Array.from(root.querySelectorAll(selector));
 const icon = (name) => `<svg aria-hidden="true"><use href="#icon-${name}"></use></svg>`;
+
+/* The control CSP disallows inline handlers, so thumbnail fallbacks are
+   handled through a capture-phase listener instead of an onerror attribute. */
+document.addEventListener(
+  'error',
+  (event) => {
+    const image = event.target;
+    if (!(image instanceof HTMLImageElement)) return;
+    const fallback = image.dataset.fallback;
+    if (!fallback || image.dataset.fallbackApplied) return;
+    image.dataset.fallbackApplied = '1';
+    image.src = fallback;
+  },
+  true,
+);
+
 const html = (value) =>
   String(value ?? '').replace(/[&<>"']/g, (character) => {
     switch (character) {
@@ -374,6 +392,7 @@ const viewMeta = {
   check: { title: 'فحص كود', subtitle: 'تحقق من صلاحية أي كود ومعلومات المستخدم.' },
   activity: { title: 'السجل', subtitle: 'كل عملية إدارة تمت على أكواد Gold.' },
   complaints: { title: 'الشكاوي', subtitle: 'انشغالات وشكاوي المستخدمين (support).' },
+  youtube: { title: 'قناة يوتيوب', subtitle: 'المشتركون، المشاهدات، وأحدث الشورتات على القناة.' },
   settings: { title: 'البيانات والإعدادات', subtitle: 'نسخ احتياطي، استيراد، ومعلومات مساحة العمل.' },
 };
 
@@ -391,6 +410,9 @@ const switchView = (view) => {
   $('#breadcrumbCurrent').textContent = meta.title;
   closeSidebar();
   renderAll();
+  if (view === 'youtube' && (!STATE.youtube || Date.now() - STATE.youtubeAt > 5 * 60 * 1000)) {
+    void loadYoutube();
+  }
   window.scrollTo({ top: 0, behavior: 'smooth' });
 };
 
@@ -975,6 +997,136 @@ const renderSettings = () => {
     <div><span>مساحة العمل</span><strong>Gold / Production</strong></div>`;
 };
 
+const loadYoutube = async (force = false) => {
+  const target = $('#youtubeStatGrid');
+  if (target && !STATE.youtube) {
+    target.innerHTML = '<div class="youtube-loading">جارٍ تحميل إحصاءات القناة…</div>';
+  }
+  try {
+    const response = await fetch(`/api/youtube?action=stats${force ? '&refresh=1' : ''}`, {
+      cache: 'no-store',
+      headers: { Accept: 'application/json' },
+    });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    STATE.youtube = await response.json();
+    STATE.youtubeAt = Date.now();
+    renderYoutube();
+    if (force) toast('تم تحديث إحصاءات القناة.');
+  } catch (error) {
+    reportError(error, 'تعذر تحميل إحصاءات القناة.');
+    if (target && !STATE.youtube) {
+      target.innerHTML = '<div class="youtube-error">تعذر تحميل الإحصاءات. اضغط «تحديث الإحصاءات».</div>';
+    }
+  }
+};
+
+const youtubeMetric = (value) =>
+  value === null || value === undefined ? '—' : formatNumber(value);
+
+const youtubeViews = (text) => {
+  if (!text) return '—';
+  if (/^no views?$/i.test(String(text).trim())) return 'لا مشاهدات بعد';
+  return String(text).replace(/\s*views?$/i, ' مشاهدة');
+};
+
+const renderYoutube = () => {
+  const target = $('#youtubeStatGrid');
+  if (!target) return;
+  const data = STATE.youtube;
+  if (!data) {
+    target.innerHTML = '<div class="youtube-loading">جارٍ تحميل إحصاءات القناة…</div>';
+    return;
+  }
+  const channel = data.channel || {};
+  const videos = [...(data.shorts || []), ...(data.videos || [])];
+  const cards = [
+    {
+      label: 'المشتركون',
+      value: youtubeMetric(channel.subscribers),
+      sub: 'اشتراكات القناة',
+      tone: 'var(--gold)',
+      icon: 'users',
+      badge: 'اشتراك',
+    },
+    {
+      label: 'المشاهدات',
+      value: youtubeMetric(channel.totalViews),
+      sub: channel.source === 'api' ? 'إجمالي مشاهدات القناة' : 'مشاهدات أحدث المقاطع',
+      tone: 'var(--blue)',
+      icon: 'trend',
+      badge: 'مشاهدة',
+    },
+    {
+      label: 'إجمالي المقاطع',
+      value: youtubeMetric(channel.videoCount ?? videos.length),
+      sub: 'فيديوهات وشورتات منشورة',
+      tone: 'var(--green)',
+      icon: 'youtube',
+      badge: 'مقاطع',
+    },
+    {
+      label: 'الشورتات',
+      value: formatNumber((data.shorts || []).length),
+      sub: (data.shorts || []).length ? 'متاحة الآن في التطبيق' : 'بانتظار نشر أول شورت',
+      tone: 'var(--orange)',
+      icon: 'play',
+      badge: 'شورت',
+    },
+  ];
+  target.innerHTML = cards
+    .map(
+      (card) => `
+        <article class="stat-card" style="--stat-tone:${card.tone}">
+          <div class="stat-top">
+            <span class="stat-icon">${icon(card.icon)}</span>
+            <span class="stat-trend">${card.badge}</span>
+          </div>
+          <div class="stat-label">${html(card.label)}</div>
+          <div class="stat-value">${html(card.value)}</div>
+          <div class="stat-sub">${html(card.sub)}</div>
+        </article>`,
+    )
+    .join('');
+
+  const list = $('#youtubeVideoList');
+  const empty = $('#youtubeEmpty');
+  if (list) {
+    list.innerHTML = videos
+      .slice(0, 6)
+      .map(
+        (video) => `
+          <a class="youtube-video-card" href="${html(video.url)}" target="_blank" rel="noopener noreferrer">
+            <span class="youtube-video-thumb">
+              <img src="${html(video.thumbnail)}" data-fallback="${html(video.fallbackThumbnail || video.thumbnail)}" alt="" loading="lazy" />
+              <span class="youtube-video-play">${icon('youtube')}</span>
+            </span>
+            <span class="youtube-video-copy">
+              <strong>${html(video.title)}</strong>
+              <small>${video.type === 'short' ? 'شورت' : 'فيديو'} · ${html(youtubeViews(video.viewsText))}</small>
+            </span>
+          </a>`,
+      )
+      .join('');
+  }
+  if (empty) empty.hidden = videos.length > 0;
+
+  const summary = $('#youtubeSummary');
+  if (summary) {
+    summary.innerHTML = `
+      <div><span>القناة</span><strong dir="ltr">${html(channel.handle || '@lingogold')}</strong></div>
+      <div><span>المصدر</span><strong>${channel.source === 'api' ? 'YouTube API' : 'الصفحة العامة'}</strong></div>
+      <div><span>آخر تحديث</span><strong>${html(formatRelative(channel.updatedAt || STATE.youtubeAt))}</strong></div>
+      <div><span>الشورتات</span><strong>${formatNumber((data.shorts || []).length)}</strong></div>
+      <div><span>الفيديوهات</span><strong>${formatNumber((data.videos || []).length)}</strong></div>
+      <div><span>الحالة</span><strong>${videos.length ? 'متصل ومتزامن' : 'بانتظار النشر'}</strong></div>`;
+  }
+
+  const navCount = $('#navYoutubeCount');
+  if (navCount) navCount.textContent = formatNumber(videos.length);
+  const updated = $('#youtubeUpdated');
+  if (updated) updated.textContent = channel.updatedAt ? formatRelative(channel.updatedAt) : '—';
+};
+
 const renderAll = () => {
   if (!STATE.db) return;
   renderStats();
@@ -986,6 +1138,7 @@ const renderAll = () => {
   renderCheck();
   renderActivityLog();
   renderComplaints();
+  renderYoutube();
   renderSettings();
   renderMeta();
 };
@@ -1454,6 +1607,7 @@ const handleRecordAction = (button) => {
 const handleAction = (action) => {
   if (action === 'generate') openGenerateModal();
   else if (action === 'refresh') refreshData($('#refreshButton'));
+  else if (action === 'youtube-refresh') void loadYoutube(true);
   else if (action === 'export-csv') exportCsv();
   else if (action === 'export-json') exportJson();
   else if (action === 'logout') logout();
@@ -1701,3 +1855,4 @@ if ('serviceWorker' in navigator && window.isSecureContext) {
 document.addEventListener('DOMContentLoaded', () => {
   void boot();
 });
+

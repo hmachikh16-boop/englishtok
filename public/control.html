@@ -48,6 +48,8 @@
       <symbol id="icon-edit" viewBox="0 0 24 24"><path d="M12 20h9"></path><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z"></path></symbol>
       <symbol id="icon-shield" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"></path><path d="m9 12 2 2 4-5"></path></symbol>
       <symbol id="icon-calendar" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M16 3v4M8 3v4M3 11h18"></path></symbol>
+      <symbol id="icon-youtube" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="4"></rect><path d="m10 9 5 3-5 3V9Z"></path></symbol>
+      <symbol id="icon-play" viewBox="0 0 24 24"><path d="m8 5 11 7-11 7V5Z"></path></symbol>
     </svg>
 
     <div class="ambient ambient-one"></div>
@@ -116,6 +118,7 @@
           <button class="nav-item" type="button" data-view="check"><span class="nav-icon"><svg><use href="#icon-search"></use></svg></span><span>فحص كود</span></button>
           <button class="nav-item" type="button" data-view="activity"><span class="nav-icon"><svg><use href="#icon-activity"></use></svg></span><span>السجل</span></button>
           <button class="nav-item" type="button" data-view="complaints"><span class="nav-icon"><svg><use href="#icon-alert"></use></svg></span><span>الشكاوي</span><span class="nav-count" id="navComplaintCount">0</span></button>
+          <button class="nav-item" type="button" data-view="youtube"><span class="nav-icon"><svg><use href="#icon-youtube"></use></svg></span><span>قناة يوتيوب</span><span class="nav-count" id="navYoutubeCount">0</span></button>
         </nav>
         <div class="side-nav-label">الإدارة</div>
         <nav class="side-nav" aria-label="إدارة البيانات">
@@ -225,7 +228,46 @@
             <div class="section-heading"><div><span class="eyebrow">السجل</span><h2>سجل النشاطات</h2><p>كل عملية إدارة تمت على أكواد Gold.</p></div><div class="heading-actions"><button class="button button-secondary" type="button" data-action="refresh"><svg><use href="#icon-refresh"></use></svg><span>تحديث</span></button></div></div>
             <article class="panel activity-log-panel"><div id="activityList" class="activity-list"></div><div id="activityEmpty" class="empty-state" hidden><span class="empty-icon"><svg><use href="#icon-activity"></use></svg></span><h3>السجل فارغ</h3><p>ستظهر هنا كل عمليات الإنشاء والتفعيل والتمديد.</p></div></article>
           </section>
-           <section id="view-complaints" class="view" data-view-panel="complaints" hidden>
+           <section id="view-youtube" class="view" data-view-panel="youtube" hidden>
+            <div class="section-heading">
+              <div>
+                <span class="eyebrow">قناة يوتيوب</span>
+                <h2>أداء قناة Lin Go</h2>
+                <p>المشتركون، المشاهدات، وأحدث الشورتات المنشورة على يوتيوب.</p>
+              </div>
+              <div class="heading-actions">
+                <a class="button button-secondary" href="https://www.youtube.com/@lingogold" target="_blank" rel="noopener noreferrer">
+                  <svg><use href="#icon-youtube"></use></svg><span>فتح القناة</span>
+                </a>
+                <button class="button button-gold" type="button" data-action="youtube-refresh">
+                  <svg><use href="#icon-refresh"></use></svg><span>تحديث الإحصاءات</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="stats-grid" id="youtubeStatGrid" aria-live="polite"></div>
+
+            <div class="split-grid">
+              <article class="panel">
+                <div class="panel-head">
+                  <div><span class="panel-kicker">آخر المقاطع</span><h3>الشورتات والفيديوهات</h3></div>
+                  <span class="panel-meta" id="youtubeUpdated">—</span>
+                </div>
+                <div id="youtubeVideoList" class="youtube-video-list"></div>
+                <div id="youtubeEmpty" class="empty-state" hidden>
+                  <span class="empty-icon"><svg><use href="#icon-youtube"></use></svg></span>
+                  <h3>لا توجد مقاطع بعد</h3>
+                  <p>سيظهر هنا أي شورت جديد تنشره القناة تلقائيًا.</p>
+                </div>
+              </article>
+              <article class="panel youtube-summary-panel">
+                <div class="panel-head"><div><span class="panel-kicker">ملخص</span><h3>مؤشرات القناة</h3></div></div>
+                <div id="youtubeSummary" class="data-summary"></div>
+              </article>
+            </div>
+          </section>
+
+          <section id="view-complaints" class="view" data-view-panel="complaints" hidden>
              <div class="section-heading"><div><span class="eyebrow">الشكاوي</span><h2>انشغالات وشكاوي المستخدمين</h2><p>رسائل الدعم (support) الواردة من التطبيق، مع الكود والوقت.</p></div><div class="heading-actions"><button class="button button-secondary" type="button" data-action="refresh"><svg><use href="#icon-refresh"></use></svg><span>تحديث</span></button></div></div>
              <article class="panel activity-log-panel">
                <div id="complaintsList" class="activity-list"></div>
