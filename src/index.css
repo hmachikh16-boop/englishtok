@@ -6228,3 +6228,175 @@ button.journey-frame-toggle svg { color: var(--duo-blue); }
   white-space: nowrap;
 }
 .alphabet-quiz-next:active { transform: scale(0.96); }
+/* ── Title shop ───────────────────────────────────────────────────── */
+.title-shop {
+  margin-top: 14px;
+  border: 1px solid rgba(109, 70, 16, 0.3);
+  border-radius: 20px;
+  padding: 12px 12px 14px;
+  background:
+    linear-gradient(rgba(255, 252, 240, 0.5), rgba(255, 252, 240, 0) 55%),
+    linear-gradient(170deg, #fbf0d7, #f2e3c0 66%, #ecd9ae);
+  box-shadow: 0 3px 0 rgba(216, 196, 154, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+.title-shop-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(216, 196, 154, 0.65);
+  margin-bottom: 10px;
+}
+.title-shop-title {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 14px;
+  font-weight: 900;
+  color: #2c2114;
+}
+.title-shop-sub {
+  margin: 3px 0 0;
+  font-size: 10px;
+  font-weight: 600;
+  color: #6d5838;
+  line-height: 1.6;
+}
+.title-shop-balance {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border: 1px solid rgba(109, 70, 16, 0.32);
+  border-radius: 13px;
+  padding: 6px 11px;
+  background: linear-gradient(180deg, #f3d79a, #e6c37c);
+  color: #2c2114;
+  font-size: 12px;
+  font-weight: 900;
+  box-shadow: 0 2px 0 rgba(140, 104, 53, 0.35);
+  white-space: nowrap;
+}
+.title-shop-grid {
+  display: grid;
+  gap: 8px;
+}
+.title-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 11px;
+  border: 1px solid rgba(109, 70, 16, 0.24);
+  border-radius: 15px;
+  background: rgba(255, 252, 240, 0.75);
+  transition: border-color 0.16s ease, background 0.16s ease;
+}
+.title-card.is-active {
+  background: linear-gradient(180deg, #fdf6e3, #f6ead0);
+  box-shadow: 0 2px 0 rgba(216, 196, 154, 0.6);
+}
+.title-card-icon {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  flex: 0 0 40px;
+  border: 1px solid rgba(109, 70, 16, 0.28);
+  border-radius: 13px;
+  background: radial-gradient(circle at 32% 26%, #fdf6e3, #efd9a7 62%, #dfc086);
+  font-size: 20px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+.title-card-name {
+  font-size: 13px;
+  font-weight: 900;
+  color: #2c2114;
+}
+.title-card-desc {
+  margin: 2px 0 0;
+  font-size: 10px;
+  font-weight: 600;
+  color: #6d5838;
+  line-height: 1.5;
+}
+.title-card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+  font-size: 10px;
+  font-weight: 700;
+  color: #7a6644;
+}
+.title-card-owned {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: #4d9560;
+}
+.title-card-price {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  color: #a56c18;
+}
+.title-card-lock {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  color: #b23a2e;
+}
+.title-card-action {
+  flex: 0 0 auto;
+}
+.title-card-btn {
+  border: 1px solid rgba(109, 70, 16, 0.3);
+  border-radius: 11px;
+  padding: 7px 12px;
+  font-size: 11px;
+  font-weight: 900;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+  white-space: nowrap;
+}
+.title-card-btn:active { transform: scale(0.96); }
+.title-card-btn-buy {
+  background: linear-gradient(180deg, #f3d79a, #e6c37c);
+  color: #2c2114;
+  box-shadow: 0 2px 0 rgba(140, 104, 53, 0.35);
+}
+.title-card-btn-equip {
+  background: #fbf0d7;
+  color: #5b3d12;
+}
+.title-card-btn-disabled {
+  background: rgba(255, 252, 240, 0.6);
+  color: #a08a63;
+  cursor: not-allowed;
+}
+.title-card-equipped {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border: 1px solid rgba(77, 149, 96, 0.4);
+  border-radius: 11px;
+  padding: 6px 11px;
+  background: rgba(233, 244, 231, 0.9);
+  color: #4d9560;
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.title-badge-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border: 1px solid rgba(109, 70, 16, 0.3);
+  border-radius: 999px;
+  padding: 3px 9px;
+  background: linear-gradient(180deg, #f3d79a, #e6c37c);
+  color: #2c2114;
+  font-size: 10px;
+  font-weight: 900;
+  box-shadow: 0 1px 0 rgba(140, 104, 53, 0.3);
+}

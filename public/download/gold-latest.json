@@ -1,11 +1,11 @@
 {
-  "version": "1.1.46",
+  "version": "1.1.47",
   "packageId": "com.englishtok.gold",
-  "apkUrl": "/lin-go-gold-1.1.46.apk",
-  "sha256": "5703D891232D74B9D0BDFB88661F2826C0EB311C83F05BD6E15919F0268B8F9C",
-  "size": 91656111,
+  "apkUrl": "/lin-go-gold-1.1.47.apk",
+  "sha256": "27B1791F93EB6D309405361D3C7C51524F3692670EC31EA299E2C3D8447B1072",
+  "size": 91656119,
   "minimumAndroidSdk": 24,
-  "notes": "تحديث Gold 1.1.46: زر «الحروف الأبجدية» (26 حرفًا، صوت + مثال + جملة، اختبار تفاعلي)، مع ~900 درس ونوافذ أنيقة وألعاب أذكى.",
-  "releaseUrl": "https://github.com/hmachikh16-boop/englishtok/releases/tag/gold-v1.1.46",
+  "notes": "تحديث Gold 1.1.47: متجر الألقاب (8 ألقاب، شراء بالنقاط، تجهيز في الملف)، نقاط من الألعاب (1 نقطة/10 XP)، عرض اللقب تحت الاسم. مع ~900 درس ونوافذ.",
+  "releaseUrl": "https://github.com/hmachikh16-boop/englishtok/releases/tag/gold-v1.1.47",
   "publishedAt": "2026-11-07T00:00:00.000Z"
 }

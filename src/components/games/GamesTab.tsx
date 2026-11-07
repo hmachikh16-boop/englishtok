@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 import {
   ChevronLeft,
   Flame,
@@ -278,6 +278,17 @@ export const GamesTab: React.FC<GamesTabProps> = ({ lessons, userProfile, onUpda
   const [activeGame, setActiveGame] = useState<GameKey | null>(null);
   const [progressVersion, setProgressVersion] = useState(0);
   const rootRef = useRef<HTMLDivElement>(null);
+  const handleProfileUpdate = useCallback((updated: Partial<UserProfile>) => {
+    const newXp = typeof updated.xp === 'number' ? updated.xp : userProfile.xp;
+    const xpGain = Math.max(0, newXp - (userProfile.xp ?? 0));
+    const coinsGain = Math.floor(xpGain / 10);
+    const next: Partial<UserProfile> = { ...updated };
+    if (coinsGain > 0) {
+      next.points = (userProfile.points ?? 0) + coinsGain + (updated.points ?? 0);
+    }
+    onUpdateProfile(next);
+  }, [userProfile, onUpdateProfile]);
+
   const progress = useMemo(() => loadGameProgress(), [activeGame, progressVersion]);
   const puzzleCount = useMemo(() => buildGamePuzzles(lessons).length, [lessons]);
 
@@ -306,7 +317,7 @@ export const GamesTab: React.FC<GamesTabProps> = ({ lessons, userProfile, onUpda
           <SpellingGame
             lessons={lessons}
             userProfile={userProfile}
-            onUpdateProfile={onUpdateProfile}
+            onUpdateProfile={handleProfileUpdate}
             onBack={backToLibrary}
           />
         );
@@ -315,7 +326,7 @@ export const GamesTab: React.FC<GamesTabProps> = ({ lessons, userProfile, onUpda
           <WordChoiceGame
             lessons={lessons}
             userProfile={userProfile}
-            onUpdateProfile={onUpdateProfile}
+            onUpdateProfile={handleProfileUpdate}
             onBack={backToLibrary}
           />
         );
@@ -324,7 +335,7 @@ export const GamesTab: React.FC<GamesTabProps> = ({ lessons, userProfile, onUpda
           <MemoryMatchGame
             lessons={lessons}
             userProfile={userProfile}
-            onUpdateProfile={onUpdateProfile}
+            onUpdateProfile={handleProfileUpdate}
             onBack={backToLibrary}
           />
         );
@@ -333,7 +344,7 @@ export const GamesTab: React.FC<GamesTabProps> = ({ lessons, userProfile, onUpda
           <ListenChooseGame
             lessons={lessons}
             userProfile={userProfile}
-            onUpdateProfile={onUpdateProfile}
+            onUpdateProfile={handleProfileUpdate}
             onBack={backToLibrary}
           />
         );
@@ -342,7 +353,7 @@ export const GamesTab: React.FC<GamesTabProps> = ({ lessons, userProfile, onUpda
           <FillBlankGame
             lessons={lessons}
             userProfile={userProfile}
-            onUpdateProfile={onUpdateProfile}
+            onUpdateProfile={handleProfileUpdate}
             onBack={backToLibrary}
           />
         );
@@ -351,7 +362,7 @@ export const GamesTab: React.FC<GamesTabProps> = ({ lessons, userProfile, onUpda
           <SpeedQuizGame
             lessons={lessons}
             userProfile={userProfile}
-            onUpdateProfile={onUpdateProfile}
+            onUpdateProfile={handleProfileUpdate}
             onBack={backToLibrary}
           />
         );
@@ -360,30 +371,30 @@ export const GamesTab: React.FC<GamesTabProps> = ({ lessons, userProfile, onUpda
           <HangmanGame
             lessons={lessons}
             userProfile={userProfile}
-            onUpdateProfile={onUpdateProfile}
+            onUpdateProfile={handleProfileUpdate}
             onBack={backToLibrary}
           />
         );
       case 'flashcards':
-        return <FlashcardGame lessons={lessons} userProfile={userProfile} onUpdateProfile={onUpdateProfile} onBack={backToLibrary} />;
+        return <FlashcardGame lessons={lessons} userProfile={userProfile} onUpdateProfile={handleProfileUpdate} onBack={backToLibrary} />;
       case 'scramble':
-        return <WordScrambleGame lessons={lessons} userProfile={userProfile} onUpdateProfile={onUpdateProfile} onBack={backToLibrary} />;
+        return <WordScrambleGame lessons={lessons} userProfile={userProfile} onUpdateProfile={handleProfileUpdate} onBack={backToLibrary} />;
       case 'picture':
-        return <PictureQuizGame lessons={lessons} userProfile={userProfile} onUpdateProfile={onUpdateProfile} onBack={backToLibrary} />;
+        return <PictureQuizGame lessons={lessons} userProfile={userProfile} onUpdateProfile={handleProfileUpdate} onBack={backToLibrary} />;
       case 'category':
-        return <CategorySortGame lessons={lessons} userProfile={userProfile} onUpdateProfile={onUpdateProfile} onBack={backToLibrary} />;
+        return <CategorySortGame lessons={lessons} userProfile={userProfile} onUpdateProfile={handleProfileUpdate} onBack={backToLibrary} />;
       case 'odd':
-        return <OddOneOutGame lessons={lessons} userProfile={userProfile} onUpdateProfile={onUpdateProfile} onBack={backToLibrary} />;
+        return <OddOneOutGame lessons={lessons} userProfile={userProfile} onUpdateProfile={handleProfileUpdate} onBack={backToLibrary} />;
       case 'sentence':
-        return <SentenceBuilderGame lessons={lessons} userProfile={userProfile} onUpdateProfile={onUpdateProfile} onBack={backToLibrary} />;
+        return <SentenceBuilderGame lessons={lessons} userProfile={userProfile} onUpdateProfile={handleProfileUpdate} onBack={backToLibrary} />;
       case 'dictation':
-        return <DictationGame lessons={lessons} userProfile={userProfile} onUpdateProfile={onUpdateProfile} onBack={backToLibrary} />;
+        return <DictationGame lessons={lessons} userProfile={userProfile} onUpdateProfile={handleProfileUpdate} onBack={backToLibrary} />;
       case 'phonetic':
-        return <PhoneticMatchGame lessons={lessons} userProfile={userProfile} onUpdateProfile={onUpdateProfile} onBack={backToLibrary} />;
+        return <PhoneticMatchGame lessons={lessons} userProfile={userProfile} onUpdateProfile={handleProfileUpdate} onBack={backToLibrary} />;
       case 'chain':
-        return <WordChainGame lessons={lessons} userProfile={userProfile} onUpdateProfile={onUpdateProfile} onBack={backToLibrary} />;
+        return <WordChainGame lessons={lessons} userProfile={userProfile} onUpdateProfile={handleProfileUpdate} onBack={backToLibrary} />;
       case 'ladder':
-        return <VocabularyLadderGame lessons={lessons} userProfile={userProfile} onUpdateProfile={onUpdateProfile} onBack={backToLibrary} />;
+        return <VocabularyLadderGame lessons={lessons} userProfile={userProfile} onUpdateProfile={handleProfileUpdate} onBack={backToLibrary} />;
       default:
         return null;
     }

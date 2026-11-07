@@ -161,6 +161,12 @@ export interface UserProfile {
   joinedAt?: string;
   avatarDataUrl?: string;
   xp: number;
+  /** Coins earned from games; spent in the titles shop. */
+  points: number;
+  /** Titles the learner has purchased. */
+  ownedTitles: string[];
+  /** Currently equipped title id (shown under the name in the profile). */
+  activeTitle?: string;
   streakDays: number;
   lastActiveDate: string;
   likedLessonIds: string[];

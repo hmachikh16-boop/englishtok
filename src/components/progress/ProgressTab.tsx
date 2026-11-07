@@ -19,6 +19,8 @@ import { getUserRank } from '../../services/storageService';
 import { getLearningPathState } from '../../services/learningPath';
 import { IS_GOLD_EDITION } from '../../config/edition';
 import { GoldLeagueCard } from '../gold/GoldLeagueCard';
+import { TitleShop } from '../shop/TitleShop';
+import { TITLES } from '../../data/titles';
 import { PremiumIcon, type PremiumIconName } from '../icons/PremiumIcon';
 
 interface ProgressTabProps {
@@ -170,6 +172,12 @@ export const ProgressTab: React.FC<ProgressTabProps> = ({
             <span className="text-slate-300 font-semibold flex items-center gap-1">
               <Sparkles className="w-3.5 h-3.5 text-amber-400" />
               <span>النقاط الكلية: <strong className="text-amber-400 font-mono-num font-black">{userProfile.xp} XP</strong></span>
+              {userProfile.activeTitle && (
+                <span className="title-badge-inline">
+                  {TITLES.find((t) => t.id === userProfile.activeTitle)?.icon}{' '}
+                  {TITLES.find((t) => t.id === userProfile.activeTitle)?.nameAr}
+                </span>
+              )}
             </span>
             <span className="text-slate-400 font-mono-num text-[11px]">
               الهدف القادم: {rank.nextThreshold} XP
@@ -183,6 +191,8 @@ export const ProgressTab: React.FC<ProgressTabProps> = ({
             />
           </div>
         </div>
+
+        <TitleShop userProfile={userProfile} onUpdateProfile={onUpdateProfile} />
       </div>
 
       {goldEdition && (
