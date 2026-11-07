@@ -62,8 +62,8 @@ export const TitleShop: React.FC<TitleShopProps> = ({ userProfile, onUpdateProfi
               className={`title-card ${isActive ? 'is-active' : ''} ${isOwned ? 'is-owned' : ''}`}
               style={{ borderColor: isActive ? title.tone : undefined }}
             >
-              <span className="title-card-icon" aria-hidden="true" style={{ color: title.tone }}>
-                {title.icon}
+              <span className="title-card-icon" aria-hidden="true">
+                <img src={`/titles/${title.thumb}`} alt="" className="title-card-thumb" />
               </span>
               <div className="min-w-0 flex-1">
                 <div className="title-card-name">{title.nameAr}</div>

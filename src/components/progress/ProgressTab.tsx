@@ -174,7 +174,7 @@ export const ProgressTab: React.FC<ProgressTabProps> = ({
               <span>النقاط الكلية: <strong className="text-amber-400 font-mono-num font-black">{userProfile.xp} XP</strong></span>
               {userProfile.activeTitle && (
                 <span className="title-badge-inline">
-                  {TITLES.find((t) => t.id === userProfile.activeTitle)?.icon}{' '}
+                  <img src={`/titles/${TITLES.find((t) => t.id === userProfile.activeTitle)?.thumb}`} alt="" className="title-badge-thumb" />
                   {TITLES.find((t) => t.id === userProfile.activeTitle)?.nameAr}
                 </span>
               )}

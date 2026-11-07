@@ -1,11 +1,11 @@
 {
-  "version": "1.1.47",
+  "version": "1.1.48",
   "packageId": "com.englishtok.gold",
-  "apkUrl": "/lin-go-gold-1.1.47.apk",
-  "sha256": "27B1791F93EB6D309405361D3C7C51524F3692670EC31EA299E2C3D8447B1072",
-  "size": 91656119,
+  "apkUrl": "/lin-go-gold-1.1.48.apk",
+  "sha256": "BBB81011FF82E658CBBE0261169BA1CF6CDFF35965815EB0F55122410A3C111C",
+  "size": 91660844,
   "minimumAndroidSdk": 24,
-  "notes": "تحديث Gold 1.1.47: متجر الألقاب (8 ألقاب، شراء بالنقاط، تجهيز في الملف)، نقاط من الألعاب (1 نقطة/10 XP)، عرض اللقب تحت الاسم. مع ~900 درس ونوافذ.",
-  "releaseUrl": "https://github.com/hmachikh16-boop/englishtok/releases/tag/gold-v1.1.47",
+  "notes": "تحديث Gold 1.1.48: صور احترافية للألقاب (8 SVG parchment، متوافقة مع الواجهة) بدل الإيموجي، مع متجر الألقاب ونقاط من الألعاب.",
+  "releaseUrl": "https://github.com/hmachikh16-boop/englishtok/releases/tag/gold-v1.1.48",
   "publishedAt": "2026-11-07T00:00:00.000Z"
 }

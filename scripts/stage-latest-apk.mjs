@@ -150,7 +150,7 @@ try {
     size: goldSize,
     minimumAndroidSdk: 24,
     notes:
-      'تحديث Gold ' + goldVersion + ': متجر الألقاب (8 ألقاب، شراء بالنقاط، تجهيز في الملف)، نقاط من الألعاب (1 نقطة/10 XP)، عرض اللقب تحت الاسم. مع ~900 درس ونوافذ.',
+      'تحديث Gold ' + goldVersion + ': صور احترافية للألقاب (8 SVG parchment، متوافقة مع الواجهة) بدل الإيموجي، مع متجر الألقاب ونقاط من الألعاب.',
     releaseUrl: `https://github.com/${repository}/releases/tag/gold-v${goldVersion}`,
     publishedAt: new Date().toISOString(),
   };
