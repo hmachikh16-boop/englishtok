@@ -14,6 +14,7 @@ import {
   Flame,
   Gem,
   Gift,
+  Gamepad2,
   GraduationCap,
   Headphones,
   Heart,
@@ -26,11 +27,14 @@ import {
   Play,
   Settings2,
   ShieldCheck,
+  ShoppingBag,
   Smartphone,
   Sparkles,
   Target,
+  Type,
   Trophy,
   Zap,
+  Youtube,
 } from 'lucide-react';
 import '../../gold-preview.css';
 import { GoldErrorBoundary } from './GoldErrorBoundary';
@@ -39,7 +43,7 @@ const GoldAppPreview = React.lazy(() =>
   import('./GoldAppPreview').then((module) => ({ default: module.GoldAppPreview })),
 );
 
-const GOLD_VERSION = '1.1.8';
+const GOLD_VERSION = '1.1.48';
 const GOLD_APK_URL = `/lin-go-gold-${GOLD_VERSION}.apk`;
 
 const stages = [
@@ -79,39 +83,39 @@ const stages = [
 
 const features = [
   {
-    icon: Trophy,
-    title: 'لوحة Gold+ الذكية',
-    body: 'جواهر وتيجان وقلوب لا نهائية ودوري خاص، مع مهاراتك الأربع في لوحة واحدة أوضح.',
-  },
-  {
     icon: Sparkles,
-    title: 'تحدٍّ بصري داخل الدرس',
-    body: 'بعد الاستماع والنطق، اختر الصورة الصحيحة واربح +10 XP إضافية في كل درس Gold.',
+    title: 'واجهة نوافذ احترافية',
+    body: 'الصفحة الرئيسية بنظام نوافذ: نافذة واحدة في كل مرة، لا تراكم. المسار مخفي خلف نافذته، والدروس في تبويب خاص.',
   },
   {
-    icon: Mic,
-    title: 'نطق موسّع بجملتين',
-    body: 'جملتا نطق لكل درس، مع زر استماع بطيء قبل التسجيل لتحسين الوضوح والثقة.',
+    icon: Type,
+    title: 'الحروف الأبجدية',
+    body: '26 حرفًا مع صوت + مثال + جملة + صورة، واختبار تفاعلي (8 أسئلة) لثبيت التعلم.',
   },
   {
-    icon: Heart,
-    title: 'قلوب لا نهائية و+25% XP',
-    body: 'لا تتوقف بسبب القلوب في Gold. كل إنجاز يمنحك مكافأة أكبر بنسبة 25%، مع احتفال خاص.',
+    icon: ShoppingBag,
+    title: 'متجر الألقاب',
+    body: 'اكسب نقاطًا من الألعاب واشترِ 8 ألقاب (المبتدئ، المجتهد، البارع، المحترف، العبقري، الماستر، متعدد اللغات، أسطورة). 1 نقطة لكل 10 XP.',
   },
   {
-    icon: Target,
-    title: '4 مشاريع Gold',
-    body: 'مشروع تطبيقي في كل مرحلة: تقديم النفس، يوم في المدينة، نقاش مهني، وخطاب إقناع.',
+    icon: Gamepad2,
+    title: 'ألعاب أذكى',
+    body: 'لعبة اليوم (موصى بها)، تجميع حسب المهارة (15 مجموعة)، صور حيوانات، XP ومستوى صعوبة.',
   },
   {
-    icon: Gift,
-    title: 'صندوق يومي ومكافآت',
-    body: 'أكمل هدفك اليومي لتفتح صندوق Gold وتحصل على XP إضافية، مع تذكير لطيف كل يوم.',
+    icon: Headphones,
+    title: 'صوت سحابي للقصص',
+    body: 'القصص تُقرأ بصوت سحابي (server TTS) سلس مع prefetch، يعمل على كل الأجهزة.',
   },
   {
-    icon: Lightbulb,
-    title: 'نصائح ومهارات',
-    body: 'نصائح عملية للاستماع والنطق والمراجعة، ولوحة مهارات تُظهر تقدمك في كل اتجاه.',
+    icon: BookOpen,
+    title: '~900 درس و 58 قصة',
+    body: 'من A1 إلى C1، مع 50 درسًا جديدًا لكل مرحلة، محادثات كرتونية، و 58 قصة مصوّرة.',
+  },
+  {
+    icon: Youtube,
+    title: 'ريلز @lingogold حية',
+    body: 'شورتات قناة @lingogold حية مع إحصاءات القناة (المشتركون/المشاهدات) في لوحة التحكم.',
   },
   {
     icon: ShieldCheck,
@@ -505,12 +509,12 @@ export const GoldPreview: React.FC = () => {
               <h1>
                 نفس واجهة Lin Go.
                 <br />
-                <span>تجربة <bdi>Gold+</bdi> ترفع 70%.</span>
+                <span>تجربة <bdi>Gold+</bdi> أذكى وأغنى.</span>
               </h1>
               <p className="gold-hero-copy">
                 <bdi>Gold+ {GOLD_VERSION}</bdi> هو نفس تطبيق <bdi>Lin Go</bdi> ومساره ودروسه، مع طبقة ذهبية داخل الرحلة:
-                تحدٍّ بصري، نطق بجملتين، قلوب لا نهائية، +25% XP، دوري ومهارات، صندوق يومي،
-                وأربعة مشاريع تطبيقية — أكثر من 70% أنشطة إضافية.
+                ~900 درس، 58 قصة، نطق سحابي، متجر ألقاب، الحروف الأبجدية، ألعاب أذكى،
+                وريلز @lingogold — تجربة أغنى وأذكى.
               </p>
               <div className="gold-hero-actions">
                 <button type="button" className="gold-btn gold-btn-gold" onClick={scrollToActivate}>
@@ -533,7 +537,7 @@ export const GoldPreview: React.FC = () => {
                 </span>
                 <span>
                   <Layers3 className="h-3.5 w-3.5 text-emerald-700" />
-                  نفس المسار · أكثر من 400 درس
+                  نفس المسار · أكثر من 700 درس
                 </span>
                 <span>
                   <Sparkles className="h-3.5 w-3.5 text-emerald-700" />
@@ -673,17 +677,14 @@ export const GoldPreview: React.FC = () => {
                   <b>Gold</b>
                 </div>
                 {[
-                  ['الواجهة', 'واجهة Lin Go', 'نفس واجهة Lin Go + Gold+'],
-                  ['المسار', '4 مراحل · 400 درس', 'نفس المسار + 4 مشاريع'],
-                  ['التدريب البصري', '—', 'تحدٍّ في كل درس +10 XP'],
-                  ['النطق', 'جملة واحدة', 'جملتان + استماع بطيء'],
-                  ['القلوب', '5 محاولات', '∞ بلا حدود'],
-                  ['مكافأة XP', '1×', '+25% في Gold'],
-                  ['الدوري', '—', 'دوري Gold+ ومهارات'],
-                  ['المكافآت', '—', 'صندوق يومي واحتفال'],
-                  ['المعلم الذكي', 'متاح', 'متاح + ردود أسرع'],
+                  ['الواجهة', 'Lin Go', 'نفس الواجهة + نوافذ احترافية'],
+                  ['المسار', '4 مراحل · ~700 درس', '~700 درس + 58 قصة + 4 مشاريع'],
+                  ['الحروف', '—', '26 حرفًا + اختبار تفاعلي'],
+                  ['متجر الألقاب', '—', '8 ألقاب (نقاط من الألعاب)'],
+                  ['النطق', 'جملة واحدة', 'سحابي للقصص + device voice'],
+                  ['الألعاب', '17 لعبة', '17 لعبة + صور + XP + صعوبة'],
+                  ['الريلز', '—', 'شورتات @lingogold حية'],
                   ['النسخ الاحتياطي', 'مشفّر', 'نفس النسخ دون تغيير'],
-                  ['الشهادة', '—', 'قريبًا'],
                 ].map(([feature, free, gold]) => (
                   <div className="gold-compare-row" key={feature}>
                     <span>{feature}</span>
