@@ -150,7 +150,7 @@ try {
     size: goldSize,
     minimumAndroidSdk: 24,
     notes:
-      'تحديث Gold ' + goldVersion + ': مراجعة جميع الدروس (684 درسًا، 0 أخطاء)، إصلاح ميكروفون Android (لغة fr/en)، صوت سحابي للقصص، ~900 درس.',
+      'تحديث Gold ' + goldVersion + ': زر «الحروف الأبجدية» (26 حرفًا، صوت + مثال + جملة، اختبار تفاعلي)، مع ~900 درس ونوافذ أنيقة وألعاب أذكى.',
     releaseUrl: `https://github.com/${repository}/releases/tag/gold-v${goldVersion}`,
     publishedAt: new Date().toISOString(),
   };
