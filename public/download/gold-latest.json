@@ -1,11 +1,11 @@
 {
-  "version": "1.1.44",
+  "version": "1.1.45",
   "packageId": "com.englishtok.gold",
-  "apkUrl": "/lin-go-gold-1.1.44.apk",
-  "sha256": "BFF04B97DAB24BBA4CDD6FD83E938B16949205BC587E21F8CE874ACF58C6B2BF",
+  "apkUrl": "/lin-go-gold-1.1.45.apk",
+  "sha256": "53067FCB78F75E7DD4AFED76ADF0552A5E46750EEE24E485BF215BA92A8B96D0",
   "size": 91652015,
   "minimumAndroidSdk": 24,
-  "notes": "تحديث Gold 1.1.44: إصلاح الصوت في الدروس والقصص (device/server voice فوري، timeout fallback، manifest لل clips، لا 404 ثقيل)، مع ~900 درس ونوافذ أنيقة.",
-  "releaseUrl": "https://github.com/hmachikh16-boop/englishtok/releases/tag/gold-v1.1.44",
+  "notes": "تحديث Gold 1.1.45: صوت القصص سحابي (cloud TTS) as primary — يعمل على كل الأجهزة، chunked prefetch سلس، safety timers. الدروس: device voice فوري + manifest. ~900 درس.",
+  "releaseUrl": "https://github.com/hmachikh16-boop/englishtok/releases/tag/gold-v1.1.45",
   "publishedAt": "2026-11-07T00:00:00.000Z"
 }

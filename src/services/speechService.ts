@@ -993,10 +993,21 @@ class SpeechService {
       this.playBrowserSpeech({ ...handlers, reason });
     };
 
-    // Story text is generated and has no bundled clip; go straight to the
-    // device/server voice instead of probing a missing .ogg file.
+    // Full-story narration uses the cloud (server) TTS as the primary voice so
+    // it works reliably on every device (no missing device voices, no 404 clips)
+    // and plays smoothly with chunked prefetch. Single words keep the instant
+    // device voice.
     if (handlers.source === 'stories') {
-      useDeviceVoice(new Error('Stories use the device or server voice.'));
+      const remoteLanguage = normalizeSpeechLanguage(handlers.accent) === 'fr' ? 'fr' : 'en';
+      this.playRemoteSpeech(remoteLanguage, handlers, (error: unknown) => {
+        if (handlers.requestId !== this.requestId) return;
+        // Fall back to the device voice if the cloud is unreachable.
+        if (Capacitor.getPlatform() === 'android') {
+          this.playNativeDeviceSpeech(handlers);
+        } else {
+          this.playBrowserSpeech({ ...handlers, reason: error });
+        }
+      });
       return;
     }
 

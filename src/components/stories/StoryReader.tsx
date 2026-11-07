@@ -89,7 +89,7 @@ export const StoryReader: React.FC<StoryReaderProps> = ({
   useEffect(() => {
     // On the web/Windows fallback the first sentence is synthesised on request
     // (~2s). Pre-fetching it while the reader paints removes that pause.
-    speechService.preloadSpeech(plainText, language);
+    speechService.preloadSpeech(plainText, language, 3);
   }, [plainText, language]);
 
   useEffect(() => {
@@ -107,9 +107,9 @@ export const StoryReader: React.FC<StoryReaderProps> = ({
   }, [onClose]);
 
   const speak = useCallback(
-    (text: string, rate: number) => {
+    (text: string, rate: number, source: string = 'stories') => {
       speechService.speakText({
-        source: 'stories',
+        source,
         text,
         rate,
         gender: 'female',
@@ -125,7 +125,7 @@ export const StoryReader: React.FC<StoryReaderProps> = ({
   const handleWord = useCallback(
     (word: string, translation: string) => {
       setActiveWord({ word, translation });
-      speak(word, 0.82);
+      speak(word, 0.82, 'story-word');
     },
     [speak],
   );
