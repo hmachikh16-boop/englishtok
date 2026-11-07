@@ -8,6 +8,8 @@ export interface NativeTextToSpeechPlugin {
     language?: string;
   }): Promise<void>;
   stop(): Promise<void>;
+  /** Optional: used only to boot the engine before the first narration. */
+  warmUp?(options?: { language?: string }): Promise<void>;
 }
 
 /**

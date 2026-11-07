@@ -27,6 +27,9 @@ import { PrimaryAvatar } from '../video/PrimaryCharacterArt';
 const ReelsViewer = lazy(() =>
   import('../reels/ReelsViewer').then((module) => ({ default: module.ReelsViewer })),
 );
+// The floating entry lives on the path, so its styles must load with this tab
+// rather than waiting for the lazy Reels viewer chunk.
+import '../reels/reels-fab.css';
 import { GoldJourneyPanel } from '../gold/GoldJourneyPanel';
 import { GoldErrorBoundary } from '../gold/GoldErrorBoundary';
 import { EDUCATIONAL_PHASES, findSchoolYearRoute, SCHOOL_YEAR_ALIGNMENT_NOTE } from '../../data/educationalStructure';
@@ -208,6 +211,15 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
     if (next !== 'exam') setExamStage(null);
     if (next !== 'goalCard') setGoalCardDialog(null);
   }, []);
+  // Stable handler so memoised path nodes do not all re-render when the reader
+  // opens or the user taps a word inside it.
+  const handlePathStorySelect = useCallback(
+    (id: string) => {
+      openExclusive('story');
+      setActiveStoryId(id);
+    },
+    [openExclusive],
+  );
   const toggleHomePanel = useCallback(
     (panel: 'stories' | 'goals' | 'gold' | 'school') => {
       const willOpen = homePanel !== panel;
@@ -434,7 +446,7 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
     return map;
   }, [storiesByStage, visibleLevels, visibleLessonCount]);
 
-  const activeStory = getStoryById(activeStoryId);
+  const activeStory = useMemo(() => getStoryById(activeStoryId), [activeStoryId]);
 
   const handleStoryComplete = useCallback((storyId: string) => {
     setCompletedStoryIds((previous) => {
@@ -588,7 +600,7 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
   };
 
   return (
-    <div className={`journey-home w-full h-full max-w-4xl mx-auto overflow-y-auto no-scrollbar p-4 sm:p-6 text-slate-100 flex flex-col gap-5 ${isPhoneFrameView ? 'is-phone-frame' : ''}`}>
+    <div className={`journey-home w-full h-full max-w-4xl mx-auto overflow-y-auto no-scrollbar p-4 sm:p-6 text-slate-100 flex flex-col gap-5 ${isPhoneFrameView ? 'is-phone-frame' : ''} ${activeStoryId ? 'is-story-open' : ''}`}>
       {!selectedSchoolYear && path.levels.length > 0 && (
         <nav className="path-stage-rail sticky top-0 z-30 -mx-3 border-b border-emerald-100/80 px-3 py-2.5 sm:-mx-6 sm:px-5" aria-label="التنقل بين مراحل المسار">
           <div className="flex items-center gap-2">
@@ -633,7 +645,7 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
           </div>
         </nav>
       )}
-      <section className="path-hero relative overflow-hidden rounded-[2rem] border border-teal-200/10 p-5 shadow-2xl sm:p-7" dir="rtl">
+      <section className={`path-hero relative overflow-hidden rounded-[2rem] border border-teal-200/10 p-5 shadow-2xl sm:p-7 ${activeStoryId ? 'is-story-open' : ''}`} dir="rtl">
         <div className="pointer-events-none absolute -left-16 -top-20 h-64 w-64 rounded-full bg-cyan-300/10 blur-3xl" />
         <div className="path-hero-intro-zone">
         <div className="path-hero-intro relative flex flex-wrap items-center justify-between gap-4">
@@ -835,7 +847,7 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
                       shiftPercent={routeLayout.shiftByStoryId.get(node.story.id) ?? 0}
                       completed={completedStoryIds.has(node.story.id)}
                       locked={node.locked}
-                      onSelect={(id) => { openExclusive('story'); setActiveStoryId(id); }}
+                      onSelect={handlePathStorySelect}
                     />
                   );
                 })}
@@ -1170,8 +1182,13 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
       {IS_GOLD_EDITION && (
         <>
           <button type="button" className="reels-fab" onClick={() => { openExclusive('reels'); setShowReels(true); }} aria-label="ريلز Lin Go من يوتيوب">
-            <Youtube className="h-5 w-5" />
-            <span>Reels</span>
+            <span className="reels-fab-medallion" aria-hidden="true">
+              <Youtube />
+            </span>
+            <span className="reels-fab-copy">
+              <strong>Reels</strong>
+              <small>يوتيوب</small>
+            </span>
             <span className="reels-fab-live" aria-hidden="true" />
           </button>
           {showReels && (

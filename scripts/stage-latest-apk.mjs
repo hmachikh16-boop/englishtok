@@ -150,7 +150,7 @@ try {
     size: goldSize,
     minimumAndroidSdk: 24,
     notes:
-      'تحديث Gold ' + goldVersion + ': ريلز احترافية تعرض شورتات قناة @lingogold مباشرة من يوتيوب وتتحدث تلقائيًا عند فتحها + إحصاءات القناة (المشتركون/المشاهدات) في لوحة التحكم. مع جلد ورقي، 58 قصة، 500 درس، و17 لعبة.',
+      'تحديث Gold ' + goldVersion + ': تسريع قصص المسار (فتح أسرع ونطق يبدأ فورًا) وزر Reels جديد بتصميم احترافي لنشر شورتات قناة @lingogold. مع جلد ورقي، 58 قصة، 500 درس، و17 لعبة.',
     releaseUrl: `https://github.com/${repository}/releases/tag/gold-v${goldVersion}`,
     publishedAt: new Date().toISOString(),
   };

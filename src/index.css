@@ -4734,6 +4734,17 @@ button.journey-frame-toggle svg { color: var(--duo-blue); }
    Story reading experience (قصص) — parchment book style
    ============================================================ */
 
+/* Keep the path, shelf and floating buttons out of the paint tree while a
+   story sheet is open. The reader then animates over a calm backdrop instead
+   of compositing the whole journey behind it. */
+.journey-home.is-story-open > :not(.path-hero) {
+  visibility: hidden;
+}
+
+.path-hero.is-story-open > :not(.story-overlay) {
+  visibility: hidden;
+}
+
 .story-overlay {
   position: fixed;
   inset: 0;
@@ -4763,14 +4774,13 @@ button.journey-frame-toggle svg { color: var(--duo-blue); }
   border: 1px solid var(--parchment-edge, #b18a4e);
   border-radius: 22px 22px 0 0;
   background-color: var(--parchment-paper, #efd9ad);
-  background-image:
-    linear-gradient(180deg, rgba(255, 250, 238, 0.55), rgba(214, 181, 123, 0.32)),
-    url('/textures/parchment.svg');
-  background-size: auto, cover;
-  background-position: center top;
-  box-shadow: 0 -12px 44px rgba(43, 33, 24, 0.36);
+  /* Solid paper wash instead of the tiled texture: same parchment tone,
+     far less painting while the sheet slides in. */
+  background-image: linear-gradient(180deg, rgba(255, 250, 238, 0.68), rgba(214, 181, 123, 0.3));
+  box-shadow: 0 -10px 30px rgba(43, 33, 24, 0.3);
   color: var(--parchment-ink, #2c2114);
-  animation: storySheetIn 280ms cubic-bezier(0.22, 0.9, 0.3, 1) both;
+  contain: paint;
+  animation: storySheetIn 200ms cubic-bezier(0.22, 0.9, 0.3, 1) both;
 }
 
 @media (min-width: 640px) {
@@ -4820,12 +4830,15 @@ button.journey-frame-toggle svg { color: var(--duo-blue); }
   border-color: #5d1c15;
   background: #8d2f24;
   color: #fbf0d7;
-  animation: storyPulse 1.5s ease-in-out infinite;
+  box-shadow: 0 0 0 3px rgba(141, 47, 36, 0.22);
+  /* Opacity-only pulse stays on the compositor; the old box-shadow pulse
+     repainted the button on every frame. */
+  animation: storyPulse 1.8s ease-in-out infinite;
 }
 
 @keyframes storyPulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(141, 47, 36, 0.4); }
-  50% { box-shadow: 0 0 0 9px rgba(141, 47, 36, 0); }
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.72; }
 }
 
 .story-level-chip {

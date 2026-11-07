@@ -71,6 +71,21 @@ public class TextToSpeechPlugin extends Plugin {
     }
 
     @PluginMethod
+    public void warmUp(PluginCall call) {
+        if (textToSpeech == null || !ready) {
+            call.reject("محرك الصوت على الجهاز لم يجهز بعد.", "TTS_NOT_READY");
+            return;
+        }
+        // Touching the language setter makes Android load the voice data before
+        // the first story line, which removes the cold-start pause.
+        String requestedLanguage = call.getString("language", "en-US");
+        boolean french = requestedLanguage != null
+            && requestedLanguage.toLowerCase(Locale.ROOT).startsWith("fr");
+        textToSpeech.setLanguage(french ? Locale.FRENCH : Locale.US);
+        call.resolve();
+    }
+
+    @PluginMethod
     public void speak(PluginCall call) {
         String text = call.getString("text", "").trim();
         if (text.isEmpty()) {

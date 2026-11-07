@@ -66,10 +66,28 @@ export const StoryReader: React.FC<StoryReaderProps> = ({
     [language, story.paragraphs],
   );
   const plainText = useMemo(() => paragraphs.join(' '), [paragraphs]);
+  // Tokenize once per story/language. Re-tokenizing on every word tap made the
+  // reader feel heavy on low-end phones.
+  const tokenizedParagraphs = useMemo(
+    () => paragraphs.map((paragraph) => tokenize(paragraph)),
+    [paragraphs],
+  );
 
   useEffect(() => {
     setIsDone(completed);
   }, [completed, story.id]);
+
+  useEffect(() => {
+    // Warm the native TTS engine while the reader paints so the first
+    // "استمع للقصة" tap starts speaking without an extra initialization delay.
+    speechService.warmUp(language);
+  }, [language]);
+
+  useEffect(() => {
+    // On the web/Windows fallback the first sentence is synthesised on request
+    // (~2s). Pre-fetching it while the reader paints removes that pause.
+    speechService.preloadSpeech(plainText, language);
+  }, [plainText, language]);
 
   useEffect(() => {
     const previousOverflow = document.body.style.overflow;
@@ -162,9 +180,9 @@ export const StoryReader: React.FC<StoryReaderProps> = ({
             اضغط على أي كلمة مظللة لسماعها ورؤية معناها بالعربية.
           </p>
           <div className="story-reader-text" dir="ltr">
-            {paragraphs.map((paragraph, paragraphIndex) => (
+            {tokenizedParagraphs.map((tokens, paragraphIndex) => (
               <p key={paragraphIndex} className="story-paragraph">
-                {tokenize(paragraph).map((token, tokenIndex) => {
+                {tokens.map((token, tokenIndex) => {
                   const translation = token.word ? glossary[token.word] : undefined;
                   if (!token.word || !translation) {
                     return <React.Fragment key={tokenIndex}>{token.text}</React.Fragment>;

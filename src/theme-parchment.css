@@ -1639,11 +1639,8 @@ html .reels-btn-secondary {
   background: var(--parchment-light) !important;
   border-color: rgba(126, 91, 43, 0.3) !important;
 }
-html .reels-fab {
-  color: var(--parchment-light) !important;
-  background: linear-gradient(135deg, #b8862b, #7c4a0e) !important;
-  box-shadow: 0 6px 18px rgba(109, 70, 16, 0.3) !important;
-}
+/* The floating Reels entry carries its own brass/oxblood plaque styling in
+   reels-fab.css; the parchment theme intentionally does not override it. */
 html .reels-mode-switch button {
   color: var(--parchment-soft) !important;
   background: rgba(255, 250, 238, 0.42) !important;
@@ -2413,10 +2410,7 @@ html .story-shelf-done { background: var(--parchment-deep) !important; color: va
 
 html .story-reader {
   background-color: var(--parchment-paper) !important;
-  background-image:
-    linear-gradient(180deg, rgba(255, 250, 238, 0.55), rgba(214, 181, 123, 0.32)),
-    url('/textures/parchment.svg') !important;
-  background-size: auto, cover !important;
+  background-image: linear-gradient(180deg, rgba(255, 250, 238, 0.68), rgba(214, 181, 123, 0.3)) !important;
   border-color: var(--parchment-edge) !important;
   color: var(--parchment-ink) !important;
 }

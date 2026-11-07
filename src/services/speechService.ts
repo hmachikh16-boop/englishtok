@@ -83,6 +83,9 @@ class SpeechService {
   private static readonly AUDIO_DATABASE_NAME = 'englishtok-speech-cache';
   private audioCtx: AudioContext | null = null;
   private currentAudio: HTMLAudioElement | null = null;
+  private prefetchedAudio: HTMLAudioElement[] = [];
+  private preloadedSpeechBlobs = new Map<string, Blob>();
+  private preloadedSpeechRequests = new Map<string, Promise<void>>();
   private currentUtterance: SpeechSynthesisUtterance | null = null;
   private currentSource: string | null = null;
   private currentBlobUrl: string | null = null;
@@ -146,6 +149,47 @@ class SpeechService {
     return speechClipUrl(text, gender, language) ?? undefined;
   }
 
+  /**
+   * Boot the Android TTS engine ahead of the first narration. Without this the
+   * initial story/lesson line waited for the engine to spin up, which read as a
+   * slow "loading" pause even though the text was ready.
+   */
+  public warmUp(language: 'en' | 'fr' = 'en') {
+    if (Capacitor.getPlatform() !== 'android') return;
+    void NativeTextToSpeech.warmUp?.({
+      language: language === 'fr' ? 'fr-FR' : 'en-US',
+    }).catch(() => undefined);
+  }
+
+  /**
+   * Pre-fetch the first generated speech chunks while a story reader paints.
+   * The server fallback can take a couple of seconds to synthesise the first
+   * line; doing it before the tap makes "استمع للقصة" start immediately.
+   */
+  public preloadSpeech(text: string, language: 'en' | 'fr', maxChunks = 2) {
+    if (Capacitor.getPlatform() === 'android') return;
+    // Mirror the playback pipeline exactly so preload keys match play keys.
+    const cleaned = normalizeClipText(text);
+    if (!cleaned) return;
+    const chunks = splitSpeechChunks(speechTextForTts(cleaned, language)).slice(0, maxChunks);
+    for (const chunk of chunks) {
+      const key = `${language}:${chunk}`;
+      if (this.preloadedSpeechBlobs.has(key) || this.preloadedSpeechRequests.has(key)) continue;
+      const request = fetch(apiUrl(`/api/tts?lang=${language}&q=${encodeURIComponent(chunk)}`), {
+        headers: { Accept: 'audio/mpeg' },
+      })
+        .then(async (response) => {
+          if (!response.ok) throw new Error(`Speech preload failed (${response.status}).`);
+          const blob = await response.blob();
+          if (blob.size < 256) throw new Error('Speech preload returned an empty clip.');
+          this.preloadedSpeechBlobs.set(key, blob);
+        })
+        .catch(() => undefined)
+        .finally(() => this.preloadedSpeechRequests.delete(key));
+      this.preloadedSpeechRequests.set(key, request);
+    }
+  }
+
   private getAudioContext(): AudioContext | null {
     if (typeof window === 'undefined') return null;
     if (!this.audioCtx) {
@@ -194,6 +238,17 @@ class SpeechService {
       URL.revokeObjectURL(this.currentBlobUrl);
       this.currentBlobUrl = null;
     }
+    if (this.prefetchedAudio.length) {
+      for (const audio of this.prefetchedAudio) {
+        audio.onplaying = null;
+        audio.onended = null;
+        audio.onerror = null;
+        audio.pause();
+        audio.removeAttribute('src');
+        audio.load();
+      }
+      this.prefetchedAudio = [];
+    }
   }
 
   /** Play lesson/story text through the same-origin fallback voice. */
@@ -230,6 +285,27 @@ class SpeechService {
       onEnd?.();
     };
 
+    const makeAudio = (chunk: string) => {
+      const audio = new Audio();
+      audio.preload = 'auto';
+      audio.src = apiUrl(`/api/tts?lang=${language}&q=${encodeURIComponent(chunk)}`);
+      audio.playbackRate = Math.max(0.5, Math.min(1.2, rate));
+      audio.preservesPitch = true;
+      return audio;
+    };
+
+    // Buffer the next chunk while the current one speaks, so long story
+    // narration does not pause at every 180-character boundary.
+    const prefetched = new Map<number, HTMLAudioElement>();
+    const prefetch = (chunkIndex: number) => {
+      if (chunkIndex >= chunks.length || prefetched.has(chunkIndex)) return;
+      if (this.preloadedSpeechBlobs.has(`${language}:${chunks[chunkIndex]}`)) return;
+      const audio = makeAudio(chunks[chunkIndex]);
+      audio.load();
+      prefetched.set(chunkIndex, audio);
+      this.prefetchedAudio.push(audio);
+    };
+
     const playNext = () => {
       if (failed || requestId !== this.requestId) return;
       if (index >= chunks.length) {
@@ -237,13 +313,33 @@ class SpeechService {
         return;
       }
 
+      const currentIndex = index;
       const chunk = chunks[index];
       index += 1;
-      const audio = new Audio();
-      audio.preload = 'auto';
-      audio.src = apiUrl(`/api/tts?lang=${language}&q=${encodeURIComponent(chunk)}`);
-      audio.playbackRate = Math.max(0.5, Math.min(1.2, rate));
-      audio.preservesPitch = true;
+      const prefetchedAudio = prefetched.get(currentIndex);
+      prefetched.delete(currentIndex);
+      const cachedBlob = this.preloadedSpeechBlobs.get(`${language}:${chunk}`);
+      let audio: HTMLAudioElement;
+      if (cachedBlob) {
+        // A warm Blob avoids a second network round-trip and starts instantly.
+        if (prefetchedAudio) {
+          this.prefetchedAudio = this.prefetchedAudio.filter((item) => item !== prefetchedAudio);
+          prefetchedAudio.pause();
+          prefetchedAudio.removeAttribute('src');
+          prefetchedAudio.load();
+        }
+        const objectUrl = URL.createObjectURL(cachedBlob);
+        this.currentBlobUrl = objectUrl;
+        audio = new Audio(objectUrl);
+        audio.preload = 'auto';
+        audio.playbackRate = Math.max(0.5, Math.min(1.2, rate));
+        audio.preservesPitch = true;
+      } else {
+        audio = prefetchedAudio ?? makeAudio(chunk);
+        if (prefetchedAudio) {
+          this.prefetchedAudio = this.prefetchedAudio.filter((item) => item !== prefetchedAudio);
+        }
+      }
       this.currentAudio = audio;
 
       audio.onplaying = () => {
@@ -255,13 +351,19 @@ class SpeechService {
       };
       audio.onended = () => {
         if (failed || requestId !== this.requestId) return;
+        if (this.currentBlobUrl) {
+          URL.revokeObjectURL(this.currentBlobUrl);
+          this.currentBlobUrl = null;
+        }
         playNext();
       };
       audio.onerror = () => fail(new Error('The speech fallback could not be played.'));
 
+      prefetch(index);
       void audio.play().catch(fail);
     };
 
+    prefetch(0);
     playNext();
   }
 
@@ -683,7 +785,7 @@ class SpeechService {
   }
 
   /** Android WebView has no Web Speech API; use the native TTS bridge. */
-  private playNativeDeviceSpeech(handlers: PlaybackHandlers) {
+  private playNativeDeviceSpeech(handlers: PlaybackHandlers, attempt = 0) {
     const language = normalizeSpeechLanguage(handlers.accent) === 'fr' ? 'fr-FR' : 'en-US';
     const text = speechTextForTts(
       handlers.text,
@@ -713,6 +815,17 @@ class SpeechService {
           this.currentSource = null;
           this.setStatus('idle');
           handlers.onEnd?.();
+          return;
+        }
+        // A cold engine (first phrase after launch) or a stop/speak race
+        // surfaces as NOT_READY/BUSY. Retrying on the device voice avoids the
+        // noticeably slower server fallback for a perfectly healthy phone.
+        if ((code === 'TTS_NOT_READY' || code === 'TTS_BUSY') && attempt < 2) {
+          window.setTimeout(() => {
+            if (handlers.requestId === this.requestId) {
+              this.playNativeDeviceSpeech(handlers, attempt + 1);
+            }
+          }, 280);
           return;
         }
         // Try the server-side voice before giving up. This keeps stories and
@@ -790,14 +903,10 @@ class SpeechService {
         this.playNativeDeviceSpeech(handlers);
         return;
       }
-      if (
-        this.canUseDeviceSpeech() ||
-        normalizeSpeechLanguage(handlers.accent) === 'fr'
-      ) {
-        this.playBrowserSpeech({ ...handlers, reason });
-        return;
-      }
-      this.finishWithError('لا يوجد صوت مضمّن لهذه الجملة، وصوت الجهاز غير متاح.', handlers.onError);
+      // The browser path owns the same-origin server fallback for both
+      // languages when no local voice exists, so always hand over to it
+      // instead of failing in WebViews that hide speechSynthesis.
+      this.playBrowserSpeech({ ...handlers, reason });
     };
 
     // Story text is generated and has no bundled clip; go straight to the

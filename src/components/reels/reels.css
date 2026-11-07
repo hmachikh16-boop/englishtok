@@ -569,52 +569,7 @@
   height: 14px;
 }
 
-/* Floating entry */
-.reels-fab {
-  position: fixed;
-  right: 16px;
-  bottom: 84px;
-  z-index: 40;
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  min-height: 46px;
-  padding: 0 15px;
-  border: 1.5px solid #6d4610;
-  border-radius: 999px;
-  color: #2c2114;
-  background: linear-gradient(150deg, #f7e2b0, #d9b25a);
-  box-shadow:
-    0 3px 0 #8a5a12,
-    0 10px 22px rgba(74, 51, 25, 0.28);
-  font-size: 12px;
-  font-weight: 1000;
-  letter-spacing: -0.01em;
-  cursor: pointer;
-  transition: transform 0.16s ease, filter 0.16s ease;
-}
-
-.reels-fab:hover {
-  filter: brightness(1.04);
-}
-
-.reels-fab:active {
-  transform: scale(0.96);
-}
-
-.reels-fab svg {
-  width: 19px;
-  height: 19px;
-  color: #8d2f24;
-}
-
-.reels-fab .reels-fab-live {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: #8d2f24;
-  box-shadow: 0 0 0 3px rgba(141, 47, 36, 0.16);
-}
+/* Floating entry styles live in reels-fab.css so they load with the home tab. */
 
 @media (max-width: 480px) {
   .reels-overlay {
