@@ -20,7 +20,7 @@ export type { CurriculumLevel };
 
 export const CURRICULUM_CONFIG = {
   passingScorePercent: 80,
-  expectedLessonCount: 500,
+  expectedLessonCount: 700,
 } as const;
 
 export const CURRICULUM_LEVELS: readonly CurriculumLevel[] = CURRICULUM_LEVEL_CONTENT;

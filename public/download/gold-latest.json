@@ -1,11 +1,11 @@
 {
-  "version": "1.1.41",
+  "version": "1.1.42",
   "packageId": "com.englishtok.gold",
-  "apkUrl": "/lin-go-gold-1.1.41.apk",
-  "sha256": "2BBABD015CFE08E5EFDDB1C2A5A59C462AE53B5D0796A5161572CC91CCF4BF71",
-  "size": 91550575,
+  "apkUrl": "/lin-go-gold-1.1.42.apk",
+  "sha256": "0CB61714A06E027E5D08D91EF5B825C054DF6A12BD86A0DDA897C9368DE5DD03",
+  "size": 91566959,
   "minimumAndroidSdk": 24,
-  "notes": "تحديث Gold 1.1.41: واجهة رئيسية بنظام نوافذ احترافي (نافذة واحدة ولا تراكم)، إخفاء المسار خلف نافذته، وإعادة مكتبة الدروس في تبويب «الدروس» الخاص. مع جلد ورقي، 58 قصة، 500 درس، و17 لعبة.",
-  "releaseUrl": "https://github.com/hmachikh16-boop/englishtok/releases/tag/gold-v1.1.41",
+  "notes": "تحديث Gold 1.1.42: 50 درسًا جديدًا لكل مرحلة (200 درسًا) بمواضيع احترافية ملائمة لمستوى كل مرحلة، مع نوافذ رئيسية أنيقة وتبويب «الدروس» الخاص. مع جلد ورقي، ~700 درس، و17 لعبة.",
+  "releaseUrl": "https://github.com/hmachikh16-boop/englishtok/releases/tag/gold-v1.1.42",
   "publishedAt": "2026-11-07T00:00:00.000Z"
 }

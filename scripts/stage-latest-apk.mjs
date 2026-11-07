@@ -150,7 +150,7 @@ try {
     size: goldSize,
     minimumAndroidSdk: 24,
     notes:
-      'تحديث Gold ' + goldVersion + ': واجهة رئيسية بنظام نوافذ احترافي (نافذة واحدة ولا تراكم)، إخفاء المسار خلف نافذته، وإعادة مكتبة الدروس في تبويب «الدروس» الخاص. مع جلد ورقي، 58 قصة، 500 درس، و17 لعبة.',
+      'تحديث Gold ' + goldVersion + ': 50 درسًا جديدًا لكل مرحلة (200 درسًا) بمواضيع احترافية ملائمة لمستوى كل مرحلة، مع نوافذ رئيسية أنيقة وتبويب «الدروس» الخاص. مع جلد ورقي، ~700 درس، و17 لعبة.',
     releaseUrl: `https://github.com/${repository}/releases/tag/gold-v${goldVersion}`,
     publishedAt: new Date().toISOString(),
   };
