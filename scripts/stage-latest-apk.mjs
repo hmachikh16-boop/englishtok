@@ -150,7 +150,7 @@ try {
     size: goldSize,
     minimumAndroidSdk: 24,
     notes:
-      'تحديث Gold ' + goldVersion + ': تسريع قصص المسار (فتح أسرع ونطق يبدأ فورًا) وزر Reels جديد بتصميم احترافي لنشر شورتات قناة @lingogold. مع جلد ورقي، 58 قصة، 500 درس، و17 لعبة.',
+      'تحديث Gold ' + goldVersion + ': واجهة رئيسية بنظام نوافذ احترافي (نافذة واحدة ولا تراكم)، إخفاء المسار خلف نافذته، وإعادة مكتبة الدروس في تبويب «الدروس» الخاص. مع جلد ورقي، 58 قصة، 500 درس، و17 لعبة.',
     releaseUrl: `https://github.com/${repository}/releases/tag/gold-v${goldVersion}`,
     publishedAt: new Date().toISOString(),
   };

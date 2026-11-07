@@ -37,6 +37,9 @@ import {
 } from './services/speechService';
 import { TopBar } from './components/navigation/TopBar';
 import { BottomTabBar } from './components/navigation/BottomTabBar';
+const LessonLibraryTab = lazy(() =>
+  import('./components/library/LessonLibraryTab').then((module) => ({ default: module.LessonLibraryTab })),
+);
 const CategoriesTab = lazy(() =>
   import('./components/categories/CategoriesTab').then((module) => ({ default: module.CategoriesTab })),
 );
@@ -637,6 +640,15 @@ export default function App() {
               learningPath={learningPath}
               userProfile={userProfile}
               onUpdateProfile={handleUpdateProfile}
+              onSelectLesson={handleSelectLessonFromCategories}
+              isPhoneFrameView={isPhoneFrameView}
+            />
+          )}
+
+          {activeTab === 'lessons' && (
+            <LessonLibraryTab
+              lessons={lessons}
+              learningPath={learningPath}
               onSelectLesson={handleSelectLessonFromCategories}
               isPhoneFrameView={isPhoneFrameView}
             />

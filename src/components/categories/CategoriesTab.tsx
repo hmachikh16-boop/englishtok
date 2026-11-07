@@ -1,8 +1,8 @@
-import React, { lazy, Suspense, useCallback, useDeferredValue, useEffect, useMemo, useRef, useState, useTransition } from 'react';
-import { Search, Sparkles, Play, BookOpen, Clock, Heart, Lock, CheckCircle2, Trophy, Star, ArrowDown, Crown, Footprints, Youtube } from 'lucide-react';
-import { Lesson, CategoryKey, UserProfile } from '../../types';
+import React, { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState, useTransition } from 'react';
+import { Sparkles, Play, BookOpen, CheckCircle2, Lock, Trophy, ArrowDown, Crown, Footprints, Youtube, Map as MapIcon, X, Star } from 'lucide-react';
+import { Lesson, UserProfile } from '../../types';
 import { CATEGORIES } from '../../data/lessons';
-import { CURRICULUM_CONFIG, CURRICULUM_LEVELS } from '../../data/curriculum';
+import { CURRICULUM_CONFIG } from '../../data/curriculum';
 import { speechService } from '../../services/speechService';
 import { IS_GOLD_EDITION } from '../../config/edition';
 import { IS_STORE_BUILD } from '../../config/storeBuild';
@@ -16,14 +16,13 @@ import {
 import { StoryAvatar, StoryScene } from '../stories/StoryScene';
 import { StoryReader } from '../stories/StoryReader';
 import { LevelFinalExam } from '../quiz/LevelFinalExam';
-import { PremiumIcon } from '../icons/PremiumIcon';
+import { PrimaryAvatar } from '../video/PrimaryCharacterArt';
 import { LearningBuddy } from '../learning/LearningBuddy';
 import {
   MotivationalCardModal,
   MotivationalGoalSpotlight,
   StageMotivationalCards,
 } from '../learning/MotivationalCards';
-import { PrimaryAvatar } from '../video/PrimaryCharacterArt';
 const ReelsViewer = lazy(() =>
   import('../reels/ReelsViewer').then((module) => ({ default: module.ReelsViewer })),
 );
@@ -184,11 +183,6 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
   goldEdition = IS_GOLD_EDITION,
 }) => {
   const routeRef = useRef<HTMLDivElement>(null);
-  const libraryRef = useRef<HTMLDetailsElement>(null);
-  const [selectedCategory, setSelectedCategory] = useState<CategoryKey | 'all'>('all');
-  const [selectedLevel, setSelectedLevel] = useState<number | 'all'>('all');
-  const [searchQuery, setSearchQuery] = useState('');
-  const deferredSearchQuery = useDeferredValue(searchQuery);
   const [examStage, setExamStage] = useState<number | null>(null);
   const [showReels, setShowReels] = useState(false);
   const [activeStoryId, setActiveStoryId] = useState<string | null>(null);
@@ -196,9 +190,9 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
   const [selectedPhaseId, setSelectedPhaseId] = useState<string | null>(null);
   const [selectedSchoolYearId, setSelectedSchoolYearId] = useState<string | null>(null);
   const [shelfVisibleCount, setShelfVisibleCount] = useState(6);
-  // Only one secondary panel is open at a time so the home screen stays a
-  // single, calm path instead of a stack of cards.
-  const [homePanel, setHomePanel] = useState<'stories' | 'goals' | 'gold' | 'school' | null>(null);
+  // Only one home window is open at a time and the tile grid is replaced by
+  // that single window — the home never stacks windows on top of each other.
+  const [homePanel, setHomePanel] = useState<'stories' | 'goals' | 'gold' | 'path' | 'school' | null>(null);
   const [goalCardDialog, setGoalCardDialog] = useState<{
     cardId: string | null;
     stage: number | null;
@@ -221,13 +215,14 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
     [openExclusive],
   );
   const toggleHomePanel = useCallback(
-    (panel: 'stories' | 'goals' | 'gold' | 'school') => {
+    (panel: 'stories' | 'goals' | 'gold' | 'path' | 'school') => {
       const willOpen = homePanel !== panel;
       setHomePanel(willOpen ? panel : null);
       speechService.playPop();
-      if (willOpen && panel === 'stories') {
+      if (willOpen) {
+        // The window replaces the tile grid; bring its header to the top.
         window.setTimeout(() => {
-          document.querySelector('.story-shelf')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          document.querySelector('.home-window')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }, 180);
       }
     },
@@ -243,7 +238,6 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
   );
   const [selectedPathStage, setSelectedPathStage] = useState<number | 'all'>(currentStageNumber);
   const [visibleLessonCount, setVisibleLessonCount] = useState(5);
-  const [libraryPageSize, setLibraryPageSize] = useState(24);
   const [isPending, startTransition] = useTransition();
   const selectedPhase = EDUCATIONAL_PHASES.find((phase) => phase.id === selectedPhaseId);
   const selectedSchoolYear = findSchoolYearRoute(selectedSchoolYearId);
@@ -251,9 +245,6 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
     if (!selectedSchoolYearId) return;
     routeRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }, [selectedSchoolYearId]);
-  useEffect(() => {
-    setLibraryPageSize(24);
-  }, [selectedCategory, selectedLevel, deferredSearchQuery]);
   const previousCurrentStage = useRef(currentStageNumber);
   useEffect(() => {
     if (selectedPathStage === previousCurrentStage.current) {
@@ -508,26 +499,6 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
     return { shiftByLessonId, shiftByStoryId, shiftByExamStage, stageRoutes };
   }, [isSchoolYearCourse, stageNodes, visibleLevels]);
 
-  const filteredLessons = useMemo(() => {
-    const query = deferredSearchQuery.trim().toLowerCase();
-    return lessons.filter((lesson) => {
-      const matchesCategory = selectedCategory === 'all' || lesson.category === selectedCategory;
-      const matchesLevel = selectedLevel === 'all' || lesson.curriculumStage === selectedLevel;
-      const matchesSearch =
-        query === '' ||
-        lesson.title.toLowerCase().includes(query) ||
-        lesson.titleAr.includes(query) ||
-        lesson.descriptionAr.includes(query) ||
-        lesson.vocabulary.some((v) => v.word.toLowerCase().includes(query) || v.translationAr.includes(query));
-
-      return matchesCategory && matchesLevel && matchesSearch;
-    });
-  }, [deferredSearchQuery, lessons, selectedCategory, selectedLevel]);
-  const visibleLibraryLessons = useMemo(
-    () => filteredLessons.slice(0, libraryPageSize),
-    [filteredLessons, libraryPageSize],
-  );
-
   const handleCardClick = useCallback((id: string) => {
     const lesson = lessons.find((entry) => entry.id === id);
     if (lesson && getLessonStatus(lesson) === 'locked') return;
@@ -550,14 +521,6 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
       routeRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   }, [startTransition]);
-
-  const handleOpenLibrary = () => {
-    const library = libraryRef.current;
-    if (!library) return;
-    library.open = true;
-    library.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    speechService.playPop();
-  };
 
   const openGoalCard = useCallback((cardId: string) => {
     openExclusive('goalCard');
@@ -601,50 +564,6 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
 
   return (
     <div className={`journey-home w-full h-full max-w-4xl mx-auto overflow-y-auto no-scrollbar p-4 sm:p-6 text-slate-100 flex flex-col gap-5 ${isPhoneFrameView ? 'is-phone-frame' : ''} ${activeStoryId ? 'is-story-open' : ''}`}>
-      {!selectedSchoolYear && path.levels.length > 0 && (
-        <nav className="path-stage-rail sticky top-0 z-30 -mx-3 border-b border-emerald-100/80 px-3 py-2.5 sm:-mx-6 sm:px-5" aria-label="التنقل بين مراحل المسار">
-          <div className="flex items-center gap-2">
-            <span className="path-stage-rail-label shrink-0">المراحل</span>
-            <div className="path-stage-rail-track flex min-w-0 flex-1 items-center gap-1.5 overflow-x-auto">
-              <button
-                type="button"
-                onClick={() => handleSelectPathStage('all')}
-                aria-pressed={selectedPathStage === 'all'}
-                className={`path-stage-chip ${selectedPathStage === 'all' ? 'is-active' : ''}`}
-              >
-                الكل
-              </button>
-              {path.levels.map((level) => {
-                const active = selectedPathStage === level.stage;
-                const hasCurrent = level.lessons.some((entry) => entry.lesson.id === path.nextLessonId);
-                return (
-                  <button
-                    key={level.stage}
-                    type="button"
-                    onClick={() => handleSelectPathStage(level.stage)}
-                    aria-label={`المرحلة ${level.stage}${level.examPassed ? '، مكتملة' : !level.isUnlocked ? '، مقفلة' : ''}`}
-                    aria-pressed={active}
-                    className={`path-stage-chip ${active ? 'is-active' : ''} ${!level.isUnlocked ? 'is-locked' : ''}`}
-                  >
-                    <span>{level.stage}</span>
-                    {!level.isUnlocked && <Lock className="h-3 w-3" aria-hidden="true" />}
-                    {hasCurrent && <span className="path-stage-chip-dot" aria-hidden="true" />}
-                  </button>
-                );
-              })}
-            </div>
-            <button
-              type="button"
-              onClick={handleOpenLibrary}
-              className="path-stage-rail-search shrink-0"
-              aria-label="البحث في جميع الدروس"
-              title="البحث في جميع الدروس"
-            >
-              <Search className="h-4 w-4" aria-hidden="true" />
-            </button>
-          </div>
-        </nav>
-      )}
       <section className={`path-hero relative overflow-hidden rounded-[2rem] border border-teal-200/10 p-5 shadow-2xl sm:p-7 ${activeStoryId ? 'is-story-open' : ''}`} dir="rtl">
         <div className="pointer-events-none absolute -left-16 -top-20 h-64 w-64 rounded-full bg-cyan-300/10 blur-3xl" />
         <div className="path-hero-intro-zone">
@@ -680,7 +599,18 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
         </div>
 
         </div>
-        {EDUCATIONAL_PHASES.length > 0 && homePanel === 'school' && <section className="school-phase-explorer home-panel mt-5" aria-labelledby="school-phase-title">
+        {homePanel === 'school' && (
+          <section className="home-window" aria-label="مسارات الدراسة">
+            <header className="home-window-head">
+              <button type="button" className="home-window-back" onClick={() => setHomePanel(null)} aria-label="إغلاق النافذة">
+                <X className="h-4 w-4" aria-hidden="true" />
+              </button>
+              <div className="min-w-0">
+                <h3 className="home-window-title">مسارات الدراسة</h3>
+                <p className="home-window-sub">تعلّم بترتيب الأطوار والسنوات الدراسية</p>
+              </div>
+            </header>
+            <section className="school-phase-explorer" aria-labelledby="school-phase-title">
           <div className="mb-3 flex items-start justify-between gap-3">
             <div><h3 id="school-phase-title" className="text-sm font-black text-slate-800">التعلّم حسب الطور الدراسي أو المستوى</h3><p className="mt-1 text-[11px] leading-5 text-slate-500">اختر طورًا أو مستوى، ثم السنة أو الوحدة، لعرض وحدات المحتوى المرتبطة بها.</p></div>
             {selectedPhase && <button type="button" onClick={() => { setSelectedPhaseId(null); setSelectedSchoolYearId(null); }} className="school-phase-back">كل الأطوار</button>}
@@ -715,59 +645,81 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
               <p className="mt-2 text-[11px] leading-5 text-slate-500">{SCHOOL_YEAR_ALIGNMENT_NOTE}</p>
             </div>
           )}
-        </section>}
-        <nav className="home-tools" aria-label="أدوات الصفحة الرئيسية">
-          <button
-            type="button"
-            className={`home-tool ${homePanel === 'stories' ? 'is-active' : ''}`}
-            onClick={() => toggleHomePanel('stories')}
-            aria-pressed={homePanel === 'stories'}
-          >
-            <BookOpen className="h-3.5 w-3.5" aria-hidden="true" />
-            القصص
-            <span className="home-tool-count">{shelfStories.length}</span>
-          </button>
-          {!isSchoolYearCourse && path.levels.length > 0 && (
-            <button
-              type="button"
-              className={`home-tool ${homePanel === 'goals' ? 'is-active' : ''}`}
-              onClick={() => toggleHomePanel('goals')}
-              aria-pressed={homePanel === 'goals'}
-            >
-              <Trophy className="h-3.5 w-3.5" aria-hidden="true" />
-              الأهداف
+            </section>
+            {selectedSchoolYear && (
+              <div className="school-year-banner mt-3 flex items-center justify-between gap-2 rounded-xl px-3 py-2 text-[11px] font-bold">
+                <span>{selectedSchoolYear.labelAr}</span>
+                <button type="button" onClick={() => { setSelectedSchoolYearId(null); setSelectedPhaseId(null); }} className="underline">عرض المسار كاملًا</button>
+              </div>
+            )}
+          </section>
+        )}
+        {homePanel === null && lessons.length > 0 && (
+          <nav className="home-windows" aria-label="نوافذ الصفحة الرئيسية">
+            {path.levels.length > 0 && (
+              <button type="button" className="home-window-tile is-wide" onClick={() => toggleHomePanel('path')}>
+                <span className="home-tile-medallion" aria-hidden="true"><MapIcon /></span>
+                <span className="home-tile-copy">
+                  <strong>مسار التعلم</strong>
+                  <small>خريطة الرحلة · المرحلة {currentStageNumber} · {path.totalLessons} درسًا</small>
+                </span>
+              </button>
+            )}
+            <button type="button" className="home-window-tile" onClick={() => toggleHomePanel('stories')}>
+              <span className="home-tile-medallion" aria-hidden="true"><BookOpen /></span>
+              <span className="home-tile-copy">
+                <strong>القصص</strong>
+                <small>{shelfStories.length} قصّة مصوّرة</small>
+              </span>
             </button>
-          )}
-          {goldEdition ? (
-            <button
-              type="button"
-              className={`home-tool ${homePanel === 'gold' ? 'is-active' : ''}`}
-              onClick={() => toggleHomePanel('gold')}
-              aria-pressed={homePanel === 'gold'}
-            >
-              <Crown className="h-3.5 w-3.5" aria-hidden="true" />
-              Gold+
-            </button>
-          ) : !IS_STORE_BUILD ? (
-            <button type="button" className="home-tool" onClick={() => void openGoldPage()}>
-              <Crown className="h-3.5 w-3.5" aria-hidden="true" />
-              Gold
-            </button>
-          ) : null}
-          {EDUCATIONAL_PHASES.length > 0 && (
-            <button
-              type="button"
-              className={`home-tool ${homePanel === 'school' ? 'is-active' : ''}`}
-              onClick={() => toggleHomePanel('school')}
-              aria-pressed={homePanel === 'school'}
-            >
-              <Footprints className="h-3.5 w-3.5" aria-hidden="true" />
-              المسارات
-            </button>
-          )}
-        </nav>
+            {!isSchoolYearCourse && path.levels.length > 0 && (
+              <button type="button" className="home-window-tile" onClick={() => toggleHomePanel('goals')}>
+                <span className="home-tile-medallion" aria-hidden="true"><Trophy /></span>
+                <span className="home-tile-copy">
+                  <strong>الأهداف</strong>
+                  <small>بطاقات التحفيز</small>
+                </span>
+              </button>
+            )}
+            {goldEdition ? (
+              <button type="button" className="home-window-tile" onClick={() => toggleHomePanel('gold')}>
+                <span className="home-tile-medallion" aria-hidden="true"><Crown /></span>
+                <span className="home-tile-copy">
+                  <strong>Gold+</strong>
+                  <small>كل المزايا مفتوحة</small>
+                </span>
+              </button>
+            ) : !IS_STORE_BUILD ? (
+              <button type="button" className="home-window-tile" onClick={() => void openGoldPage()}>
+                <span className="home-tile-medallion" aria-hidden="true"><Crown /></span>
+                <span className="home-tile-copy">
+                  <strong>Gold</strong>
+                  <small>جرّب النسخة الذهبية</small>
+                </span>
+              </button>
+            ) : null}
+            {EDUCATIONAL_PHASES.length > 0 && (
+              <button type="button" className="home-window-tile" onClick={() => toggleHomePanel('school')}>
+                <span className="home-tile-medallion" aria-hidden="true"><Footprints /></span>
+                <span className="home-tile-copy">
+                  <strong>مسارات الدراسة</strong>
+                  <small>طور دراسي أو مستوى</small>
+                </span>
+              </button>
+            )}
+          </nav>
+        )}
         {homePanel === 'goals' && !isSchoolYearCourse && path.levels.length > 0 && (
-          <section className="home-panel home-panel-goals" aria-label="الأهداف والبطاقات">
+          <section className="home-window" aria-label="الأهداف والبطاقات">
+            <header className="home-window-head">
+              <button type="button" className="home-window-back" onClick={() => setHomePanel(null)} aria-label="إغلاق النافذة">
+                <X className="h-4 w-4" aria-hidden="true" />
+              </button>
+              <div className="min-w-0">
+                <h3 className="home-window-title">الأهداف والبطاقات</h3>
+                <p className="home-window-sub">كل درس تكمله يفتح بطاقة جديدة</p>
+              </div>
+            </header>
             <MotivationalGoalSpotlight
               progressByStage={cardProgressByStage}
               onBrowse={openGoalBrowser}
@@ -781,25 +733,79 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
           </section>
         )}
         {homePanel === 'gold' && goldEdition && (
-          <GoldErrorBoundary>
-            <GoldJourneyPanel
-              userProfile={userProfile}
-              lessons={lessons}
-              learningPath={path}
-              onSelectLesson={handlePathLessonClick}
-              onUpdateProfile={onUpdateProfile}
-            />
-          </GoldErrorBoundary>
+          <section className="home-window" aria-label="مزايا Gold">
+            <header className="home-window-head">
+              <button type="button" className="home-window-back" onClick={() => setHomePanel(null)} aria-label="إغلاق النافذة">
+                <X className="h-4 w-4" aria-hidden="true" />
+              </button>
+              <div className="min-w-0">
+                <h3 className="home-window-title">Gold+</h3>
+                <p className="home-window-sub">تقدّم غير محدود ومزايا خاصة</p>
+              </div>
+            </header>
+            <GoldErrorBoundary>
+              <GoldJourneyPanel
+                userProfile={userProfile}
+                lessons={lessons}
+                learningPath={path}
+                onSelectLesson={handlePathLessonClick}
+                onUpdateProfile={onUpdateProfile}
+              />
+            </GoldErrorBoundary>
+          </section>
         )}
-        {selectedSchoolYear && <div className="mt-4 flex items-center justify-between gap-2 rounded-xl bg-emerald-50 px-3 py-2 text-[11px] font-bold text-emerald-800"><span>{selectedSchoolYear.labelAr}</span><button type="button" onClick={() => setSelectedSchoolYearId(null)} className="underline">عرض المسار كاملًا</button></div>}
-        {lessons.length === 0 ? (
+        {lessons.length === 0 && (
           <div className="rounded-3xl border border-dashed border-white/20 bg-white/[0.04] p-8 text-center" dir="rtl">
             <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-lime-300/15 text-lime-200"><Sparkles className="h-6 w-6" /></span>
             <h3 className="mt-3 text-base font-black text-white">المحتوى قيد الإعداد</h3>
             <p className="mx-auto mt-2 max-w-md text-xs leading-6 text-slate-400">حُذفت جميع الدروس والمستويات السابقة. سيُضاف المنهج الجديد هنا فور اعتماده وإدخاله، وستظهر الدروس بالترتيب مع الاختبارات والتقدم.</p>
           </div>
-        ) : (<>
-        <div ref={routeRef} className="continuous-route relative mt-6" aria-label="مسار التعلم الكامل" aria-busy={isPending}>
+        )}
+        {homePanel === 'path' && path.levels.length > 0 && (
+          <section className="home-window home-window-path" aria-label="مسار التعلم">
+            <header className="home-window-head">
+              <button type="button" className="home-window-back" onClick={() => setHomePanel(null)} aria-label="إغلاق النافذة">
+                <X className="h-4 w-4" aria-hidden="true" />
+              </button>
+              <div className="min-w-0">
+                <h3 className="home-window-title">مسار التعلم</h3>
+                <p className="home-window-sub">{path.completedCount}/{path.totalLessons} درسًا مكتملًا · افتح المراحل بالترتيب</p>
+              </div>
+            </header>
+            <nav className="path-stage-rail" aria-label="التنقل بين مراحل المسار">
+              <div className="flex items-center gap-2">
+                <span className="path-stage-rail-label shrink-0">المراحل</span>
+                <div className="path-stage-rail-track flex min-w-0 flex-1 items-center gap-1.5 overflow-x-auto">
+                  <button
+                    type="button"
+                    onClick={() => handleSelectPathStage('all')}
+                    aria-pressed={selectedPathStage === 'all'}
+                    className={`path-stage-chip ${selectedPathStage === 'all' ? 'is-active' : ''}`}
+                  >
+                    الكل
+                  </button>
+                  {path.levels.map((level) => {
+                    const active = selectedPathStage === level.stage;
+                    const hasCurrent = level.lessons.some((entry) => entry.lesson.id === path.nextLessonId);
+                    return (
+                      <button
+                        key={level.stage}
+                        type="button"
+                        onClick={() => handleSelectPathStage(level.stage)}
+                        aria-label={`المرحلة ${level.stage}${level.examPassed ? '، مكتملة' : !level.isUnlocked ? '، مقفلة' : ''}`}
+                        aria-pressed={active}
+                        className={`path-stage-chip ${active ? 'is-active' : ''} ${!level.isUnlocked ? 'is-locked' : ''}`}
+                      >
+                        <span>{level.stage}</span>
+                        {!level.isUnlocked && <Lock className="h-3 w-3" aria-hidden="true" />}
+                        {hasCurrent && <span className="path-stage-chip-dot" aria-hidden="true" />}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            </nav>
+            <div ref={routeRef} className="continuous-route relative" aria-label="مسار التعلم الكامل" aria-busy={isPending}>
           {visibleLevels.map((level) => {
             const locked = !level.isUnlocked;
             const color = [
@@ -881,20 +887,22 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
               <div className="continuous-unit-progress"><span className="continuous-unit-progress-fill" style={{ width: `${level.lessons.length ? (level.completedCount / level.lessons.length) * 100 : 0}%` }} /></div>
             </div>;
           })}
-        </div>
-        {homePanel === 'stories' && <aside className="story-shelf home-panel mt-6" aria-label="قصص تعليمية">
-          <div className="story-shelf-head">
-            <div className="min-w-0">
-              <div className="story-shelf-title">
-                <BookOpen className="h-4 w-4" aria-hidden="true" />
-                قصص تعليمية
-              </div>
-              <p className="story-shelf-sub">
-                قصص قصيرة مصوّرة (إنجليزية/فرنسية) لتحسين الفهم والاستماع. اضغط على أي محطة قصة في المسار أو هنا.
-              </p>
-            </div>
-            <span className="story-shelf-count">{shelfStories.length} قصص · المرحلة {shelfStage}</span>
           </div>
+          <div className="path-window-hint"><ArrowDown className="h-3.5 w-3.5" aria-hidden="true" />أكمل الدروس بالترتيب لفتح محطات جديدة</div>
+          </section>
+        )}
+        {homePanel === 'stories' && (
+          <section className="home-window home-window-stories" aria-label="قصص تعليمية">
+            <header className="home-window-head">
+              <button type="button" className="home-window-back" onClick={() => setHomePanel(null)} aria-label="إغلاق النافذة">
+                <X className="h-4 w-4" aria-hidden="true" />
+              </button>
+              <div className="min-w-0">
+                <h3 className="home-window-title">القصص التعليمية</h3>
+                <p className="home-window-sub">قصص مصوّرة بالإنجليزية والفرنسية</p>
+              </div>
+            </header>
+            <aside className="story-shelf" aria-label="قصص تعليمية">
           <div className="story-shelf-grid">
             {shelfStories.slice(0, shelfVisibleCount).map((story) => {
               const done = completedStoryIds.has(story.id);
@@ -949,7 +957,9 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
               عرض المزيد ({shelfStories.length - shelfVisibleCount})
             </button>
           )}
-        </aside>}
+            </aside>
+          </section>
+        )}
         {activeStory && (
           <StoryReader
             story={activeStory}
@@ -959,201 +969,8 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
             onComplete={handleStoryComplete}
           />
         )}
-        <div className="mt-4 flex items-center justify-center gap-2 text-[10px] text-slate-400"><ArrowDown className="h-3.5 w-3.5 text-lime-200" />أكمل الدروس بالترتيب لفتح محطات جديدة</div>
-        </>)}
       </section>
 
-      {lessons.length > 0 && <details className="lesson-library" dir="rtl" ref={libraryRef}>
-        <summary>
-          <span>استعراض جميع الدروس</span>
-          <span className="lesson-library-count">{lessons.length} درسًا</span>
-          <ArrowDown className="lesson-library-chevron" aria-hidden="true" />
-        </summary>
-
-      {/* Search Bar */}
-      <div className="relative">
-        <input
-          type="text"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder="ابحث عن درس، كلمة، أو موقف يومي..."
-          className="w-full bg-white border border-emerald-100 rounded-2xl py-3.5 pr-11 pl-4 text-xs font-medium text-slate-700 placeholder-slate-400 focus:outline-none focus:border-emerald-400 transition-colors shadow-sm"
-        />
-        <Search className="w-4 h-4 text-emerald-500 absolute right-4 top-1/2 -translate-y-1/2" />
-      </div>
-
-      {/* Categories Horizontal Carousel */}
-      <div>
-        <div className="flex items-center justify-between mb-2.5">
-          <h3 className="text-xs font-bold text-slate-300">التصنيفات التعليمية</h3>
-          <span className="text-[11px] text-slate-500 font-mono-num">
-            {CATEGORIES.length} تصنيفات
-          </span>
-        </div>
-
-        <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
-          <button
-            onClick={() => {
-              setSelectedCategory('all');
-              speechService.playPop();
-            }}
-            className={`px-3.5 py-2 rounded-xl text-xs font-bold shrink-0 transition-all active:scale-95 border ${
-              selectedCategory === 'all'
-                ? 'bg-emerald-500 text-white border-emerald-500 shadow-md shadow-emerald-500/20'
-                : 'bg-white text-slate-600 border-emerald-100 hover:border-emerald-300 hover:text-emerald-800'
-            }`}
-          >
-            الكل
-          </button>
-
-          {CATEGORIES.map((cat) => {
-            const isSelected = selectedCategory === cat.key;
-            const CategoryIcon = cat.icon;
-            return (
-              <button
-                key={cat.key}
-                onClick={() => {
-                  setSelectedCategory(cat.key);
-                  speechService.playPop();
-                }}
-                className={`px-3 py-2 rounded-xl text-xs font-bold shrink-0 flex items-center gap-1.5 transition-all active:scale-95 border ${
-                  isSelected
-                    ? 'bg-emerald-500 text-white border-emerald-500 shadow-md shadow-emerald-500/20'
-                    : 'bg-white text-slate-600 border-emerald-100 hover:border-emerald-300 hover:text-emerald-800'
-                }`}
-              >
-                <CategoryIcon className="w-4 h-4" aria-hidden="true" />
-                <span>{cat.nameAr}</span>
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Levels Filter Tabs */}
-      <div>
-        <div className="flex items-center justify-between mb-2">
-          <h3 className="text-xs font-bold text-slate-300">المرحلة التعليمية</h3>
-        </div>
-
-        <div className="flex gap-1.5 overflow-x-auto no-scrollbar p-1 bg-white rounded-xl border border-emerald-100">
-          {(['all', ...CURRICULUM_LEVELS.map((level) => level.stage)] as (number | 'all')[]).map((lvl) => (
-            <button
-              key={lvl}
-              onClick={() => {
-                setSelectedLevel(lvl);
-                speechService.playPop();
-              }}
-              aria-label={lvl === 'all' ? 'جميع المراحل' : `المرحلة ${lvl}`}
-              className={`shrink-0 min-w-9 px-2 py-1.5 rounded-lg text-xs font-bold transition-all ${
-                selectedLevel === lvl
-                  ? 'bg-emerald-500 text-white shadow-sm'
-                  : 'text-slate-500 hover:text-emerald-800'
-              }`}
-            >
-              {lvl === 'all' ? 'الكل' : lvl}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Filtered Lessons Cards Grid */}
-        <div className={`lesson-card-grid grid grid-cols-1 md:grid-cols-2 gap-3 ${isPhoneFrameView ? 'is-phone-frame' : ''}`}>
-        <div className="md:col-span-2 flex items-center justify-between gap-2 text-xs text-slate-400">
-          <span>دروس المسار ({filteredLessons.length})</span>
-          <span className="text-[11px] text-slate-500">تُفتح الدروس تباعًا بعد إكمال الدرس السابق</span>
-        </div>
-
-        {filteredLessons.length === 0 ? (
-          <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-8 text-center">
-            <p className="text-xs text-slate-400">لم يتم العثور على دروس تطابق هذا البحث.</p>
-          </div>
-        ) : (
-          visibleLibraryLessons.map((lesson) => {
-            const durationMinutes = Math.max(1, Math.ceil(lesson.dialogue.reduce((duration, line) => duration + line.durationSec, 0) / 60));
-            return (
-            <button
-              type="button"
-              key={lesson.id}
-              onClick={() => handleCardClick(lesson.id)}
-              disabled={path.lessonStatusById.get(lesson.id) === 'locked'}
-              className={`group flex flex-col gap-2.5 rounded-2xl border p-3.5 text-right shadow-sm transition-all active:scale-[0.99] ${path.lessonStatusById.get(lesson.id) === 'locked' ? 'cursor-not-allowed border-emerald-100 bg-white/60 opacity-60' : 'cursor-pointer border-emerald-100 bg-white hover:-translate-y-0.5 hover:border-emerald-300 hover:shadow-lg'}`}
-            >
-              <div className="flex items-start justify-between gap-3">
-              <div className="flex min-w-0 items-center gap-3">
-                  {/* Avatar badge */}
-                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-emerald-50 to-teal-100 border border-emerald-100 flex items-center justify-center text-xl shrink-0 group-hover:scale-105 transition-transform overflow-hidden">
-                    {lesson.characterA.design
-                      ? <PrimaryAvatar design={lesson.characterA.design} className="h-12 w-12" label={lesson.characterA.nameAr} />
-                      : lesson.characterA.avatar}
-                  </div>
-                  <div className="min-w-0">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-amber-500/15 text-amber-400 border border-amber-500/30">
-                        المرحلة {lesson.curriculumStage}
-                      </span>
-                      <span className="text-[11px] text-slate-400">
-                        {lesson.characterA.nameAr} و{lesson.characterB.nameAr}
-                      </span>
-                    </div>
-                    <h4 className="break-words text-sm font-bold text-white group-hover:text-emerald-700 transition-colors">
-                      {lesson.titleAr}
-                    </h4>
-                    <p dir="ltr" className="text-xs text-slate-400 font-en text-left">
-                      {lesson.title}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Play button */}
-                <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full border transition-colors ${path.lessonStatusById.get(lesson.id) === 'locked' ? 'border-slate-200 bg-slate-100 text-slate-400' : 'border-emerald-500/30 bg-emerald-500/10 text-emerald-600 group-hover:bg-emerald-500 group-hover:text-white'}`}>
-                  {path.lessonStatusById.get(lesson.id) === 'locked' ? <Lock className="h-4 w-4" /> : path.lessonStatusById.get(lesson.id) === 'completed' ? <CheckCircle2 className="h-4 w-4" /> : <Play className="w-4 h-4 fill-current translate-x-0.5" />}
-                </div>
-              </div>
-
-              <p className="text-xs text-slate-400 leading-relaxed line-clamp-2">
-                {lesson.descriptionAr}
-              </p>
-
-              {/* Lesson metadata footer */}
-              <div className="flex items-center justify-between pt-2 border-t border-emerald-50 text-[11px] text-slate-500">
-                <div className="flex items-center gap-3">
-                  <span className="flex items-center gap-1">
-                    <BookOpen className="w-3.5 h-3.5 text-emerald-400" />
-                    <span>{lesson.vocabulary.length} كلمات</span>
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <Clock className="w-3.5 h-3.5 text-teal-500" />
-                    <span>{durationMinutes} د</span>
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                    <span>{path.lessonStatusById.get(lesson.id) === 'completed' ? 'مكتمل' : path.lessonStatusById.get(lesson.id) === 'locked' ? 'مقفل' : 'متاح الآن'}</span>
-                  </span>
-                </div>
-
-                <span className="flex items-center gap-1 font-mono-num text-slate-400">
-                  <Heart className="w-3.5 h-3.5 text-rose-400" />
-                  <span>{lesson.likesCount}</span>
-                </span>
-              </div>
-            </button>
-            );
-          })
-        )}
-        {filteredLessons.length > libraryPageSize && (
-          <button
-            type="button"
-            onClick={() => setLibraryPageSize((size) => size + 24)}
-            className="lesson-library-more md:col-span-2"
-          >
-            <span>عرض المزيد من الدروس</span>
-            <span className="lesson-library-more-count">متبقي {filteredLessons.length - libraryPageSize}</span>
-            <ArrowDown className="h-4 w-4" aria-hidden="true" />
-          </button>
-        )}
-      </div>
-      </details>}
       {examStage !== null && (() => {
         const level = path.levels.find((entry) => entry.stage === examStage);
         if (!level) return null;

@@ -4,7 +4,8 @@ import {
   ChartNoAxesColumnIncreasing,
   Flame,
   Gamepad2,
-  Map,
+  GraduationCap,
+  House,
   Settings2,
   type LucideIcon,
 } from 'lucide-react';
@@ -35,8 +36,14 @@ export const BottomTabBar: React.FC<BottomTabBarProps> = ({
   const tabs: NavigationTab[] = [
     {
       id: 'categories',
-      labelAr: 'المسار',
-      icon: Map,
+      labelAr: 'الرئيسية',
+      icon: House,
+      badge: null,
+    },
+    {
+      id: 'lessons',
+      labelAr: 'الدروس',
+      icon: GraduationCap,
       badge: null,
     },
     {
@@ -76,7 +83,7 @@ export const BottomTabBar: React.FC<BottomTabBarProps> = ({
       className="journey-nav relative z-40 w-full shrink-0 border-t safe-area-pb"
       aria-label="التنقل الرئيسي"
     >
-      <div className="mx-auto grid h-[68px] w-full max-w-2xl grid-cols-5 items-center px-2 sm:px-4">
+      <div className="mx-auto grid h-[68px] w-full max-w-2xl grid-cols-6 items-center px-1.5 sm:px-4">
         {tabs.map((tab) => {
           const isActive = activeTab === tab.id;
           const Icon = tab.icon;
@@ -150,7 +157,7 @@ export const BottomTabBar: React.FC<BottomTabBarProps> = ({
               </div>
 
               <span
-                className={`text-[11px] font-bold tracking-tight transition-colors ${
+                className={`journey-tab-label text-[10.5px] font-bold tracking-tight transition-colors ${
                   isActive ? 'text-teal-800' : 'text-slate-500 group-hover:text-slate-800'
                 }`}
               >
