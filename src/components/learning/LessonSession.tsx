@@ -269,6 +269,9 @@ export const LessonSession: React.FC<LessonSessionProps> = ({
     recognitionRef.current?.stop();
     recognitionRef.current = null;
   }, []);
+  useEffect(() => {
+    speechService.loadClipManifest();
+  }, []);
 
   useEffect(() => {
     if (phase !== 'story') return;

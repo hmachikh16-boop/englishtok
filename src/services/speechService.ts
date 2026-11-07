@@ -7,9 +7,11 @@ import {
   normalizeSpeechLanguage,
   normalizeSpeechText as normalizeClipText,
   resolveSpeechLanguage,
+  speechClipHash,
   speechClipUrl,
   speechTextForTts,
   type SpeechVoice,
+  voiceFor,
 } from './speechClip';
 
 export const SPEECH_UNAVAILABLE_EVENT = 'englishtok:speech-unavailable';
@@ -142,11 +144,42 @@ class SpeechService {
   }
 
   /** URL of the bundled studio clip for a line, or undefined when there is none. */
+  private clipManifest: Map<string, Set<string>> | null = null;
+  private clipManifestPromise: Promise<void> | null = null;
+
+  public loadClipManifest(): void {
+    if (this.clipManifestPromise) return;
+    this.clipManifestPromise = (async () => {
+      try {
+        const response = await fetch('/audio/tts/manifest.json', { cache: 'force-cache' });
+        if (!response.ok) return;
+        const data = (await response.json()) as Record<string, string[]>;
+        const map = new Map<string, Set<string>>();
+        for (const [voice, hashes] of Object.entries(data)) {
+          map.set(voice, new Set(hashes));
+        }
+        this.clipManifest = map;
+      } catch {
+        // Manifest unavailable — keep the legacy behaviour (try the clip, cache misses).
+        this.clipManifest = null;
+      }
+    })();
+  }
+
   public getSpeechClipUrl(text: string, gender: 'male' | 'female', accent: string) {
     // `accent` is the learner's preference, not the language of this sentence.
     // Resolve English course text to English even when the UI is set to French.
     const language = resolveSpeechLanguage(text, accent);
-    return speechClipUrl(text, gender, language) ?? undefined;
+    const url = speechClipUrl(text, gender, language) ?? undefined;
+    if (!url) return undefined;
+    // If the manifest is loaded, skip clips that are known to be missing so we
+    // never pay a 404 round-trip (and IndexedDB probe) for them.
+    if (this.clipManifest) {
+      const voice = voiceFor(language, gender);
+      const hash = speechClipHash(normalizeClipText(text) ?? text);
+      if (!this.clipManifest.get(voice)?.has(hash)) return undefined;
+    }
+    return url;
   }
 
   /**
@@ -350,6 +383,7 @@ class SpeechService {
         onStart?.();
       };
       audio.onended = () => {
+        window.clearTimeout(safetyTimer);
         if (failed || requestId !== this.requestId) return;
         if (this.currentBlobUrl) {
           URL.revokeObjectURL(this.currentBlobUrl);
@@ -357,10 +391,26 @@ class SpeechService {
         }
         playNext();
       };
-      audio.onerror = () => fail(new Error('The speech fallback could not be played.'));
+      audio.onerror = () => {
+        window.clearTimeout(safetyTimer);
+        fail(new Error('The speech fallback could not be played.'));
+      };
 
       prefetch(index);
-      void audio.play().catch(fail);
+      const estimatedMs = Math.max(2000, Math.min(30000, chunk.length * 75));
+      const safetyTimer = window.setTimeout(() => {
+        if (failed || requestId !== this.requestId) return;
+        if (this.currentAudio !== audio) return;
+        if (this.currentBlobUrl) {
+          URL.revokeObjectURL(this.currentBlobUrl);
+          this.currentBlobUrl = null;
+        }
+        playNext();
+      }, estimatedMs);
+      void audio.play().catch((error) => {
+        window.clearTimeout(safetyTimer);
+        fail(error);
+      });
     };
 
     prefetch(0);
@@ -479,12 +529,13 @@ class SpeechService {
     this.currentUtterance = utterance;
     // The device voice starts instantly, so there is no loading state to report.
 
-    utterance.onstart = () => {
-      if (requestId !== this.requestId) return;
-      this.setStatus('playing');
-      onStart?.();
-    };
-    utterance.onend = () => {
+    let started = false;
+    let finished = false;
+    const finishOnce = () => {
+      if (finished) return;
+      finished = true;
+      if (fallbackTimer) window.clearTimeout(fallbackTimer);
+      if (startTimer) window.clearTimeout(startTimer);
       if (requestId !== this.requestId) return;
       this.currentUtterance = null;
       this.currentSource = null;
@@ -492,8 +543,23 @@ class SpeechService {
       this.setStatus('idle');
       onEnd?.();
     };
-    utterance.onerror = (event) => {
+
+    utterance.onstart = () => {
+      if (requestId !== this.requestId || finished) return;
+      started = true;
+      if (startTimer) window.clearTimeout(startTimer);
+      this.setStatus('playing');
+      onStart?.();
+    };
+    utterance.onend = () => {
       if (requestId !== this.requestId) return;
+      finishOnce();
+    };
+    utterance.onerror = (event) => {
+      if (requestId !== this.requestId || finished) return;
+      finished = true;
+      if (fallbackTimer) window.clearTimeout(fallbackTimer);
+      if (startTimer) window.clearTimeout(startTimer);
       this.currentUtterance = null;
       this.finishWithError(
         `تعذر تشغيل صوت Kokoro أو صوت الجهاز (${event.error}). تحقق من إعدادات الصوت وحاول مجددًا.`,
@@ -501,9 +567,27 @@ class SpeechService {
       );
     };
 
+    // Some engines (headless/locked-down browsers) never fire onstart/onend.
+    // Fall back to a timer so the UI never gets stuck in the "speaking" state
+    // and the lesson can advance.
+    const startTimer = window.setTimeout(() => {
+      if (requestId !== this.requestId || started || finished) return;
+      started = true;
+      this.setStatus('playing');
+      onStart?.();
+    }, 400);
+    const estimatedMs = Math.max(3000, Math.min(30000, text.length * 75));
+    const fallbackTimer = window.setTimeout(() => {
+      if (requestId !== this.requestId || finished) return;
+      finishOnce();
+    }, estimatedMs);
+
     try {
       synthesis.speak(utterance);
     } catch (error) {
+      finished = true;
+      if (fallbackTimer) window.clearTimeout(fallbackTimer);
+      if (startTimer) window.clearTimeout(startTimer);
       this.currentUtterance = null;
       this.finishWithError(
         'تعذر بدء النطق على هذا الجهاز. تحقق من إعدادات الصوت وحاول مجددًا.',

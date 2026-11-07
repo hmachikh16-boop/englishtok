@@ -150,7 +150,7 @@ try {
     size: goldSize,
     minimumAndroidSdk: 24,
     notes:
-      'تحديث Gold ' + goldVersion + ': ألعاب أذكى وأكثر احترافية (لعبة اليوم موصى بها، تجميع حسب المهارة، صور حيوانات، XP ومستوى صعوبة)، مع ~900 درس ونوافذ رئيسية أنيقة.',
+      'تحديث Gold ' + goldVersion + ': إصلاح الصوت في الدروس والقصص (device/server voice فوري، timeout fallback، manifest لل clips، لا 404 ثقيل)، مع ~900 درس ونوافذ أنيقة.',
     releaseUrl: `https://github.com/${repository}/releases/tag/gold-v${goldVersion}`,
     publishedAt: new Date().toISOString(),
   };

@@ -1,11 +1,11 @@
 {
-  "version": "1.1.43",
+  "version": "1.1.44",
   "packageId": "com.englishtok.gold",
-  "apkUrl": "/lin-go-gold-1.1.43.apk",
-  "sha256": "CD4FF5906609B0959F9ED8D19370CAAF29F4D84EA7953C0491EA230327118CC3",
-  "size": 91561820,
+  "apkUrl": "/lin-go-gold-1.1.44.apk",
+  "sha256": "BFF04B97DAB24BBA4CDD6FD83E938B16949205BC587E21F8CE874ACF58C6B2BF",
+  "size": 91652015,
   "minimumAndroidSdk": 24,
-  "notes": "تحديث Gold 1.1.43: ألعاب أذكى وأكثر احترافية (لعبة اليوم موصى بها، تجميع حسب المهارة، صور حيوانات، XP ومستوى صعوبة)، مع ~900 درس ونوافذ رئيسية أنيقة.",
-  "releaseUrl": "https://github.com/hmachikh16-boop/englishtok/releases/tag/gold-v1.1.43",
+  "notes": "تحديث Gold 1.1.44: إصلاح الصوت في الدروس والقصص (device/server voice فوري، timeout fallback، manifest لل clips، لا 404 ثقيل)، مع ~900 درس ونوافذ أنيقة.",
+  "releaseUrl": "https://github.com/hmachikh16-boop/englishtok/releases/tag/gold-v1.1.44",
   "publishedAt": "2026-11-07T00:00:00.000Z"
 }

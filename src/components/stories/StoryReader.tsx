@@ -81,6 +81,9 @@ export const StoryReader: React.FC<StoryReaderProps> = ({
     // Warm the native TTS engine while the reader paints so the first
     // "استمع للقصة" tap starts speaking without an extra initialization delay.
     speechService.warmUp(language);
+    // Load the bundled-clip manifest early so missing clips are skipped without
+    // a 404 round-trip on the first narration.
+    speechService.loadClipManifest();
   }, [language]);
 
   useEffect(() => {
