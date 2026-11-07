@@ -150,12 +150,17 @@ public class SpeechRecognitionPlugin extends Plugin {
                 pendingCall = call;
                 cancelled = false;
 
+                String language = call.getString("language", "en-US");
+                if (language == null || language.trim().isEmpty()) {
+                    language = "en-US";
+                }
+
                 Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
                 intent.putExtra(
                     RecognizerIntent.EXTRA_LANGUAGE_MODEL,
                     RecognizerIntent.LANGUAGE_MODEL_FREE_FORM
                 );
-                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "en-US");
+                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, language);
                 intent.putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true);
                 intent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 3);
                 recognizer.startListening(intent);

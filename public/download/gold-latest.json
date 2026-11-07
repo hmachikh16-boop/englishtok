@@ -1,11 +1,11 @@
 {
-  "version": "1.1.48",
+  "version": "1.1.49",
   "packageId": "com.englishtok.gold",
-  "apkUrl": "/lin-go-gold-1.1.48.apk",
-  "sha256": "BBB81011FF82E658CBBE0261169BA1CF6CDFF35965815EB0F55122410A3C111C",
-  "size": 91660844,
+  "apkUrl": "/lin-go-gold-1.1.49.apk",
+  "sha256": "856A7AF56851DD582BFD78A15F4176A846468BD29A2BA68EC7F0667F824923B2",
+  "size": 91660927,
   "minimumAndroidSdk": 24,
-  "notes": "تحديث Gold 1.1.48: صور احترافية للألقاب (8 SVG parchment، متوافقة مع الواجهة) بدل الإيموجي، مع متجر الألقاب ونقاط من الألعاب.",
-  "releaseUrl": "https://github.com/hmachikh16-boop/englishtok/releases/tag/gold-v1.1.48",
+  "notes": "تحديث Gold 1.1.49: مراجعة جميع الدروس (684 درسًا، 0 أخطاء)، إصلاح ميكروفون Android (لغة fr/en)، صوت سحابي للقصص، ~900 درس.",
+  "releaseUrl": "https://github.com/hmachikh16-boop/englishtok/releases/tag/gold-v1.1.49",
   "publishedAt": "2026-11-07T00:00:00.000Z"
 }

@@ -150,7 +150,7 @@ try {
     size: goldSize,
     minimumAndroidSdk: 24,
     notes:
-      'تحديث Gold ' + goldVersion + ': صور احترافية للألقاب (8 SVG parchment، متوافقة مع الواجهة) بدل الإيموجي، مع متجر الألقاب ونقاط من الألعاب.',
+      'تحديث Gold ' + goldVersion + ': مراجعة جميع الدروس (684 درسًا، 0 أخطاء)، إصلاح ميكروفون Android (لغة fr/en)، صوت سحابي للقصص، ~900 درس.',
     releaseUrl: `https://github.com/${repository}/releases/tag/gold-v${goldVersion}`,
     publishedAt: new Date().toISOString(),
   };
