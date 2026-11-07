@@ -1,11 +1,11 @@
 {
-  "version": "1.1.45",
+  "version": "1.1.46",
   "packageId": "com.englishtok.gold",
-  "apkUrl": "/lin-go-gold-1.1.45.apk",
-  "sha256": "53067FCB78F75E7DD4AFED76ADF0552A5E46750EEE24E485BF215BA92A8B96D0",
-  "size": 91652015,
+  "apkUrl": "/lin-go-gold-1.1.46.apk",
+  "sha256": "5703D891232D74B9D0BDFB88661F2826C0EB311C83F05BD6E15919F0268B8F9C",
+  "size": 91656111,
   "minimumAndroidSdk": 24,
-  "notes": "تحديث Gold 1.1.45: صوت القصص سحابي (cloud TTS) as primary — يعمل على كل الأجهزة، chunked prefetch سلس، safety timers. الدروس: device voice فوري + manifest. ~900 درس.",
-  "releaseUrl": "https://github.com/hmachikh16-boop/englishtok/releases/tag/gold-v1.1.45",
+  "notes": "تحديث Gold 1.1.46: زر «الحروف الأبجدية» (26 حرفًا، صوت + مثال + جملة، اختبار تفاعلي)، مع ~900 درس ونوافذ أنيقة وألعاب أذكى.",
+  "releaseUrl": "https://github.com/hmachikh16-boop/englishtok/releases/tag/gold-v1.1.46",
   "publishedAt": "2026-11-07T00:00:00.000Z"
 }

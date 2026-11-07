@@ -1,5 +1,5 @@
 import React, { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState, useTransition } from 'react';
-import { Sparkles, Play, BookOpen, CheckCircle2, Lock, Trophy, ArrowDown, Crown, Footprints, Youtube, Map as MapIcon, X, Star } from 'lucide-react';
+import { Sparkles, Play, BookOpen, CheckCircle2, Lock, Trophy, ArrowDown, Crown, Footprints, Youtube, Map as MapIcon, X, Star, Type } from 'lucide-react';
 import { Lesson, UserProfile } from '../../types';
 import { CATEGORIES } from '../../data/lessons';
 import { CURRICULUM_CONFIG } from '../../data/curriculum';
@@ -31,6 +31,7 @@ const ReelsViewer = lazy(() =>
 import '../reels/reels-fab.css';
 import { GoldJourneyPanel } from '../gold/GoldJourneyPanel';
 import { GoldErrorBoundary } from '../gold/GoldErrorBoundary';
+import { AlphabetWindow } from '../alphabet/AlphabetWindow';
 import { EDUCATIONAL_PHASES, findSchoolYearRoute, SCHOOL_YEAR_ALIGNMENT_NOTE } from '../../data/educationalStructure';
 
 const ROUTE_SHIFTS = [0, 30, 44, 30, 0, -30, -44, -30, 0, 30];
@@ -192,7 +193,7 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
   const [shelfVisibleCount, setShelfVisibleCount] = useState(6);
   // Only one home window is open at a time and the tile grid is replaced by
   // that single window — the home never stacks windows on top of each other.
-  const [homePanel, setHomePanel] = useState<'stories' | 'goals' | 'gold' | 'path' | 'school' | null>(null);
+  const [homePanel, setHomePanel] = useState<'stories' | 'goals' | 'gold' | 'path' | 'school' | 'alphabet' | null>(null);
   const [goalCardDialog, setGoalCardDialog] = useState<{
     cardId: string | null;
     stage: number | null;
@@ -215,7 +216,7 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
     [openExclusive],
   );
   const toggleHomePanel = useCallback(
-    (panel: 'stories' | 'goals' | 'gold' | 'path' | 'school') => {
+    (panel: 'stories' | 'goals' | 'gold' | 'path' | 'school' | 'alphabet') => {
       const willOpen = homePanel !== panel;
       setHomePanel(willOpen ? panel : null);
       speechService.playPop();
@@ -672,6 +673,13 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
                 <small>{shelfStories.length} قصّة مصوّرة</small>
               </span>
             </button>
+            <button type="button" className="home-window-tile" onClick={() => toggleHomePanel('alphabet')}>
+              <span className="home-tile-medallion" aria-hidden="true"><Type /></span>
+              <span className="home-tile-copy">
+                <strong>الحروف الأبجدية</strong>
+                <small>26 حرفًا · تعلّم بالذكاء</small>
+              </span>
+            </button>
             {!isSchoolYearCourse && path.levels.length > 0 && (
               <button type="button" className="home-window-tile" onClick={() => toggleHomePanel('goals')}>
                 <span className="home-tile-medallion" aria-hidden="true"><Trophy /></span>
@@ -960,6 +968,7 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
             </aside>
           </section>
         )}
+        {homePanel === 'alphabet' && <AlphabetWindow onClose={() => setHomePanel(null)} />}
         {activeStory && (
           <StoryReader
             story={activeStory}

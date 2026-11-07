@@ -150,7 +150,7 @@ try {
     size: goldSize,
     minimumAndroidSdk: 24,
     notes:
-      'تحديث Gold ' + goldVersion + ': صوت القصص سحابي (cloud TTS) as primary — يعمل على كل الأجهزة، chunked prefetch سلس، safety timers. الدروس: device voice فوري + manifest. ~900 درس.',
+      'تحديث Gold ' + goldVersion + ': زر «الحروف الأبجدية» (26 حرفًا، صوت + مثال + جملة، اختبار تفاعلي)، مع ~900 درس ونوافذ أنيقة وألعاب أذكى.',
     releaseUrl: `https://github.com/${repository}/releases/tag/gold-v${goldVersion}`,
     publishedAt: new Date().toISOString(),
   };

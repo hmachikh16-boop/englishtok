@@ -40,8 +40,8 @@ android {
         gold {
             dimension "distribution"
             applicationId "com.englishtok.gold"
-            versionCode 1001045
-            versionName "1.1.45"
+            versionCode 1001046
+            versionName "1.1.46"
         }
     }
 }
