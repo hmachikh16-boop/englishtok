@@ -1714,3 +1714,134 @@
     animation: none;
   }
 }
+/* ── Smart games hub additions ─────────────────────────────────────── */
+.gg-recommended {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 12px;
+  margin: 14px 0 16px;
+  padding: 12px 14px;
+  border: 1px solid rgba(109, 70, 16, 0.32);
+  border-radius: 18px;
+  background:
+    linear-gradient(rgba(255, 252, 240, 0.55), rgba(255, 252, 240, 0) 55%),
+    linear-gradient(165deg, #fbf0d7, #f0e0ba 60%, #e8d7ac);
+  box-shadow: 0 3px 0 rgba(216, 196, 154, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+.gg-recommended-art {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  flex: 0 0 52px;
+  border: 1px solid rgba(109, 70, 16, 0.3);
+  border-radius: 15px;
+  background: radial-gradient(circle at 32% 26%, #fdf6e3, #efd9a7 62%, #dfc086);
+  overflow: hidden;
+}
+.gg-recommended-art img {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
+.gg-recommended-copy {
+  min-width: 0;
+  display: grid;
+  gap: 3px;
+}
+.gg-recommended-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10px;
+  font-weight: 900;
+  color: #8d2f24;
+  letter-spacing: 0.02em;
+}
+.gg-recommended-copy strong {
+  font-size: 14px;
+  font-weight: 900;
+  color: #2c2114;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.gg-recommended-copy small {
+  font-size: 10.5px;
+  font-weight: 600;
+  color: #6d5838;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.gg-recommended-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 8px;
+  font-size: 10px;
+  font-weight: 700;
+  color: #7a6644;
+}
+.gg-recommended-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border: 1px solid rgba(109, 70, 16, 0.32);
+  border-radius: 13px;
+  padding: 9px 14px;
+  background: linear-gradient(180deg, #f3d79a, #e6c37c);
+  color: #2c2114;
+  font-size: 12px;
+  font-weight: 900;
+  cursor: pointer;
+  box-shadow: 0 2px 0 rgba(140, 104, 53, 0.35);
+  transition: transform 0.15s ease;
+  white-space: nowrap;
+}
+.gg-recommended-btn:active { transform: scale(0.96); }
+
+.gg-skill-group {
+  margin-top: 14px;
+}
+.gg-skill-head {
+  margin-bottom: 8px;
+}
+.gg-skill-head h2 {
+  font-size: 13px;
+  font-weight: 900;
+  color: #2c2114;
+}
+.gg-skill-head p {
+  font-size: 10px;
+  font-weight: 600;
+  color: #6d5838;
+  margin-top: 2px;
+}
+
+.gg-game-thumb {
+  width: 34px;
+  height: 34px;
+  object-fit: contain;
+  filter: drop-shadow(0 1px 0 rgba(255, 255, 255, 0.6));
+}
+.gg-game-difficulty {
+  color: #8a5c14;
+}
+.gg-game-xp {
+  color: #4d9560;
+  font-weight: 900;
+}
+
+/* Keep the grid responsive on narrow phones */
+@media (max-width: 420px) {
+  .gg-recommended {
+    grid-template-columns: auto 1fr;
+  }
+  .gg-recommended-btn {
+    grid-column: 1 / -1;
+    justify-self: stretch;
+    justify-content: center;
+  }
+}

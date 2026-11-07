@@ -150,7 +150,7 @@ try {
     size: goldSize,
     minimumAndroidSdk: 24,
     notes:
-      'تحديث Gold ' + goldVersion + ': 50 درسًا جديدًا لكل مرحلة (200 درسًا) بمواضيع احترافية ملائمة لمستوى كل مرحلة، مع نوافذ رئيسية أنيقة وتبويب «الدروس» الخاص. مع جلد ورقي، ~700 درس، و17 لعبة.',
+      'تحديث Gold ' + goldVersion + ': ألعاب أذكى وأكثر احترافية (لعبة اليوم موصى بها، تجميع حسب المهارة، صور حيوانات، XP ومستوى صعوبة)، مع ~900 درس ونوافذ رئيسية أنيقة.',
     releaseUrl: `https://github.com/${repository}/releases/tag/gold-v${goldVersion}`,
     publishedAt: new Date().toISOString(),
   };

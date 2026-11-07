@@ -80,6 +80,9 @@ interface GameCard {
   skill: string;
   duration: string;
   badge?: string;
+  thumb?: string;
+  difficulty?: 'سهل' | 'متوسط' | 'متقدم';
+  xp?: number;
 }
 
 const GAME_CATALOG: GameCard[] = [
@@ -240,6 +243,36 @@ const GAME_CATALOG: GameCard[] = [
     badge: 'جديد',
   },
 ];
+
+// Smart metadata for each game: an illustrated thumbnail (from the existing
+// animal art set), a difficulty level and an XP reward estimate. Kept in a
+// side table so the catalog entries stay compact and easy to author.
+const GAME_EXTRAS: Record<string, { thumb: string; difficulty: 'سهل' | 'متوسط' | 'متقدم'; xp: number }> = {
+  spelling: { thumb: 'bee.svg', difficulty: 'متوسط', xp: 12 },
+  choice: { thumb: 'butterfly.svg', difficulty: 'سهل', xp: 8 },
+  listen: { thumb: 'parrot.svg', difficulty: 'سهل', xp: 8 },
+  fill: { thumb: 'cat.svg', difficulty: 'متوسط', xp: 10 },
+  speed: { thumb: 'tiger.svg', difficulty: 'متقدم', xp: 15 },
+  hangman: { thumb: 'fox.svg', difficulty: 'متوسط', xp: 10 },
+  flashcards: { thumb: 'owl.svg', difficulty: 'سهل', xp: 6 },
+  scramble: { thumb: 'monkey.svg', difficulty: 'متوسط', xp: 10 },
+  picture: { thumb: 'panda.svg', difficulty: 'سهل', xp: 8 },
+  category: { thumb: 'rabbit.svg', difficulty: 'متقدم', xp: 12 },
+  odd: { thumb: 'sheep.svg', difficulty: 'متوسط', xp: 10 },
+  sentence: { thumb: 'turtle.svg', difficulty: 'متقدم', xp: 14 },
+  dictation: { thumb: 'whale.svg', difficulty: 'متقدم', xp: 14 },
+  phonetic: { thumb: 'frog.svg', difficulty: 'متوسط', xp: 10 },
+  chain: { thumb: 'snake.svg', difficulty: 'متقدم', xp: 14 },
+  ladder: { thumb: 'giraffe.svg', difficulty: 'متقدم', xp: 16 },
+  memory: { thumb: 'elephant.svg', difficulty: 'متوسط', xp: 10 },
+};
+
+// Pick the "game of the day" deterministically so it stays stable within a day.
+const dailyGame = (): GameKey => {
+  const catalog = GAME_CATALOG;
+  const day = Math.floor(Date.now() / 86400000);
+  return catalog[day % catalog.length].id;
+};
 
 export const GamesTab: React.FC<GamesTabProps> = ({ lessons, userProfile, onUpdateProfile }) => {
   const [activeGame, setActiveGame] = useState<GameKey | null>(null);
@@ -411,47 +444,101 @@ export const GamesTab: React.FC<GamesTabProps> = ({ lessons, userProfile, onUpda
             </button>
           </section>
 
-          <div className="gg-section-head">
-            <div>
-              <h2>مكتبة الألعاب</h2>
-              <p>اختر لعبة وابدأ جولة قصيرة. بعد كل سؤال تظهر جملة استخدام و pronunciation.</p>
+          <section className="gg-recommended" aria-labelledby="games-recommended-title">
+            <div className="gg-recommended-art" aria-hidden="true">
+              <img src={`/animals/${GAME_EXTRAS[dailyGame()].thumb}`} alt="" />
             </div>
-            <span>{GAME_CATALOG.length} ألعاب</span>
-          </div>
+            <div className="gg-recommended-copy">
+              <span className="gg-recommended-kicker">
+                <Sparkles aria-hidden="true" /> لعبة اليوم
+              </span>
+              <strong id="games-recommended-title">
+                {GAME_CATALOG.find((g) => g.id === dailyGame())?.title}
+              </strong>
+              <small>
+                {GAME_CATALOG.find((g) => g.id === dailyGame())?.description}
+              </small>
+              <div className="gg-recommended-meta">
+                <span>{GAME_CATALOG.find((g) => g.id === dailyGame())?.skill}</span>
+                <span aria-hidden="true">•</span>
+                <span>{GAME_EXTRAS[dailyGame()].difficulty}</span>
+                <span aria-hidden="true">•</span>
+                <span>+{GAME_EXTRAS[dailyGame()].xp} XP</span>
+              </div>
+            </div>
+            <button
+              type="button"
+              className="gg-recommended-btn"
+              onClick={() => startGame(dailyGame())}
+            >
+              ابدأ
+              <ChevronLeft aria-hidden="true" />
+            </button>
+          </section>
 
-          <div className="gg-grid">
-            {GAME_CATALOG.map((game) => {
-              const Icon = game.icon;
-              return (
-                <button
-                  key={game.id}
-                  type="button"
-                  className="gg-game-card"
-                  onClick={() => startGame(game.id)}
-                  aria-label={`ابدأ ${game.title}`}
-                >
-                  <span className={`gg-game-icon tone-${game.tone}`} aria-hidden="true">
-                    <Icon />
-                  </span>
-                  <span className="gg-game-copy">
-                    <span className="gg-game-title-row">
-                      <strong>{game.title}</strong>
-                      {game.badge && <em className="gg-game-badge">{game.badge}</em>}
-                    </span>
-                    <span className="gg-game-desc">{game.description}</span>
-                    <span className="gg-game-meta">
-                      <span>{game.skill}</span>
-                      <span aria-hidden="true">•</span>
-                      <span>{game.duration}</span>
-                    </span>
-                  </span>
-                  <span className="gg-game-arrow" aria-hidden="true">
-                    <ChevronLeft />
-                  </span>
-                </button>
-              );
-            })}
-          </div>
+          {(() => {
+            const groups = new Map<string, typeof GAME_CATALOG>();
+            for (const game of GAME_CATALOG) {
+              if (!groups.has(game.skill)) groups.set(game.skill, []);
+              groups.get(game.skill)!.push(game);
+            }
+            return [...groups.entries()].map(([skill, games]) => (
+              <div key={skill} className="gg-skill-group">
+                <div className="gg-section-head gg-skill-head">
+                  <div>
+                    <h2>{skill}</h2>
+                    <p>{games.length} {games.length === 1 ? 'لعبة' : 'ألعاب'} · تدرّب هذه المهارة</p>
+                  </div>
+                  <span>{games.length}</span>
+                </div>
+                <div className="gg-grid">
+                  {games.map((game) => {
+                    const Icon = game.icon;
+                    const extra = GAME_EXTRAS[game.id];
+                    return (
+                      <button
+                        key={game.id}
+                        type="button"
+                        className="gg-game-card"
+                        onClick={() => startGame(game.id)}
+                        aria-label={`ابدأ ${game.title}`}
+                      >
+                        <span className={`gg-game-icon tone-${game.tone}`} aria-hidden="true">
+                          {extra?.thumb ? (
+                            <img src={`/animals/${extra.thumb}`} alt="" className="gg-game-thumb" />
+                          ) : (
+                            <Icon />
+                          )}
+                        </span>
+                        <span className="gg-game-copy">
+                          <span className="gg-game-title-row">
+                            <strong>{game.title}</strong>
+                            {game.badge && <em className="gg-game-badge">{game.badge}</em>}
+                          </span>
+                          <span className="gg-game-desc">{game.description}</span>
+                          <span className="gg-game-meta">
+                            <span>{game.skill}</span>
+                            <span aria-hidden="true">•</span>
+                            <span>{game.duration}</span>
+                            {extra && (
+                              <>
+                                <span aria-hidden="true">•</span>
+                                <span className="gg-game-difficulty">{extra.difficulty}</span>
+                                <span className="gg-game-xp">+{extra.xp} XP</span>
+                              </>
+                            )}
+                          </span>
+                        </span>
+                        <span className="gg-game-arrow" aria-hidden="true">
+                          <ChevronLeft />
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            ));
+          })()}
 
           <section className="gg-hub-progress" aria-labelledby="games-progress-title">
             <div className="gg-hub-progress-head">
