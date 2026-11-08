@@ -333,9 +333,9 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
 
   useEffect(() => {
     const shouldExpand = visibleLevels.some(
-      (level) => level.completedCount >= visibleLessonCount && visibleLessonCount < 125,
+      (level) => level.completedCount >= visibleLessonCount && visibleLessonCount < 1000,
     );
-    if (shouldExpand) setVisibleLessonCount((count) => Math.min(count + 5, 125));
+    if (shouldExpand) setVisibleLessonCount((count) => Math.min(count + 5, 1000));
   }, [visibleLevels, visibleLessonCount]);
 
   const isSchoolYearCourse = Boolean(selectedSchoolYear?.grade);
@@ -868,7 +868,7 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
                 {visibleLessonCount < level.lessons.length && (
                   <button
                     type="button"
-                    onClick={() => setVisibleLessonCount((count) => Math.min(count + 5, 125))}
+                    onClick={() => setVisibleLessonCount((count) => Math.min(count + 5, 1000))}
                     className="path-node path-show-more-node"
                     aria-label="عرض 5 دروس إضافية"
                   >
