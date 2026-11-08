@@ -16,7 +16,9 @@ export const OFFICIAL_GOLD_APK_URL = `${OFFICIAL_SITE_URL}/lin-go-gold-1.1.14.ap
 
 export const officialApkUrl = (version: string): string => {
   if (IS_GOLD_EDITION) {
-    return `${OFFICIAL_SITE_URL}/lin-go-gold-${encodeURIComponent(version)}.apk`;
+    // The version query bypasses any cached HTML fallback from a deployment
+    // where the APK was not staged yet.
+    return `${OFFICIAL_SITE_URL}/lin-go-gold-${encodeURIComponent(version)}.apk?v=${encodeURIComponent(version)}`;
   }
   return `${OFFICIAL_APK_URL}?v=${encodeURIComponent(version)}`;
 };

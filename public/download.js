@@ -3,8 +3,9 @@ const DOWNLOAD_PAGE = 'https://englishtok-eight.vercel.app/download';
 const LOCAL_APK = '/english-tok.apk';
 const GITHUB_APK = `https://github.com/${REPOSITORY}/releases/latest/download/english-tok.apk`;
 const GITHUB_RELEASE = `https://github.com/${REPOSITORY}/releases/latest`;
+const goldApkPath = (version) => `/lin-go-gold-${version}.apk?v=${version}`;
 let GOLD_VERSION = '1.1.25';
-let GOLD_APK = `/lin-go-gold-${GOLD_VERSION}.apk`;
+let GOLD_APK = goldApkPath(GOLD_VERSION);
 let GOLD_GITHUB_APK =
   `https://github.com/${REPOSITORY}/releases/download/gold-v${GOLD_VERSION}/lin-go-gold-${GOLD_VERSION}.apk`;
 
@@ -15,7 +16,7 @@ const loadGoldManifest = async () => {
     const data = await response.json();
     if (isValidVersion(data?.version)) {
       GOLD_VERSION = data.version;
-      GOLD_APK = `/lin-go-gold-${GOLD_VERSION}.apk`;
+      GOLD_APK = goldApkPath(GOLD_VERSION);
       GOLD_GITHUB_APK =
         `https://github.com/${REPOSITORY}/releases/download/gold-v${GOLD_VERSION}/lin-go-gold-${GOLD_VERSION}.apk`;
       setGoldLinks(GOLD_APK);
