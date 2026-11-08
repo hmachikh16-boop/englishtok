@@ -413,6 +413,9 @@ const switchView = (view) => {
   if (view === 'youtube' && (!STATE.youtube || Date.now() - STATE.youtubeAt > 5 * 60 * 1000)) {
     void loadYoutube();
   }
+  if (view === 'complaints') {
+    void loadComplaintsData();
+  }
   window.scrollTo({ top: 0, behavior: 'smooth' });
 };
 
@@ -1006,7 +1009,6 @@ const sendChatReply = async (conversationId, text) => {
 };
 
 const renderComplaints = () => {
-  if (!STATE.db) return;
   const list = $('#complaintsList');
   const empty = $('#complaintsEmpty');
   const navCount = $('#navComplaintCount');
