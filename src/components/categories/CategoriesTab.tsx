@@ -875,7 +875,7 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
                     <span className="path-node-orb path-show-more-orb">
                       <span className="text-lg font-black">+5</span>
                     </span>
-                    <span className="path-node-title">عرض المزيد</span>
+                    <span className="path-node-title">عرض المزيد ({Math.max(0, level.lessons.length - visibleLessonCount)} متبقي)</span>
                   </button>
                 )}
                 {!isSchoolYearCourse && visibleLessonCount >= level.lessons.length && <button

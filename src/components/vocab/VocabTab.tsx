@@ -23,7 +23,7 @@ export const VocabTab: React.FC<VocabTabProps> = ({
   userProfile,
   onUpdateProfile,
 }) => {
-  const [filterMode, setFilterMode] = useState<'saved' | 'all' | 'review'>('saved');
+  const [filterMode, setFilterMode] = useState<'saved' | 'all' | 'review'>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [isFlashcardMode, setIsFlashcardMode] = useState(false);
   const [flashcardIdx, setFlashcardIdx] = useState(0);

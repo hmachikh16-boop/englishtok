@@ -2,12 +2,12 @@ import { Capacitor } from '@capacitor/core';
 import type { Lesson } from '../types';
 
 const CONTENT_CACHE_KEYS = {
-  en: 'englishtok_learning_path_content_v7',
-  fr: 'englishtok_learning_path_content_fr_v1',
+  en: 'englishtok_learning_path_content_v8',
+  fr: 'englishtok_learning_path_content_fr_v2',
 } as const;
 const CONTENT_VERSION_KEYS = {
-  en: 'englishtok_learning_path_version_en_v1',
-  fr: 'englishtok_learning_path_version_fr_v1',
+  en: 'englishtok_learning_path_version_en_v2',
+  fr: 'englishtok_learning_path_version_fr_v2',
 } as const;
 const CONTENT_LAST_CHECK_KEYS = {
   en: 'englishtok_learning_path_checked_en_v1',
