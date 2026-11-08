@@ -1,11 +1,11 @@
 {
-  "version": "1.1.51",
+  "version": "1.1.52",
   "packageId": "com.englishtok.gold",
-  "apkUrl": "/lin-go-gold-1.1.51.apk",
-  "sha256": "A8F9539913B88BBF6A5582B38101828157B3EEE4C125551F47786D50890F382F",
-  "size": 91669119,
+  "apkUrl": "/lin-go-gold-1.1.52.apk",
+  "sha256": "C32A5C897D6E671FB1FD7436BCDE21BFE95EBD0F423C5B838EA81C32570F2FFE",
+  "size": 90786180,
   "minimumAndroidSdk": 24,
-  "notes": "تحديث Gold 1.1.51: زر «وضع التجربة المجانية» في لوحة الإدارة — عند تفعيله يفتح التطبيق بدون كود، وإيقافه يعيد طلب الكود المفعّل فورًا. مع ~900 درس ونوافذ أنيقة وألعاب أذكى.",
-  "releaseUrl": "https://github.com/hmachikh16-boop/englishtok/releases/tag/gold-v1.1.51",
-  "publishedAt": "2026-11-08T00:00:00.000Z"
+  "notes": "تحديث Gold 1.1.52: +20 درسًا في Stage 1 (740 درسًا إجماليًا)، رفع حد «عرض المزيد» من 125 إلى 1000 (جميع الدروس قابلة للوصول)، إصلاح تحميل APK (91.7 MB → 90.8 MB)، تحسين صفحة التحميل (احترافية، لقطة حقيقية، شارة تحقق).",
+  "releaseUrl": "https://github.com/hmachikh16-boop/englishtok/releases/tag/gold-v1.1.52",
+  "publishedAt": "2026-11-08T12:00:00.000Z"
 }

@@ -201,7 +201,7 @@ try {
     size: goldSize,
     minimumAndroidSdk: 24,
     notes:
-      'تحديث Gold ' + goldVersion + ': زر «وضع التجربة المجانية» في لوحة الإدارة — عند تفعيله يفتح التطبيق بدون كود، وإيقافه يعيد طلب الكود المفعّل فورًا. مع ~900 درس ونوافذ أنيقة وألعاب أذكى.',
+      'تحديث Gold ' + goldVersion + ': +20 درسًا في Stage 1 (740 إجمالي)، رفع حد «عرض المزيد» 125→1000 (جميع الدروس قابلة للوصول)، إصلاح تحميل APK، تحسين صفحة التحميل (احترافية، لقطة حقيقية، شارة تحقق).',
     releaseUrl: `https://github.com/${repository}/releases/tag/gold-v${goldVersion}`,
     publishedAt: new Date().toISOString(),
   };
