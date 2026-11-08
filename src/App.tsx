@@ -7,6 +7,7 @@ import React, { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useStat
 import { App as CapacitorApp } from '@capacitor/app';
 import { Capacitor } from '@capacitor/core';
 import { ActiveTab, Lesson, TargetLanguage, UserProfile } from './types';
+import { MessageCircle } from 'lucide-react';
 // Bundled English curriculum is loaded lazily (see useEffect below) so it no
 // longer blocks the first paint of the app shell.
 import { applyGoldCurriculum } from './data/goldCurriculum';
@@ -37,6 +38,7 @@ import {
 } from './services/speechService';
 import { TopBar } from './components/navigation/TopBar';
 import { BottomTabBar } from './components/navigation/BottomTabBar';
+import { SupportChat } from './components/support/SupportChat';
 const LessonLibraryTab = lazy(() =>
   import('./components/library/LessonLibraryTab').then((module) => ({ default: module.LessonLibraryTab })),
 );
@@ -112,6 +114,7 @@ export default function App() {
     [userProfile.savedWordIds, vocabularyIds],
   );
   const [activeTab, setActiveTab] = useState<ActiveTab>('categories');
+const [supportChatOpen, setSupportChatOpen] = useState(false);
   const [selectedLessonId, setSelectedLessonId] = useState<string | null>(learningPath.nextLessonId);
   const [isPhoneFrameView, setIsPhoneFrameView] = useState<boolean>(false);
   const [speechNotice, setSpeechNotice] = useState<string | null>(null);
@@ -727,6 +730,30 @@ export default function App() {
           userStreak={userProfile.streakDays}
           onChangeTab={handleChangeTab}
         />}
+
+        {/* Floating Support Chat Button (Messenger-style) */}
+        {activeTab !== 'lesson' && activeTab !== 'chat' && (
+          <button
+            type="button"
+            onClick={() => setSupportChatOpen(true)}
+            aria-label="دردشة مع الدعم"
+            className="fixed bottom-24 right-4 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-emerald-500 to-emerald-700 text-white shadow-2xl shadow-emerald-900/40 transition hover:scale-105 active:scale-95 sm:bottom-6 sm:right-6"
+          >
+            <MessageCircle className="h-6 w-6" />
+            <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-rose-500 text-[10px] font-black text-white shadow">
+              !
+            </span>
+          </button>
+        )}
+
+        {/* Support Chat Modal */}
+        {supportChatOpen && (
+          <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 p-0 sm:items-center sm:p-4">
+            <div className="w-full max-w-lg">
+              <SupportChat onClose={() => setSupportChatOpen(false)} />
+            </div>
+          </div>
+        )}
 
       </div>
       {placementGateOpen && (

@@ -962,60 +962,140 @@ const complaintInitials = (event) => {
   return source.slice(0, 2).toUpperCase();
 };
 
+let chatConversations = [];
+let activeChatConversationId = null;
+let activeChatMessages = [];
+
+const loadChatConversations = async () => {
+  try {
+    const payload = await api('chats');
+    chatConversations = Array.isArray(payload.conversations) ? payload.conversations : [];
+  } catch (error) {
+    chatConversations = [];
+  }
+};
+
+const loadChatMessages = async (conversationId) => {
+  if (!conversationId) return;
+  const conv = chatConversations.find((c) => c.conversationId === conversationId);
+  if (!conv) return;
+  try {
+    const url = `${API_ENDPOINT}?action=chat&code=${encodeURIComponent(conv.code || '')}&device=${encodeURIComponent(conv.device || '')}`;
+    const response = await fetch(url, { credentials: 'same-origin', cache: 'no-store', headers: { Accept: 'application/json' } });
+    if (!response.ok) return;
+    const payload = await response.json().catch(() => ({}));
+    activeChatMessages = Array.isArray(payload.messages) ? payload.messages : [];
+    activeChatConversationId = conversationId;
+  } catch (error) {
+    activeChatMessages = [];
+  }
+  void loadComplaintsData();
+};
+
+const sendChatReply = async (conversationId, text) => {
+  if (!text.trim()) return;
+  try {
+    await api('chat_reply', { method: 'POST', body: { conversationId, message: text.trim() } });
+    await loadChatMessages(conversationId);
+    const input = $('#chatReplyInput');
+    if (input) input.value = '';
+    toast('تم إرسال الرد.');
+  } catch (error) {
+    toast(error instanceof Error ? error.message : 'تعذر إرسال الرد.', 'error');
+  }
+};
+
 const renderComplaints = () => {
   if (!STATE.db) return;
   const list = $('#complaintsList');
   const empty = $('#complaintsEmpty');
-  const count = complaints().length;
   const navCount = $('#navComplaintCount');
-  if (navCount) navCount.textContent = formatNumber(count);
   const badge = $('#complaintsCountBadge');
-  if (badge) badge.textContent = `${formatNumber(count)} رسالة`;
+  if (navCount) navCount.textContent = formatNumber(chatConversations.length);
+  if (badge) badge.textContent = `${formatNumber(chatConversations.length)} محادثة`;
   if (!list) return;
-  if (empty) empty.hidden = count !== 0;
-  list.hidden = count === 0;
-  list.innerHTML = complaints()
-    .map((event) => {
-      const replies = replyFor(event.id);
-      const replyBubbles = replies
-        .map(
-          (r) => `
-        <div class="chat-bubble chat-bubble-admin">
-          <div class="chat-bubble-avatar chat-avatar-admin">A</div>
-          <div class="chat-bubble-body">
-            <div class="chat-bubble-meta">
-              <strong>الإدارة</strong>
-              <time>${html(formatRelative(r.at))}</time>
-            </div>
-            <p class="chat-bubble-text">${html(r.text)}</p>
-          </div>
-        </div>`,
-        )
-        .join('');
+  if (chatConversations.length === 0) {
+    if (empty) empty.hidden = false;
+    list.hidden = true;
+    list.innerHTML = '';
+    return;
+  }
+  if (empty) empty.hidden = true;
+  list.hidden = false;
+
+  const convList = chatConversations
+    .map((conv) => {
+      const initials = (conv.userName || conv.code || conv.device || '?').slice(0, 2).toUpperCase();
+      const unreadBadge = conv.unread > 0 ? `<span class="chat-unread">${formatNumber(conv.unread)}</span>` : '';
+      const active = conv.conversationId === activeChatConversationId ? 'is-active' : '';
       return `
-        <article class="chat-message" data-complaint-id="${html(event.id)}">
-          <div class="chat-bubble chat-bubble-user">
-            <div class="chat-bubble-avatar chat-avatar-user">${html(complaintInitials(event))}</div>
-            <div class="chat-bubble-body">
-              <div class="chat-bubble-meta">
-                <strong>${html(event.userName || event.userEmail || 'مستخدم')}</strong>
-                ${event.code ? `<span class="chat-code">${html(event.code)}</span>` : ''}
-                <time title="${html(formatDateTime(event.at))}">${html(formatRelative(event.at))}</time>
-              </div>
-              <p class="chat-bubble-text">${html(event.message)}</p>
-              <div class="chat-bubble-footer">
-                <button type="button" class="chat-reply-btn" data-action="reply-complaint" data-id="${html(event.id)}">
-                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /></svg>
-                  رد
-                </button>
-                ${event.userEmail ? `<a class="chat-reply-btn chat-reply-mail" href="mailto:${html(event.userEmail)}?subject=رد%20على%20رسالتك%20في%20Lin%20Go%20Gold" target="_blank" rel="noopener">📧 بريد</a>` : ''}
-              </div>
-            </div>
-          </div>
-          ${replyBubbles}
-        </article>`;
+        <button type="button" class="chat-conv ${active}" data-action="open-chat" data-id="${html(conv.conversationId)}">
+          <span class="chat-conv-avatar">${html(initials)}</span>
+          <span class="chat-conv-body">
+            <span class="chat-conv-name">${html(conv.userName || conv.code || conv.device || 'مستخدم')}</span>
+            <span class="chat-conv-preview">${html(conv.lastMessage || '')}</span>
+          </span>
+          <span class="chat-conv-meta">
+            <span class="chat-conv-time">${html(formatRelative(conv.lastAt))}</span>
+            ${unreadBadge}
+          </span>
+        </button>`;
     })
     .join('');
+
+  let threadHtml = '';
+  if (activeChatConversationId) {
+    const conv = chatConversations.find((c) => c.conversationId === activeChatConversationId);
+    const bubbles = activeChatMessages
+      .map((m) => {
+        const isUser = m.sender === 'user';
+        const avatar = isUser ? html((conv?.userName || conv?.code || '?').slice(0, 2).toUpperCase()) : 'A';
+        return `
+        <div class="chat-bubble ${isUser ? 'chat-bubble-user' : 'chat-bubble-admin'}">
+          <div class="chat-bubble-avatar ${isUser ? 'chat-avatar-user' : 'chat-avatar-admin'}">${avatar}</div>
+          <div class="chat-bubble-body">
+            <div class="chat-bubble-meta">
+              <strong>${isUser ? html(conv?.userName || conv?.code || 'مستخدم') : 'الإدارة'}</strong>
+              <time title="${html(formatDateTime(m.at))}">${html(formatRelative(m.at))}</time>
+            </div>
+            <p class="chat-bubble-text">${html(m.message)}</p>
+          </div>
+        </div>`;
+      })
+      .join('');
+    threadHtml = `
+      <div class="chat-thread-view">
+        <div class="chat-thread-header">
+          <button type="button" class="chat-thread-back" data-action="close-chat">←</button>
+          <div class="chat-thread-title">${html(conv?.userName || conv?.code || conv?.device || 'محادثة')}</div>
+          ${conv?.code ? `<span class="chat-code">${html(conv.code)}</span>` : ''}
+        </div>
+        <div class="chat-thread-messages">${bubbles || '<p class="chat-empty-text">لا توجد رسائل.</p>'}</div>
+        <div class="chat-thread-compose">
+          <textarea id="chatReplyInput" class="chat-thread-input" rows="1" placeholder="اكتب ردًا… (Enter للإرسال)"></textarea>
+          <button type="button" class="chat-thread-send" data-action="send-chat-reply" data-id="${html(activeChatConversationId)}">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 2 11 13M22 2 15 22 11 13 2 9 22 2Z" /></svg>
+          </button>
+        </div>
+      </div>`;
+  }
+
+  list.innerHTML = `
+    <div class="chat-conv-list">${convList}</div>
+    ${threadHtml}`;
+};
+
+// Load chat conversations when complaints view is shown
+const originalSwitchView = switchView;
+// We'll call loadChatConversations in renderAll instead
+const origRenderAllComplaints = renderAll;
+// Patch: load conversations before rendering complaints
+const loadComplaintsData = async () => {
+  await loadChatConversations();
+  if (activeChatConversationId) {
+    await loadChatMessages(activeChatConversationId);
+  }
+  void loadComplaintsData();
 };
 
 const renderActivityLog = () => {
@@ -1257,7 +1337,7 @@ const renderAll = () => {
   renderUsers();
   renderCheck();
   renderActivityLog();
-  renderComplaints();
+  void loadComplaintsData();
   renderYoutube();
   renderSettings();
   renderFreeMode();
@@ -1730,6 +1810,24 @@ const handleAction = (action) => {
   else if (action === 'refresh') refreshData($('#refreshButton'));
   else if (action === 'youtube-refresh') void loadYoutube(true);
   else if (action === 'toggle-free-mode') void toggleFreeMode();
+  else if (action === 'open-chat') {
+    const id = button.dataset.id;
+    if (id) {
+      activeChatConversationId = id;
+      void loadChatMessages(id);
+    }
+  }
+  else if (action === 'close-chat') {
+    activeChatConversationId = null;
+    activeChatMessages = [];
+    renderComplaints();
+  }
+  else if (action === 'send-chat-reply') {
+    const id = button.dataset.id;
+    const input = $('#chatReplyInput');
+    const text = input?.value?.trim() || '';
+    if (id && text) void sendChatReply(id, text);
+  }
   else if (action === 'export-csv') exportCsv();
   else if (action === 'export-json') exportJson();
   else if (action === 'logout') logout();
@@ -1748,7 +1846,7 @@ const handleAction = (action) => {
   else if (action === 'clear-complaints') {
     if (!window.confirm('مسح ردود المحادثة من العرض (لا يحذف من الخادم)؟')) return;
     try { window.localStorage.removeItem(COMPLAINT_REPLIES_KEY); } catch {}
-    renderComplaints();
+    void loadComplaintsData();
     toast('تم مسح ردود المحادثة من العرض.');
   }
 };
@@ -1830,6 +1928,18 @@ const bindEvents = () => {
   $('#logoutButtonSide')?.addEventListener('click', logout);
   $('#refreshButton')?.addEventListener('click', () => refreshData($('#refreshButton')));
 
+  // Chat reply Enter key
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      const input = event.target?.closest?.('#chatReplyInput');
+      if (input) {
+        event.preventDefault();
+        const button = document.querySelector('[data-action="send-chat-reply"]');
+        if (button) button.click();
+      }
+    }
+  });
+
   const sendReply = () => {
     const input = $('#complaintReplyInput');
     const text = input?.value.trim();
@@ -1845,7 +1955,7 @@ const bindEvents = () => {
       input.style.height = '';
     }
     activeComplaintId = null;
-    renderComplaints();
+    void loadComplaintsData();
     toast('تم إرسال الرد.');
   };
 

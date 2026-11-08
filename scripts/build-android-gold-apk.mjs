@@ -9,7 +9,7 @@
  * Usage: npm run android:gold
  */
 import { copyFile, mkdir, readFile, rm } from 'node:fs/promises';
-import { existsSync } from 'node:fs';
+import { existsSync, readdirSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
@@ -98,7 +98,20 @@ for (const stagedApk of [
 console.log('1/4  Building Gold web assets (same UI + Gold curriculum)…');
 run('npm', ['run', 'build'], root, goldEnv);
 
-// Vite copies public/ into dist/. Make sure no download payload slipped in.
+// Vite copies public/ into dist/. Make sure no download payload slipped in,
+// including any versioned Gold APK committed for the website's first-party
+// download (it must never be bundled into the Android app).
+for (const dir of ['public', 'dist']) {
+  const dirPath = resolve(root, dir);
+  if (!existsSync(dirPath)) continue;
+  for (const name of readdirSync(dirPath)) {
+    if (/^lin-go-gold-.*\\.apk$/i.test(name) || /^english-tok.*\\.apk$/i.test(name)) {
+      const target = resolve(dirPath, name);
+      await rm(target, { force: true });
+      console.log(`Removed staged APK before Android sync: ${target}`);
+    }
+  }
+}
 for (const stagedApk of [
   resolve(root, 'public', 'english-tok.apk'),
   resolve(root, 'dist', 'english-tok.apk'),

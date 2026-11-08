@@ -985,28 +985,7 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
                  {chatStatus && (
                    <p className="text-xs font-bold text-emerald-300">{chatStatus}</p>
                  )}
-                 <details className="rounded-xl border border-slate-700/60 bg-slate-900/40 p-3">
-                   <summary className="cursor-pointer text-xs font-bold text-slate-300">نموذج الدعم (بديل)</summary>
-                   <form className="mt-3 space-y-3" onSubmit={handleSupportSubmit}>
-                     <textarea
-                       value={supportMessage}
-                       onChange={(event) => setSupportMessage(event.target.value)}
-                       rows={3}
-                       placeholder="اشرح المشكلة (الصوت، التفعيل، التحديث، ...)"
-                       className="w-full resize-none rounded-xl border border-emerald-500/30 bg-slate-950/60 px-3 py-2 text-xs text-white outline-none focus:border-emerald-400"
-                     />
-                     <button
-                       type="submit"
-                       disabled={supportSending}
-                       className="w-full rounded-xl bg-slate-700 px-4 py-2 text-xs font-black text-white transition hover:bg-slate-600 disabled:cursor-not-allowed disabled:opacity-50"
-                     >
-                       {supportSending ? 'جارٍ الإرسال…' : 'إرسال (نموذج قديم)'}
-                     </button>
-                     {supportStatus && (
-                       <p className="text-xs font-bold text-emerald-300">{supportStatus}</p>
-                     )}
-                   </form>
-                 </details>
+
                </div>
             </section>
           )}
