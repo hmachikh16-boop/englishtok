@@ -11,11 +11,14 @@
  * into the Android app itself. Failures never break the build.
  */
 import {
+  closeSync,
   createReadStream,
   createWriteStream,
   existsSync,
   mkdirSync,
+  openSync,
   readFileSync,
+  readSync,
   statSync,
   unlinkSync,
   writeFileSync,
@@ -73,6 +76,54 @@ const sha256File = (file) =>
       .on('data', (chunk) => hash.update(chunk))
       .on('end', () => resolveHash(hash.digest('hex').toUpperCase()));
   });
+
+/**
+ * Refuse to publish a manifest that points at a missing or non-APK file.
+ *
+ * Vercel rewrites unknown paths to index.html, so a missing APK used to be
+ * downloaded as a ~7 KB HTML page and saved with an .apk name. This guard runs
+ * on Vercel only: local builds may legitimately run without the 90 MB binary.
+ */
+const verifyGoldBundle = () => {
+  let manifest;
+  try {
+    manifest = JSON.parse(readFileSync(goldLatestFile, 'utf8'));
+  } catch (error) {
+    throw new Error(
+      `Gold manifest is unreadable (${error instanceof Error ? error.message : String(error)}).`,
+    );
+  }
+
+  const version = manifest?.version;
+  if (typeof version !== 'string' || !/^\d+\.\d+\.\d+$/.test(version)) {
+    throw new Error('Gold manifest has an invalid version.');
+  }
+
+  const apk = resolve(process.cwd(), 'public', `lin-go-gold-${version}.apk`);
+  if (!existsSync(apk)) {
+    throw new Error(`Gold APK ${version} is missing from public/.`);
+  }
+
+  const size = statSync(apk).size;
+  if (typeof manifest.size === 'number' && manifest.size !== size) {
+    throw new Error(
+      `Gold APK ${version} size mismatch: manifest ${manifest.size} bytes, file ${size} bytes.`,
+    );
+  }
+
+  const header = Buffer.alloc(4);
+  const fd = openSync(apk, 'r');
+  try {
+    readSync(fd, header, 0, 4, 0);
+  } finally {
+    closeSync(fd);
+  }
+  if (header[0] !== 0x50 || header[1] !== 0x4b || header[2] !== 0x03 || header[3] !== 0x04) {
+    throw new Error(`Gold APK ${version} is not a ZIP/APK file.`);
+  }
+
+  return { version, size };
+};
 
 try {
   const response = await fetch(url, { redirect: 'follow' });
@@ -163,4 +214,18 @@ try {
   console.warn(
     `stage-latest-apk: Gold APK was not staged (${error instanceof Error ? error.message : String(error)}).`,
   );
+}
+
+if (process.env.VERCEL) {
+  try {
+    const verified = verifyGoldBundle();
+    console.log(
+      `stage-latest-apk: verified Gold APK ${verified.version} (${verified.size} bytes) matches the manifest.`,
+    );
+  } catch (error) {
+    console.error(
+      `stage-latest-apk: refusing to publish a broken Gold download (${error instanceof Error ? error.message : String(error)}).`,
+    );
+    process.exit(1);
+  }
 }

@@ -209,7 +209,13 @@ const setupGoldMode = async () => {
     document.body.dataset.goldMode = 'free';
 
     const freeBox = document.querySelector('[data-gold-free]');
-    if (freeBox) freeBox.hidden = false;
+    if (freeBox) {
+      freeBox.hidden = false;
+      const freeStrong = freeBox.querySelector('.btn-copy strong');
+      if (freeStrong) {
+        freeStrong.innerHTML = `تحميل Gold+ <span dir="ltr">${GOLD_VERSION}</span> مجانًا`;
+      }
+    }
 
     const codeBox = document.querySelector('[data-gold-code-box]');
     if (codeBox) codeBox.hidden = true;
@@ -223,6 +229,9 @@ const setupGoldMode = async () => {
       main.setAttribute('download', `lin-go-gold-${GOLD_VERSION}.apk`);
       main.setAttribute('rel', 'noopener');
       main.setAttribute('title', 'تحميل Gold+ مجانًا خلال فترة التجربة');
+      // Let ensureGoldTarget() switch this to the GitHub mirror if the
+      // first-party APK is ever missing, instead of saving an HTML page.
+      main.setAttribute('data-gold-download', '');
       const strong = main.querySelector('.btn-copy strong');
       const small = main.querySelector('.btn-copy small');
       if (strong) strong.textContent = 'تحميل Gold+ مجانًا';
@@ -412,11 +421,11 @@ const setupSupport = () => {
 };
 
 void loadLatest().then(() => ensureDownloadTarget());
-void loadGoldManifest().then(() => {
+void loadGoldManifest().then(async () => {
   setGoldLinks();
-  void setupGoldMode();
+  await setupGoldMode();
+  await ensureGoldTarget();
 });
-void ensureGoldTarget();
 setGoldLinks();
 setupGoldForm();
 setupSupport();
