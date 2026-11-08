@@ -1,11 +1,11 @@
 {
-  "version": "1.1.53",
+  "version": "1.1.54",
   "packageId": "com.englishtok.gold",
-  "apkUrl": "/lin-go-gold-1.1.53.apk",
-  "sha256": "A2C7C9E6225EE8AE682A51D940094BB375A45F7912E9621CCF5F07B19C482D61",
-  "size": 90786204,
+  "apkUrl": "/lin-go-gold-1.1.54.apk",
+  "sha256": "F7F915DC12C7504686870FC3A491C74E45AE94A7D62EB5D97DC419BDDAB0F0C2",
+  "size": 90787392,
   "minimumAndroidSdk": 24,
-  "notes": "تحديث Gold 1.1.53: إصلاح القاموس (عرض جميع الكلمات بدل 96)، رفع حد «عرض المزيد» 125→1000 (جميع الدروس قابلة للوصول)، +20 درس في Stage 1 (740 إجمالي)، bump cache keys (v7→v8) to clear stale caches.",
-  "releaseUrl": "https://github.com/hmachikh16-boop/englishtok/releases/tag/gold-v1.1.53",
-  "publishedAt": "2026-11-08T13:00:00.000Z"
+  "notes": "تحديث Gold 1.1.54: إصلاح إرسال الشكاوي من التطبيق (relative -> absolute URL)، +20 درس في Stage 1، رفع حد «عرض المزيد» 125->1000، bump cache keys (v7->v8) to clear stale caches، VocabTab default 'all' (2992 كلمة).",
+  "releaseUrl": "https://github.com/hmachikh16-boop/englishtok/releases/tag/gold-v1.1.54",
+  "publishedAt": "2026-11-08T14:00:00.000Z"
 }
