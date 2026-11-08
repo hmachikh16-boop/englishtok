@@ -10,6 +10,7 @@ import { STAGE_4B_LESSONS } from './expansion/stage4b';
 import { STAGE_4_PLUS_LESSONS } from './expansionPlus/stage4';
 import { STAGE_4_PLUS2_LESSONS } from './expansionPlus2/stage4';
 import { STAGE_4_PLUS3_LESSONS } from './expansionPlus3/stage4';
+import { STAGE_4_PLUS4_LESSONS } from './expansionPlus4/stage4';
 
 export async function loadStageLessons(): Promise<Lesson[]> {
   const specs = [
@@ -18,6 +19,7 @@ export async function loadStageLessons(): Promise<Lesson[]> {
     ...STAGE_4_PLUS_LESSONS,
     ...STAGE_4_PLUS2_LESSONS,
     ...STAGE_4_PLUS3_LESSONS,
+    ...STAGE_4_PLUS4_LESSONS,
   ];
   const baseLessons = LESSON_SPECS.filter((spec) => spec.stage === 4).map(buildLesson);
   const expansionLessons = specs.map((spec) =>

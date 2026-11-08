@@ -196,6 +196,49 @@ const ensureDownloadTarget = async () => {
   setDownloadLinks(currentVersion, target);
 };
 
+const setupGoldMode = async () => {
+  try {
+    const response = await fetch('/api/admin?action=mode', {
+      headers: { Accept: 'application/json' },
+      cache: 'no-store',
+    });
+    if (!response.ok) return;
+    const data = await response.json().catch(() => ({}));
+    if (!data?.freeMode) return;
+
+    document.body.dataset.goldMode = 'free';
+
+    const freeBox = document.querySelector('[data-gold-free]');
+    if (freeBox) freeBox.hidden = false;
+
+    const codeBox = document.querySelector('[data-gold-code-box]');
+    if (codeBox) codeBox.hidden = true;
+
+    const state = document.querySelector('[data-gold-state]');
+    if (state) state.textContent = 'متاح الآن — تجربة مجانية';
+
+    const main = document.querySelector('[data-gold-main-btn]');
+    if (main) {
+      main.setAttribute('href', GOLD_APK);
+      main.setAttribute('download', `lin-go-gold-${GOLD_VERSION}.apk`);
+      main.setAttribute('rel', 'noopener');
+      main.setAttribute('title', 'تحميل Gold+ مجانًا خلال فترة التجربة');
+      const strong = main.querySelector('.btn-copy strong');
+      const small = main.querySelector('.btn-copy small');
+      if (strong) strong.textContent = 'تحميل Gold+ مجانًا';
+      if (small) small.textContent = 'تجربة مجانية — بدون كود';
+    }
+
+    const mirror = document.querySelector('.gold-mirror');
+    if (mirror) {
+      mirror.textContent =
+        'وضع التجربة المجانية مفعّل: التحميل متاح بدون كود. عند تفعيل الأكواد سيعود التحميل لطلب كود مفعّل. تحديثات Gold تُنزّل داخل التطبيق عبر مدير التنزيلات.';
+    }
+  } catch {
+    /* Paid mode stays as the default when the mode cannot be read. */
+  }
+};
+
 const setupGoldForm = () => {
   const form = document.querySelector('[data-gold-form]');
   const input = document.querySelector('[data-gold-input]');
@@ -369,7 +412,10 @@ const setupSupport = () => {
 };
 
 void loadLatest().then(() => ensureDownloadTarget());
-void loadGoldManifest().then(() => setGoldLinks());
+void loadGoldManifest().then(() => {
+  setGoldLinks();
+  void setupGoldMode();
+});
 void ensureGoldTarget();
 setGoldLinks();
 setupGoldForm();

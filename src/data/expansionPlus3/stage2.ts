@@ -212,7 +212,7 @@ export const STAGE_2_PLUS3_LESSONS: readonly ExpansionLessonSpec[] = [
       ["weather", "طقس", "طقس", "The weather is nice.", "الطقس لطيف."],
       ["rain", "طقس", "مطر", "It is raining.", "إنها تمطر."],
       ["wind", "طقس", "رياح", "The wind is strong.", "الرياح قوية."],
-      ["season", "طقس", "فصل", "Summer is hot.", "الصيف حار."],
+      ["season", "طقس", "فصل", "Summer is my favorite season.", "الصيف فصلي المفضل."],
     ],
     closingEn: "Enjoy your hobby.",
     closingAr: "استمتع بهوايتك.",
@@ -233,7 +233,7 @@ export const STAGE_2_PLUS3_LESSONS: readonly ExpansionLessonSpec[] = [
     openingEn: "Welcome home.",
     openingAr: "أهلاً بك في المنزل.",
     words: [
-      ["season", "طقس", "فصل", "Summer is hot.", "الصيف حار."],
+      ["season", "طقس", "فصل", "Summer is my favorite season.", "الصيف فصلي المفضل."],
       ["direction", "اتجاه", "اتجاه", "Ask for directions.", "اسأل عن الاتجاهات."],
       ["left", "اتجاه", "يسار", "Turn left.", "انعطف يسارًا."],
       ["right", "اتجاه", "يمين", "Turn right.", "انعطف يمينًا."],
@@ -619,7 +619,7 @@ export const STAGE_2_PLUS3_LESSONS: readonly ExpansionLessonSpec[] = [
     words: [
       ["rain", "طقس", "مطر", "It is raining.", "إنها تمطر."],
       ["wind", "طقس", "رياح", "The wind is strong.", "الرياح قوية."],
-      ["season", "طقس", "فصل", "Summer is hot.", "الصيف حار."],
+      ["season", "طقس", "فصل", "Summer is my favorite season.", "الصيف فصلي المفضل."],
       ["direction", "اتجاه", "اتجاه", "Ask for directions.", "اسأل عن الاتجاهات."],
     ],
     closingEn: "The bill, please.",
@@ -1026,7 +1026,7 @@ export const STAGE_2_PLUS3_LESSONS: readonly ExpansionLessonSpec[] = [
     openingAr: "انعطف يسارًا.",
     words: [
       ["wind", "طقس", "رياح", "The wind is strong.", "الرياح قوية."],
-      ["season", "طقس", "فصل", "Summer is hot.", "الصيف حار."],
+      ["season", "طقس", "فصل", "Summer is my favorite season.", "الصيف فصلي المفضل."],
       ["direction", "اتجاه", "اتجاه", "Ask for directions.", "اسأل عن الاتجاهات."],
       ["left", "اتجاه", "يسار", "Turn left.", "انعطف يسارًا."],
     ],

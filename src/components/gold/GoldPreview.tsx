@@ -43,7 +43,7 @@ const GoldAppPreview = React.lazy(() =>
   import('./GoldAppPreview').then((module) => ({ default: module.GoldAppPreview })),
 );
 
-const GOLD_VERSION = '1.1.48';
+const GOLD_VERSION = '1.1.51';
 const GOLD_APK_URL = `/lin-go-gold-${GOLD_VERSION}.apk`;
 
 const stages = [
@@ -82,6 +82,11 @@ const stages = [
 ] as const;
 
 const features = [
+  {
+    icon: Gift,
+    title: 'تجربة مجانية قبل التفعيل',
+    body: 'زر واحد في لوحة الإدارة يفتح Gold+ للجميع بدون كود خلال فترة الإطلاق. عند إيقافه يعود طلب الكود المفعّل فورًا، دون فقدان تقدمك.',
+  },
   {
     icon: Sparkles,
     title: 'واجهة نوافذ احترافية',
@@ -677,6 +682,7 @@ export const GoldPreview: React.FC = () => {
                   <b>Gold</b>
                 </div>
                 {[
+                  ['التفعيل', 'بدون كود', 'كود مفعّل — أو تجربة مجانية عند تفعيلها'],
                   ['الواجهة', 'Lin Go', 'نفس الواجهة + نوافذ احترافية'],
                   ['المسار', '4 مراحل · ~700 درس', '~700 درس + 58 قصة + 4 مشاريع'],
                   ['الحروف', '—', '26 حرفًا + اختبار تفاعلي'],

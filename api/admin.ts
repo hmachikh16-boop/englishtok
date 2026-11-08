@@ -45,11 +45,17 @@ interface ActivityEvent {
   code?: string;
 }
 
+interface LicenseSettings {
+  /** When true, the Gold app opens for everyone without a license code. */
+  freeMode: boolean;
+}
+
 interface LicenseDatabase {
   schemaVersion: 1;
   updatedAtUtc: string;
   licenses: LicenseRecord[];
   activity: ActivityEvent[];
+  settings: LicenseSettings;
 }
 
 class HttpError extends Error {
@@ -203,7 +209,14 @@ const emptyDatabase = (): LicenseDatabase => ({
   updatedAtUtc: nowIso(),
   licenses: [],
   activity: [],
+  settings: { freeMode: false },
 });
+
+const normalizeSettings = (raw: unknown): LicenseSettings => {
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return { freeMode: false };
+  const source = raw as Record<string, unknown>;
+  return { freeMode: asBoolean(pick(source, 'freeMode', 'FreeMode')) };
+};
 
 const normalizeDatabase = (raw: unknown): LicenseDatabase => {
   if (!raw || typeof raw !== 'object' || Array.isArray(raw)) {
@@ -228,6 +241,7 @@ const normalizeDatabase = (raw: unknown): LicenseDatabase => {
     updatedAtUtc: normalizeDate(pick(source, 'updatedAtUtc', 'UpdatedAtUtc')) || nowIso(),
     licenses,
     activity: normalizeActivity(source.activity ?? source.Activity),
+    settings: normalizeSettings(source.settings ?? source.Settings),
   };
 };
 
@@ -809,6 +823,33 @@ const handlePublicCheck = async (request: AdminRequest, rawCode: unknown) => {
   });
 };
 
+const handleGetMode = async (): Promise<{ freeMode: boolean; updatedAtUtc: string }> => {
+  const database = await loadDatabase();
+  return {
+    freeMode: Boolean(database.settings?.freeMode),
+    updatedAtUtc: database.updatedAtUtc,
+  };
+};
+
+const handleSetMode = async (request: AdminRequest, body: Record<string, unknown>) => {
+  requireAuth(request);
+  assertSameOrigin(request);
+  const freeMode = asBoolean(body.freeMode);
+  return withDatabaseLock(async () => {
+    const database = await loadDatabase();
+    database.settings = { freeMode };
+    addActivity(
+      database,
+      'mode',
+      freeMode
+        ? 'تم تفعيل وضع التجربة المجانية — التطبيق يفتح بدون كود.'
+        : 'تمت العودة إلى الوضع المدفوع — التطبيق يطلب كودًا مفعّلًا.',
+    );
+    await saveDatabase(database);
+    return { database, freeMode };
+  });
+};
+
 const handleSupportSubmit = async (request: AdminRequest, body: Record<string, unknown>): Promise<{ ok: boolean; id: string }> => {
   await enforceCheckRateLimit(request);
   const message = asString(body.message, 1000);
@@ -853,7 +894,7 @@ export default async function adminHandler(
   const body = readBody(request.body);
   const action = getAction(request, body);
   if (method === 'OPTIONS') {
-    if (action === 'check' || action === 'support') setCheckCors(response);
+    if (action === 'check' || action === 'support' || action === 'mode') setCheckCors(response);
     response.setHeader('Allow', 'GET, POST, OPTIONS');
     return response.status(204).json({});
   }
@@ -880,6 +921,12 @@ export default async function adminHandler(
         return response.status(405).json({ error: 'Method not allowed.' });
       }
       return response.status(200).json(await handleSupportSubmit(request, body));
+    }
+
+    if (action === 'mode') {
+      setCheckCors(response);
+      if (method === 'GET') return response.status(200).json(await handleGetMode());
+      return response.status(200).json(await handleSetMode(request, body));
     }
 
     if (method === 'GET') {

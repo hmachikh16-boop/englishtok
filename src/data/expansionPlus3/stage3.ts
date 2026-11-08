@@ -164,7 +164,7 @@ export const STAGE_3_PLUS3_LESSONS: readonly ExpansionLessonSpec[] = [
       ["research", "بحث", "بحث", "Conduct research.", "أجرِ بحثًا."],
       ["innovation", "ابتكار", "ابتكار", "Innovation drives growth.", "الابتكار يدفع النمو."],
       ["technology", "تقنية", "تقنية", "Technology evolves fast.", "التقنية تتطور بسرعة."],
-      ["artificial intelligence", "تقنية", "ذكاء اصطناعي", "AI changes jobs.", "الذكاء الاصطناعي يغير الوظائف."],
+      ["artificial intelligence", "تقنية", "ذكاء اصطناعي", "Artificial intelligence changes jobs.", "الذكاء الاصطناعي يغير الوظائف."],
     ],
     closingEn: "Respect diversity.",
     closingAr: "احترم التنوع.",
@@ -185,7 +185,7 @@ export const STAGE_3_PLUS3_LESSONS: readonly ExpansionLessonSpec[] = [
     openingEn: "Manage stress.",
     openingAr: "أدر الضغط.",
     words: [
-      ["artificial intelligence", "تقنية", "ذكاء اصطناعي", "AI changes jobs.", "الذكاء الاصطناعي يغير الوظائف."],
+      ["artificial intelligence", "تقنية", "ذكاء اصطناعي", "Artificial intelligence changes jobs.", "الذكاء الاصطناعي يغير الوظائف."],
       ["media", "إعلام", "إعلام", "Media shapes opinions.", "الإعلام يشكل الآراء."],
       ["journalism", "إعلام", "صحافة", "Journalism informs.", "الصحافة تُبلّغ."],
       ["broadcast", "إعلام", "بث", "Broadcast the news.", "ابث الأخبار."],
@@ -284,7 +284,7 @@ export const STAGE_3_PLUS3_LESSONS: readonly ExpansionLessonSpec[] = [
       ["healthcare", "صحة", "رعاية صحية", "Healthcare is vital.", "الرعاية الصحية حيوية."],
       ["prevention", "صحة", "وقاية", "Prevention is better.", "الوقاية أفضل."],
       ["treatment", "صحة", "علاج", "Start treatment.", "ابدأ العلاج."],
-      ["vaccine", "صحة", "لقاح", "Get vaccinated.", "تلقَّ اللقاح."],
+      ["vaccine", "صحة", "لقاح", "The vaccine is safe.", "اللقاح آمن."],
     ],
     closingEn: "Communicate clearly.",
     closingAr: "تواصل بوضوح.",
@@ -305,7 +305,7 @@ export const STAGE_3_PLUS3_LESSONS: readonly ExpansionLessonSpec[] = [
     openingEn: "Teamwork brings success.",
     openingAr: "العمل الجماعي يجلب النجاح.",
     words: [
-      ["vaccine", "صحة", "لقاح", "Get vaccinated.", "تلقَّ اللقاح."],
+      ["vaccine", "صحة", "لقاح", "The vaccine is safe.", "اللقاح آمن."],
       ["migration", "مجتمع", "هجرة", "Migration affects cities.", "الهجرة تؤثر على المدن."],
       ["integration", "مجتمع", "اندماج", "Integration takes time.", "الاندماج يأخذ وقتًا."],
       ["community", "مجتمع", "مجتمع", "Build community.", "ابنِ مجتمعًا."],
@@ -571,7 +571,7 @@ export const STAGE_3_PLUS3_LESSONS: readonly ExpansionLessonSpec[] = [
     words: [
       ["innovation", "ابتكار", "ابتكار", "Innovation drives growth.", "الابتكار يدفع النمو."],
       ["technology", "تقنية", "تقنية", "Technology evolves fast.", "التقنية تتطور بسرعة."],
-      ["artificial intelligence", "تقنية", "ذكاء اصطناعي", "AI changes jobs.", "الذكاء الاصطناعي يغير الوظائف."],
+      ["artificial intelligence", "تقنية", "ذكاء اصطناعي", "Artificial intelligence changes jobs.", "الذكاء الاصطناعي يغير الوظائف."],
       ["media", "إعلام", "إعلام", "Media shapes opinions.", "الإعلام يشكل الآراء."],
     ],
     closingEn: "Communicate clearly.",
@@ -691,7 +691,7 @@ export const STAGE_3_PLUS3_LESSONS: readonly ExpansionLessonSpec[] = [
     words: [
       ["prevention", "صحة", "وقاية", "Prevention is better.", "الوقاية أفضل."],
       ["treatment", "صحة", "علاج", "Start treatment.", "ابدأ العلاج."],
-      ["vaccine", "صحة", "لقاح", "Get vaccinated.", "تلقَّ اللقاح."],
+      ["vaccine", "صحة", "لقاح", "The vaccine is safe.", "اللقاح آمن."],
       ["migration", "مجتمع", "هجرة", "Migration affects cities.", "الهجرة تؤثر على المدن."],
     ],
     closingEn: "Innovate always.",
@@ -978,7 +978,7 @@ export const STAGE_3_PLUS3_LESSONS: readonly ExpansionLessonSpec[] = [
     openingAr: "الذكاء الاصطناعي يغير الوظائف.",
     words: [
       ["technology", "تقنية", "تقنية", "Technology evolves fast.", "التقنية تتطور بسرعة."],
-      ["artificial intelligence", "تقنية", "ذكاء اصطناعي", "AI changes jobs.", "الذكاء الاصطناعي يغير الوظائف."],
+      ["artificial intelligence", "تقنية", "ذكاء اصطناعي", "Artificial intelligence changes jobs.", "الذكاء الاصطناعي يغير الوظائف."],
       ["media", "إعلام", "إعلام", "Media shapes opinions.", "الإعلام يشكل الآراء."],
       ["journalism", "إعلام", "صحافة", "Journalism informs.", "الصحافة تُبلّغ."],
     ],
@@ -1098,7 +1098,7 @@ export const STAGE_3_PLUS3_LESSONS: readonly ExpansionLessonSpec[] = [
     openingAr: "تطوع محليًا.",
     words: [
       ["treatment", "صحة", "علاج", "Start treatment.", "ابدأ العلاج."],
-      ["vaccine", "صحة", "لقاح", "Get vaccinated.", "تلقَّ اللقاح."],
+      ["vaccine", "صحة", "لقاح", "The vaccine is safe.", "اللقاح آمن."],
       ["migration", "مجتمع", "هجرة", "Migration affects cities.", "الهجرة تؤثر على المدن."],
       ["integration", "مجتمع", "اندماج", "Integration takes time.", "الاندماج يأخذ وقتًا."],
     ],

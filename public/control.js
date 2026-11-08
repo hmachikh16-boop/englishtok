@@ -997,6 +997,66 @@ const renderSettings = () => {
     <div><span>مساحة العمل</span><strong>Gold / Production</strong></div>`;
 };
 
+const isFreeMode = () => Boolean(STATE.db?.settings?.freeMode);
+
+const renderFreeMode = () => {
+  const free = isFreeMode();
+  const mode = free ? 'free' : 'paid';
+  const button = $('#freeModeButton');
+  if (button) {
+    button.dataset.mode = mode;
+    button.setAttribute('aria-pressed', free ? 'true' : 'false');
+    button.title = free
+      ? 'الوضع المجاني مفعّل — اضغط للعودة إلى الوضع المدفوع'
+      : 'الوضع المدفوع — اضغط لتفعيل التجربة المجانية';
+  }
+  const label = $('#freeModeLabel');
+  if (label) label.textContent = free ? 'الوضع المجاني' : 'الوضع المدفوع';
+  const card = $('#freeModeCard');
+  if (card) card.dataset.mode = mode;
+  const badge = $('#freeModeBadge');
+  if (badge) {
+    badge.dataset.mode = mode;
+    badge.textContent = free ? 'الوضع المجاني مفعّل · لا كود مطلوب' : 'الوضع المدفوع · الكود مطلوب';
+  }
+  const toggle = $('#freeModeToggle');
+  if (toggle) {
+    const span = toggle.querySelector('span');
+    if (span) span.textContent = free ? 'إيقاف الوضع المجاني' : 'تفعيل الوضع المجاني';
+    toggle.setAttribute('aria-pressed', free ? 'true' : 'false');
+  }
+};
+
+const toggleFreeMode = async () => {
+  const button = $('#freeModeToggle') || $('#freeModeButton');
+  const next = !isFreeMode();
+  const confirmText = next
+    ? 'سيتم فتح تطبيق Gold+ للجميع بدون كود (وضع تجربة). هل تريد التفعيل؟'
+    : 'سيعود التطبيق إلى الوضع المدفوع ويطلب كودًا مفعّلًا. هل تريد المتابعة؟';
+  if (!window.confirm(confirmText)) return;
+
+  setBusy(button, true);
+  try {
+    const payload = await api('mode', { method: 'POST', body: { freeMode: next } });
+    if (payload?.database) {
+      STATE.db = payload.database;
+      STATE.lastUpdated = payload.database.updatedAtUtc || new Date().toISOString();
+    } else {
+      await loadData({ silent: true });
+    }
+    setBusy(button, false);
+    renderAll();
+    toast(
+      next
+        ? 'تم تفعيل وضع التجربة المجانية — التطبيق يفتح الآن بدون كود.'
+        : 'تمت العودة إلى الوضع المدفوع — التطبيق يطلب الكود المفعّل.',
+    );
+  } catch (error) {
+    setBusy(button, false);
+    reportError(error, 'تعذر تغيير وضع التفعيل.');
+  }
+};
+
 const loadYoutube = async (force = false) => {
   const target = $('#youtubeStatGrid');
   if (target && !STATE.youtube) {
@@ -1140,6 +1200,7 @@ const renderAll = () => {
   renderComplaints();
   renderYoutube();
   renderSettings();
+  renderFreeMode();
   renderMeta();
 };
 
@@ -1608,6 +1669,7 @@ const handleAction = (action) => {
   if (action === 'generate') openGenerateModal();
   else if (action === 'refresh') refreshData($('#refreshButton'));
   else if (action === 'youtube-refresh') void loadYoutube(true);
+  else if (action === 'toggle-free-mode') void toggleFreeMode();
   else if (action === 'export-csv') exportCsv();
   else if (action === 'export-json') exportJson();
   else if (action === 'logout') logout();

@@ -3,18 +3,23 @@ import { App as CapacitorApp } from '@capacitor/app';
 import { KeyRound, ShieldCheck, XCircle } from 'lucide-react';
 import {
   clearStoredGoldLicenseCode,
+  fetchGoldMode,
   getStoredGoldLicenseCode,
+  readCachedGoldMode,
   storeGoldLicenseCode,
   verifyGoldLicense,
+  writeCachedGoldMode,
 } from '../../services/goldLicense';
 
 interface GoldLicenseGateProps {
   children: React.ReactNode;
 }
 
+type GateStatus = 'checking' | 'licensed' | 'free' | 'locked';
+
 export const GoldLicenseGate: React.FC<GoldLicenseGateProps> = ({ children }) => {
   const [code, setCode] = useState(getStoredGoldLicenseCode());
-  const [status, setStatus] = useState<'checking' | 'licensed' | 'locked'>('checking');
+  const [status, setStatus] = useState<GateStatus>('checking');
   const [message, setMessage] = useState('جارٍ التحقق من كود Gold...');
   const [verifying, setVerifying] = useState(false);
 
@@ -24,13 +29,15 @@ export const GoldLicenseGate: React.FC<GoldLicenseGateProps> = ({ children }) =>
     setVerifying(false);
 
     if (result.networkError) {
-      setMessage('تعذر الاتصال بلوحة التحكم. سيتم إعادة المحاولة لاحقًا، والتطبيق يبقى مفعّلًا.');
       const stored = getStoredGoldLicenseCode();
       if (stored && stored === candidate.trim().toUpperCase()) {
         setStatus('licensed');
+        setMessage('تعذر الاتصال بلوحة التحكم. التطبيق يبقى مفعّلًا على هذا الجهاز.');
         return true;
       }
-      return status === 'licensed';
+      setStatus('locked');
+      setMessage('تعذر الاتصال بلوحة التحكم. تحقق من الإنترنت وأعد المحاولة.');
+      return false;
     }
 
     if (result.valid) {
@@ -59,31 +66,49 @@ export const GoldLicenseGate: React.FC<GoldLicenseGateProps> = ({ children }) =>
     return false;
   };
 
-  useEffect(() => {
+  /**
+   * The admin panel can switch the whole app between:
+   *  - free mode  → open for everyone, no code required;
+   *  - paid mode  → require an activated Gold code.
+   * The last known mode is cached so a trial user is not locked out by a
+   * brief network drop.
+   */
+  const resolveAccess = async (): Promise<void> => {
+    const mode = await fetchGoldMode();
+
+    if (!mode.networkError) {
+      writeCachedGoldMode(mode.freeMode);
+      if (mode.freeMode) {
+        setStatus('free');
+        setMessage('النسخة التجريبية المجانية مفعّلة — لا حاجة إلى كود.');
+        return;
+      }
+    } else if (readCachedGoldMode() === true) {
+      setStatus('free');
+      setMessage('النسخة التجريبية المجانية مفعّلة — لا حاجة إلى كود.');
+      return;
+    }
+
     const stored = getStoredGoldLicenseCode();
     if (!stored) {
       setStatus('locked');
       setMessage('أدخل كود Gold مفعّلًا من لوحة التحكم لتشغيل Gold+.');
       return;
     }
-    void verify(stored);
+    await verify(stored);
+  };
+
+  useEffect(() => {
+    void resolveAccess();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
-    if (status !== 'licensed') return;
-
     const recheck = () => {
-      const stored = getStoredGoldLicenseCode();
-      if (!stored) {
-        setStatus('locked');
-        setMessage('أدخل كود Gold مفعّلًا من لوحة التحكم لتشغيل Gold+.');
-        return;
-      }
-      void verify(stored);
+      void resolveAccess();
     };
 
-    const interval = window.setInterval(recheck, 12 * 60 * 60 * 1000);
+    const interval = window.setInterval(recheck, 30 * 60 * 1000);
     const onVisibilityChange = () => {
       if (document.visibilityState === 'visible') recheck();
     };
@@ -94,7 +119,7 @@ export const GoldLicenseGate: React.FC<GoldLicenseGateProps> = ({ children }) =>
       document.removeEventListener('visibilitychange', onVisibilityChange);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [status]);
+  }, []);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -123,7 +148,7 @@ export const GoldLicenseGate: React.FC<GoldLicenseGateProps> = ({ children }) =>
     );
   }
 
-  if (status === 'licensed') {
+  if (status === 'licensed' || status === 'free') {
     return <>{children}</>;
   }
 

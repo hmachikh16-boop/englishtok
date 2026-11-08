@@ -1,6 +1,8 @@
 const STORAGE_KEY = 'lin-go-gold-license-code';
 const DEVICE_KEY = 'lin-go-device-id';
+const MODE_KEY = 'lin-go-gold-free-mode';
 const CHECK_URL = 'https://englishtok-eight.vercel.app/api/admin?action=check';
+const MODE_URL = 'https://englishtok-eight.vercel.app/api/admin?action=mode';
 
 const getDeviceId = (): string => {
   try {
@@ -48,6 +50,45 @@ export const clearStoredGoldLicenseCode = (): void => {
     window.localStorage.removeItem(STORAGE_KEY);
   } catch {
     /* Ignore storage failures. */
+  }
+};
+
+/** Last known server mode, used to keep the app open if the network drops. */
+export const readCachedGoldMode = (): boolean | null => {
+  try {
+    const raw = window.localStorage.getItem(MODE_KEY);
+    if (raw === 'free') return true;
+    if (raw === 'paid') return false;
+    return null;
+  } catch {
+    return null;
+  }
+};
+
+export const writeCachedGoldMode = (freeMode: boolean): void => {
+  try {
+    window.localStorage.setItem(MODE_KEY, freeMode ? 'free' : 'paid');
+  } catch {
+    /* Ignore storage failures. */
+  }
+};
+
+export interface GoldModeResult {
+  freeMode: boolean;
+  networkError?: boolean;
+}
+
+export const fetchGoldMode = async (): Promise<GoldModeResult> => {
+  try {
+    const response = await fetch(MODE_URL, {
+      cache: 'no-store',
+      headers: { Accept: 'application/json' },
+    });
+    if (!response.ok) return { freeMode: false, networkError: true };
+    const payload = await response.json().catch(() => ({}));
+    return { freeMode: Boolean(payload?.freeMode) };
+  } catch {
+    return { freeMode: false, networkError: true };
   }
 };
 

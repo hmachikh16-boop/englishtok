@@ -19,6 +19,10 @@ import { STAGE_1_PLUS3_LESSONS } from './expansionPlus3/stage1';
 import { STAGE_2_PLUS3_LESSONS } from './expansionPlus3/stage2';
 import { STAGE_3_PLUS3_LESSONS } from './expansionPlus3/stage3';
 import { STAGE_4_PLUS3_LESSONS } from './expansionPlus3/stage4';
+import { STAGE_1_PLUS4_LESSONS } from './expansionPlus4/stage1';
+import { STAGE_2_PLUS4_LESSONS } from './expansionPlus4/stage2';
+import { STAGE_3_PLUS4_LESSONS } from './expansionPlus4/stage3';
+import { STAGE_4_PLUS4_LESSONS } from './expansionPlus4/stage4';
 
 /**
  * 146 expansion lessons per stage (96 base + 50 new), merged with the four
@@ -46,4 +50,8 @@ export const EXPANSION_LESSONS: readonly ExpansionLessonSpec[] = [
   ...STAGE_2_PLUS3_LESSONS,
   ...STAGE_3_PLUS3_LESSONS,
   ...STAGE_4_PLUS3_LESSONS,
+  ...STAGE_1_PLUS4_LESSONS,
+  ...STAGE_2_PLUS4_LESSONS,
+  ...STAGE_3_PLUS4_LESSONS,
+  ...STAGE_4_PLUS4_LESSONS,
 ];

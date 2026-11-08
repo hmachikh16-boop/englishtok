@@ -150,7 +150,7 @@ try {
     size: goldSize,
     minimumAndroidSdk: 24,
     notes:
-      'تحديث Gold ' + goldVersion + ': زر «الحروف الأبجدية» (26 حرفًا، صوت + مثال + جملة، اختبار تفاعلي)، مع ~900 درس ونوافذ أنيقة وألعاب أذكى.',
+      'تحديث Gold ' + goldVersion + ': زر «وضع التجربة المجانية» في لوحة الإدارة — عند تفعيله يفتح التطبيق بدون كود، وإيقافه يعيد طلب الكود المفعّل فورًا. مع ~900 درس ونوافذ أنيقة وألعاب أذكى.',
     releaseUrl: `https://github.com/${repository}/releases/tag/gold-v${goldVersion}`,
     publishedAt: new Date().toISOString(),
   };

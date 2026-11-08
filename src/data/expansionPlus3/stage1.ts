@@ -66,7 +66,7 @@ export const STAGE_1_PLUS3_LESSONS: readonly ExpansionLessonSpec[] = [
     openingAr: "أحب هذا الطعام.",
     words: [
       ["name", "اسم", "اسم", "My name is Ali.", "اسمي علي."],
-      ["age", "عمر", "عمر", "I am twenty years old.", "أنا في العشرين من عمري."],
+      ["age", "عمر", "عمر", "I am ten years of age.", "أنا في العاشرة من عمري."],
       ["family", "عائلة", "عائلة", "I love my family.", "أحب عائلتي."],
       ["mother", "أقارب", "أم", "My mother cooks well.", "أمي تطبخ جيدًا."],
     ],
@@ -283,7 +283,7 @@ export const STAGE_1_PLUS3_LESSONS: readonly ExpansionLessonSpec[] = [
     words: [
       ["eye", "جسم", "عين", "She has blue eyes.", "لديها عينان زرقاوان."],
       ["ear", "جسم", "أذن", "I cannot hear well.", "لا أسمع جيدًا."],
-      ["nose", "جسم", "أنف", "The flower smells nice.", "الزهرة رائحتها nice."],
+      ["nose", "جسم", "أنف", "My nose is cold.", "أنفي بارد."],
       ["mouth", "جسم", "فم", "Open your mouth.", "افتح فمك."],
     ],
     closingEn: "Enjoy the weather.",
@@ -619,7 +619,7 @@ export const STAGE_1_PLUS3_LESSONS: readonly ExpansionLessonSpec[] = [
     words: [
       ["no", "إجابة", "لا", "No, I do not agree.", "لا، لا أوافق."],
       ["name", "اسم", "اسم", "My name is Ali.", "اسمي علي."],
-      ["age", "عمر", "عمر", "I am twenty years old.", "أنا في العشرين من عمري."],
+      ["age", "عمر", "عمر", "I am ten years of age.", "أنا في العاشرة من عمري."],
       ["family", "عائلة", "عائلة", "I love my family.", "أحب عائلتي."],
     ],
     closingEn: "Family is important.",
@@ -836,7 +836,7 @@ export const STAGE_1_PLUS3_LESSONS: readonly ExpansionLessonSpec[] = [
       ["head", "جسم", "رأس", "My head hurts.", "رأسي يؤلمني."],
       ["eye", "جسم", "عين", "She has blue eyes.", "لديها عينان زرقاوان."],
       ["ear", "جسم", "أذن", "I cannot hear well.", "لا أسمع جيدًا."],
-      ["nose", "جسم", "أنف", "The flower smells nice.", "الزهرة رائحتها nice."],
+      ["nose", "جسم", "أنف", "My nose is cold.", "أنفي بارد."],
     ],
     closingEn: "Choose your clothes.",
     closingAr: "اختر ملابسك.",
@@ -857,7 +857,7 @@ export const STAGE_1_PLUS3_LESSONS: readonly ExpansionLessonSpec[] = [
     openingEn: "The rain is cold.",
     openingAr: "المطر بارد.",
     words: [
-      ["nose", "جسم", "أنف", "The flower smells nice.", "الزهرة رائحتها nice."],
+      ["nose", "جسم", "أنف", "My nose is cold.", "أنفي بارد."],
       ["mouth", "جسم", "فم", "Open your mouth.", "افتح فمك."],
       ["hand", "جسم", "يد", "Wash your hands.", "اغسل يديك."],
       ["leg", "جسم", "ساق", "My leg is tired.", "ساقي متعبة."],
@@ -1172,7 +1172,7 @@ export const STAGE_1_PLUS3_LESSONS: readonly ExpansionLessonSpec[] = [
       ["yes", "إجابة", "نعم", "Yes, I understand.", "نعم، أفهم."],
       ["no", "إجابة", "لا", "No, I do not agree.", "لا، لا أوافق."],
       ["name", "اسم", "اسم", "My name is Ali.", "اسمي علي."],
-      ["age", "عمر", "عمر", "I am twenty years old.", "أنا في العشرين من عمري."],
+      ["age", "عمر", "عمر", "I am ten years of age.", "أنا في العاشرة من عمري."],
     ],
     closingEn: "Goodbye, see you soon.",
     closingAr: "وداعًا، أراك قريبًا.",
@@ -1193,7 +1193,7 @@ export const STAGE_1_PLUS3_LESSONS: readonly ExpansionLessonSpec[] = [
     openingEn: "I love my family.",
     openingAr: "أحب عائلتي.",
     words: [
-      ["age", "عمر", "عمر", "I am twenty years old.", "أنا في العشرين من عمري."],
+      ["age", "عمر", "عمر", "I am ten years of age.", "أنا في العاشرة من عمري."],
       ["family", "عائلة", "عائلة", "I love my family.", "أحب عائلتي."],
       ["mother", "أقارب", "أم", "My mother cooks well.", "أمي تطبخ جيدًا."],
       ["father", "أقارب", "أب", "My father works hard.", "أبي يعمل بجد."],
