@@ -11,7 +11,7 @@ import { STAGE_1_PLUS_LESSONS } from './expansionPlus/stage1';
 import { STAGE_1_PLUS2_LESSONS } from './expansionPlus2/stage1';
 import { STAGE_1_PLUS3_LESSONS } from './expansionPlus3/stage1';
 import { STAGE_1_PLUS4_LESSONS } from './expansionPlus4/stage1';
-
+import { STAGE_1_PLUS5_LESSONS } from './expansionPlus5/stage1';
 export async function loadStageLessons(): Promise<Lesson[]> {
   const specs = [
     ...STAGE_1A_LESSONS,
@@ -20,6 +20,7 @@ export async function loadStageLessons(): Promise<Lesson[]> {
     ...STAGE_1_PLUS2_LESSONS,
     ...STAGE_1_PLUS3_LESSONS,
     ...STAGE_1_PLUS4_LESSONS,
+    ...STAGE_1_PLUS5_LESSONS,
   ];
   const baseLessons = LESSON_SPECS.filter((spec) => spec.stage === 1).map(buildLesson);
   const expansionLessons = specs.map((spec) =>
