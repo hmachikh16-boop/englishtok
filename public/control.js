@@ -1088,7 +1088,6 @@ const renderComplaints = () => {
 // Load chat conversations when complaints view is shown
 const originalSwitchView = switchView;
 // We'll call loadChatConversations in renderAll instead
-const origRenderAllComplaints = renderAll;
 // Patch: load conversations before rendering complaints
 const loadComplaintsData = async () => {
   await loadChatConversations();
