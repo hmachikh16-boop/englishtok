@@ -927,7 +927,40 @@ const renderCheck = () => {
     </div>`;
 };
 
+const COMPLAINT_REPLIES_KEY = 'lingo_gold_complaint_replies_v1';
+const complaintReplies = () => {
+  try {
+    const raw = window.localStorage.getItem(COMPLAINT_REPLIES_KEY);
+    return raw ? JSON.parse(raw) : {};
+  } catch {
+    return {};
+  }
+};
+const saveComplaintReplies = (map) => {
+  try {
+    window.localStorage.setItem(COMPLAINT_REPLIES_KEY, JSON.stringify(map));
+  } catch {
+    /* ignore */
+  }
+};
+const replyFor = (id) => complaintReplies()[id] || [];
+const addReply = (id, text) => {
+  const map = complaintReplies();
+  if (!map[id]) map[id] = [];
+  map[id].push({ text, at: new Date().toISOString() });
+  saveComplaintReplies(map);
+};
+
 const complaints = () => allActivity().filter((event) => event.type === 'support');
+
+let activeComplaintId = null;
+
+const complaintInitials = (event) => {
+  const source = (event.userName || event.userEmail || event.code || '?').trim();
+  const parts = source.split(/\s+/).filter(Boolean);
+  if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
+  return source.slice(0, 2).toUpperCase();
+};
 
 const renderComplaints = () => {
   if (!STATE.db) return;
@@ -936,24 +969,51 @@ const renderComplaints = () => {
   const count = complaints().length;
   const navCount = $('#navComplaintCount');
   if (navCount) navCount.textContent = formatNumber(count);
+  const badge = $('#complaintsCountBadge');
+  if (badge) badge.textContent = `${formatNumber(count)} رسالة`;
   if (!list) return;
   if (empty) empty.hidden = count !== 0;
   list.hidden = count === 0;
   list.innerHTML = complaints()
     .map((event) => {
-      const meta = eventMeta(event.type);
-      return `
-        <div class="activity-row">
-          <span class="activity-bullet" style="--event-tone:${meta.tone}">${icon(meta.icon)}</span>
-          <div class="activity-row-copy">
-            <strong>${html(event.message)}</strong>
-            ${event.code ? `<span class="activity-code">${html(event.code)}</span>` : ''}
-            <span>${formatDateTime(event.at)}</span>
-            ${event.userName ? `<span>المستخدم: ${html(event.userName)}</span>` : ''}
-            ${event.userEmail ? `<span>البريد: ${html(event.userEmail)}</span>` : ''}
+      const replies = replyFor(event.id);
+      const replyBubbles = replies
+        .map(
+          (r) => `
+        <div class="chat-bubble chat-bubble-admin">
+          <div class="chat-bubble-avatar chat-avatar-admin">A</div>
+          <div class="chat-bubble-body">
+            <div class="chat-bubble-meta">
+              <strong>الإدارة</strong>
+              <time>${html(formatRelative(r.at))}</time>
+            </div>
+            <p class="chat-bubble-text">${html(r.text)}</p>
           </div>
-          <time datetime="${html(event.at)}" title="${html(formatDateTime(event.at))}">${html(formatRelative(event.at))}</time>
-        </div>`;
+        </div>`,
+        )
+        .join('');
+      return `
+        <article class="chat-message" data-complaint-id="${html(event.id)}">
+          <div class="chat-bubble chat-bubble-user">
+            <div class="chat-bubble-avatar chat-avatar-user">${html(complaintInitials(event))}</div>
+            <div class="chat-bubble-body">
+              <div class="chat-bubble-meta">
+                <strong>${html(event.userName || event.userEmail || 'مستخدم')}</strong>
+                ${event.code ? `<span class="chat-code">${html(event.code)}</span>` : ''}
+                <time title="${html(formatDateTime(event.at))}">${html(formatRelative(event.at))}</time>
+              </div>
+              <p class="chat-bubble-text">${html(event.message)}</p>
+              <div class="chat-bubble-footer">
+                <button type="button" class="chat-reply-btn" data-action="reply-complaint" data-id="${html(event.id)}">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /></svg>
+                  رد
+                </button>
+                ${event.userEmail ? `<a class="chat-reply-btn chat-reply-mail" href="mailto:${html(event.userEmail)}?subject=رد%20على%20رسالتك%20في%20Lin%20Go%20Gold" target="_blank" rel="noopener">📧 بريد</a>` : ''}
+              </div>
+            </div>
+          </div>
+          ${replyBubbles}
+        </article>`;
     })
     .join('');
 };
@@ -1673,6 +1733,24 @@ const handleAction = (action) => {
   else if (action === 'export-csv') exportCsv();
   else if (action === 'export-json') exportJson();
   else if (action === 'logout') logout();
+  else if (action === 'reply-complaint') {
+    activeComplaintId = button.dataset.id;
+    const input = $('#complaintReplyInput');
+    if (input) {
+      input.focus();
+      input.placeholder = 'رد على الشكوى المحددة…';
+    }
+  }
+  else if (action === 'quick-replies') {
+    const qr = $('#quickReplies');
+    if (qr) qr.hidden = !qr.hidden;
+  }
+  else if (action === 'clear-complaints') {
+    if (!window.confirm('مسح ردود المحادثة من العرض (لا يحذف من الخادم)؟')) return;
+    try { window.localStorage.removeItem(COMPLAINT_REPLIES_KEY); } catch {}
+    renderComplaints();
+    toast('تم مسح ردود المحادثة من العرض.');
+  }
 };
 
 const logout = async () => {
@@ -1751,6 +1829,50 @@ const bindEvents = () => {
   $('#logoutButton')?.addEventListener('click', logout);
   $('#logoutButtonSide')?.addEventListener('click', logout);
   $('#refreshButton')?.addEventListener('click', () => refreshData($('#refreshButton')));
+
+  const sendReply = () => {
+    const input = $('#complaintReplyInput');
+    const text = input?.value.trim();
+    if (!text) return;
+    const targetId = activeComplaintId || complaints()[0]?.id;
+    if (!targetId) {
+      toast('لا توجد شكوى للرد عليها.', 'error');
+      return;
+    }
+    addReply(targetId, text);
+    if (input) {
+      input.value = '';
+      input.style.height = '';
+    }
+    activeComplaintId = null;
+    renderComplaints();
+    toast('تم إرسال الرد.');
+  };
+
+  $('#complaintReplySend')?.addEventListener('click', sendReply);
+  $('#complaintReplyInput')?.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault();
+      sendReply();
+    }
+  });
+  $('#complaintReplyInput')?.addEventListener('input', (event) => {
+    const target = event.target;
+    target.style.height = 'auto';
+    target.style.height = Math.min(target.scrollHeight, 120) + 'px';
+  });
+
+  document.addEventListener('click', (event) => {
+    const chip = event.target.closest('.quick-reply-chip');
+    if (chip) {
+      event.preventDefault();
+      const input = $('#complaintReplyInput');
+      if (input) {
+        input.value = chip.dataset.reply || '';
+        input.focus();
+      }
+    }
+  });
   $('#menuButton')?.addEventListener('click', openSidebar);
   $('#closeMenuButton')?.addEventListener('click', closeSidebar);
   $('#sidebarBackdrop')?.addEventListener('click', closeSidebar);
