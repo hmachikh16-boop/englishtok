@@ -45,6 +45,19 @@ interface ActivityEvent {
   code?: string;
 }
 
+interface ChatMessage {
+  id: string;
+  conversationId: string;
+  sender: 'user' | 'admin';
+  message: string;
+  at: string;
+  code?: string;
+  device?: string;
+  userName?: string;
+  userEmail?: string;
+  read?: boolean;
+}
+
 interface LicenseSettings {
   /** When true, the Gold app opens for everyone without a license code. */
   freeMode: boolean;
@@ -55,6 +68,7 @@ interface LicenseDatabase {
   updatedAtUtc: string;
   licenses: LicenseRecord[];
   activity: ActivityEvent[];
+  chats: ChatMessage[];
   settings: LicenseSettings;
 }
 
@@ -76,6 +90,7 @@ const CODE_PREFIX = 'LINGO-GOLD';
 const CODE_ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
 const MAX_DB_BYTES = 2_000_000;
 const MAX_ACTIVITY = 120;
+const MAX_CHATS = 2000;
 const LOGIN_RATE_LIMIT = 10;
 const LOGIN_RATE_WINDOW_SECONDS = 15 * 60;
 const CHECK_RATE_LIMIT = 30;
@@ -209,6 +224,7 @@ const emptyDatabase = (): LicenseDatabase => ({
   updatedAtUtc: nowIso(),
   licenses: [],
   activity: [],
+  chats: [],
   settings: { freeMode: false },
 });
 
@@ -216,6 +232,35 @@ const normalizeSettings = (raw: unknown): LicenseSettings => {
   if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return { freeMode: false };
   const source = raw as Record<string, unknown>;
   return { freeMode: asBoolean(pick(source, 'freeMode', 'FreeMode')) };
+};
+
+const normalizeChat = (raw: unknown): ChatMessage[] => {
+  if (!Array.isArray(raw)) return [];
+  const messages: ChatMessage[] = [];
+  for (const item of raw.slice(0, MAX_CHATS)) {
+    if (!item || typeof item !== 'object' || Array.isArray(item)) continue;
+    const source = item as Record<string, unknown>;
+    const id = asString(pick(source, 'id', 'Id'), 80) || randomUUID();
+    const conversationId = asString(pick(source, 'conversationId', 'ConversationId'), 200);
+    const message = asString(pick(source, 'message', 'Message'), 2000);
+    const at = normalizeDate(pick(source, 'at', 'At')) || nowIso();
+    const senderRaw = asString(pick(source, 'sender', 'Sender'), 10).toLowerCase();
+    const sender: 'user' | 'admin' = senderRaw === 'admin' ? 'admin' : 'user';
+    if (!conversationId || !message) continue;
+    messages.push({
+      id,
+      conversationId,
+      sender,
+      message,
+      at,
+      code: normalizeCode(pick(source, 'code', 'Code')) || undefined,
+      device: asString(pick(source, 'device', 'Device'), 240) || undefined,
+      userName: asString(pick(source, 'userName', 'UserName'), 160) || undefined,
+      userEmail: asString(pick(source, 'userEmail', 'UserEmail'), 240) || undefined,
+      read: asBoolean(pick(source, 'read', 'Read')),
+    });
+  }
+  return messages;
 };
 
 const normalizeDatabase = (raw: unknown): LicenseDatabase => {
@@ -241,6 +286,7 @@ const normalizeDatabase = (raw: unknown): LicenseDatabase => {
     updatedAtUtc: normalizeDate(pick(source, 'updatedAtUtc', 'UpdatedAtUtc')) || nowIso(),
     licenses,
     activity: normalizeActivity(source.activity ?? source.Activity),
+    chats: normalizeChat(source.chats ?? source.Chats),
     settings: normalizeSettings(source.settings ?? source.Settings),
   };
 };
@@ -879,6 +925,141 @@ const handleSupportSubmit = async (request: AdminRequest, body: Record<string, u
   return { ok: true, id };
 };
 
+const conversationIdFor = (code: string, device: string): string =>
+  `${code || 'anon'}::${device || 'unknown'}`;
+
+const handleChatSend = async (body: Record<string, unknown>) => {
+  const message = asString(body.message, 2000);
+  if (message.length < 1) {
+    throw new HttpError(400, 'الرسالة فارغة.');
+  }
+  const code = asString(body.code, 48);
+  const device = asString(body.device, 240);
+  const userName = asString(body.userName, 160);
+  const userEmail = asString(body.userEmail, 240);
+  const conversationId = conversationIdFor(code, device);
+  const id = await withDatabaseLock(async () => {
+    const database = await loadDatabase();
+    const msg: ChatMessage = {
+      id: randomUUID(),
+      conversationId,
+      sender: 'user',
+      message: message.slice(0, 2000),
+      at: nowIso(),
+      code: code || undefined,
+      device: device || undefined,
+      userName: userName || undefined,
+      userEmail: userEmail || undefined,
+      read: false,
+    };
+    database.chats.push(msg);
+    if (database.chats.length > MAX_CHATS) {
+      database.chats = database.chats.slice(database.chats.length - MAX_CHATS);
+    }
+    await saveDatabase(database);
+    return msg.id;
+  });
+  return { ok: true, id };
+};
+
+const handleChatGet = async (query: Record<string, string | string[] | undefined>) => {
+  const code = asString(Array.isArray(query.code) ? query.code[0] : query.code, 48);
+  const device = asString(Array.isArray(query.device) ? query.device[0] : query.device, 240);
+  const conversationId = conversationIdFor(code, device);
+  const database = await loadDatabase();
+  const messages = database.chats
+    .filter((m) => m.conversationId === conversationId)
+    .sort((a, b) => (a.at < b.at ? -1 : a.at > b.at ? 1 : 0));
+  return { messages };
+};
+
+const handleChatList = async () => {
+  const database = await loadDatabase();
+  const convMap = new Map<string, { conversationId: string; code?: string; device?: string; userName?: string; userEmail?: string; lastMessage: string; lastAt: string; unread: number; messageCount: number }>();
+  for (const m of database.chats) {
+    const existing = convMap.get(m.conversationId);
+    if (!existing) {
+      convMap.set(m.conversationId, {
+        conversationId: m.conversationId,
+        code: m.code,
+        device: m.device,
+        userName: m.userName,
+        userEmail: m.userEmail,
+        lastMessage: m.message,
+        lastAt: m.at,
+        unread: m.sender === 'user' && !m.read ? 1 : 0,
+        messageCount: 1,
+      });
+    } else {
+      if (m.at > existing.lastAt) {
+        existing.lastMessage = m.message;
+        existing.lastAt = m.at;
+      }
+      existing.messageCount += 1;
+      if (m.sender === 'user' && !m.read) existing.unread += 1;
+      if (!existing.userName && m.userName) existing.userName = m.userName;
+      if (!existing.userEmail && m.userEmail) existing.userEmail = m.userEmail;
+      if (!existing.code && m.code) existing.code = m.code;
+      if (!existing.device && m.device) existing.device = m.device;
+    }
+  }
+  const conversations = [...convMap.values()].sort((a, b) => (a.lastAt < b.lastAt ? 1 : -1));
+  return { conversations };
+};
+
+const handleChatReply = async (request: AdminRequest, body: Record<string, unknown>) => {
+  requireAuth(request);
+  assertSameOrigin(request);
+  const conversationId = asString(body.conversationId, 200);
+  const message = asString(body.message, 2000);
+  if (!conversationId || !message) {
+    throw new HttpError(400, 'conversationId و message مطلوبان.');
+  }
+  const id = await withDatabaseLock(async () => {
+    const database = await loadDatabase();
+    const msg: ChatMessage = {
+      id: randomUUID(),
+      conversationId,
+      sender: 'admin',
+      message: message.slice(0, 2000),
+      at: nowIso(),
+      read: true,
+    };
+    // Find the conversation's code/device from existing messages
+    const existing = database.chats.find((m) => m.conversationId === conversationId);
+    if (existing) {
+      msg.code = existing.code;
+      msg.device = existing.device;
+      msg.userName = existing.userName;
+      msg.userEmail = existing.userEmail;
+    }
+    database.chats.push(msg);
+    if (database.chats.length > MAX_CHATS) {
+      database.chats = database.chats.slice(database.chats.length - MAX_CHATS);
+    }
+    await saveDatabase(database);
+    return msg.id;
+  });
+  return { ok: true, id };
+};
+
+const handleChatRead = async (request: AdminRequest, body: Record<string, unknown>) => {
+  requireAuth(request);
+  assertSameOrigin(request);
+  const conversationId = asString(body.conversationId, 200);
+  if (!conversationId) throw new HttpError(400, 'conversationId مطلوب.');
+  await withDatabaseLock(async () => {
+    const database = await loadDatabase();
+    for (const m of database.chats) {
+      if (m.conversationId === conversationId && m.sender === 'user') {
+        m.read = true;
+      }
+    }
+    await saveDatabase(database);
+  });
+  return { ok: true };
+};
+
 const setCheckCors = (response: AdminResponse): void => {
   response.setHeader('Access-Control-Allow-Origin', '*');
   response.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
@@ -894,7 +1075,7 @@ export default async function adminHandler(
   const body = readBody(request.body);
   const action = getAction(request, body);
   if (method === 'OPTIONS') {
-    if (action === 'check' || action === 'support' || action === 'mode') setCheckCors(response);
+    if (action === 'check' || action === 'support' || action === 'mode' || action === 'chat' || action === 'chat_get') setCheckCors(response);
     response.setHeader('Allow', 'GET, POST, OPTIONS');
     return response.status(204).json({});
   }
@@ -921,6 +1102,42 @@ export default async function adminHandler(
         return response.status(405).json({ error: 'Method not allowed.' });
       }
       return response.status(200).json(await handleSupportSubmit(request, body));
+    }
+
+    if (action === 'chat') {
+      setCheckCors(response);
+      if (method === 'GET') {
+        return response.status(200).json(await handleChatGet(request.query ?? {}));
+      }
+      if (method !== 'POST') {
+        response.setHeader('Allow', 'GET, POST, OPTIONS');
+        return response.status(405).json({ error: 'Method not allowed.' });
+      }
+      return response.status(200).json(await handleChatSend(body));
+    }
+
+    if (action === 'chats') {
+      if (method !== 'GET') {
+        response.setHeader('Allow', 'GET, OPTIONS');
+        return response.status(405).json({ error: 'Method not allowed.' });
+      }
+      return response.status(200).json(await handleChatList());
+    }
+
+    if (action === 'chat_reply') {
+      if (method !== 'POST') {
+        response.setHeader('Allow', 'POST, OPTIONS');
+        return response.status(405).json({ error: 'Method not allowed.' });
+      }
+      return response.status(200).json(await handleChatReply(request, body));
+    }
+
+    if (action === 'chat_read') {
+      if (method !== 'POST') {
+        response.setHeader('Allow', 'POST, OPTIONS');
+        return response.status(405).json({ error: 'Method not allowed.' });
+      }
+      return response.status(200).json(await handleChatRead(request, body));
     }
 
     if (action === 'mode') {
