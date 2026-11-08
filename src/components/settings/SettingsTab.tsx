@@ -85,6 +85,10 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
   const [supportMessage, setSupportMessage] = useState('');
   const [supportEmail, setSupportEmail] = useState('');
   const [supportStatus, setSupportStatus] = useState('');
+  const [chatMessages, setChatMessages] = useState<{ id: string; sender: 'user' | 'admin'; message: string; at: string }[]>([]);
+  const [chatInput, setChatInput] = useState('');
+  const [chatSending, setChatSending] = useState(false);
+  const [chatStatus, setChatStatus] = useState('');
   const [supportSending, setSupportSending] = useState(false);
   const [isCheckingUpdate, setIsCheckingUpdate] = useState(false);
   const [availableUpdate, setAvailableUpdate] = useState<AppUpdateManifest | null>(null);
@@ -359,7 +363,7 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
     setSupportSending(true);
     setSupportStatus('');
     try {
-      const response = await fetch('/api/admin?action=support', {
+      const response = await fetch('https://englishtok-eight.vercel.app/api/admin?action=support', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
         body: JSON.stringify({
@@ -381,6 +385,66 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
       setSupportSending(false);
     }
   };
+
+  const chatConversationId = () => {
+    const code = getStoredGoldLicenseCode();
+    const device = Capacitor.getPlatform();
+    return `${code || 'anon'}::${device}`;
+  };
+
+  const loadChatMessages = async () => {
+    try {
+      const code = getStoredGoldLicenseCode();
+      const device = Capacitor.getPlatform();
+      const url = `https://englishtok-eight.vercel.app/api/admin?action=chat&code=${encodeURIComponent(code)}&device=${encodeURIComponent(device)}`;
+      const response = await fetch(url, { headers: { Accept: 'application/json' }, cache: 'no-store' });
+      if (!response.ok) return;
+      const payload = await response.json().catch(() => ({}));
+      if (Array.isArray(payload.messages)) {
+        setChatMessages(payload.messages);
+      }
+    } catch {
+      /* ignore */
+    }
+  };
+
+  const handleChatSend = async (event?: React.FormEvent) => {
+    if (event) event.preventDefault();
+    const text = chatInput.trim();
+    if (!text) return;
+    setChatSending(true);
+    setChatStatus('');
+    try {
+      const code = getStoredGoldLicenseCode();
+      const device = Capacitor.getPlatform();
+      const response = await fetch('https://englishtok-eight.vercel.app/api/admin?action=chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({
+          message: text,
+          email: supportEmail.trim(),
+          code,
+          device,
+          userName: userProfile.displayName,
+        }),
+      });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(payload.error || 'تعذر إرسال الرسالة.');
+      setChatInput('');
+      await loadChatMessages();
+    } catch (error) {
+      setChatStatus(error instanceof Error ? error.message : 'تعذر إرسال الرسالة.');
+    } finally {
+      setChatSending(false);
+    }
+  };
+
+  // Poll for admin replies every 30s
+  useEffect(() => {
+    void loadChatMessages();
+    const interval = window.setInterval(() => void loadChatMessages(), 30000);
+    return () => window.clearInterval(interval);
+  }, []);
 
   const handleUpdateEverything = async () => {
     setIsUpdatingAll(true);
@@ -873,40 +937,77 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
                 </a>
               </div>
 
-              <form className="mt-4 space-y-3" onSubmit={handleSupportSubmit}>
-                <label className="block text-xs font-bold text-white" htmlFor="gold-support-email">
-                  بريدك (اختياري)
-                </label>
-                <input
-                  id="gold-support-email"
-                  type="email"
-                  value={supportEmail}
-                  onChange={(event) => setSupportEmail(event.target.value)}
-                  placeholder="name@example.com"
-                  className="w-full rounded-xl border border-emerald-500/30 bg-slate-950/60 px-3 py-2 text-xs text-white outline-none focus:border-emerald-400"
-                />
-                <label className="block text-xs font-bold text-white" htmlFor="gold-support-message">
-                  تفاصيل المشكلة
-                </label>
-                <textarea
-                  id="gold-support-message"
-                  value={supportMessage}
-                  onChange={(event) => setSupportMessage(event.target.value)}
-                  rows={4}
-                  placeholder="اشرح المشكلة (الصوت، التفعيل، التحديث، ...)"
-                  className="w-full resize-none rounded-xl border border-emerald-500/30 bg-slate-950/60 px-3 py-2 text-xs text-white outline-none focus:border-emerald-400"
-                />
-                <button
-                  type="submit"
-                  disabled={supportSending}
-                  className="w-full rounded-xl bg-emerald-500 px-4 py-2 text-xs font-black text-slate-950 transition hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  {supportSending ? 'جارٍ الإرسال…' : 'إرسال الشكوى'}
-                </button>
-                {supportStatus && (
-                  <p className="text-xs font-bold text-emerald-300">{supportStatus}</p>
-                )}
-              </form>
+              <div className="mt-4 flex flex-col gap-3">
+                 <div className="flex items-center gap-2">
+                   <MessageCircle className="h-4 w-4 text-emerald-400" aria-hidden="true" />
+                   <h4 className="text-xs font-black text-white">دردشة مع الدعم</h4>
+                   <span className="text-[10px] text-slate-400">ردود خلال 24 ساعة</span>
+                 </div>
+                 <div className="flex flex-col gap-2 max-h-64 overflow-y-auto no-scrollbar rounded-xl border border-emerald-500/20 bg-slate-950/40 p-3">
+                   {chatMessages.length === 0 && (
+                     <p className="text-xs text-slate-400 text-center py-4">لا توجد رسائل بعد. ابدأ المحادثة…</p>
+                   )}
+                   {chatMessages.map((m) => (
+                     <div key={m.id} className={`flex ${m.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
+                       <div className={`max-w-[85%] rounded-2xl px-3 py-2 text-xs leading-relaxed ${m.sender === 'user' ? 'bg-emerald-500 text-slate-950 rounded-br-sm' : 'bg-slate-800 text-white border border-slate-700 rounded-bl-sm'}`}>
+                         <p className="whitespace-pre-wrap">{m.message}</p>
+                         <span className={`block mt-1 text-[9px] ${m.sender === 'user' ? 'text-slate-900/70' : 'text-slate-400'}`}>
+                           {m.sender === 'admin' ? 'الإدارة' : 'أنت'} · {new Date(m.at).toLocaleTimeString('ar', { hour: '2-digit', minute: '2-digit' })}
+                         </span>
+                       </div>
+                     </div>
+                   ))}
+                 </div>
+                 <div className="flex gap-2">
+                   <input
+                     type="email"
+                     value={supportEmail}
+                     onChange={(event) => setSupportEmail(event.target.value)}
+                     placeholder="بريدك (اختياري)"
+                     className="w-28 rounded-xl border border-emerald-500/30 bg-slate-950/60 px-3 py-2 text-xs text-white outline-none focus:border-emerald-400"
+                   />
+                   <input
+                     type="text"
+                     value={chatInput}
+                     onChange={(event) => setChatInput(event.target.value)}
+                     placeholder="اكتب رسالتك…"
+                     className="flex-1 rounded-xl border border-emerald-500/30 bg-slate-950/60 px-3 py-2 text-xs text-white outline-none focus:border-emerald-400"
+                   />
+                   <button
+                     type="button"
+                     onClick={() => void handleChatSend()}
+                     disabled={chatSending || !chatInput.trim()}
+                     className="rounded-xl bg-emerald-500 px-4 py-2 text-xs font-black text-slate-950 transition hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-50"
+                   >
+                     {chatSending ? '…' : 'إرسال'}
+                   </button>
+                 </div>
+                 {chatStatus && (
+                   <p className="text-xs font-bold text-emerald-300">{chatStatus}</p>
+                 )}
+                 <details className="rounded-xl border border-slate-700/60 bg-slate-900/40 p-3">
+                   <summary className="cursor-pointer text-xs font-bold text-slate-300">نموذج الدعم (بديل)</summary>
+                   <form className="mt-3 space-y-3" onSubmit={handleSupportSubmit}>
+                     <textarea
+                       value={supportMessage}
+                       onChange={(event) => setSupportMessage(event.target.value)}
+                       rows={3}
+                       placeholder="اشرح المشكلة (الصوت، التفعيل، التحديث، ...)"
+                       className="w-full resize-none rounded-xl border border-emerald-500/30 bg-slate-950/60 px-3 py-2 text-xs text-white outline-none focus:border-emerald-400"
+                     />
+                     <button
+                       type="submit"
+                       disabled={supportSending}
+                       className="w-full rounded-xl bg-slate-700 px-4 py-2 text-xs font-black text-white transition hover:bg-slate-600 disabled:cursor-not-allowed disabled:opacity-50"
+                     >
+                       {supportSending ? 'جارٍ الإرسال…' : 'إرسال (نموذج قديم)'}
+                     </button>
+                     {supportStatus && (
+                       <p className="text-xs font-bold text-emerald-300">{supportStatus}</p>
+                     )}
+                   </form>
+                 </details>
+               </div>
             </section>
           )}
 

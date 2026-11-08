@@ -1,11 +1,11 @@
 {
-  "version": "1.1.54",
+  "version": "1.1.55",
   "packageId": "com.englishtok.gold",
-  "apkUrl": "/lin-go-gold-1.1.54.apk",
-  "sha256": "F7F915DC12C7504686870FC3A491C74E45AE94A7D62EB5D97DC419BDDAB0F0C2",
-  "size": 90787392,
+  "apkUrl": "/lin-go-gold-1.1.55.apk",
+  "sha256": "A269AF4D0B5C25FC7B7C8AA514CE3FB83888D48CB7E89B366801C3D86E4440ED",
+  "size": 90788328,
   "minimumAndroidSdk": 24,
-  "notes": "تحديث Gold 1.1.54: إصلاح إرسال الشكاوي من التطبيق (relative -> absolute URL)، +20 درس في Stage 1، رفع حد «عرض المزيد» 125->1000، bump cache keys (v7->v8) to clear stale caches، VocabTab default 'all' (2992 كلمة).",
-  "releaseUrl": "https://github.com/hmachikh16-boop/englishtok/releases/tag/gold-v1.1.54",
-  "publishedAt": "2026-11-08T14:00:00.000Z"
+  "notes": "تحديث Gold 1.1.55: دردشة مباشرة مع الدعم (Messenger-style) — كل مستخدم يمكنه التواصل مع الإدارة من داخل التطبيق، والردود تصل فورًا. + إصلاح إرسال الشكاوي (relative->absolute URL)، +20 درس Stage 1، VocabTab default 'all', bump cache keys v7->v8.",
+  "releaseUrl": "https://github.com/hmachikh16-boop/englishtok/releases/tag/gold-v1.1.55",
+  "publishedAt": "2026-11-08T15:00:00.000Z"
 }
