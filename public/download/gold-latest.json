@@ -1,11 +1,11 @@
 {
-  "version": "1.1.52",
+  "version": "1.1.53",
   "packageId": "com.englishtok.gold",
-  "apkUrl": "/lin-go-gold-1.1.52.apk",
-  "sha256": "C32A5C897D6E671FB1FD7436BCDE21BFE95EBD0F423C5B838EA81C32570F2FFE",
-  "size": 90786180,
+  "apkUrl": "/lin-go-gold-1.1.53.apk",
+  "sha256": "A2C7C9E6225EE8AE682A51D940094BB375A45F7912E9621CCF5F07B19C482D61",
+  "size": 90786204,
   "minimumAndroidSdk": 24,
-  "notes": "تحديث Gold 1.1.52: +20 درسًا في Stage 1 (740 درسًا إجماليًا)، رفع حد «عرض المزيد» من 125 إلى 1000 (جميع الدروس قابلة للوصول)، إصلاح تحميل APK (91.7 MB → 90.8 MB)، تحسين صفحة التحميل (احترافية، لقطة حقيقية، شارة تحقق).",
-  "releaseUrl": "https://github.com/hmachikh16-boop/englishtok/releases/tag/gold-v1.1.52",
-  "publishedAt": "2026-11-08T12:00:00.000Z"
+  "notes": "تحديث Gold 1.1.53: إصلاح القاموس (عرض جميع الكلمات بدل 96)، رفع حد «عرض المزيد» 125→1000 (جميع الدروس قابلة للوصول)، +20 درس في Stage 1 (740 إجمالي)، bump cache keys (v7→v8) to clear stale caches.",
+  "releaseUrl": "https://github.com/hmachikh16-boop/englishtok/releases/tag/gold-v1.1.53",
+  "publishedAt": "2026-11-08T13:00:00.000Z"
 }
