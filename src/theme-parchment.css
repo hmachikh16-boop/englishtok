@@ -2743,3 +2743,124 @@ html .path-hero-intro-zone .daily-goal-card {
   box-shadow: none !important;
   padding: 10px 0 0 !important;
 }
+
+/* Path "load more" button — clear CTA instead of a fake test node */
+html .path-load-more {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  margin: 14px 0 4px;
+  padding: 11px 16px;
+  border: 1px solid rgba(109, 70, 16, 0.5);
+  border-radius: 999px;
+  color: #2c2114;
+  font-size: 12px;
+  font-weight: 900;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0) 46%),
+    linear-gradient(150deg, #fbe8b8 0%, #e7c477 52%, #d4a94f 100%);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.7) inset,
+    0 3px 0 #8a5a12,
+    0 10px 20px rgba(74, 51, 25, 0.18);
+  cursor: pointer;
+  transition: transform 0.16s ease, filter 0.16s ease;
+}
+
+html .path-load-more:hover {
+  filter: brightness(1.03);
+  transform: translateY(-1px);
+}
+
+html .path-load-more:active {
+  transform: translateY(2px);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.7) inset,
+    0 1px 0 #8a5a12,
+    0 5px 12px rgba(74, 51, 25, 0.22);
+}
+
+html .path-load-more svg {
+  color: #7a5a2a;
+  flex: 0 0 auto;
+}
+
+html .path-load-more-count {
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(109, 70, 16, 0.12);
+  color: #7a5a2a;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+/* ---------- Vocabulary cards (professional parchment list) ---------- */
+html .vocab-card {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(126, 91, 43, 0.26) !important;
+  border-radius: 18px !important;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0) 40%),
+    linear-gradient(160deg, #fbf0d7 0%, #f4e8cc 100%) !important;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.7) inset,
+    0 8px 18px rgba(74, 51, 25, 0.1) !important;
+  transition: transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease;
+}
+
+html .vocab-card::before {
+  content: '';
+  position: absolute;
+  inset-inline-start: 0;
+  top: 14px;
+  bottom: 14px;
+  width: 3px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #d4a94f, #8d2f24);
+  opacity: 0.85;
+}
+
+html .vocab-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(165, 108, 24, 0.5) !important;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.7) inset,
+    0 14px 28px rgba(74, 51, 25, 0.16) !important;
+}
+
+html .vocab-card [class*='bg-slate-950'] {
+  background: rgba(255, 250, 240, 0.72) !important;
+  border-color: rgba(126, 91, 43, 0.2) !important;
+}
+
+html .vocab-card .font-en {
+  letter-spacing: 0.01em;
+}
+
+/* ---------- Settings sections (consistent parchment panels) ---------- */
+html .settings-section {
+  border: 1px solid rgba(126, 91, 43, 0.26) !important;
+  border-radius: 18px !important;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0) 38%),
+    linear-gradient(160deg, #fbf0d7 0%, #f4e8cc 100%) !important;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.7) inset,
+    0 8px 18px rgba(74, 51, 25, 0.1) !important;
+}
+
+html .settings-section h3 {
+  color: #2c2114 !important;
+  letter-spacing: -0.01em;
+}
+
+html .settings-section h3 svg {
+  color: #a56c18 !important;
+}
+
+html .settings-section p {
+  color: #5b4730 !important;
+}

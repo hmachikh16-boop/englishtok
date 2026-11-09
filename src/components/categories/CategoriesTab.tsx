@@ -865,19 +865,6 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
                     />
                   );
                 })}
-                {visibleLessonCount < level.lessons.length && (
-                  <button
-                    type="button"
-                    onClick={() => setVisibleLessonCount((count) => Math.min(count + 5, 1000))}
-                    className="path-node path-show-more-node"
-                    aria-label="عرض 5 دروس إضافية"
-                  >
-                    <span className="path-node-orb path-show-more-orb">
-                      <span className="text-lg font-black">+5</span>
-                    </span>
-                    <span className="path-node-title">عرض المزيد ({Math.max(0, level.lessons.length - visibleLessonCount)} متبقي)</span>
-                  </button>
-                )}
                 {!isSchoolYearCourse && visibleLessonCount >= level.lessons.length && <button
                   type="button"
                   disabled={!level.canTakeExam}
@@ -893,6 +880,18 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
                 </button>}
               </div>
               <div className="continuous-unit-progress"><span className="continuous-unit-progress-fill" style={{ width: `${level.lessons.length ? (level.completedCount / level.lessons.length) * 100 : 0}%` }} /></div>
+              {visibleLessonCount < level.lessons.length && (
+                <button
+                  type="button"
+                  onClick={() => setVisibleLessonCount((count) => Math.min(count + 5, 1000))}
+                  className="path-load-more"
+                  aria-label="عرض 5 دروس إضافية"
+                >
+                  <ArrowDown className="h-4 w-4" aria-hidden="true" />
+                  <span>عرض 5 دروس إضافية</span>
+                  <span className="path-load-more-count">{Math.max(0, level.lessons.length - visibleLessonCount)} متبقي</span>
+                </button>
+              )}
             </div>;
           })}
           </div>

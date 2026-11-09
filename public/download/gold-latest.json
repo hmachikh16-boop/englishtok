@@ -1,11 +1,11 @@
 {
-  "version": "1.1.57",
+  "version": "1.1.58",
   "packageId": "com.englishtok.gold",
-  "apkUrl": "/lin-go-gold-1.1.57.apk",
-  "sha256": "4FFDC1A2E9FFD8D79508BCDE7AA50F53AB146BA54ECA218A6C578A9CFF7AE80D",
-  "size": 90790636,
+  "apkUrl": "/lin-go-gold-1.1.58.apk",
+  "sha256": "36B7ACB2605CD8984208246D4F8C16020A22A7C7824E155E933B180B1C9F3FFA",
+  "size": 90791216,
   "minimumAndroidSdk": 24,
-  "notes": "تحديث 1.1.57: إصلاح جذري لوصول الرسائل في لوحة التحكم (كانت هناك حلقة لا نهائية تمنع عرض المحادثات) + زر الدردشة الاحترافي أصبح فوق زر الريلز + تصميم دردشة كامل بألوان الورق + إصلاح حقل البريد.",
-  "releaseUrl": "https://github.com/hmachikh16-boop/englishtok/releases/tag/gold-v1.1.57",
-  "publishedAt": "2026-11-09T09:00:00.000Z"
+  "notes": "تحديث 1.1.58: مسار التعلم يعرض الدروس تدريجيًا (5 دروس + زر واضح لعرض 5 إضافية، و5 جديدة تظهر تلقائيًا بعد إكمال 5) + تحسين قائمة الإعدادات وقائمة الكلمات بتصميم ورقي احترافي موحّد.",
+  "releaseUrl": "https://github.com/hmachikh16-boop/englishtok/releases/tag/gold-v1.1.58",
+  "publishedAt": "2026-11-09T11:00:00.000Z"
 }

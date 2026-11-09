@@ -739,7 +739,7 @@ const [supportChatOpen, setSupportChatOpen] = useState(false);
             aria-label="دردشة مع الدعم"
             className="fixed right-4 z-40 flex items-center gap-2 rounded-full border border-[#6d4610]/70 px-1.5 py-1.5 transition hover:-translate-y-0.5 active:translate-y-0.5"
             style={{
-              bottom: activeTab === 'categories' ? 148 : 84,
+              bottom: IS_GOLD_EDITION && activeTab === 'categories' ? 148 : 84,
               background:
                 'linear-gradient(180deg, rgba(255,255,255,0.5), rgba(255,255,255,0) 44%), linear-gradient(150deg, #fbe8b8 0%, #e7c477 52%, #d4a94f 100%)',
               boxShadow:

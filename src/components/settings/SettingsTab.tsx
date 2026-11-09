@@ -543,7 +543,7 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
           <ProfileCard profile={userProfile} onUpdateProfile={onUpdateProfile} />
           {!IS_STORE_BUILD && (
           <section
-            className="bg-gradient-to-br from-sky-950 via-slate-900 to-emerald-950/40 border border-sky-500/30 rounded-2xl p-4 flex flex-col gap-3 shadow-xl"
+            className="settings-section bg-gradient-to-br from-sky-950 via-slate-900 to-emerald-950/40 border border-sky-500/30 rounded-2xl p-4 flex flex-col gap-3 shadow-xl"
             aria-labelledby="updates-title"
           >
             <h3 id="updates-title" className="text-sm font-bold text-white flex items-center gap-2">
@@ -639,7 +639,7 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
             )}
           </section>
           )}
-          <section className="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-col gap-3 shadow-lg" aria-labelledby="learning-language-title">
+          <section className="settings-section bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-col gap-3 shadow-lg" aria-labelledby="learning-language-title">
             <h3 id="learning-language-title" className="text-xs font-bold text-white flex items-center gap-2"><Languages className="h-4 w-4 text-sky-400" />لغة التعلّم</h3>
             <p className="text-[11px] leading-6 text-slate-400">
               تختار لغة الدروس والحوارات والتمارين والصوت. يحتفظ التطبيق بتقدم كل لغة على حدة، لذلك يمكنك التبديل دون فقدان XP أو الدروس المكتملة.
@@ -670,7 +670,7 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
               تغيير اللغة لا يحذف تقدمك. إذا كانت اللغة الجديدة بلا نقطة بداية بعد، سيُفتح اختبار تحديد المستوى قبل دروسها.
             </p>
           </section>
-          {hasLessons && <section className="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-col gap-3 shadow-lg" aria-labelledby="placement-settings-title">
+          {hasLessons && <section className="settings-section bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-col gap-3 shadow-lg" aria-labelledby="placement-settings-title">
             <h3 id="placement-settings-title" className="text-xs font-bold text-white flex items-center gap-2"><GraduationCap className="h-4 w-4 text-emerald-400" />تحديد المستوى التعليمي</h3>
             <p className="text-[11px] leading-6 text-slate-400">{userProfile.placementAssessment?.result
               ? userProfile.placementAssessment.result.method === 'first_stage'
@@ -680,7 +680,7 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
             <button type="button" onClick={onRetakePlacement} className="min-h-11 rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs font-bold text-emerald-800 hover:bg-emerald-100">تغيير نقطة البداية أو إعادة الاختبار</button>
           </section>}
           {/* Audio & Pronunciation settings */}
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-col gap-3 shadow-lg">
+          <div className="settings-section bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-col gap-3 shadow-lg">
             <h3 className="text-xs font-bold text-white flex items-center gap-2">
               <Volume2 className="w-4 h-4 text-sky-400" />
               <span>إعدادات الصوت والنطق التلقائي</span>
@@ -741,7 +741,7 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
           </div>
 
           {/* Subtitles & Display settings */}
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-col gap-3 shadow-lg">
+          <div className="settings-section bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-col gap-3 shadow-lg">
             <h3 className="text-xs font-bold text-white flex items-center gap-2">
               <Languages className="w-4 h-4 text-emerald-400" />
               <span>إعدادات الترجمة والواجهة</span>
@@ -791,7 +791,7 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
             <summary className="cursor-pointer select-none text-xs font-bold text-slate-300">
               نسخ قديمة بالرمز (غير مشفرة) — للتوافق فقط
             </summary>
-            <section className="mt-3 rounded-2xl border border-amber-500/20 bg-gradient-to-br from-slate-900 to-amber-950/10 p-4 shadow-lg" aria-labelledby="legacy-progress-backup-title">
+            <section className="settings-section mt-3 rounded-2xl border border-amber-500/20 bg-gradient-to-br from-slate-900 to-amber-950/10 p-4 shadow-lg" aria-labelledby="legacy-progress-backup-title">
             <h3 id="legacy-progress-backup-title" className="flex items-center gap-2 text-sm font-black text-white">
               <KeyRound className="h-4 w-4 text-amber-300" />
               نسخة قديمة بالرمز أو السحابة
@@ -880,7 +880,7 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
 
           {goldEdition && (
             <section
-              className="rounded-2xl border border-emerald-500/20 bg-gradient-to-br from-slate-900 to-emerald-950/30 p-4 shadow-lg"
+              className="settings-section rounded-2xl border border-emerald-500/20 bg-gradient-to-br from-slate-900 to-emerald-950/30 p-4 shadow-lg"
               aria-labelledby="gold-support-heading"
             >
               <div className="flex items-center gap-2 text-emerald-300">
@@ -991,7 +991,7 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
           )}
 
           <section
-            className="rounded-2xl border border-sky-500/20 bg-gradient-to-br from-slate-900 to-sky-950/30 p-4 shadow-lg"
+            className="settings-section rounded-2xl border border-sky-500/20 bg-gradient-to-br from-slate-900 to-sky-950/30 p-4 shadow-lg"
             aria-labelledby="developer-heading"
           >
             <h3 id="developer-heading" className="text-xs font-bold text-white">
@@ -1034,7 +1034,7 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
           </section>
 
           <section
-            className="rounded-2xl border border-emerald-500/20 bg-gradient-to-br from-slate-900 to-emerald-950/30 p-4 shadow-lg"
+            className="settings-section rounded-2xl border border-emerald-500/20 bg-gradient-to-br from-slate-900 to-emerald-950/30 p-4 shadow-lg"
             aria-labelledby="app-rights-heading"
           >
             <div className="flex items-center gap-2 text-emerald-300">

@@ -325,7 +325,7 @@ export const VocabTab: React.FC<VocabTabProps> = ({
               return (
                 <div
                   key={vocab.id}
-                  className="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-col gap-2.5 shadow-lg hover:border-slate-700 transition-colors"
+                  className="vocab-card bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-col gap-2.5 shadow-lg hover:border-slate-700 transition-colors"
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2.5">
