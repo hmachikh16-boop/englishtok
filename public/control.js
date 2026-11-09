@@ -1808,13 +1808,13 @@ const handleRecordAction = (button) => {
   else if (action === 'delete') openDelete(record);
 };
 
-const handleAction = (action) => {
+const handleAction = (action, button) => {
   if (action === 'generate') openGenerateModal();
   else if (action === 'refresh') refreshData($('#refreshButton'));
   else if (action === 'youtube-refresh') void loadYoutube(true);
   else if (action === 'toggle-free-mode') void toggleFreeMode();
   else if (action === 'open-chat') {
-    const id = button.dataset.id;
+    const id = button?.dataset?.id;
     if (id) {
       activeChatConversationId = id;
       void loadChatMessages(id);
@@ -1826,7 +1826,7 @@ const handleAction = (action) => {
     renderComplaints();
   }
   else if (action === 'send-chat-reply') {
-    const id = button.dataset.id;
+    const id = button?.dataset?.id;
     const input = $('#chatReplyInput');
     const text = input?.value?.trim() || '';
     if (id && text) void sendChatReply(id, text);
@@ -2005,7 +2005,7 @@ const bindEvents = () => {
         return;
       }
       event.preventDefault();
-      handleAction(actionButton.dataset.action);
+      handleAction(actionButton.dataset.action, actionButton);
       return;
     }
     const recordButton = event.target.closest('[data-record-action]');
