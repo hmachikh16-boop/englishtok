@@ -238,7 +238,6 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
     [path.levels, path.nextLessonId],
   );
   const [selectedPathStage, setSelectedPathStage] = useState<number | 'all'>(currentStageNumber);
-  const [visibleLessonCount, setVisibleLessonCount] = useState(1000);
   const [isPending, startTransition] = useTransition();
   const selectedPhase = EDUCATIONAL_PHASES.find((phase) => phase.id === selectedPhaseId);
   const selectedSchoolYear = findSchoolYearRoute(selectedSchoolYearId);
@@ -332,6 +331,15 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
   }, [completedLessonIds, getSchoolYearProgress, path.levels, selectedPathStage, selectedSchoolYear]);
 
   const isSchoolYearCourse = Boolean(selectedSchoolYear?.grade);
+  const visibleLessonCount = useMemo(() => {
+    if (isSchoolYearCourse) return 1000;
+    if (selectedPathStage === 'all') return 1000;
+    const level = visibleLevels.find((l) => l.stage === selectedPathStage);
+    if (!level || level.lessons.length === 0) return 5;
+    const completedInStage = level.lessons.filter((entry) => completedLessonIds.has(entry.lesson.id)).length;
+    const chunks = Math.floor(completedInStage / 5) + 1;
+    return Math.min(chunks * 5, level.lessons.length);
+  }, [isSchoolYearCourse, selectedPathStage, visibleLevels, completedLessonIds]);
   const today = new Date().toISOString().slice(0, 10);
   const dailyLessonCount = userProfile.dailyProgress.date === today ? userProfile.dailyProgress.completedLessonIds.length : 0;
   const dailyGoal = Math.max(1, userProfile.dailyGoalLessons);
@@ -874,21 +882,15 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
               </div>
               <div className="continuous-unit-progress"><span className="continuous-unit-progress-fill" style={{ width: `${level.lessons.length ? (level.completedCount / level.lessons.length) * 100 : 0}%` }} /></div>
               {visibleLessonCount < level.lessons.length && (
-                <button
-                  type="button"
-                  onClick={() => setVisibleLessonCount((count) => Math.min(count + 5, 1000))}
-                  className="path-load-more"
-                  aria-label="عرض 5 دروس إضافية"
-                >
-                  <ArrowDown className="h-4 w-4" aria-hidden="true" />
-                  <span>عرض 5 دروس إضافية</span>
-                  <span className="path-load-more-count">{Math.max(0, level.lessons.length - visibleLessonCount)} متبقي</span>
-                </button>
+                <div className="path-unlock-hint">
+                  <Lock className="h-3.5 w-3.5" aria-hidden="true" />
+                  <span>أكمل {Math.max(0, visibleLessonCount - level.completedCount)} درساً من ال{visibleLessonCount} ظاهرة لفتح 5 دروس التالية</span>
+                </div>
               )}
             </div>;
           })}
           </div>
-          <div className="path-window-hint"><ArrowDown className="h-3.5 w-3.5" aria-hidden="true" />أكمل الدروس بالترتيب لفتح محطات جديدة</div>
+          <div className="path-window-hint"><Lock className="h-3.5 w-3.5" aria-hidden="true" />أكمل 5 دروس لفتح 5 التالية · لا ت anxiety، الدروس تُفتح تدريجياً</div>
           </section>
         )}
         {homePanel === 'stories' && (

@@ -1,11 +1,11 @@
 {
-  "version": "1.1.61",
+  "version": "1.1.62",
   "packageId": "com.englishtok.gold",
-  "apkUrl": "/lin-go-gold-1.1.61.apk",
-  "sha256": "2B10CDEBC7977CFA47155AAF4CA5DA9FFCABF2A022DB68F10892E6740B8D2B25",
-  "size": 91482672,
+  "apkUrl": "/lin-go-gold-1.1.62.apk",
+  "sha256": "18D0751DAE07032419DBDA95A449CCAC054487A250DFA9DCC5D7B6CBB27767F9",
+  "size": 91482736,
   "minimumAndroidSdk": 24,
-  "notes": "تحديث 1.1.61: قسم ألعاب احترافي (19 لعبة) — تحويل GamesTab + games.css إلى parchment (hero/stats/quick/progress/footer/panel)، إضافة لعبة «ترجم الجملة» (sentence-level translation، +8 XP)، إضافة «مسار الألعاب» (4 مراحل: مبتدئ/متوسط/متقدم/خبير) مع مؤشر فتح/قفل based on XP. TSC ✅ Build ✅. جميع الدروس (740) محفوظة.",
-  "releaseUrl": "https://github.com/hmachikh16-boop/englishtok/releases/tag/gold-v1.1.61",
-  "publishedAt": "2026-11-09T14:00:00.000Z"
+  "notes": "تحديث 1.1.62: مسار الدروس احترافي (progressive unlock) — إظهار 5 دروس inicialmente، وفتح 5 التالية بعد إكمال 5. إزالة زر «عرض المزيد». تحسين سلاسة الواجهة. TSC ✅ Build ✅. جميع الدروس (740) محفوظة. الألعاب (19) + parchment UI + مسار الألعاب (Phase 1+2) محفوظة.",
+  "releaseUrl": "https://github.com/hmachikh16-boop/englishtok/releases/tag/gold-v1.1.62",
+  "publishedAt": "2026-11-09T15:00:00.000Z"
 }
