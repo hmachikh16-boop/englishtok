@@ -1,11 +1,11 @@
 {
-  "version": "1.1.58",
+  "version": "1.1.59",
   "packageId": "com.englishtok.gold",
-  "apkUrl": "/lin-go-gold-1.1.58.apk",
-  "sha256": "36B7ACB2605CD8984208246D4F8C16020A22A7C7824E155E933B180B1C9F3FFA",
-  "size": 90791216,
+  "apkUrl": "/lin-go-gold-1.1.59.apk",
+  "sha256": "E5F13399A791FCB33489238EA8C7F745661135B4CE9AB6B1E0934AF5F5B1FA33",
+  "size": 91482252,
   "minimumAndroidSdk": 24,
-  "notes": "تحديث 1.1.58: مسار التعلم يعرض الدروس تدريجيًا (5 دروس + زر واضح لعرض 5 إضافية، و5 جديدة تظهر تلقائيًا بعد إكمال 5) + تحسين قائمة الإعدادات وقائمة الكلمات بتصميم ورقي احترافي موحّد.",
-  "releaseUrl": "https://github.com/hmachikh16-boop/englishtok/releases/tag/gold-v1.1.58",
-  "publishedAt": "2026-11-09T11:00:00.000Z"
+  "notes": "تحديث 1.1.59: استعادة جميع الدروس في المسار (740 درسًا كاملة بلا اختصار) + إصلاح مزامنة المحتوى (كان التنزيل القديم يحتوي 16 درسًا فقط) + تحسين قائمة الإعدادات وقائمة الكلمات بتصميم ورقي احترافي.",
+  "releaseUrl": "https://github.com/hmachikh16-boop/englishtok/releases/tag/gold-v1.1.59",
+  "publishedAt": "2026-11-09T12:00:00.000Z"
 }

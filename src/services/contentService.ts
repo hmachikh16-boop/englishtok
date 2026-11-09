@@ -2,7 +2,7 @@ import { Capacitor } from '@capacitor/core';
 import type { Lesson } from '../types';
 
 const CONTENT_CACHE_KEYS = {
-  en: 'englishtok_learning_path_content_v8',
+  en: 'englishtok_learning_path_content_v9',
   fr: 'englishtok_learning_path_content_fr_v2',
 } as const;
 const CONTENT_VERSION_KEYS = {

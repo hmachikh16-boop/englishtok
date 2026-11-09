@@ -238,7 +238,7 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
     [path.levels, path.nextLessonId],
   );
   const [selectedPathStage, setSelectedPathStage] = useState<number | 'all'>(currentStageNumber);
-  const [visibleLessonCount, setVisibleLessonCount] = useState(5);
+  const [visibleLessonCount, setVisibleLessonCount] = useState(1000);
   const [isPending, startTransition] = useTransition();
   const selectedPhase = EDUCATIONAL_PHASES.find((phase) => phase.id === selectedPhaseId);
   const selectedSchoolYear = findSchoolYearRoute(selectedSchoolYearId);
@@ -330,13 +330,6 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
         ? path.levels
         : path.levels.filter((level) => level.stage === selectedPathStage);
   }, [completedLessonIds, getSchoolYearProgress, path.levels, selectedPathStage, selectedSchoolYear]);
-
-  useEffect(() => {
-    const shouldExpand = visibleLevels.some(
-      (level) => level.completedCount >= visibleLessonCount && visibleLessonCount < 1000,
-    );
-    if (shouldExpand) setVisibleLessonCount((count) => Math.min(count + 5, 1000));
-  }, [visibleLevels, visibleLessonCount]);
 
   const isSchoolYearCourse = Boolean(selectedSchoolYear?.grade);
   const today = new Date().toISOString().slice(0, 10);
