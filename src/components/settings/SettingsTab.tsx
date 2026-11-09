@@ -422,7 +422,7 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
         body: JSON.stringify({
           message: text,
-          email: supportEmail.trim(),
+          userEmail: supportEmail.trim(),
           code,
           device,
           userName: userProfile.displayName,

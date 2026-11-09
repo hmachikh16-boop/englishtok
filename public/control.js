@@ -992,7 +992,7 @@ const loadChatMessages = async (conversationId) => {
   } catch (error) {
     activeChatMessages = [];
   }
-  void loadComplaintsData();
+  renderComplaints();
 };
 
 const sendChatReply = async (conversationId, text) => {
@@ -1009,6 +1009,8 @@ const sendChatReply = async (conversationId, text) => {
 };
 
 const renderComplaints = () => {
+  // Complaints (chat) do not depend on the license DB; they are loaded from
+  // the chat API. Do not gate rendering on STATE.db.
   const list = $('#complaintsList');
   const empty = $('#complaintsEmpty');
   const navCount = $('#navComplaintCount');
@@ -1082,21 +1084,21 @@ const renderComplaints = () => {
       </div>`;
   }
 
-  list.innerHTML = `
-    <div class="chat-conv-list">${convList}</div>
-    ${threadHtml}`;
+  if (activeChatConversationId) {
+    list.innerHTML = threadHtml;
+  } else {
+    list.innerHTML = `<div class="chat-conv-list">${convList}</div>`;
+  }
 };
 
 // Load chat conversations when complaints view is shown
-const originalSwitchView = switchView;
-// We'll call loadChatConversations in renderAll instead
-// Patch: load conversations before rendering complaints
 const loadComplaintsData = async () => {
   await loadChatConversations();
   if (activeChatConversationId) {
     await loadChatMessages(activeChatConversationId);
+    return;
   }
-  void loadComplaintsData();
+  renderComplaints();
 };
 
 const renderActivityLog = () => {

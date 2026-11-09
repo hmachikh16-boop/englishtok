@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { MessageCircle, Send, AtSign } from 'lucide-react';
+import React, { useEffect, useRef, useState } from 'react';
+import { MessageCircle, Send } from 'lucide-react';
 import { Capacitor } from '@capacitor/core';
 import { getStoredGoldLicenseCode } from '../../services/goldLicense';
 
@@ -13,20 +13,35 @@ interface ChatMessage {
 interface SupportChatProps {
   onClose?: () => void;
   compact?: boolean;
+  userName?: string;
 }
 
-export const SupportChat: React.FC<SupportChatProps> = ({ onClose, compact = false }) => {
+const CHAT_BASE = 'https://englishtok-eight.vercel.app/api/admin';
+
+const formatTime = (iso: string): string => {
+  const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) return '';
+  return date.toLocaleTimeString('ar', { hour: '2-digit', minute: '2-digit' });
+};
+
+export const SupportChat: React.FC<SupportChatProps> = ({ onClose, compact = false, userName = '' }) => {
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [chatInput, setChatInput] = useState('');
   const [chatSending, setChatSending] = useState(false);
   const [chatStatus, setChatStatus] = useState('');
   const [supportEmail, setSupportEmail] = useState('');
+  const threadRef = useRef<HTMLDivElement | null>(null);
+
+  const identity = () => {
+    const code = getStoredGoldLicenseCode();
+    const device = Capacitor.getPlatform();
+    return { code, device };
+  };
 
   const loadChatMessages = async () => {
     try {
-      const code = getStoredGoldLicenseCode();
-      const device = Capacitor.getPlatform();
-      const url = `https://englishtok-eight.vercel.app/api/admin?action=chat&code=${encodeURIComponent(code)}&device=${encodeURIComponent(device)}`;
+      const { code, device } = identity();
+      const url = `${CHAT_BASE}?action=chat&code=${encodeURIComponent(code)}&device=${encodeURIComponent(device)}`;
       const response = await fetch(url, { headers: { Accept: 'application/json' }, cache: 'no-store' });
       if (!response.ok) return;
       const payload = await response.json().catch(() => ({}));
@@ -34,27 +49,26 @@ export const SupportChat: React.FC<SupportChatProps> = ({ onClose, compact = fal
         setChatMessages(payload.messages);
       }
     } catch {
-      /* ignore */
+      /* ignore network hiccups; next poll retries */
     }
   };
 
   const handleChatSend = async () => {
     const text = chatInput.trim();
-    if (!text) return;
+    if (!text || chatSending) return;
     setChatSending(true);
     setChatStatus('');
     try {
-      const code = getStoredGoldLicenseCode();
-      const device = Capacitor.getPlatform();
-      const response = await fetch('https://englishtok-eight.vercel.app/api/admin?action=chat', {
+      const { code, device } = identity();
+      const response = await fetch(`${CHAT_BASE}?action=chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
         body: JSON.stringify({
           message: text,
-          email: supportEmail.trim(),
+          userEmail: supportEmail.trim(),
           code,
           device,
-          userName: '',
+          userName: userName.trim(),
         }),
       });
       const payload = await response.json().catch(() => ({}));
@@ -70,26 +84,48 @@ export const SupportChat: React.FC<SupportChatProps> = ({ onClose, compact = fal
 
   useEffect(() => {
     void loadChatMessages();
-    const interval = window.setInterval(() => void loadChatMessages(), 30000);
+    const interval = window.setInterval(() => void loadChatMessages(), 20000);
     return () => window.clearInterval(interval);
   }, []);
 
+  useEffect(() => {
+    if (threadRef.current) {
+      threadRef.current.scrollTop = threadRef.current.scrollHeight;
+    }
+  }, [chatMessages.length]);
+
   return (
-    <div className={`flex flex-col ${compact ? 'h-full' : 'h-[70vh]'} bg-slate-900 rounded-2xl border border-emerald-500/20 shadow-xl overflow-hidden`}>
+    <div
+      className={`flex flex-col overflow-hidden rounded-3xl border border-[#d8c49a] bg-[#fbf0d7] shadow-2xl ${compact ? 'h-full' : 'h-[76vh]'}`}
+      style={{ boxShadow: '0 24px 60px rgba(74,51,25,0.35), 0 2px 0 rgba(255,255,255,0.6) inset' }}
+      dir="rtl"
+    >
       {/* Header */}
-      <div className="flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-emerald-900/60 to-slate-900 border-b border-emerald-500/20">
-        <div className="w-9 h-9 rounded-full bg-gradient-to-br from-emerald-500 to-emerald-700 flex items-center justify-center text-white font-black text-sm shadow-lg">
+      <div
+        className="flex items-center gap-3 border-b border-[#d8c49a] px-4 py-3"
+        style={{ background: 'linear-gradient(150deg, #f4e8cc 0%, #e8d9b0 100%)' }}
+      >
+        <div
+          className="grid h-10 w-10 flex-none place-items-center rounded-full text-base font-black text-[#fbf0d7]"
+          style={{
+            background: 'radial-gradient(circle at 32% 26%, rgba(255,255,255,0.35), transparent 46%), linear-gradient(150deg, #a56c18, #7d4c0d)',
+            boxShadow: '0 2px 6px rgba(74,51,25,0.35)',
+          }}
+        >
           G
         </div>
-        <div className="flex-1">
-          <h3 className="text-sm font-black text-white">دردشة مع الدعم</h3>
-          <p className="text-[10px] text-emerald-300/80">ردود خلال 24 ساعة · Polling كل 30s</p>
+        <div className="min-w-0 flex-1">
+          <h3 className="text-sm font-black text-[#2c2114]">دردشة مع الدعم</h3>
+          <p className="flex items-center gap-1.5 text-[10px] font-bold text-[#5b4730]">
+            <span className="inline-block h-2 w-2 rounded-full bg-[#8d2f24]" />
+            نرد عليك خلال 24 ساعة
+          </p>
         </div>
         {onClose && (
           <button
             type="button"
             onClick={onClose}
-            className="w-8 h-8 rounded-full bg-slate-800 text-slate-300 flex items-center justify-center hover:bg-slate-700 transition"
+            className="grid h-8 w-8 place-items-center rounded-full border border-[#d8c49a] bg-[#fbf0d7] text-[#5b4730] transition hover:bg-[#f4e8cc] active:scale-95"
             aria-label="إغلاق"
           >
             ✕
@@ -98,67 +134,83 @@ export const SupportChat: React.FC<SupportChatProps> = ({ onClose, compact = fal
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto no-scrollbar p-3 flex flex-col gap-2">
-        {chatMessages.length === 0 && (
-          <div className="flex-1 flex flex-col items-center justify-center text-center py-8">
-            <div className="w-14 h-14 rounded-full bg-emerald-500/10 flex items-center justify-center mb-3">
-              <MessageCircle className="w-7 h-7 text-emerald-400" />
+      <div ref={threadRef} className="flex-1 overflow-y-auto px-3 py-3" style={{ background: 'linear-gradient(180deg, #fbf0d7, #f4e8cc)' }}>
+        {chatMessages.length === 0 ? (
+          <div className="flex h-full flex-col items-center justify-center px-6 text-center">
+            <div className="mb-3 grid h-16 w-16 place-items-center rounded-full border border-[#d8c49a] bg-[#f4e8cc]">
+              <MessageCircle className="h-8 w-8 text-[#a56c18]" />
             </div>
-            <p className="text-xs text-slate-400 max-w-[220px]">
-              لا توجد رسائل بعد. ابدأ المحادثة…
+            <p className="text-sm font-black text-[#2c2114]">مرحبًا بك في الدعم</p>
+            <p className="mt-1 max-w-[240px] text-xs leading-relaxed text-[#5b4730]">
+              اكتب رسالتك وسنرد عليك هنا مباشرة. يمكنك السؤال عن التفعيل، الصوت، أو التحديث.
             </p>
           </div>
-        )}
-        {chatMessages.map((m) => (
-          <div
-            key={m.id}
-            className={`flex ${m.sender === 'user' ? 'justify-end' : 'justify-start'}`}
-          >
-            <div
-              className={`max-w-[80%] rounded-2xl px-3 py-2 text-xs leading-relaxed ${
-                m.sender === 'user'
-                  ? 'bg-emerald-500 text-slate-950 rounded-br-sm'
-                  : 'bg-slate-800 text-white border border-slate-700 rounded-bl-sm'
-              }`}
-            >
-              <p className="whitespace-pre-wrap">{m.message}</p>
-              <span className={`block mt-1 text-[9px] ${m.sender === 'user' ? 'text-slate-900/70' : 'text-slate-400'}`}>
-                {m.sender === 'admin' ? 'الإدارة' : 'أنت'} · {new Date(m.at).toLocaleTimeString('ar', { hour: '2-digit', minute: '2-digit' })}
-              </span>
-            </div>
+        ) : (
+          <div className="flex flex-col gap-2.5">
+            {chatMessages.map((m) => {
+              const isUser = m.sender === 'user';
+              return (
+                <div key={m.id} className={`flex ${isUser ? 'justify-start' : 'justify-end'}`}>
+                  <div
+                    className={`max-w-[82%] rounded-2xl px-3 py-2 text-xs leading-relaxed ${
+                      isUser
+                        ? 'rounded-tr-sm text-[#fbf0d7]'
+                        : 'rounded-tl-sm border border-[#d8c49a] text-[#2c2114]'
+                    }`}
+                    style={
+                      isUser
+                        ? { background: 'linear-gradient(150deg, #8d2f24, #6f2118)', boxShadow: '0 2px 6px rgba(74,51,25,0.25)' }
+                        : { background: '#fbf0d7' }
+                    }
+                  >
+                    <p className="whitespace-pre-wrap">{m.message}</p>
+                    <span className={`mt-1 block text-[9px] ${isUser ? 'text-[#f4e8cc]/80' : 'text-[#8a7350]'}`}>
+                      {isUser ? 'أنت' : 'الإدارة'} · {formatTime(m.at)}
+                    </span>
+                  </div>
+                </div>
+              );
+            })}
           </div>
-        ))}
+        )}
       </div>
 
       {/* Compose */}
-      <div className="border-t border-emerald-500/20 bg-slate-900/80 p-3">
-        <div className="flex gap-2">
+      <div className="border-t border-[#d8c49a] bg-[#f4e8cc] px-3 py-2.5">
+        <div className="flex items-center gap-2">
           <input
             type="email"
             value={supportEmail}
             onChange={(e) => setSupportEmail(e.target.value)}
             placeholder="بريدك (اختياري)"
-            className="w-24 rounded-xl border border-emerald-500/30 bg-slate-950/60 px-2 py-2 text-[10px] text-white outline-none focus:border-emerald-400"
+            className="hidden w-28 rounded-xl border border-[#d8c49a] bg-[#fbf0d7] px-2 py-2 text-[10px] text-[#2c2114] outline-none placeholder:text-[#a08a63] focus:border-[#a56c18] sm:block"
           />
           <input
             type="text"
             value={chatInput}
             onChange={(e) => setChatInput(e.target.value)}
-            onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); void handleChatSend(); } }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                void handleChatSend();
+              }
+            }}
             placeholder="اكتب رسالتك…"
-            className="flex-1 rounded-xl border border-emerald-500/30 bg-slate-950/60 px-3 py-2 text-xs text-white outline-none focus:border-emerald-400"
+            className="min-w-0 flex-1 rounded-xl border border-[#d8c49a] bg-[#fbf0d7] px-3 py-2.5 text-xs text-[#2c2114] outline-none placeholder:text-[#a08a63] focus:border-[#a56c18]"
           />
           <button
             type="button"
             onClick={() => void handleChatSend()}
             disabled={chatSending || !chatInput.trim()}
-            className="rounded-xl bg-emerald-500 px-4 py-2 text-xs font-black text-slate-950 transition hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-50"
+            className="grid h-10 w-10 flex-none place-items-center rounded-xl text-[#fbf0d7] transition active:scale-95 disabled:cursor-not-allowed disabled:opacity-45"
+            style={{ background: 'linear-gradient(150deg, #a56c18, #7d4c0d)', boxShadow: '0 3px 8px rgba(74,51,25,0.28)' }}
+            aria-label="إرسال"
           >
-            {chatSending ? '…' : 'إرسال'}
+            <Send className="h-4 w-4" />
           </button>
         </div>
         {chatStatus && (
-          <p className="mt-2 text-xs font-bold text-emerald-300">{chatStatus}</p>
+          <p className="mt-2 text-[11px] font-bold text-[#8d2f24]">{chatStatus}</p>
         )}
       </div>
     </div>

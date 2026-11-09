@@ -43,7 +43,7 @@ const GoldAppPreview = React.lazy(() =>
   import('./GoldAppPreview').then((module) => ({ default: module.GoldAppPreview })),
 );
 
-const GOLD_VERSION = '1.1.56';
+const GOLD_VERSION = '1.1.57';
 const GOLD_APK_URL = `/lin-go-gold-${GOLD_VERSION}.apk`;
 
 const stages = [

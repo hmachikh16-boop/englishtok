@@ -731,26 +731,51 @@ const [supportChatOpen, setSupportChatOpen] = useState(false);
           onChangeTab={handleChangeTab}
         />}
 
-        {/* Floating Support Chat Button (Messenger-style) */}
+        {/* Floating Support Chat Button (Messenger-style, above the Reels button) */}
         {activeTab !== 'lesson' && activeTab !== 'chat' && (
           <button
             type="button"
             onClick={() => setSupportChatOpen(true)}
             aria-label="دردشة مع الدعم"
-            className="fixed bottom-24 right-4 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-emerald-500 to-emerald-700 text-white shadow-2xl shadow-emerald-900/40 transition hover:scale-105 active:scale-95 sm:bottom-6 sm:right-6"
+            className="fixed right-4 z-40 flex items-center gap-2 rounded-full border border-[#6d4610]/70 px-1.5 py-1.5 transition hover:-translate-y-0.5 active:translate-y-0.5"
+            style={{
+              bottom: activeTab === 'categories' ? 148 : 84,
+              background:
+                'linear-gradient(180deg, rgba(255,255,255,0.5), rgba(255,255,255,0) 44%), linear-gradient(150deg, #fbe8b8 0%, #e7c477 52%, #d4a94f 100%)',
+              boxShadow:
+                '0 1px 0 rgba(255,255,255,0.7) inset, 0 3px 0 #8a5a12, 0 12px 24px rgba(74,51,25,0.3)',
+            }}
           >
-            <MessageCircle className="h-6 w-6" />
-            <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-rose-500 text-[10px] font-black text-white shadow">
-              !
+            <span
+              className="grid h-9 w-9 flex-none place-items-center rounded-full text-[#fbe8b8]"
+              style={{
+                background:
+                  'radial-gradient(circle at 32% 26%, rgba(255,255,255,0.28), transparent 44%), linear-gradient(150deg, #a83a2c, #7d241b)',
+                boxShadow: '0 1px 0 rgba(255,255,255,0.24) inset, 0 2px 5px rgba(74,51,25,0.38)',
+              }}
+            >
+              <MessageCircle className="h-5 w-5" />
             </span>
+            <span className="flex flex-col items-start gap-0.5 leading-none">
+              <strong className="text-[13px] font-black text-[#2c2114]">الدعم</strong>
+              <small className="text-[8px] font-extrabold tracking-wide text-[#7a5a2a]">دردشة مباشرة</small>
+            </span>
+            <span
+              className="ml-0.5 mr-1 h-2 w-2 flex-none rounded-full bg-[#8d2f24]"
+              style={{ boxShadow: '0 0 0 2px #f7e2b0, 0 0 0 4px rgba(141,47,36,0.14)' }}
+              aria-hidden="true"
+            />
           </button>
         )}
 
         {/* Support Chat Modal */}
         {supportChatOpen && (
-          <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 p-0 sm:items-center sm:p-4">
+          <div className="fixed inset-0 z-50 flex items-end justify-center bg-[#2c2114]/55 p-0 sm:items-center sm:p-4">
             <div className="w-full max-w-lg">
-              <SupportChat onClose={() => setSupportChatOpen(false)} />
+              <SupportChat
+                userName={userProfile.displayName}
+                onClose={() => setSupportChatOpen(false)}
+              />
             </div>
           </div>
         )}

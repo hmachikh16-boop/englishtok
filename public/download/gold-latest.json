@@ -1,11 +1,11 @@
 {
-  "version": "1.1.56",
+  "version": "1.1.57",
   "packageId": "com.englishtok.gold",
-  "apkUrl": "/lin-go-gold-1.1.56.apk",
-  "sha256": "F039C3B2523CF45BC53DAD5928D5CCD243DD3AD110430A1DCAD13A3D90FBAE5E",
-  "size": 90789440,
+  "apkUrl": "/lin-go-gold-1.1.57.apk",
+  "sha256": "4FFDC1A2E9FFD8D79508BCDE7AA50F53AB146BA54ECA218A6C578A9CFF7AE80D",
+  "size": 90790636,
   "minimumAndroidSdk": 24,
-  "notes": "تحديث Gold 1.1.56: زر دردشة (Messenger-style) عائم (FAB) — كل مستخدم يمكنه التواصل مع الإدارة مباشرة من داخل التطبيق (بدون البحث في الإعدادات). + إصلاح إرسال الشكاوي (relative->absolute URL)، +20 درس Stage 1، VocabTab default 'all', bump cache keys v7->v8, cap 125->1000.",
-  "releaseUrl": "https://github.com/hmachikh16-boop/englishtok/releases/tag/gold-v1.1.56",
-  "publishedAt": "2026-11-08T16:00:00.000Z"
+  "notes": "تحديث 1.1.57: إصلاح جذري لوصول الرسائل في لوحة التحكم (كانت هناك حلقة لا نهائية تمنع عرض المحادثات) + زر الدردشة الاحترافي أصبح فوق زر الريلز + تصميم دردشة كامل بألوان الورق + إصلاح حقل البريد.",
+  "releaseUrl": "https://github.com/hmachikh16-boop/englishtok/releases/tag/gold-v1.1.57",
+  "publishedAt": "2026-11-09T09:00:00.000Z"
 }

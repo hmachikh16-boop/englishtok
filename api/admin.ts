@@ -936,7 +936,7 @@ const handleChatSend = async (body: Record<string, unknown>) => {
   const code = asString(body.code, 48);
   const device = asString(body.device, 240);
   const userName = asString(body.userName, 160);
-  const userEmail = asString(body.userEmail, 240);
+  const userEmail = asString(body.userEmail, 240) || asString(body.email, 240);
   const conversationId = conversationIdFor(code, device);
   const id = await withDatabaseLock(async () => {
     const database = await loadDatabase();
