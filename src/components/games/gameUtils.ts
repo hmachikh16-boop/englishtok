@@ -12,7 +12,7 @@ export const shuffle = <T,>(items: readonly T[]): T[] => {
 export const buildRound = (puzzles: GamePuzzle[], size = 10): GamePuzzle[] =>
   shuffle(puzzles).slice(0, Math.min(size, puzzles.length));
 
-export type GameOptionField = 'word' | 'translationAr';
+export type GameOptionField = 'word' | 'translationAr' | 'exampleSentenceAr';
 
 /**
  * Builds a set of plausible distractors from the same category first, then
@@ -27,7 +27,11 @@ export const buildGameOptions = (
   preferSamePartOfSpeech = false,
 ): string[] => {
   const valueOf = (puzzle: GamePuzzle) =>
-    field === 'word' ? puzzle.word.toLowerCase() : puzzle.translationAr;
+    field === 'word'
+      ? puzzle.word.toLowerCase()
+      : field === 'translationAr'
+        ? puzzle.translationAr
+        : puzzle.exampleSentenceAr;
   const correct = valueOf(current);
   const seen = new Set([correct.trim().toLowerCase()]);
   const isPreferred = (puzzle: GamePuzzle) =>

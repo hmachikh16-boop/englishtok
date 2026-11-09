@@ -1,5 +1,6 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import {
+  BookOpen,
   ChevronLeft,
   Flame,
   Gamepad2,
@@ -44,6 +45,8 @@ import { VocabularyLadderGame } from './VocabularyLadderGame';
 import { WordChainGame } from './WordChainGame';
 import { WordChoiceGame } from './WordChoiceGame';
 import { WordScrambleGame } from './WordScrambleGame';
+import { TranslationGame } from './TranslationGame';
+import { ConversationGame } from './ConversationGame';
 import './games.css';
 
 interface GamesTabProps {
@@ -69,7 +72,9 @@ type GameKey =
   | 'dictation'
   | 'phonetic'
   | 'chain'
-  | 'ladder';
+  | 'ladder'
+  | 'translation'
+  | 'conversation';
 
 interface GameCard {
   id: GameKey;
@@ -242,6 +247,26 @@ const GAME_CATALOG: GameCard[] = [
     duration: '3–5 دقائق',
     badge: 'جديد',
   },
+  {
+    id: 'translation',
+    icon: BookOpen,
+    tone: 'gold',
+    title: 'ترجم الجملة',
+    description: 'اقرأ جملة إنجليزية واختر ترجمتها العربية (8 جمل).',
+    skill: 'ترجمة',
+    duration: '3–4 دقائق',
+    badge: 'جديد',
+  },
+  {
+    id: 'conversation',
+    icon: MessageSquareText,
+    tone: 'gold',
+    title: 'أكمل المحادثة',
+    description: 'اقرأ réplique إنجليزية واختر الرد (response) الأنسب (8 أسئلة).',
+    skill: 'محادثة',
+    duration: '3–4 دقائق',
+    badge: 'جديد',
+  },
 ];
 
 // Smart metadata for each game: an illustrated thumbnail (from the existing
@@ -265,6 +290,8 @@ const GAME_EXTRAS: Record<string, { thumb: string; difficulty: 'سهل' | 'مت�
   chain: { thumb: 'snake.svg', difficulty: 'متقدم', xp: 14 },
   ladder: { thumb: 'giraffe.svg', difficulty: 'متقدم', xp: 16 },
   memory: { thumb: 'elephant.svg', difficulty: 'متوسط', xp: 10 },
+  translation: { thumb: 'owl.svg', difficulty: 'متوسط', xp: 8 },
+  conversation: { thumb: 'parrot.svg', difficulty: 'متقدم', xp: 10 },
 };
 
 // Pick the "game of the day" deterministically so it stays stable within a day.
@@ -395,6 +422,10 @@ export const GamesTab: React.FC<GamesTabProps> = ({ lessons, userProfile, onUpda
         return <WordChainGame lessons={lessons} userProfile={userProfile} onUpdateProfile={handleProfileUpdate} onBack={backToLibrary} />;
       case 'ladder':
         return <VocabularyLadderGame lessons={lessons} userProfile={userProfile} onUpdateProfile={handleProfileUpdate} onBack={backToLibrary} />;
+      case 'translation':
+        return <TranslationGame lessons={lessons} userProfile={userProfile} onUpdateProfile={handleProfileUpdate} onBack={backToLibrary} />;
+      case 'conversation':
+        return <ConversationGame lessons={lessons} userProfile={userProfile} onUpdateProfile={handleProfileUpdate} onBack={backToLibrary} />;
       default:
         return null;
     }
@@ -414,8 +445,8 @@ export const GamesTab: React.FC<GamesTabProps> = ({ lessons, userProfile, onUpda
               </span>
               <h1 id="games-hub-title">تعلّم باللعب، وثبّت كل كلمة.</h1>
               <p>
-                سبعة عشر لعبة، كل منها تدرّب مهارة مختلفة: التهجئة، المفردات،
-                الاستماع، السياق، الذاكرة، والسرعة. كل إجابة صحيحة تمنح XP وتجعل
+                تسعة عشر لعبة، كل منها تدرّب مهارة مختلفة: التهجئة، المفردات،
+                الاستماع، السياق، الذاكرة، والسرعة، والترجمة، والمحادثة. كل إجابة صحيحة تمنح XP وتجعل
                 الدرس أكثر ثباتًا.
               </p>
             </div>
@@ -438,6 +469,41 @@ export const GamesTab: React.FC<GamesTabProps> = ({ lessons, userProfile, onUpda
                 <strong>{GAME_CATALOG.length}</strong>
                 <span>ألعاب</span>
               </div>
+            </div>
+          </section>
+
+          <section className="gg-hub-path" aria-labelledby="games-path-title">
+            <div className="gg-section-head">
+              <div>
+                <h2 id="games-path-title">مسار الألعاب</h2>
+                <p>اتقن كل مرحلة قبل الانتقال إلى التالية. XP يفتح المراحل الأعلى.</p>
+              </div>
+              <span>{userProfile.xp.toLocaleString('en-US')} XP</span>
+            </div>
+            <div className="gg-path-track">
+              {[
+                { stage: 1, label: 'مبتدئ', threshold: 0, games: 'تهجئة، مفردات، استماع' },
+                { stage: 2, label: 'متوسط', threshold: 500, games: 'سياق، نحو، ذاكرة' },
+                { stage: 3, label: 'متقدم', threshold: 1500, games: 'سرعة، ترجمة، نطق' },
+                { stage: 4, label: 'خبير', threshold: 3000, games: 'تحدي، سلسلة، سلم' },
+              ].map((step) => {
+                const unlocked = userProfile.xp >= step.threshold;
+                return (
+                  <div
+                    key={step.stage}
+                    className={`gg-path-step ${unlocked ? 'is-unlocked' : 'is-locked'}`}
+                  >
+                    <span className="gg-path-step-num">{step.stage}</span>
+                    <div className="gg-path-step-copy">
+                      <strong>{step.label}</strong>
+                      <small>{step.games}</small>
+                    </div>
+                    <span className="gg-path-step-state">
+                      {unlocked ? 'مفتوح' : `${step.threshold} XP`}
+                    </span>
+                  </div>
+                );
+              })}
             </div>
           </section>
 
