@@ -1,11 +1,11 @@
 {
-  "version": "1.1.59",
+  "version": "1.1.60",
   "packageId": "com.englishtok.gold",
-  "apkUrl": "/lin-go-gold-1.1.59.apk",
-  "sha256": "E5F13399A791FCB33489238EA8C7F745661135B4CE9AB6B1E0934AF5F5B1FA33",
-  "size": 91482252,
+  "apkUrl": "/lin-go-gold-1.1.60.apk",
+  "sha256": "DCC83BF7626EE9297D54F8C2F07E591CEE0D02B5244BA1FC26D46CDBA6EE1563",
+  "size": 91480656,
   "minimumAndroidSdk": 24,
-  "notes": "تحديث 1.1.59: استعادة جميع الدروس في المسار (740 درسًا كاملة بلا اختصار) + إصلاح مزامنة المحتوى (كان التنزيل القديم يحتوي 16 درسًا فقط) + تحسين قائمة الإعدادات وقائمة الكلمات بتصميم ورقي احترافي.",
-  "releaseUrl": "https://github.com/hmachikh16-boop/englishtok/releases/tag/gold-v1.1.59",
-  "publishedAt": "2026-11-09T12:00:00.000Z"
+  "notes": "تحديث 1.1.60: إزالة قسم الدعم من قائمة الإعدادات (الاكتفاء بزر الدعم العائم) + إصلاح مفتاح المؤثرات الصوتية + تحسين اتساق بطاقات الإعدادات. جميع الدروس (740) محفوظة كما هي دون أي تعديل أو حذف.",
+  "releaseUrl": "https://github.com/hmachikh16-boop/englishtok/releases/tag/gold-v1.1.60",
+  "publishedAt": "2026-11-09T13:00:00.000Z"
 }

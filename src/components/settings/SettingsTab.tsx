@@ -17,7 +17,6 @@ import {
   AlertCircle,
   AtSign,
   Phone,
-  MessageCircle,
   ExternalLink,
   KeyRound,
   Upload,
@@ -82,14 +81,6 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
   const [copiedCmd, setCopiedCmd] = useState<string | null>(null);
   const [showResetConfirm, setShowResetConfirm] = useState(false);
   const [activeSubTab, setActiveSubTab] = useState<'app' | 'capacitor' | 'content'>('app');
-  const [supportMessage, setSupportMessage] = useState('');
-  const [supportEmail, setSupportEmail] = useState('');
-  const [supportStatus, setSupportStatus] = useState('');
-  const [chatMessages, setChatMessages] = useState<{ id: string; sender: 'user' | 'admin'; message: string; at: string }[]>([]);
-  const [chatInput, setChatInput] = useState('');
-  const [chatSending, setChatSending] = useState(false);
-  const [chatStatus, setChatStatus] = useState('');
-  const [supportSending, setSupportSending] = useState(false);
   const [isCheckingUpdate, setIsCheckingUpdate] = useState(false);
   const [availableUpdate, setAvailableUpdate] = useState<AppUpdateManifest | null>(null);
   const [updateMessage, setUpdateMessage] = useState<string | null>(null);
@@ -353,98 +344,6 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
       setIsRefreshingContent(false);
     }
   };
-
-  const handleSupportSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    if (!supportMessage.trim()) {
-      setSupportStatus('اكتب تفاصيل المشكلة أولًا.');
-      return;
-    }
-    setSupportSending(true);
-    setSupportStatus('');
-    try {
-      const response = await fetch('https://englishtok-eight.vercel.app/api/admin?action=support', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify({
-          message: supportMessage.trim(),
-          email: supportEmail.trim(),
-          code: getStoredGoldLicenseCode(),
-          device: `${Capacitor.getPlatform()} ${userProfile.targetLanguage ?? ''}`,
-        }),
-      });
-      const payload = await response.json().catch(() => ({}));
-      if (!response.ok) {
-        throw new Error(payload.error || 'تعذر إرسال الشكوى.');
-      }
-      setSupportMessage('');
-      setSupportStatus('تم إرسال الشكوى إلى لوحة التحكم. سنراجعها قريبًا.');
-    } catch (error) {
-      setSupportStatus(error instanceof Error ? error.message : 'تعذر إرسال الشكوى.');
-    } finally {
-      setSupportSending(false);
-    }
-  };
-
-  const chatConversationId = () => {
-    const code = getStoredGoldLicenseCode();
-    const device = Capacitor.getPlatform();
-    return `${code || 'anon'}::${device}`;
-  };
-
-  const loadChatMessages = async () => {
-    try {
-      const code = getStoredGoldLicenseCode();
-      const device = Capacitor.getPlatform();
-      const url = `https://englishtok-eight.vercel.app/api/admin?action=chat&code=${encodeURIComponent(code)}&device=${encodeURIComponent(device)}`;
-      const response = await fetch(url, { headers: { Accept: 'application/json' }, cache: 'no-store' });
-      if (!response.ok) return;
-      const payload = await response.json().catch(() => ({}));
-      if (Array.isArray(payload.messages)) {
-        setChatMessages(payload.messages);
-      }
-    } catch {
-      /* ignore */
-    }
-  };
-
-  const handleChatSend = async (event?: React.FormEvent) => {
-    if (event) event.preventDefault();
-    const text = chatInput.trim();
-    if (!text) return;
-    setChatSending(true);
-    setChatStatus('');
-    try {
-      const code = getStoredGoldLicenseCode();
-      const device = Capacitor.getPlatform();
-      const response = await fetch('https://englishtok-eight.vercel.app/api/admin?action=chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify({
-          message: text,
-          userEmail: supportEmail.trim(),
-          code,
-          device,
-          userName: userProfile.displayName,
-        }),
-      });
-      const payload = await response.json().catch(() => ({}));
-      if (!response.ok) throw new Error(payload.error || 'تعذر إرسال الرسالة.');
-      setChatInput('');
-      await loadChatMessages();
-    } catch (error) {
-      setChatStatus(error instanceof Error ? error.message : 'تعذر إرسال الرسالة.');
-    } finally {
-      setChatSending(false);
-    }
-  };
-
-  // Poll for admin replies every 30s
-  useEffect(() => {
-    void loadChatMessages();
-    const interval = window.setInterval(() => void loadChatMessages(), 30000);
-    return () => window.clearInterval(interval);
-  }, []);
 
   const handleUpdateEverything = async () => {
     setIsUpdatingAll(true);
@@ -727,15 +626,12 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
               </div>
               <button
                 onClick={() => updateSetting('soundEffects', !userProfile.settings.soundEffects)}
-                className={`w-12 h-6 rounded-full transition-colors relative p-0.5 ${
-                  userProfile.settings.soundEffects ? 'bg-emerald-500' : 'bg-slate-800'
+                aria-pressed={userProfile.settings.soundEffects}
+                className={`flex h-6 w-12 items-center rounded-full p-0.5 transition-colors ${
+                  userProfile.settings.soundEffects ? 'justify-end bg-emerald-500' : 'justify-start bg-slate-800'
                 }`}
               >
-                <div
-                  className={`w-5 h-5 rounded-full bg-white transition-transform ${
-                    userProfile.settings.soundEffects ? 'translate-x-0' : '-translate-x-6'
-                  }`}
-                />
+                <span className="h-5 w-5 rounded-full bg-white shadow-sm transition-transform" />
               </button>
             </div>
           </div>
@@ -878,117 +774,6 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
             )}
           </div>
 
-          {goldEdition && (
-            <section
-              className="settings-section rounded-2xl border border-emerald-500/20 bg-gradient-to-br from-slate-900 to-emerald-950/30 p-4 shadow-lg"
-              aria-labelledby="gold-support-heading"
-            >
-              <div className="flex items-center gap-2 text-emerald-300">
-                <MessageCircle className="h-4 w-4" aria-hidden="true" />
-                <h3 id="gold-support-heading" className="text-xs font-bold text-white">
-                  دعم Gold+
-                </h3>
-              </div>
-              <p className="mt-2 text-xs leading-6 text-slate-300">
-                تواصل معنا لأي مشكلة في التفعيل أو التحديث أو الصوت. كودك وحالة تفعيلك محفوظان على هذا الجهاز.
-              </p>
-              <div className="mt-3 flex flex-col gap-2 text-xs text-slate-300 sm:flex-row sm:flex-wrap sm:gap-x-5">
-                <a
-                  href="mailto:hmachikh16@gmail.com?subject=Gold%20Support"
-                  className="inline-flex items-center gap-2 hover:text-emerald-300"
-                  dir="ltr"
-                >
-                  <AtSign className="h-3.5 w-3.5 text-emerald-400" aria-hidden="true" />
-                  hmachikh16@gmail.com
-                </a>
-                <a
-                  href="https://wa.me/213665003037"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 hover:text-emerald-300"
-                  dir="ltr"
-                >
-                  <MessageCircle className="h-3.5 w-3.5 text-emerald-400" aria-hidden="true" />
-                  WhatsApp
-                </a>
-                <a
-                  href="https://www.facebook.com/hma.chikh14/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 hover:text-emerald-300"
-                >
-                  <svg className="h-3.5 w-3.5 text-emerald-400" viewBox="0 0 24 24" aria-hidden="true">
-                    <path
-                      fill="currentColor"
-                      d="M14 8h3V4h-3c-2.76 0-5 2.24-5 5v3H6v4h3v8h4v-8h3l1-4h-4V9c0-.55.45-1 1-1Z"
-                    />
-                  </svg>
-                  فيسبوك
-                </a>
-                <a
-                  href="https://englishtok-eight.vercel.app/control"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 hover:text-emerald-300"
-                  dir="ltr"
-                >
-                  <ExternalLink className="h-3.5 w-3.5 text-emerald-400" aria-hidden="true" />
-                  لوحة التحكم (للإدارة)
-                </a>
-              </div>
-
-              <div className="mt-4 flex flex-col gap-3">
-                 <div className="flex items-center gap-2">
-                   <MessageCircle className="h-4 w-4 text-emerald-400" aria-hidden="true" />
-                   <h4 className="text-xs font-black text-white">دردشة مع الدعم</h4>
-                   <span className="text-[10px] text-slate-400">ردود خلال 24 ساعة</span>
-                 </div>
-                 <div className="flex flex-col gap-2 max-h-64 overflow-y-auto no-scrollbar rounded-xl border border-emerald-500/20 bg-slate-950/40 p-3">
-                   {chatMessages.length === 0 && (
-                     <p className="text-xs text-slate-400 text-center py-4">لا توجد رسائل بعد. ابدأ المحادثة…</p>
-                   )}
-                   {chatMessages.map((m) => (
-                     <div key={m.id} className={`flex ${m.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
-                       <div className={`max-w-[85%] rounded-2xl px-3 py-2 text-xs leading-relaxed ${m.sender === 'user' ? 'bg-emerald-500 text-slate-950 rounded-br-sm' : 'bg-slate-800 text-white border border-slate-700 rounded-bl-sm'}`}>
-                         <p className="whitespace-pre-wrap">{m.message}</p>
-                         <span className={`block mt-1 text-[9px] ${m.sender === 'user' ? 'text-slate-900/70' : 'text-slate-400'}`}>
-                           {m.sender === 'admin' ? 'الإدارة' : 'أنت'} · {new Date(m.at).toLocaleTimeString('ar', { hour: '2-digit', minute: '2-digit' })}
-                         </span>
-                       </div>
-                     </div>
-                   ))}
-                 </div>
-                 <div className="flex gap-2">
-                   <input
-                     type="email"
-                     value={supportEmail}
-                     onChange={(event) => setSupportEmail(event.target.value)}
-                     placeholder="بريدك (اختياري)"
-                     className="w-28 rounded-xl border border-emerald-500/30 bg-slate-950/60 px-3 py-2 text-xs text-white outline-none focus:border-emerald-400"
-                   />
-                   <input
-                     type="text"
-                     value={chatInput}
-                     onChange={(event) => setChatInput(event.target.value)}
-                     placeholder="اكتب رسالتك…"
-                     className="flex-1 rounded-xl border border-emerald-500/30 bg-slate-950/60 px-3 py-2 text-xs text-white outline-none focus:border-emerald-400"
-                   />
-                   <button
-                     type="button"
-                     onClick={() => void handleChatSend()}
-                     disabled={chatSending || !chatInput.trim()}
-                     className="rounded-xl bg-emerald-500 px-4 py-2 text-xs font-black text-slate-950 transition hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-50"
-                   >
-                     {chatSending ? '…' : 'إرسال'}
-                   </button>
-                 </div>
-                 {chatStatus && (
-                   <p className="text-xs font-bold text-emerald-300">{chatStatus}</p>
-                 )}
-
-               </div>
-            </section>
-          )}
 
           <section
             className="settings-section rounded-2xl border border-sky-500/20 bg-gradient-to-br from-slate-900 to-sky-950/30 p-4 shadow-lg"
@@ -1213,7 +998,7 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
           </div>
 
           {/* Config file explanation */}
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-col gap-2 text-xs">
+          <div className="settings-section bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-col gap-2 text-xs">
             <span className="font-bold text-amber-400">ملف الإعداد المهيأ جاهزاً:</span>
             <p className="text-slate-400 leading-relaxed text-[11px]">
               تم تضمين ملف <code className="text-sky-300 bg-slate-950 px-1 py-0.5 rounded">capacitor.config.json</code> مسبقاً في جذر المشروع باسم التطبيق <strong className="text-white">Lin Go</strong> ومجلد التوزيع <code className="text-sky-300 bg-slate-950 px-1 py-0.5 rounded">dist</code>.
@@ -1225,7 +1010,7 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
       {/* Subtab 3: Content Management Architecture */}
       {activeSubTab === 'content' && (
         <div className="flex flex-col gap-4">
-          <div className="flex flex-col gap-3 rounded-2xl border border-emerald-500/30 bg-slate-900 p-4 shadow-lg">
+          <div className="settings-section flex flex-col gap-3 rounded-2xl border border-emerald-500/30 bg-slate-900 p-4 shadow-lg">
             <div className="flex items-center gap-2 text-emerald-300">
               <RefreshCw className="h-4 w-4" />
               <h3 className="text-xs font-bold text-white">مزامنة محتوى الدروس</h3>
@@ -1253,7 +1038,7 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
             )}
           </div>
 
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl flex flex-col gap-2">
+          <div className="settings-section bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl flex flex-col gap-2">
             <div className="flex items-center gap-2 text-amber-400">
               <Code className="w-5 h-5" />
               <h3 className="text-sm font-bold text-white">
@@ -1265,15 +1050,15 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
             </p>
           </div>
 
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-col gap-3">
+          <div className="settings-section bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-col gap-3">
             <h4 className="text-xs font-bold text-white">
               الملف المسؤول عن إضافة المحتوى:
             </h4>
             <div className="bg-slate-950 p-3 rounded-xl border border-slate-800 font-mono text-xs text-sky-400" dir="ltr">
-              /src/data/lessons.ts
+              /src/data/curriculumContent.ts (+ stage1.ts … stage4.ts)
             </div>
             <p className="text-xs text-slate-400 leading-relaxed">
-              لإضافة درس جديد، يكفي إضافة كائن داخل مصفوفة <code className="text-amber-300">INITIAL_LESSONS</code> يحتوي على:
+              لإضافة درس جديد، أضف مواصفة داخل مصفوفة <code className="text-amber-300">LESSON_SPECS</code> أو ملف المرحلة المناسب مثل <code className="text-amber-300">src/data/stage1.ts</code> تحتوي على:
             </p>
             <ul className="text-xs text-slate-300 flex flex-col gap-1.5 list-disc pr-5">
               <li><strong className="text-white">title & titleAr:</strong> عنوان الدرس بلغة التعلّم والعربية.</li>
@@ -1284,7 +1069,7 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
             </ul>
           </div>
 
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-col gap-2 text-xs">
+          <div className="settings-section bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-col gap-2 text-xs">
             <span className="font-bold text-emerald-400">حفظ التقدم والتحديث:</span>
             <p className="text-slate-400 leading-relaxed text-[11px]">
             يبقى تقدم المتعلم ومفضلاته في <code className="text-sky-300 bg-slate-950 px-1 py-0.5 rounded">localStorage</code> مستقلًا عن ملف المحتوى. تُراجع البيانات المنشورة قبل اعتمادها، ويستخدم التطبيق آخر نسخة محفوظة إذا تعذر الاتصال.
