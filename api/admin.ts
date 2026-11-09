@@ -58,6 +58,27 @@ interface ChatMessage {
   read?: boolean;
 }
 
+interface FriendRecord {
+  id: string;
+  fromCode: string;
+  fromDevice: string;
+  fromName: string;
+  toCode: string;
+  status: 'pending' | 'accepted' | 'rejected';
+  createdAtUtc: string;
+  updatedAtUtc: string;
+}
+
+interface FriendChatMessage {
+  id: string;
+  conversationId: string;
+  senderCode: string;
+  senderName: string;
+  message: string;
+  at: string;
+  read?: boolean;
+}
+
 interface LicenseSettings {
   /** When true, the Gold app opens for everyone without a license code. */
   freeMode: boolean;
@@ -69,6 +90,8 @@ interface LicenseDatabase {
   licenses: LicenseRecord[];
   activity: ActivityEvent[];
   chats: ChatMessage[];
+  friends: FriendRecord[];
+  friendChats: FriendChatMessage[];
   settings: LicenseSettings;
 }
 
@@ -225,6 +248,8 @@ const emptyDatabase = (): LicenseDatabase => ({
   licenses: [],
   activity: [],
   chats: [],
+  friends: [],
+  friendChats: [],
   settings: { freeMode: false },
 });
 
@@ -232,6 +257,46 @@ const normalizeSettings = (raw: unknown): LicenseSettings => {
   if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return { freeMode: false };
   const source = raw as Record<string, unknown>;
   return { freeMode: asBoolean(pick(source, 'freeMode', 'FreeMode')) };
+};
+
+const normalizeFriends = (raw: unknown): FriendRecord[] => {
+  if (!Array.isArray(raw)) return [];
+  const records: FriendRecord[] = [];
+  for (const item of raw.slice(0, 5000)) {
+    if (!item || typeof item !== 'object' || Array.isArray(item)) continue;
+    const source = item as Record<string, unknown>;
+    const id = asString(pick(source, 'id', 'Id'), 80) || randomUUID();
+    const fromCode = normalizeCode(pick(source, 'fromCode', 'FromCode'));
+    const fromDevice = asString(pick(source, 'fromDevice', 'FromDevice'), 240);
+    const fromName = asString(pick(source, 'fromName', 'FromName'), 160);
+    const toCode = normalizeCode(pick(source, 'toCode', 'ToCode'));
+    const statusRaw = asString(pick(source, 'status', 'Status'), 16).toLowerCase();
+    const status: 'pending' | 'accepted' | 'rejected' =
+      statusRaw === 'accepted' ? 'accepted' : statusRaw === 'rejected' ? 'rejected' : 'pending';
+    const createdAtUtc = normalizeDate(pick(source, 'createdAtUtc', 'CreatedAtUtc')) || nowIso();
+    const updatedAtUtc = normalizeDate(pick(source, 'updatedAtUtc', 'UpdatedAtUtc')) || createdAtUtc;
+    if (!fromCode || !toCode || fromCode === toCode) continue;
+    records.push({ id, fromCode, fromDevice, fromName, toCode, status, createdAtUtc, updatedAtUtc });
+  }
+  return records;
+};
+
+const normalizeFriendChat = (raw: unknown): FriendChatMessage[] => {
+  if (!Array.isArray(raw)) return [];
+  const messages: FriendChatMessage[] = [];
+  for (const item of raw.slice(0, 5000)) {
+    if (!item || typeof item !== 'object' || Array.isArray(item)) continue;
+    const source = item as Record<string, unknown>;
+    const id = asString(pick(source, 'id', 'Id'), 80) || randomUUID();
+    const conversationId = asString(pick(source, 'conversationId', 'ConversationId'), 200);
+    const senderCode = normalizeCode(pick(source, 'senderCode', 'SenderCode'));
+    const senderName = asString(pick(source, 'senderName', 'SenderName'), 160);
+    const message = asString(pick(source, 'message', 'Message'), 2000);
+    const at = normalizeDate(pick(source, 'at', 'At')) || nowIso();
+    if (!conversationId || !message) continue;
+    messages.push({ id, conversationId, senderCode, senderName, message, at, read: asBoolean(pick(source, 'read', 'Read')) });
+  }
+  return messages;
 };
 
 const normalizeChat = (raw: unknown): ChatMessage[] => {
@@ -287,6 +352,8 @@ const normalizeDatabase = (raw: unknown): LicenseDatabase => {
     licenses,
     activity: normalizeActivity(source.activity ?? source.Activity),
     chats: normalizeChat(source.chats ?? source.Chats),
+    friends: normalizeFriends(source.friends ?? source.Friends),
+    friendChats: normalizeFriendChat(source.friendChats ?? source.FriendChats),
     settings: normalizeSettings(source.settings ?? source.Settings),
   };
 };
@@ -962,6 +1029,148 @@ const handleChatSend = async (body: Record<string, unknown>) => {
   return { ok: true, id };
 };
 
+const handleFriendsRequest = async (body: Record<string, unknown>) => {
+  const fromCode = asString(body.code, 48);
+  const fromDevice = asString(body.device, 240);
+  const fromName = asString(body.userName, 160);
+  const toCode = asString(body.targetCode, 48);
+  if (!fromCode || !toCode) throw new HttpError(400, 'كود المرسل والمستهدف مطلوبان.');
+  if (fromCode === toCode) throw new HttpError(400, 'لا يمكنك إضافة نفسك.');
+  const id = await withDatabaseLock(async () => {
+    const database = await loadDatabase();
+    // Check if already friends or pending
+    const existing = database.friends.find(
+      (f) => (f.fromCode === fromCode && f.toCode === toCode) || (f.fromCode === toCode && f.toCode === fromCode),
+    );
+    if (existing) {
+      if (existing.status === 'accepted') throw new HttpError(409, 'أنتما أصدقاء بالفعل.');
+      if (existing.status === 'pending') throw new HttpError(409, 'طلب صداقة معلق بالفعل.');
+    }
+    const record: FriendRecord = {
+      id: randomUUID(),
+      fromCode,
+      fromDevice,
+      fromName,
+      toCode,
+      status: 'pending',
+      createdAtUtc: nowIso(),
+      updatedAtUtc: nowIso(),
+    };
+    database.friends.push(record);
+    if (database.friends.length > 5000) database.friends = database.friends.slice(database.friends.length - 5000);
+    await saveDatabase(database);
+    return record.id;
+  });
+  return { ok: true, id };
+};
+
+const handleFriendsAccept = async (body: Record<string, unknown>) => {
+  const code = asString(body.code, 48);
+  const requestId = asString(body.requestId, 80);
+  if (!code || !requestId) throw new HttpError(400, 'كود و requestId مطلوبان.');
+  await withDatabaseLock(async () => {
+    const database = await loadDatabase();
+    const record = database.friends.find((f) => f.id === requestId && f.toCode === code && f.status === 'pending');
+    if (!record) throw new HttpError(404, 'طلب الصداقة غير موجود.');
+    record.status = 'accepted';
+    record.updatedAtUtc = nowIso();
+    await saveDatabase(database);
+  });
+  return { ok: true };
+};
+
+const handleFriendsReject = async (body: Record<string, unknown>) => {
+  const code = asString(body.code, 48);
+  const requestId = asString(body.requestId, 80);
+  if (!code || !requestId) throw new HttpError(400, 'كود و requestId مطلوبان.');
+  await withDatabaseLock(async () => {
+    const database = await loadDatabase();
+    const record = database.friends.find((f) => f.id === requestId && f.toCode === code && f.status === 'pending');
+    if (!record) throw new HttpError(404, 'طلب الصداقة غير موجود.');
+    record.status = 'rejected';
+    record.updatedAtUtc = nowIso();
+    await saveDatabase(database);
+  });
+  return { ok: true };
+};
+
+const handleFriendsList = async (query: Record<string, string | string[] | undefined>) => {
+  const code = asString(Array.isArray(query.code) ? query.code[0] : query.code, 48);
+  const device = asString(Array.isArray(query.device) ? query.device[0] : query.device, 240);
+  if (!code) return { friends: [], requests: [] };
+  const database = await loadDatabase();
+  const friends: Array<{ code: string; name: string; status: 'accepted' }> = [];
+  const requests: Array<{ id: string; fromCode: string; fromName: string; createdAtUtc: string }> = [];
+  for (const f of database.friends) {
+    if (f.status === 'accepted' && (f.fromCode === code || f.toCode === code)) {
+      const otherCode = f.fromCode === code ? f.toCode : f.fromCode;
+      const otherName = f.fromCode === code ? '' : f.fromName;
+      friends.push({ code: otherCode, name: otherName, status: 'accepted' });
+    }
+    if (f.status === 'pending' && f.toCode === code) {
+      requests.push({ id: f.id, fromCode: f.fromCode, fromName: f.fromName, createdAtUtc: f.createdAtUtc });
+    }
+  }
+  return { friends, requests };
+};
+
+const handleFriendsRemove = async (body: Record<string, unknown>) => {
+  const code = asString(body.code, 48);
+  const friendCode = asString(body.friendCode, 48);
+  if (!code || !friendCode) throw new HttpError(400, 'كود و friendCode مطلوبان.');
+  await withDatabaseLock(async () => {
+    const database = await loadDatabase();
+    database.friends = database.friends.filter(
+      (f) =>
+        !((f.fromCode === code && f.toCode === friendCode) || (f.fromCode === friendCode && f.toCode === code)),
+    );
+    const convId = [code, friendCode].sort().join('::');
+    database.friendChats = database.friendChats.filter((m) => m.conversationId !== convId);
+    await saveDatabase(database);
+  });
+  return { ok: true };
+};
+
+const handleFriendsChatGet = async (query: Record<string, string | string[] | undefined>) => {
+  const code = asString(Array.isArray(query.code) ? query.code[0] : query.code, 48);
+  const friendCode = asString(Array.isArray(query.friendCode) ? query.friendCode[0] : query.friendCode, 48);
+  if (!code || !friendCode) return { messages: [] };
+  const convId = [code, friendCode].sort().join('::');
+  const database = await loadDatabase();
+  const messages = database.friendChats
+    .filter((m) => m.conversationId === convId)
+    .sort((a, b) => (a.at < b.at ? -1 : 1))
+    .slice(-100);
+  return { messages };
+};
+
+const handleFriendsChatSend = async (body: Record<string, unknown>) => {
+  const code = asString(body.code, 48);
+  const device = asString(body.device, 240);
+  const userName = asString(body.userName, 160);
+  const friendCode = asString(body.friendCode, 48);
+  const message = asString(body.message, 2000);
+  if (!code || !friendCode || message.length < 1) throw new HttpError(400, 'كود و friendCode ورسالة مطلوبة.');
+  const convId = [code, friendCode].sort().join('::');
+  const id = await withDatabaseLock(async () => {
+    const database = await loadDatabase();
+    const msg: FriendChatMessage = {
+      id: randomUUID(),
+      conversationId: convId,
+      senderCode: code,
+      senderName: userName || code,
+      message: message.slice(0, 2000),
+      at: nowIso(),
+      read: false,
+    };
+    database.friendChats.push(msg);
+    if (database.friendChats.length > 5000) database.friendChats = database.friendChats.slice(database.friendChats.length - 5000);
+    await saveDatabase(database);
+    return msg.id;
+  });
+  return { ok: true, id };
+};
+
 const handleChatGet = async (query: Record<string, string | string[] | undefined>) => {
   const code = asString(Array.isArray(query.code) ? query.code[0] : query.code, 48);
   const device = asString(Array.isArray(query.device) ? query.device[0] : query.device, 240);
@@ -1075,7 +1284,7 @@ export default async function adminHandler(
   const body = readBody(request.body);
   const action = getAction(request, body);
   if (method === 'OPTIONS') {
-    if (action === 'check' || action === 'support' || action === 'mode' || action === 'chat' || action === 'chat_get') setCheckCors(response);
+    if (action === 'check' || action === 'support' || action === 'mode' || action === 'chat' || action === 'chat_get' || action.startsWith('friends_')) setCheckCors(response);
     response.setHeader('Allow', 'GET, POST, OPTIONS');
     return response.status(204).json({});
   }
@@ -1138,6 +1347,64 @@ export default async function adminHandler(
         return response.status(405).json({ error: 'Method not allowed.' });
       }
       return response.status(200).json(await handleChatRead(request, body));
+    }
+
+    // ---- Friends (social) ----
+    if (action === 'friends_list') {
+      setCheckCors(response);
+      if (method !== 'GET') {
+        response.setHeader('Allow', 'GET, OPTIONS');
+        return response.status(405).json({ error: 'Method not allowed.' });
+      }
+      return response.status(200).json(await handleFriendsList(request.query ?? {}));
+    }
+
+    if (action === 'friends_request') {
+      setCheckCors(response);
+      if (method !== 'POST') {
+        response.setHeader('Allow', 'POST, OPTIONS');
+        return response.status(405).json({ error: 'Method not allowed.' });
+      }
+      return response.status(200).json(await handleFriendsRequest(body));
+    }
+
+    if (action === 'friends_accept') {
+      setCheckCors(response);
+      if (method !== 'POST') {
+        response.setHeader('Allow', 'POST, OPTIONS');
+        return response.status(405).json({ error: 'Method not allowed.' });
+      }
+      return response.status(200).json(await handleFriendsAccept(body));
+    }
+
+    if (action === 'friends_reject') {
+      setCheckCors(response);
+      if (method !== 'POST') {
+        response.setHeader('Allow', 'POST, OPTIONS');
+        return response.status(405).json({ error: 'Method not allowed.' });
+      }
+      return response.status(200).json(await handleFriendsReject(body));
+    }
+
+    if (action === 'friends_remove') {
+      setCheckCors(response);
+      if (method !== 'POST') {
+        response.setHeader('Allow', 'POST, OPTIONS');
+        return response.status(405).json({ error: 'Method not allowed.' });
+      }
+      return response.status(200).json(await handleFriendsRemove(body));
+    }
+
+    if (action === 'friends_chat') {
+      setCheckCors(response);
+      if (method === 'GET') {
+        return response.status(200).json(await handleFriendsChatGet(request.query ?? {}));
+      }
+      if (method !== 'POST') {
+        response.setHeader('Allow', 'GET, POST, OPTIONS');
+        return response.status(405).json({ error: 'Method not allowed.' });
+      }
+      return response.status(200).json(await handleFriendsChatSend(body));
     }
 
     if (action === 'mode') {

@@ -7,7 +7,7 @@ import React, { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useStat
 import { App as CapacitorApp } from '@capacitor/app';
 import { Capacitor } from '@capacitor/core';
 import { ActiveTab, Lesson, TargetLanguage, UserProfile } from './types';
-import { MessageCircle } from 'lucide-react';
+import { MessageCircle, Users } from 'lucide-react';
 // Bundled English curriculum is loaded lazily (see useEffect below) so it no
 // longer blocks the first paint of the app shell.
 import { applyGoldCurriculum } from './data/goldCurriculum';
@@ -39,6 +39,8 @@ import {
 import { TopBar } from './components/navigation/TopBar';
 import { BottomTabBar } from './components/navigation/BottomTabBar';
 import { SupportChat } from './components/support/SupportChat';
+import { FriendsChat } from './components/friends/FriendsChat';
+import './components/friends/friends.css';
 const LessonLibraryTab = lazy(() =>
   import('./components/library/LessonLibraryTab').then((module) => ({ default: module.LessonLibraryTab })),
 );
@@ -115,6 +117,7 @@ export default function App() {
   );
   const [activeTab, setActiveTab] = useState<ActiveTab>('categories');
 const [supportChatOpen, setSupportChatOpen] = useState(false);
+  const [friendsChatOpen, setFriendsChatOpen] = useState(false);
   const [selectedLessonId, setSelectedLessonId] = useState<string | null>(learningPath.nextLessonId);
   const [isPhoneFrameView, setIsPhoneFrameView] = useState<boolean>(false);
   const [speechNotice, setSpeechNotice] = useState<string | null>(null);
@@ -768,6 +771,21 @@ const [supportChatOpen, setSupportChatOpen] = useState(false);
           </button>
         )}
 
+        {/* Floating Friends Chat Button (parchment, left side) */}
+        {activeTab !== 'lesson' && activeTab !== 'chat' && (
+          <button
+            type="button"
+            onClick={() => setFriendsChatOpen(true)}
+            aria-label="أصدقاء التعلّم"
+            className="friends-fab"
+            style={{
+              bottom: IS_GOLD_EDITION && activeTab === 'categories' ? 148 : 84,
+            }}
+          >
+            <Users className="h-5 w-5" />
+          </button>
+        )}
+
         {/* Support Chat Modal */}
         {supportChatOpen && (
           <div className="fixed inset-0 z-50 flex items-end justify-center bg-[#2c2114]/55 p-0 sm:items-center sm:p-4">
@@ -775,6 +793,18 @@ const [supportChatOpen, setSupportChatOpen] = useState(false);
               <SupportChat
                 userName={userProfile.displayName}
                 onClose={() => setSupportChatOpen(false)}
+              />
+            </div>
+          </div>
+        )}
+
+        {/* Friends Chat Modal */}
+        {friendsChatOpen && (
+          <div className="fixed inset-0 z-50 flex items-end justify-center bg-[#2c2114]/55 p-0 sm:items-center sm:p-4">
+            <div className="w-full max-w-lg">
+              <FriendsChat
+                userName={userProfile.displayName}
+                onClose={() => setFriendsChatOpen(false)}
               />
             </div>
           </div>

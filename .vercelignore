@@ -15,3 +15,10 @@ tests
 .github
 public/english-tok.apk
 *.log
+android-nova
+design-previews
+uptodown
+lin-go-gold-*.apk
+lin-go-gold-*.apk.idsig
+src/reels.css
+validate-lessons.ts
