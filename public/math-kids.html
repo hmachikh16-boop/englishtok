@@ -376,10 +376,29 @@
 
   .empty { text-align: center; padding: 36px 20px; color: var(--muted); font-weight: 700; }
   .star { color: #c9a227; }
+  /* Update banner */
+  .update-banner {
+    display: none; align-items: center; justify-content: space-between; gap: 10px;
+    background: linear-gradient(135deg, var(--brass), var(--brass2));
+    color: var(--tint); padding: 10px 14px;
+    border-bottom: 1.5px solid var(--brass2); flex: 0 0 auto;
+    box-shadow: 0 2px 8px rgba(44,33,20,0.15);
+  }
+  .update-banner .update-text { font-size: 13px; font-weight: 900; }
+  .update-banner .update-btn {
+    min-height: 34px; padding: 0 14px; border-radius: 10px; border: 0;
+    background: var(--tint); color: var(--brass); font-size: 12px; font-weight: 900;
+    cursor: pointer; box-shadow: 0 2px 0 var(--brass2);
+  }
+  .update-banner .update-btn:active { transform: translateY(2px); box-shadow: 0 0 0 var(--brass2); }
 </style>
 </head>
 <body>
 <div class="app">
+  <div class="update-banner" id="updateBanner">
+    <span class="update-text">تحديث جديد متاح! 🎉</span>
+    <button class="update-btn" id="updateBtn">تحديث الآن</button>
+  </div>
   <div class="topbar">
     <button class="back-btn" id="backBtn" style="visibility:hidden"><span data-icon="chevron-right"></span></button>
     <div class="title"><span class="mascot" data-icon="calculator"></span> ریاضيات — مسارات</div>
@@ -1398,13 +1417,28 @@ function renderSettings(){
       <button class="btn-danger" id="resetBtn">إعادة تعيين</button>
     </div>
     <div class="setting-row">
-      <div><div class="label">الإصدار</div><div class="sub">Math Kids 1.0.0 (preview)</div></div>
+      <div><div class="label">التحقق من التحديثات</div><div class="sub">الإصدار الحالي: 1.0.4</div></div>
+      <button class="toggle" id="checkUpdateBtn" style="width:auto;padding:0 14px;border-radius:10px;background:var(--brass);color:var(--tint)">فحص</button>
+    </div>
+    <div class="setting-row">
+      <div><div class="label">الإصدار</div><div class="sub">Math Kids 1.0.4 (preview)</div></div>
     </div>
   `;
   document.getElementById('toggleSound').addEventListener('click',function(){ state.settings.sound=!state.settings.sound; saveState(); this.classList.toggle('on'); });
   document.getElementById('toggleVoice').addEventListener('click',function(){ state.settings.voice=!state.settings.voice; saveState(); this.classList.toggle('on'); });
   document.getElementById('resetBtn').addEventListener('click',()=>{
     if(confirm('هل أنت متأكد؟ سيتم حذف جميع النجوم والدروس.')){ state.stars=0; state.xp=0; state.progress={}; saveState(); updateStars(); renderSettings(); }
+  });
+  const cuBtn = document.getElementById('checkUpdateBtn');
+  if (cuBtn) cuBtn.addEventListener('click', async () => {
+    cuBtn.textContent = '...';
+    await checkForUpdate();
+    if (availableUpdate) {
+      cuBtn.textContent = 'تحديث!'; cuBtn.style.background = 'var(--green)';
+      downloadUpdate(availableUpdate);
+    } else {
+      cuBtn.textContent = 'محدّث'; cuBtn.style.background = 'var(--muted)';
+    }
   });
   backBtn.style.visibility='hidden';
   backBtn.onclick=null;
@@ -1438,9 +1472,63 @@ function initIcons() {
     el.style.display = 'inline-block';
   });
 }
+// ---------- App version & update check ----------
+const APP_VERSION = '1.0.4';
+const UPDATE_URL = 'https://englishtok-eight.vercel.app/math-kids-latest.json';
+let availableUpdate = null;
+
+async function checkForUpdate() {
+  try {
+    const res = await fetch(UPDATE_URL, { cache: 'no-store' });
+    if (!res.ok) return;
+    const m = await res.json();
+    if (m && m.version && m.version !== APP_VERSION) {
+      availableUpdate = m;
+      const banner = document.getElementById('updateBanner');
+      const btn = document.getElementById('updateBtn');
+      if (banner) banner.style.display = 'flex';
+      if (btn) btn.onclick = () => downloadUpdate(m);
+    }
+  } catch (e) { /* offline */ }
+}
+function isNewerVersion(a, b) {
+  const pa = a.split('.').map(Number);
+  const pb = b.split('.').map(Number);
+  for (let i = 0; i < Math.max(pa.length, pb.length); i++) {
+    const x = pa[i] || 0, y = pb[i] || 0;
+    if (x > y) return true;
+    if (x < y) return false;
+  }
+  return false;
+}
+async function downloadUpdate(m) {
+  const url = m.downloadUrl || m.apkUrl;
+  if (!url) { alert('رابط التحميل غير متوفر'); return; }
+  try {
+    if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.Browser) {
+      await window.Capacitor.Plugins.Browser.open({ url });
+    } else {
+      const a = document.createElement('a');
+      a.href = url;
+      a.target = '_blank';
+      a.rel = 'noopener';
+      a.download = 'math-kids-update.apk';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+  } catch (e) {
+    try { window.open(url, '_system'); } catch (e2) { window.open(url, '_blank'); }
+  }
+  const btn = document.getElementById('updateBtn');
+  if (btn) { btn.textContent = 'جارٍ التحميل...'; btn.disabled = true; }
+  setTimeout(() => { if (btn) { btn.textContent = 'تحديث الآن'; btn.disabled = false; } }, 5000);
+}
+
 loadState();
 initIcons();
 renderHome();
+checkForUpdate();
 </script>
 </body>
 </html>
