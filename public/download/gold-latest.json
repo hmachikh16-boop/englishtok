@@ -1,11 +1,11 @@
 {
-    "version":  "1.1.66",
+    "version":  "1.1.67",
     "packageId":  "com.englishtok.gold",
-    "apkUrl":  "/lin-go-gold-1.1.66.apk",
-    "sha256":  "15FB9D6029F3CFE6D56C1599CDEBC8FB06BBED19292F7BB4F5F9547C39A69584",
-    "size":  91551120,
+    "apkUrl":  "/lin-go-gold-1.1.67.apk",
+    "sha256":  "398C875865DA507FD41848AB373B38F1086AA85B6C121E7B7AA17A655488D9EC",
+    "size":  91551124,
     "minimumAndroidSdk":  24,
-    "notes":  "تحديث Gold 1.1.66: حضور (نقطة خضراء عندما يكون صديقك نشطاً) + إشعارات للهاتف (رسالة من صديق، تحديث جديد). 740 درساً و19 لعبة محفوظة.",
-    "releaseUrl":  "https://github.com/hmachikh16-boop/englishtok/releases/tag/gold-v1.1.66",
-    "publishedAt":  "2026-11-10T15:21:23.000Z"
+    "notes":  "تحديث Gold 1.1.67: دردشة مباشرة (تحديث كل 2 ثانية) + كل ميزات 1.1.66. 740 درساً و19 لعبة محفوظة.",
+    "releaseUrl":  "https://github.com/hmachikh16-boop/englishtok/releases/tag/gold-v1.1.67",
+    "publishedAt":  "2026-11-10T15:31:05.000Z"
 }
