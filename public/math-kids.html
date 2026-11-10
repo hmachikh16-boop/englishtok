@@ -5,400 +5,173 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 <title>ریاضيات — مسارات التعلّم</title>
 <style>
-  :root {
-    --paper: #f4e8cc; --paper2: #efd9ad; --paper3: #e8d9b0;
-    --ink: #2c2114; --soft: #5b4730; --muted: #8a7355;
-    --brass: #a56c18; --brass2: #8d5a12; --oxblood: #8d2f24;
-    --border: #d8c49a; --border2: #c9b38a; --tint: #fbf0d7; --white: #fffdf7;
-    --green: #4d9560; --red: #8d2f24;
-    --shadow: 0 10px 30px rgba(44,33,20,0.14); --shadow2: 0 4px 12px rgba(44,33,20,0.08);
-    --r: 20px; --r2: 14px;
-  }
-  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-  html, body { margin: 0; padding: 0; height: 100%; }
-  body {
-    font-family: 'Segoe UI', 'Tahoma', 'Arial', sans-serif;
-    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.18'/%3E%3C/svg%3E"),
-      linear-gradient(180deg, var(--paper) 0%, var(--paper2) 100%);
-    color: var(--ink); overflow: hidden; user-select: none;
-  }
-  .app { max-width: 520px; margin: 0 auto; height: 100vh; display: flex; flex-direction: column; position: relative; }
-  .svg-icon { display: inline-block; vertical-align: middle; flex: 0 0 auto; }
-  .svg-icon svg { display: block; }
-
-  /* Top bar */
-  .topbar {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 14px 18px;
-    background: linear-gradient(180deg, var(--tint), var(--paper));
-    border-bottom: 1.5px solid var(--border);
-    flex: 0 0 auto; z-index: 5;
-    box-shadow: 0 2px 8px rgba(44,33,20,0.06);
-  }
-  .topbar .title { font-size: 18px; font-weight: 900; display: flex; align-items: center; gap: 10px; color: var(--ink); }
-  .topbar .mascot { width: 32px; height: 32px; }
-  .back-btn {
-    width: 42px; height: 42px; border-radius: 13px;
-    border: 1.5px solid var(--border); background: var(--white);
-    cursor: pointer; display: grid; place-items: center;
-    color: var(--soft); transition: all 150ms;
-  }
-  .back-btn:hover { background: var(--paper); transform: translateX(2px); }
-  .back-btn svg { width: 20px; height: 20px; }
-  .stars-pill {
-    background: linear-gradient(160deg, var(--brass), var(--brass2));
-    color: var(--tint); padding: 8px 14px; border-radius: 999px;
-    font-weight: 900; font-size: 13px; display: flex; align-items: center; gap: 5px;
-    box-shadow: 0 3px 0 var(--brass2);
-  }
-  .stars-pill svg { width: 14px; height: 14px; }
-
-  .screen { flex: 1 1 auto; overflow-y: auto; padding: 18px 16px 24px; }
-  .screen::-webkit-scrollbar { width: 6px; }
-  .screen::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 999px; }
-
-  /* Hero */
-  .home-hero {
-    background: linear-gradient(135deg, var(--brass) 0%, var(--brass2) 100%);
-    border-radius: var(--r); padding: 20px 18px; color: var(--tint); margin-bottom: 18px;
-    box-shadow: 0 12px 30px rgba(165,108,24,0.25);
-    position: relative; overflow: hidden; border: 1.5px solid var(--brass2);
-  }
-  .home-hero::after {
-    content: ''; position: absolute; right: -30px; top: -30px;
-    width: 120px; height: 120px; border-radius: 50%;
-    background: rgba(255,253,247,0.10);
-  }
-  .home-hero h1 { margin: 0; font-size: 24px; font-weight: 900; }
-  .home-hero p { margin: 4px 0 14px; font-size: 13px; font-weight: 600; opacity: 0.9; }
-  .hero-stats { display: flex; gap: 10px; }
-  .hero-stat {
-    background: rgba(255,253,247,0.18); border-radius: 12px;
-    padding: 8px 12px; flex: 1; text-align: center; border: 1px solid rgba(255,253,247,0.2);
-  }
-  .hero-stat .v { font-size: 20px; font-weight: 900; }
-  .hero-stat .l { font-size: 10px; font-weight: 700; opacity: 0.85; margin-top: 1px; }
-
-  /* Daily goal + streak */
-  .daily-row { display: flex; gap: 10px; margin-bottom: 16px; }
-  .daily-card {
-    flex: 1; background: var(--white); border-radius: 14px; padding: 12px 14px;
-    border: 1.5px solid var(--border); box-shadow: var(--shadow2);
-    display: flex; align-items: center; gap: 10px;
-  }
-  .daily-card .ring { width: 40px; height: 40px; border-radius: 50%; border: 3px solid var(--paper); border-top-color: var(--brass); position: relative; display: grid; place-items: center; font-size: 11px; font-weight: 900; color: var(--brass); }
-  .daily-card .info { flex: 1 1 auto; min-width: 0; }
-  .daily-card .title { font-size: 12px; font-weight: 900; color: var(--ink); }
-  .daily-card .sub { font-size: 10px; color: var(--muted); font-weight: 600; margin-top: 1px; }
-  .streak-card { background: linear-gradient(135deg, #d97706, #b45309); color: var(--tint); }
-  .streak-card .title { color: var(--tint); }
-  .streak-card .sub { color: rgba(255,253,247,0.8); }
-
-  /* Continue button */
-  .continue-btn {
-    width: 100%; min-height: 52px; border-radius: 14px; border: 0;
-    background: linear-gradient(160deg, var(--brass), var(--brass2));
-    color: var(--tint); font-size: 15px; font-weight: 900; cursor: pointer;
-    box-shadow: 0 4px 0 var(--brass2);
-    display: flex; align-items: center; justify-content: center; gap: 10px;
-    margin-bottom: 16px;
-  }
-  .continue-btn svg { width: 20px; height: 20px; }
-
-  .section-title {
-    font-size: 14px; font-weight: 900; margin: 16px 4px 10px;
-    display: flex; align-items: center; gap: 8px; color: var(--ink);
-  }
-  .section-title .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--brass); }
-
-  /* Paths grid */
-  .paths-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .path-card {
-    background: var(--white); border-radius: var(--r); padding: 14px 12px;
-    box-shadow: var(--shadow2); border: 1.5px solid var(--border);
-    cursor: pointer; transition: transform 180ms ease, box-shadow 180ms ease;
-    display: flex; flex-direction: column; gap: 8px; position: relative; overflow: hidden;
-  }
-  .path-card:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
-  .path-card.locked { opacity: 0.5; filter: grayscale(0.5); cursor: not-allowed; }
-  .path-icon {
-    width: 46px; height: 46px; border-radius: 14px;
-    display: grid; place-items: center; color: var(--tint);
-    box-shadow: inset 0 2px 0 rgba(255,253,247,0.25);
-  }
-  .path-icon svg { width: 24px; height: 24px; }
-  .path-name { font-size: 14px; font-weight: 900; color: var(--ink); }
-  .path-sub { font-size: 10.5px; color: var(--muted); font-weight: 600; }
-  .path-progress { height: 6px; background: var(--paper); border-radius: 999px; overflow: hidden; border: 1px solid var(--border); }
-  .path-progress > div { height: 100%; border-radius: 999px; transition: width 500ms ease; }
-  .path-meta { display: flex; justify-content: space-between; align-items: center; font-size: 10.5px; font-weight: 800; color: var(--soft); }
-
-  /* Path view */
-  .path-header {
-    background: var(--white); border-radius: var(--r); padding: 16px;
-    border: 1.5px solid var(--border); margin-bottom: 14px;
-    display: flex; align-items: center; gap: 12px; box-shadow: var(--shadow2);
-  }
-  .path-header .icon { width: 52px; height: 52px; border-radius: 14px; display: grid; place-items: center; color: var(--tint); box-shadow: inset 0 2px 0 rgba(255,253,247,0.25); }
-  .path-header .icon svg { width: 26px; height: 26px; }
-  .path-header h2 { margin: 0; font-size: 17px; font-weight: 900; color: var(--ink); }
-  .path-header p { margin: 3px 0 0; font-size: 11px; color: var(--muted); font-weight: 600; }
-  .path-header .progress-bar { height: 7px; background: var(--paper); border-radius: 999px; overflow: hidden; margin-top: 8px; border: 1px solid var(--border); }
-  .path-header .progress-bar > div { height: 100%; border-radius: 999px; transition: width 500ms; }
-
-  .path-chips { display: flex; gap: 6px; overflow-x: auto; padding: 4px 2px 10px; scrollbar-width: none; }
-  .path-chips::-webkit-scrollbar { display: none; }
-  .path-chip {
-    flex: 0 0 auto; padding: 7px 13px; border-radius: 999px;
-    background: var(--white); border: 1.5px solid var(--border);
-    font-size: 12px; font-weight: 800; color: var(--soft); cursor: pointer;
-    display: flex; align-items: center; gap: 6px; transition: all 150ms;
-    box-shadow: var(--shadow2);
-  }
-  .path-chip.active { background: var(--brass); color: var(--tint); border-color: var(--brass); }
-  .path-chip svg { width: 16px; height: 16px; }
-
-  .path-vertical { position: relative; padding: 10px 0 20px; }
-  .path-line {
-    position: absolute; top: 0; bottom: 0; right: 50%; width: 4px;
-    background: linear-gradient(180deg, var(--border2), var(--border)); border-radius: 999px;
-    transform: translateX(50%);
-  }
-  .path-node {
-    position: relative; display: flex; align-items: center; gap: 12px;
-    margin: 12px 0; cursor: pointer; transition: transform 160ms;
-  }
-  .path-node:hover { transform: scale(1.02); }
-  .path-node.locked { opacity: 0.45; cursor: not-allowed; filter: grayscale(0.6); }
-  .path-node.done .node-circle { background: var(--green); border-color: var(--green); }
-  .path-node.current .node-circle { box-shadow: 0 0 0 4px rgba(165,108,24,0.25); border-color: var(--brass); }
-  .node-circle {
-    width: 56px; height: 56px; border-radius: 50%;
-    display: grid; place-items: center; color: var(--tint);
-    background: var(--brass); border: 3px solid var(--brass2);
-    box-shadow: 0 4px 0 var(--brass2), var(--shadow2);
-    flex: 0 0 auto; font-weight: 900; font-size: 16px; z-index: 2;
-  }
-  .node-circle svg { width: 22px; height: 22px; }
-  .node-info {
-    flex: 1 1 auto; min-width: 0;
-    background: var(--white); border-radius: 14px; padding: 10px 12px;
-    border: 1.5px solid var(--border); box-shadow: var(--shadow2);
-  }
-  .path-node:nth-child(odd) .node-info { margin-left: 64px; }
-  .path-node:nth-child(even) .node-info { margin-right: 64px; }
-  .node-title { font-size: 13px; font-weight: 900; color: var(--ink); }
-  .node-sub { font-size: 10px; color: var(--muted); font-weight: 600; margin-top: 2px; }
-  .node-meta { display: flex; align-items: center; gap: 8px; margin-top: 4px; }
-  .node-stars { font-size: 11px; color: #9a7a00; font-weight: 900; }
-  .node-xp { font-size: 9.5px; color: var(--soft); font-weight: 700; background: var(--paper); padding: 2px 7px; border-radius: 999px; border: 1px solid var(--border); }
-
-  /* Lesson intro */
-  .lesson-intro {
-    background: var(--white); border-radius: var(--r); padding: 20px 18px;
-    border: 1.5px solid var(--border); text-align: center; box-shadow: var(--shadow2);
-  }
-  .lesson-intro .icon { width: 64px; height: 64px; margin: 0 auto 8px; border-radius: 18px; display: grid; place-items: center; color: var(--tint); }
-  .lesson-intro .icon svg { width: 32px; height: 32px; }
-  .lesson-intro h2 { margin: 0; font-size: 18px; font-weight: 900; color: var(--ink); }
-  .lesson-intro p { margin: 6px 0 14px; font-size: 12px; color: var(--soft); font-weight: 600; line-height: 1.6; }
-  .start-btn {
-    min-height: 48px; padding: 0 26px; border-radius: 12px; border: 0;
-    background: linear-gradient(160deg, var(--brass), var(--brass2));
-    color: var(--tint); font-size: 14px; font-weight: 900; cursor: pointer;
-    box-shadow: 0 4px 0 var(--brass2); display: inline-flex; align-items: center; gap: 8px;
-  }
-  .start-btn svg { width: 18px; height: 18px; }
-
-  /* Question */
-  .q-card {
-    background: var(--white); border-radius: var(--r); padding: 20px 16px;
-    border: 1.5px solid var(--border); box-shadow: var(--shadow); text-align: center;
-  }
-  .q-progress { font-size: 11px; font-weight: 800; color: var(--muted); margin-bottom: 6px; letter-spacing: 0.5px; }
-  .q-text { font-size: 28px; font-weight: 900; margin: 8px 0 6px; line-height: 1.3; color: var(--ink); }
-  .q-hint { font-size: 11px; color: var(--muted); font-weight: 600; }
-  .answers { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .ans-btn {
-    min-height: 58px; border-radius: 14px; border: 1.5px solid var(--border);
-    background: var(--white); font-size: 20px; font-weight: 900;
-    cursor: pointer; transition: transform 120ms ease, background 120ms ease, border-color 120ms ease, box-shadow 120ms ease;
-    box-shadow: var(--shadow2); color: var(--ink);
-    display: flex; align-items: center; justify-content: center; gap: 6px;
-  }
-  .ans-btn:hover { transform: scale(1.02); border-color: var(--brass); }
-  .ans-btn.correct { background: var(--green); color: #fff; border-color: var(--green); box-shadow: 0 4px 0 #3a7a45; }
-  .ans-btn.wrong { background: var(--oxblood); color: #fff; border-color: var(--oxblood); box-shadow: 0 4px 0 #6f2118; }
-  .ans-btn:disabled { cursor: default; }
-  .ans-btn svg { width: 20px; height: 20px; }
-  .feedback { text-align: center; font-size: 16px; font-weight: 900; min-height: 24px; margin-top: 4px; display: flex; align-items: center; justify-content: center; gap: 6px; }
-  .feedback.ok { color: var(--green); }
-  .feedback.bad { color: var(--oxblood); }
-  .feedback svg { width: 18px; height: 18px; }
-  .hint-btn {
-    min-height: 36px; padding: 0 14px; border-radius: 10px; border: 1.5px dashed var(--border2);
-    background: var(--paper); color: var(--soft); font-size: 12px; font-weight: 800; cursor: pointer;
-    display: inline-flex; align-items: center; gap: 6px; margin-top: 8px;
-  }
-  .hint-btn svg { width: 14px; height: 14px; }
-  .explanation {
-    background: var(--paper); border-radius: 12px; padding: 10px 12px; margin-top: 8px;
-    border: 1px solid var(--border); font-size: 12px; font-weight: 600; color: var(--soft); line-height: 1.6;
-    display: none;
-  }
-  .explanation.show { display: block; }
-  .next-btn {
-    min-height: 48px; border-radius: 12px; border: 0; width: 100%;
-    background: linear-gradient(160deg, var(--brass), var(--brass2));
-    color: var(--tint); font-size: 14px; font-weight: 900; cursor: pointer;
-    box-shadow: 0 4px 0 var(--brass2);
-    display: flex; align-items: center; justify-content: center; gap: 8px;
-  }
-  .next-btn svg { width: 18px; height: 18px; }
-  .next-btn:disabled { opacity: 0.4; box-shadow: none; cursor: default; }
-
-  /* Result */
-  .result-card {
-    background: var(--white); border-radius: var(--r); padding: 26px 18px;
-    border: 1.5px solid var(--border); text-align: center; box-shadow: var(--shadow);
-  }
-  .result-emoji { width: 72px; height: 72px; margin: 0 auto 8px; border-radius: 50%; display: grid; place-items: center; background: linear-gradient(150deg, var(--brass), var(--brass2)); color: var(--tint); }
-  .result-emoji svg { width: 36px; height: 36px; }
-  .result-title { font-size: 22px; font-weight: 900; margin: 0; color: var(--ink); }
-  .result-sub { color: var(--soft); font-weight: 600; margin: 6px 0 10px; font-size: 13px; }
-  .result-stars { font-size: 32px; margin: 8px 0 14px; letter-spacing: 4px; }
-  .result-stats { display: flex; gap: 10px; margin: 10px 0 16px; }
-  .result-stat { flex: 1; background: var(--paper); border-radius: 12px; padding: 10px; border: 1px solid var(--border); }
-  .result-stat .v { font-size: 18px; font-weight: 900; color: var(--brass); }
-  .result-stat .l { font-size: 9.5px; color: var(--muted); font-weight: 700; margin-top: 2px; }
-
-  /* Confetti */
-  .confetti { position: fixed; inset: 0; pointer-events: none; z-index: 99; }
-  .confetti span { position: absolute; top: -20px; font-size: 22px; animation: fall 1.5s linear forwards; }
-  @keyframes fall { to { transform: translateY(110vh) rotate(360deg); opacity: 0; } }
-
-  /* Bottom nav */
-  .bottomnav {
-    display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px;
-    padding: 8px 10px calc(8px + env(safe-area-inset-bottom));
-    background: linear-gradient(180deg, var(--tint), var(--paper));
-    border-top: 1.5px solid var(--border); flex: 0 0 auto;
-  }
-  .nav-btn {
-    display: flex; flex-direction: column; align-items: center; gap: 3px;
-    min-height: 50px; border: 0; background: transparent;
-    color: var(--muted); font-size: 9.5px; font-weight: 800; cursor: pointer;
-    border-radius: 12px; transition: all 150ms;
-  }
-  .nav-btn.active { color: var(--brass); background: rgba(165,108,24,0.10); }
-  .nav-btn .ico { width: 20px; height: 20px; }
-  .nav-btn .ico svg { width: 20px; height: 20px; }
-
-  /* Char bar */
-  .char-bar {
-    display: flex; align-items: center; gap: 10px;
-    background: var(--white); border-radius: 14px; padding: 10px 12px;
-    border: 1.5px solid var(--border); margin-bottom: 12px; box-shadow: var(--shadow2);
-  }
-  .char-avatar {
-    width: 46px; height: 46px; border-radius: 50%;
-    display: grid; place-items: center;
-    background: linear-gradient(150deg, var(--brass), var(--brass2));
-    flex: 0 0 auto; box-shadow: inset 0 2px 0 rgba(255,253,247,0.3); color: var(--tint);
-    overflow: hidden;
-  }
-  .char-avatar svg { width: 40px; height: 40px; }
-  .char-bubble {
-    flex: 1 1 auto; min-width: 0;
-    background: var(--paper); border-radius: 12px; padding: 8px 11px;
-    border: 1px solid var(--border); font-size: 12px; font-weight: 700;
-    color: var(--ink); line-height: 1.5;
-  }
-  .char-speak {
-    width: 38px; height: 38px; border-radius: 50%; border: 0;
-    background: linear-gradient(160deg, var(--brass), var(--brass2));
-    color: var(--tint); cursor: pointer; display: grid; place-items: center;
-    box-shadow: 0 3px 0 var(--brass2); flex: 0 0 auto;
-  }
-  .char-speak svg { width: 16px; height: 16px; }
-  .char-speak:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--brass2); }
-
-  /* Counting strip */
-  .count-strip { display: flex; gap: 6px; overflow-x: auto; padding: 4px 2px 8px; scrollbar-width: none; }
-  .count-strip::-webkit-scrollbar { display: none; }
-  .count-chip {
-    flex: 0 0 auto; min-width: 44px; height: 44px; border-radius: 12px;
-    background: var(--white); border: 1.5px solid var(--border);
-    display: grid; place-items: center; font-size: 18px; font-weight: 900;
-    color: var(--ink); cursor: pointer; transition: all 150ms;
-  }
-  .count-chip:hover { background: var(--brass); color: var(--tint); border-color: var(--brass); }
-  .count-chip:active { transform: scale(0.95); }
-
-  /* Progress view */
-  .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
-  .stat-card { background: var(--white); border-radius: 14px; padding: 14px; border: 1.5px solid var(--border); box-shadow: var(--shadow2); text-align: center; }
-  .stat-card .v { font-size: 24px; font-weight: 900; color: var(--brass); }
-  .stat-card .l { font-size: 10.5px; color: var(--muted); font-weight: 700; margin-top: 2px; }
-  .path-progress-card { background: var(--white); border-radius: 14px; padding: 12px 14px; border: 1.5px solid var(--border); margin-bottom: 8px; box-shadow: var(--shadow2); }
-  .path-progress-card .row { display: flex; align-items: center; gap: 10px; }
-  .path-progress-card .icon { width: 36px; height: 36px; border-radius: 10px; display: grid; place-items: center; color: var(--tint); }
-  .path-progress-card .icon svg { width: 18px; height: 18px; }
-  .path-progress-card .info { flex: 1 1 auto; min-width: 0; }
-  .path-progress-card .name { font-size: 13px; font-weight: 900; color: var(--ink); }
-  .path-progress-card .bar { height: 6px; background: var(--paper); border-radius: 999px; overflow: hidden; margin-top: 4px; border: 1px solid var(--border); }
-  .path-progress-card .bar > div { height: 100%; border-radius: 999px; transition: width 500ms; }
-  .path-progress-card .pct { font-size: 10.5px; color: var(--muted); font-weight: 700; margin-top: 3px; }
-
-  /* Settings */
-  .setting-row {
-    display: flex; align-items: center; justify-content: space-between;
-    background: var(--white); border-radius: 14px; padding: 14px 16px;
-    border: 1.5px solid var(--border); margin-bottom: 8px; box-shadow: var(--shadow2);
-  }
-  .setting-row .label { font-size: 13px; font-weight: 800; color: var(--ink); }
-  .setting-row .sub { font-size: 10.5px; color: var(--muted); font-weight: 600; margin-top: 2px; }
-  .toggle {
-    width: 46px; height: 26px; border-radius: 999px; background: var(--border2);
-    position: relative; cursor: pointer; transition: background 200ms; border: 0; flex: 0 0 auto;
-  }
-  .toggle.on { background: var(--brass); }
-  .toggle::after {
-    content: ''; position: absolute; top: 3px; right: 3px; width: 20px; height: 20px;
-    border-radius: 50%; background: var(--white); transition: right 200ms; box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-  }
-  .toggle.on::after { right: 23px; }
-  .btn-danger {
-    min-height: 44px; padding: 0 16px; border-radius: 12px; border: 0; width: 100%;
-    background: var(--oxblood); color: var(--tint); font-size: 13px; font-weight: 900; cursor: pointer;
-    box-shadow: 0 4px 0 #6f2118;
-  }
-
-  .empty { text-align: center; padding: 36px 20px; color: var(--muted); font-weight: 700; }
-  .star { color: #c9a227; }
-  /* Update banner */
-  .update-banner {
-    display: none; align-items: center; justify-content: space-between; gap: 10px;
-    background: linear-gradient(135deg, var(--brass), var(--brass2));
-    color: var(--tint); padding: 10px 14px;
-    border-bottom: 1.5px solid var(--brass2); flex: 0 0 auto;
-    box-shadow: 0 2px 8px rgba(44,33,20,0.15);
-  }
-  .update-banner .update-text { font-size: 13px; font-weight: 900; }
-  .update-banner .update-btn {
-    min-height: 34px; padding: 0 14px; border-radius: 10px; border: 0;
-    background: var(--tint); color: var(--brass); font-size: 12px; font-weight: 900;
-    cursor: pointer; box-shadow: 0 2px 0 var(--brass2);
-  }
-  .update-banner .update-btn:active { transform: translateY(2px); box-shadow: 0 0 0 var(--brass2); }
+  :root { --paper:#f4e8cc; --paper2:#efd9ad; --ink:#2c2114; --soft:#5b4730; --muted:#8a7355; --brass:#a56c18; --brass2:#8d5a12; --oxblood:#8d2f24; --border:#d8c49a; --border2:#c9b38a; --tint:#fbf0d7; --white:#fffdf7; --green:#4d9560; --shadow:0 8px 24px rgba(44,33,20,0.14); --shadow2:0 3px 10px rgba(44,33,20,0.08); --r:18px; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { margin:0; padding:0; height:100%; }
+  body { font-family:'Segoe UI','Tahoma','Arial',sans-serif; background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.18'/%3E%3C/svg%3E"),linear-gradient(180deg,var(--paper) 0%,var(--paper2) 100%); color:var(--ink); overflow:hidden; user-select:none; }
+  .app { max-width:520px; margin:0 auto; height:100vh; display:flex; flex-direction:column; position:relative; }
+  .svg-icon { display:inline-block; vertical-align:middle; flex:0 0 auto; }
+  .svg-icon svg { display:block; }
+  .topbar { display:flex; align-items:center; justify-content:space-between; padding:12px 16px; background:linear-gradient(180deg,var(--tint),var(--paper)); border-bottom:1.5px solid var(--border); flex:0 0 auto; z-index:5; box-shadow:0 2px 8px rgba(44,33,20,0.06); }
+  .topbar .title { font-size:17px; font-weight:900; display:flex; align-items:center; gap:9px; color:var(--ink); }
+  .topbar .mascot { width:30px; height:30px; }
+  .back-btn { width:40px; height:40px; border-radius:12px; border:1.5px solid var(--border); background:var(--white); cursor:pointer; display:grid; place-items:center; color:var(--soft); transition:all 150ms; }
+  .back-btn:hover { background:var(--paper); }
+  .back-btn svg { width:20px; height:20px; }
+  .stars-pill { background:linear-gradient(160deg,var(--brass),var(--brass2)); color:var(--tint); padding:7px 13px; border-radius:999px; font-weight:900; font-size:13px; display:flex; align-items:center; gap:5px; box-shadow:0 3px 0 var(--brass2); }
+  .stars-pill svg { width:14px; height:14px; }
+  .screen { flex:1 1 auto; overflow-y:auto; padding:16px; }
+  .screen::-webkit-scrollbar { width:6px; }
+  .screen::-webkit-scrollbar-thumb { background:var(--border2); border-radius:999px; }
+  .update-banner { display:none; align-items:center; justify-content:space-between; gap:10px; background:linear-gradient(135deg,var(--brass),var(--brass2)); color:var(--tint); padding:10px 14px; border-bottom:1.5px solid var(--brass2); flex:0 0 auto; box-shadow:0 2px 8px rgba(44,33,20,0.15); }
+  .update-banner .update-text { font-size:13px; font-weight:900; }
+  .update-banner .update-btn { min-height:34px; padding:0 14px; border-radius:10px; border:0; background:var(--tint); color:var(--brass); font-size:12px; font-weight:900; cursor:pointer; box-shadow:0 2px 0 var(--brass2); }
+  .home-hero { background:linear-gradient(135deg,var(--brass) 0%,var(--brass2) 100%); border-radius:var(--r); padding:18px 16px; color:var(--tint); margin-bottom:16px; box-shadow:0 12px 30px rgba(165,108,24,0.25); position:relative; overflow:hidden; border:1.5px solid var(--brass2); }
+  .home-hero::after { content:''; position:absolute; right:-30px; top:-30px; width:120px; height:120px; border-radius:50%; background:rgba(255,253,247,0.10); }
+  .home-hero h1 { margin:0; font-size:22px; font-weight:900; }
+  .home-hero p { margin:4px 0 14px; font-size:12px; font-weight:600; opacity:0.9; }
+  .hero-stats { display:flex; gap:10px; }
+  .hero-stat { background:rgba(255,253,247,0.18); border-radius:12px; padding:8px 12px; flex:1; text-align:center; border:1px solid rgba(255,253,247,0.2); }
+  .hero-stat .v { font-size:20px; font-weight:900; }
+  .hero-stat .l { font-size:10px; font-weight:700; opacity:0.85; margin-top:1px; }
+  .daily-row { display:flex; gap:10px; margin-bottom:16px; }
+  .daily-card { flex:1; background:var(--white); border-radius:14px; padding:12px 14px; border:1.5px solid var(--border); box-shadow:var(--shadow2); display:flex; align-items:center; gap:10px; }
+  .daily-card .ring { width:40px; height:40px; border-radius:50%; border:3px solid var(--paper); border-top-color:var(--brass); position:relative; display:grid; place-items:center; font-size:11px; font-weight:900; color:var(--brass); }
+  .daily-card .info { flex:1 1 auto; min-width:0; }
+  .daily-card .title { font-size:12px; font-weight:900; color:var(--ink); }
+  .daily-card .sub { font-size:10px; color:var(--muted); font-weight:600; margin-top:1px; }
+  .streak-card { background:linear-gradient(135deg,#d97706,#b45309); color:var(--tint); }
+  .streak-card .title { color:var(--tint); }
+  .streak-card .sub { color:rgba(255,253,247,0.8); }
+  .continue-btn { width:100%; min-height:52px; border-radius:14px; border:0; background:linear-gradient(160deg,var(--brass),var(--brass2)); color:var(--tint); font-size:15px; font-weight:900; cursor:pointer; box-shadow:0 4px 0 var(--brass2); display:flex; align-items:center; justify-content:center; gap:10px; margin-bottom:16px; }
+  .continue-btn svg { width:20px; height:20px; }
+  .section-title { font-size:14px; font-weight:900; margin:16px 4px 10px; display:flex; align-items:center; gap:8px; color:var(--ink); }
+  .section-title .dot { width:8px; height:8px; border-radius:50%; background:var(--brass); }
+  .paths-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .path-card { background:var(--white); border-radius:var(--r); padding:14px 12px; box-shadow:var(--shadow2); border:1.5px solid var(--border); cursor:pointer; transition:transform 180ms ease, box-shadow 180ms ease; display:flex; flex-direction:column; gap:8px; position:relative; overflow:hidden; }
+  .path-card:hover { transform:translateY(-4px); box-shadow:var(--shadow); }
+  .path-card.locked { opacity:0.5; filter:grayscale(0.5); cursor:not-allowed; }
+  .path-icon { width:46px; height:46px; border-radius:14px; display:grid; place-items:center; color:var(--tint); box-shadow:inset 0 2px 0 rgba(255,253,247,0.25); }
+  .path-icon svg { width:24px; height:24px; }
+  .path-name { font-size:14px; font-weight:900; color:var(--ink); }
+  .path-sub { font-size:10.5px; color:var(--muted); font-weight:600; }
+  .path-progress { height:6px; background:var(--paper); border-radius:999px; overflow:hidden; border:1px solid var(--border); }
+  .path-progress > div { height:100%; border-radius:999px; transition:width 500ms ease; }
+  .path-meta { display:flex; justify-content:space-between; align-items:center; font-size:10.5px; font-weight:800; color:var(--soft); }
+  .path-header { background:var(--white); border-radius:var(--r); padding:16px; border:1.5px solid var(--border); margin-bottom:14px; display:flex; align-items:center; gap:12px; box-shadow:var(--shadow2); }
+  .path-header .icon { width:52px; height:52px; border-radius:14px; display:grid; place-items:center; color:var(--tint); box-shadow:inset 0 2px 0 rgba(255,253,247,0.25); }
+  .path-header .icon svg { width:26px; height:26px; }
+  .path-header h2 { margin:0; font-size:17px; font-weight:900; color:var(--ink); }
+  .path-header p { margin:3px 0 0; font-size:11px; color:var(--muted); font-weight:600; }
+  .path-header .progress-bar { height:7px; background:var(--paper); border-radius:999px; overflow:hidden; margin-top:8px; border:1px solid var(--border); }
+  .path-header .progress-bar > div { height:100%; border-radius:999px; transition:width 500ms; }
+  .path-chips { display:flex; gap:6px; overflow-x:auto; padding:4px 2px 10px; scrollbar-width:none; }
+  .path-chips::-webkit-scrollbar { display:none; }
+  .path-chip { flex:0 0 auto; padding:7px 13px; border-radius:999px; background:var(--white); border:1.5px solid var(--border); font-size:12px; font-weight:800; color:var(--soft); cursor:pointer; display:flex; align-items:center; gap:6px; transition:all 150ms; box-shadow:var(--shadow2); }
+  .path-chip.active { background:var(--brass); color:var(--tint); border-color:var(--brass); }
+  .path-chip svg { width:16px; height:16px; }
+  .path-vertical { position:relative; padding:10px 0 20px; }
+  .path-line { position:absolute; top:0; bottom:0; right:50%; width:4px; background:linear-gradient(180deg,var(--border2),var(--border)); border-radius:999px; transform:translateX(50%); }
+  .path-node { position:relative; display:flex; align-items:center; gap:12px; margin:12px 0; cursor:pointer; transition:transform 160ms; }
+  .path-node:hover { transform:scale(1.02); }
+  .path-node.locked { opacity:0.45; cursor:not-allowed; filter:grayscale(0.6); }
+  .path-node.done .node-circle { background:var(--green); border-color:var(--green); }
+  .path-node.current .node-circle { box-shadow:0 0 0 4px rgba(165,108,24,0.25); border-color:var(--brass); }
+  .node-circle { width:56px; height:56px; border-radius:50%; display:grid; place-items:center; color:var(--tint); background:var(--brass); border:3px solid var(--brass2); box-shadow:0 4px 0 var(--brass2),var(--shadow2); flex:0 0 auto; font-weight:900; font-size:16px; z-index:2; }
+  .node-circle svg { width:22px; height:22px; }
+  .node-info { flex:1 1 auto; min-width:0; background:var(--white); border-radius:14px; padding:10px 12px; border:1.5px solid var(--border); box-shadow:var(--shadow2); }
+  .path-node:nth-child(odd) .node-info { margin-left:64px; }
+  .path-node:nth-child(even) .node-info { margin-right:64px; }
+  .node-title { font-size:13px; font-weight:900; color:var(--ink); }
+  .node-sub { font-size:10px; color:var(--muted); font-weight:600; margin-top:2px; }
+  .node-meta { display:flex; align-items:center; gap:8px; margin-top:4px; }
+  .node-stars { font-size:11px; color:#9a7a00; font-weight:900; }
+  .node-xp { font-size:9.5px; color:var(--soft); font-weight:700; background:var(--paper); padding:2px 7px; border-radius:999px; border:1px solid var(--border); }
+  .lesson-intro { background:var(--white); border-radius:var(--r); padding:20px 18px; border:1.5px solid var(--border); text-align:center; box-shadow:var(--shadow2); }
+  .lesson-intro .icon { width:64px; height:64px; margin:0 auto 8px; border-radius:18px; display:grid; place-items:center; color:var(--tint); }
+  .lesson-intro .icon svg { width:32px; height:32px; }
+  .lesson-intro h2 { margin:0; font-size:18px; font-weight:900; color:var(--ink); }
+  .lesson-intro p { margin:6px 0 14px; font-size:12px; color:var(--soft); font-weight:600; line-height:1.6; }
+  .start-btn { min-height:48px; padding:0 26px; border-radius:12px; border:0; background:linear-gradient(160deg,var(--brass),var(--brass2)); color:var(--tint); font-size:14px; font-weight:900; cursor:pointer; box-shadow:0 4px 0 var(--brass2); display:inline-flex; align-items:center; gap:8px; }
+  .start-btn svg { width:18px; height:18px; }
+  .q-card { background:var(--white); border-radius:var(--r); padding:20px 16px; border:1.5px solid var(--border); box-shadow:var(--shadow); text-align:center; }
+  .q-progress { font-size:11px; font-weight:800; color:var(--muted); margin-bottom:6px; letter-spacing:0.5px; }
+  .q-text { font-size:28px; font-weight:900; margin:8px 0 6px; line-height:1.3; color:var(--ink); }
+  .q-hint { font-size:11px; color:var(--muted); font-weight:600; }
+  .answers { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .ans-btn { min-height:58px; border-radius:14px; border:1.5px solid var(--border); background:var(--white); font-size:20px; font-weight:900; cursor:pointer; transition:transform 120ms ease, background 120ms ease, border-color 120ms ease, box-shadow 120ms ease; box-shadow:var(--shadow2); color:var(--ink); display:flex; align-items:center; justify-content:center; gap:6px; }
+  .ans-btn:hover { transform:scale(1.02); border-color:var(--brass); }
+  .ans-btn.correct { background:var(--green); color:#fff; border-color:var(--green); box-shadow:0 4px 0 #3a7a45; }
+  .ans-btn.wrong { background:var(--oxblood); color:#fff; border-color:var(--oxblood); box-shadow:0 4px 0 #6f2118; }
+  .ans-btn:disabled { cursor:default; }
+  .ans-btn svg { width:20px; height:20px; }
+  .feedback { text-align:center; font-size:16px; font-weight:900; min-height:24px; margin-top:4px; display:flex; align-items:center; justify-content:center; gap:6px; }
+  .feedback.ok { color:var(--green); }
+  .feedback.bad { color:var(--oxblood); }
+  .feedback svg { width:18px; height:18px; }
+  .hint-btn { min-height:36px; padding:0 14px; border-radius:10px; border:1.5px dashed var(--border2); background:var(--paper); color:var(--soft); font-size:12px; font-weight:800; cursor:pointer; display:inline-flex; align-items:center; gap:6px; margin-top:8px; }
+  .hint-btn svg { width:14px; height:14px; }
+  .explanation { background:var(--paper); border-radius:12px; padding:10px 12px; margin-top:8px; border:1px solid var(--border); font-size:12px; font-weight:600; color:var(--soft); line-height:1.6; display:none; }
+  .explanation.show { display:block; }
+  .next-btn { min-height:48px; border-radius:12px; border:0; width:100%; background:linear-gradient(160deg,var(--brass),var(--brass2)); color:var(--tint); font-size:14px; font-weight:900; cursor:pointer; box-shadow:0 4px 0 var(--brass2); display:flex; align-items:center; justify-content:center; gap:8px; }
+  .next-btn svg { width:18px; height:18px; }
+  .next-btn:disabled { opacity:0.4; box-shadow:none; cursor:default; }
+  .result-card { background:var(--white); border-radius:var(--r); padding:26px 18px; border:1.5px solid var(--border); text-align:center; box-shadow:var(--shadow); }
+  .result-emoji { width:72px; height:72px; margin:0 auto 8px; border-radius:50%; display:grid; place-items:center; background:linear-gradient(150deg,var(--brass),var(--brass2)); color:var(--tint); }
+  .result-emoji svg { width:36px; height:36px; }
+  .result-title { font-size:22px; font-weight:900; margin:0; color:var(--ink); }
+  .result-sub { color:var(--soft); font-weight:600; margin:6px 0 10px; font-size:13px; }
+  .result-stars { font-size:32px; margin:8px 0 14px; letter-spacing:4px; }
+  .result-stats { display:flex; gap:10px; margin:10px 0 16px; }
+  .result-stat { flex:1; background:var(--paper); border-radius:12px; padding:10px; border:1px solid var(--border); }
+  .result-stat .v { font-size:18px; font-weight:900; color:var(--brass); }
+  .result-stat .l { font-size:9.5px; color:var(--muted); font-weight:700; margin-top:2px; }
+  .confetti { position:fixed; inset:0; pointer-events:none; z-index:99; }
+  .confetti span { position:absolute; top:-20px; font-size:22px; animation:fall 1.5s linear forwards; }
+  @keyframes fall { to { transform:translateY(110vh) rotate(360deg); opacity:0; } }
+  .bottomnav { display:grid; grid-template-columns:repeat(5,1fr); gap:4px; padding:8px 10px calc(8px + env(safe-area-inset-bottom)); background:linear-gradient(180deg,var(--tint),var(--paper)); border-top:1.5px solid var(--border); flex:0 0 auto; }
+  .nav-btn { display:flex; flex-direction:column; align-items:center; gap:3px; min-height:50px; border:0; background:transparent; color:var(--muted); font-size:9.5px; font-weight:800; cursor:pointer; border-radius:12px; transition:all 150ms; }
+  .nav-btn.active { color:var(--brass); background:rgba(165,108,24,0.10); }
+  .nav-btn .ico { width:20px; height:20px; }
+  .nav-btn .ico svg { width:20px; height:20px; }
+  .char-bar { display:flex; align-items:center; gap:10px; background:var(--white); border-radius:14px; padding:10px 12px; border:1.5px solid var(--border); margin-bottom:12px; box-shadow:var(--shadow2); }
+  .char-avatar { width:46px; height:46px; border-radius:50%; display:grid; place-items:center; background:linear-gradient(150deg,var(--brass),var(--brass2)); flex:0 0 auto; box-shadow:inset 0 2px 0 rgba(255,253,247,0.3); color:var(--tint); overflow:hidden; font-size:28px; }
+  .char-bubble { flex:1 1 auto; min-width:0; background:var(--paper); border-radius:12px; padding:8px 11px; border:1px solid var(--border); font-size:12px; font-weight:700; color:var(--ink); line-height:1.5; }
+  .char-speak { width:38px; height:38px; border-radius:50%; border:0; background:linear-gradient(160deg,var(--brass),var(--brass2)); color:var(--tint); cursor:pointer; display:grid; place-items:center; box-shadow:0 3px 0 var(--brass2); flex:0 0 auto; }
+  .char-speak svg { width:16px; height:16px; }
+  .char-speak:active { transform:translateY(2px); box-shadow:0 1px 0 var(--brass2); }
+  .count-strip { display:flex; gap:6px; overflow-x:auto; padding:4px 2px 8px; scrollbar-width:none; }
+  .count-strip::-webkit-scrollbar { display:none; }
+  .count-chip { flex:0 0 auto; min-width:44px; height:44px; border-radius:12px; background:var(--white); border:1.5px solid var(--border); display:grid; place-items:center; font-size:18px; font-weight:900; color:var(--ink); cursor:pointer; transition:all 150ms; }
+  .count-chip:hover { background:var(--brass); color:var(--tint); border-color:var(--brass); }
+  .count-chip:active { transform:scale(0.95); }
+  .stat-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:14px; }
+  .stat-card { background:var(--white); border-radius:14px; padding:14px; border:1.5px solid var(--border); box-shadow:var(--shadow2); text-align:center; }
+  .stat-card .v { font-size:24px; font-weight:900; color:var(--brass); }
+  .stat-card .l { font-size:10.5px; color:var(--muted); font-weight:700; margin-top:2px; }
+  .path-progress-card { background:var(--white); border-radius:14px; padding:12px 14px; border:1.5px solid var(--border); margin-bottom:8px; box-shadow:var(--shadow2); }
+  .path-progress-card .row { display:flex; align-items:center; gap:10px; }
+  .path-progress-card .icon { width:36px; height:36px; border-radius:10px; display:grid; place-items:center; color:var(--tint); }
+  .path-progress-card .icon svg { width:18px; height:18px; }
+  .path-progress-card .info { flex:1 1 auto; min-width:0; }
+  .path-progress-card .name { font-size:13px; font-weight:900; color:var(--ink); }
+  .path-progress-card .bar { height:6px; background:var(--paper); border-radius:999px; overflow:hidden; margin-top:4px; border:1px solid var(--border); }
+  .path-progress-card .bar > div { height:100%; border-radius:999px; transition:width 500ms; }
+  .path-progress-card .pct { font-size:10.5px; color:var(--muted); font-weight:700; margin-top:3px; }
+  .setting-row { display:flex; align-items:center; justify-content:space-between; background:var(--white); border-radius:14px; padding:14px 16px; border:1.5px solid var(--border); margin-bottom:8px; box-shadow:var(--shadow2); }
+  .setting-row .label { font-size:13px; font-weight:800; color:var(--ink); }
+  .setting-row .sub { font-size:10.5px; color:var(--muted); font-weight:600; margin-top:2px; }
+  .toggle { width:46px; height:26px; border-radius:999px; background:var(--border2); position:relative; cursor:pointer; transition:background 200ms; border:0; flex:0 0 auto; }
+  .toggle.on { background:var(--brass); }
+  .toggle::after { content:''; position:absolute; top:3px; right:3px; width:20px; height:20px; border-radius:50%; background:var(--white); transition:right 200ms; box-shadow:0 1px 3px rgba(0,0,0,0.2); }
+  .toggle.on::after { right:23px; }
+  .btn-danger { min-height:44px; padding:0 16px; border-radius:12px; border:0; width:100%; background:var(--oxblood); color:var(--tint); font-size:13px; font-weight:900; cursor:pointer; box-shadow:0 4px 0 #6f2118; }
+  .empty { text-align:center; padding:36px 20px; color:var(--muted); font-weight:700; }
+  .star { color:#c9a227; }
 </style>
 </head>
 <body>
 <div class="app">
-  <div class="update-banner" id="updateBanner">
-    <span class="update-text">تحديث جديد متاح! 🎉</span>
-    <button class="update-btn" id="updateBtn">تحديث الآن</button>
-  </div>
   <div class="topbar">
     <button class="back-btn" id="backBtn" style="visibility:hidden"><span data-icon="chevron-right"></span></button>
     <div class="title"><span class="mascot" data-icon="calculator"></span> ریاضيات — مسارات</div>
@@ -445,222 +218,6 @@ const ICONS = {
   'next': I('<circle cx="12" cy="12" r="10" fill="#a56c18" stroke="#8d5a12" stroke-width="1"/><path d="M9 8l5 4-5 4" fill="none" stroke="#fbf0d7" stroke-width="2"/>'),
   'check-circle': I('<circle cx="12" cy="12" r="10" fill="#4d9560" stroke="#3a7a45" stroke-width="1"/><path d="M7 12l3.5 3.5 6-7" fill="none" stroke="#fff" stroke-width="2.2"/>'),
   'gear': I('<circle cx="12" cy="12" r="3" fill="#8a7355"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" fill="#8a7355" stroke="#5b4730" stroke-width="1"/>'),
-  'giraffe': I('<circle cx="12" cy="14" r="6" fill="#fbbf24" stroke="#b45309" stroke-width="1.5"/><path d="M9 9l-1-5 2 3M15 9l1-5-2 3" fill="#fbbf24" stroke="#b45309" stroke-width="1.5"/><circle cx="9.5" cy="13" r="1.3" fill="#2c2114"/><circle cx="14.5" cy="13" r="1.3" fill="#2c2114"/><circle cx="9" cy="10" r="0.9" fill="#8d2f24"/><circle cx="15" cy="10" r="0.9" fill="#8d2f24"/><path d="M10 16q2 2 4 0" stroke="#2c2114" fill="none" stroke-width="1.2"/>', {size:46}),
-  'dog': I('<circle cx="12" cy="14" r="6" fill="#a16207" stroke="#78350f" stroke-width="1.5"/><path d="M6 10c-1-3 0-6 2-6s2 3 1 5M18 10c1-3 0-6-2-6s-2 3-1 5" fill="#a16207" stroke="#78350f" stroke-width="1.5"/><circle cx="9.5" cy="13" r="1.3" fill="#2c2114"/><circle cx="14.5" cy="13" r="1.3" fill="#2c2114"/><ellipse cx="12" cy="16" rx="1.6" ry="1.2" fill="#2c2114"/><path d="M10.5 17.5q1.5 1.5 3 0" stroke="#fbf0d7" fill="none" stroke-width="1"/>', {size:46}),
-};
-function icon(name, size=20){ return `<span class="svg-icon" style="width:${size}px;height:${size}px">${ICONS[name]||''}</span>`; }
-
-// ---------- Data ----------
-const PATHS = [
-  { id:'count', name:'العد والأعداد', sub:'الأعداد ١-١٠٠ · ٨ دروس', icon:'count', color:'#a56c18', lessons:[
-    {id:'c1',title:'العد من ١ إلى ١٠',sub:'تعرّف على الأعداد',type:'count',max:10,xp:10},
-    {id:'c2',title:'العد من ١ إلى ٢٠',sub:'أعداد أكبر',type:'count',max:20,xp:10},
-    {id:'c3',title:'أي عدد أكبر؟',sub:'مقارنة',type:'compare',max:20,xp:15},
-    {id:'c4',title:'العد من ١ إلى ٥٠',sub:'حتى ٥٠',type:'count',max:50,xp:15},
-    {id:'c5',title:'العد من ١ إلى ١٠٠',sub:'حتى ١٠٠',type:'count',max:100,xp:20},
-    {id:'c6',title:'ترتيب الأعداد',sub:'أكبر/أصغر',type:'compare',max:100,xp:20},
-    {id:'c7',title:'العد تنازلياً',sub:'من ٢٠ إلى ١',type:'countdown',max:20,xp:20},
-    {id:'c8',title:'الأعداد الزوجية',sub:'٢,٤,٦,...',type:'even',max:50,xp:25},
-  ]},
-  { id:'add', name:'الجمع', sub:'جمع الأعداد · ٨ دروس', icon:'add', color:'#4d9560', lessons:[
-    {id:'a1',title:'جمع حتى ٥',sub:'١+١=٢',type:'add',max:5,xp:10},
-    {id:'a2',title:'جمع حتى ١٠',sub:'٥+٣=٨',type:'add',max:10,xp:10},
-    {id:'a3',title:'جمع حتى ٢٠',sub:'٩+٧=١٦',type:'add',max:20,xp:15},
-    {id:'a4',title:'جمع ٣ أعداد',sub:'٢+٣+٤',type:'add3',max:10,xp:15},
-    {id:'a5',title:'جمع حتى ٥٠',sub:'٢٣+١٧',type:'add',max:50,xp:20},
-    {id:'a6',title:'جمع حتى ١٠٠',sub:'٤٧+٣٨',type:'add',max:100,xp:20},
-    {id:'a7',title:'جمع with carrying',sub:'٥٨+٤٧',type:'add',max:100,xp:25},
-    {id:'a8',title:'مسائل جمع',sub:'قصص',type:'wordadd',max:20,xp:25},
-  ]},
-  { id:'sub', name:'الطرح', sub:'طرح الأعداد · ٧ دروس', icon:'sub', color:'#8d2f24', lessons:[
-    {id:'s1',title:'طرح حتى ٥',sub:'٣-١=٢',type:'sub',max:5,xp:10},
-    {id:'s2',title:'طرح حتى ١٠',sub:'٧-٤=٣',type:'sub',max:10,xp:10},
-    {id:'s3',title:'طرح حتى ٢٠',sub:'١٥-٨=٧',type:'sub',max:20,xp:15},
-    {id:'s4',title:'طرح حتى ٥٠',sub:'٤٠-١٧',type:'sub',max:50,xp:20},
-    {id:'s5',title:'طرح حتى ١٠٠',sub:'٨٣-٢٩',type:'sub',max:100,xp:20},
-    {id:'s6',title:'طرح with borrowing',sub:'٧٢-٣٨',type:'sub',max:100,xp:25},
-    {id:'s7',title:'مسائل طرح',sub:'قصص',type:'wordsub',max:20,xp:25},
-  ]},
-  { id:'mul', name:'الضرب', sub:'جدول الضرب · ٩ دروس', icon:'mul', color:'#7c3aed', lessons:[
-    {id:'m1',title:'ضرب ×٢',sub:'٢×٣=٦',type:'mul',factor:2,xp:15},
-    {id:'m2',title:'ضرب ×٣',sub:'٣×٤=١٢',type:'mul',factor:3,xp:15},
-    {id:'m3',title:'ضرب ×٤',sub:'٤×٥=٢٠',type:'mul',factor:4,xp:15},
-    {id:'m4',title:'ضرب ×٥',sub:'٥×٦=٣٠',type:'mul',factor:5,xp:15},
-    {id:'m5',title:'ضرب ×٦',sub:'٦×٧=٤٢',type:'mul',factor:6,xp:20},
-    {id:'m6',title:'ضرب ×٧',sub:'٧×٨=٥٦',type:'mul',factor:7,xp:20},
-    {id:'m7',title:'ضرب ×٨',sub:'٨×٩=٧٢',type:'mul',factor:8,xp:20},
-    {id:'m8',title:'ضرب ×٩',sub:'٩×٩=٨١',type:'mul',factor:9,xp:20},
-    {id:'m9',title:'ضرب مختلط',sub:'جميع الجداول',type:'mulmix',factor:0,xp:30},
-  ]},
-  { id:'div', name:'القسمة', sub:'قسمة الأعداد · ٦ دروس', icon:'div', color:'#0891b2', lessons:[
-    {id:'d1',title:'قسمة على ٢',sub:'٦÷٢=٣',type:'div',factor:2,xp:15},
-    {id:'d2',title:'قسمة على ٣',sub:'٩÷٣=٣',type:'div',factor:3,xp:15},
-    {id:'d3',title:'قسمة على ٤',sub:'١٢÷٤=٣',type:'div',factor:4,xp:15},
-    {id:'d4',title:'قسمة على ٥',sub:'٢٠÷٥=٤',type:'div',factor:5,xp:15},
-    {id:'d5',title:'قسمة على ٦-٩',sub:'مختلط',type:'div',factor:0,xp:25},
-    {id:'d6',title:'مسائل قسمة',sub:'قصص',type:'worddiv',max:30,xp:25},
-  ]},
-  { id:'frac', name:'الكسور', sub:'أجزاء من كل · ٥ دروس', icon:'frac', color:'#d97706', lessons:[
-    {id:'f1',title:'نصف (١/٢)',sub:'جزء من كل',type:'frac',denom:2,xp:15},
-    {id:'f2',title:'ثلث (١/٣)',sub:'جزء من كل',type:'frac',denom:3,xp:15},
-    {id:'f3',title:'ربع (١/٤)',sub:'جزء من كل',type:'frac',denom:4,xp:15},
-    {id:'f4',title:'جمع كسور',sub:'١/٢+١/٢',type:'fracadd',xp:20},
-    {id:'f5',title:'مقارنة كسور',sub:'أكبر/أصغر',type:'fraccmp',xp:20},
-  ]},
-  { id:'geo', name:'الهندسة', sub:'الأشكال · ٦ دروس', icon:'geo', color:'#db2777', lessons:[
-    {id:'g1',title:'المربع',sub:'٤ أضلاع متساوية',type:'shape',shape:'square',xp:10},
-    {id:'g2',title:'المثلث',sub:'٣ أضلاع',type:'shape',shape:'triangle',xp:10},
-    {id:'g3',title:'الدائرة',sub:'بدون أضلاع',type:'shape',shape:'circle',xp:10},
-    {id:'g4',title:'المستطيل',sub:'أضلاع متقابلة',type:'shape',shape:'rect',xp:10},
-    {id:'g5',title:'عد الأضلاع',sub:'كم ضلعاً؟',type:'sides',xp:15},
-    {id:'g6',title:'المساحة',sub:'طول × عرض',type:'area',xp:25},
-  ]},
-  { id:'meas', name:'القياس', sub:'الوقت والطول · ٤ دروس', icon:'meas', color:'#0891b2', lessons:[
-    {id:'ms1',title:'الساعة (ساعة)',sub:'قراءة الوقت',type:'time',xp:15},
-    {id:'ms2',title:'الساعة (دقيقة)',sub:'قراءة الوقت',type:'time',xp:20},
-    {id:'ms3',title:'الطول (سم)',sub:'قياس',type:'length',xp:15},
-    {id:'ms4',title:'الوزن (كغ)',sub:'قياس',type:'weight',xp:15},
-  ]},
-  { id:'word', name:'مسائل كلامية', sub:'تطبيق · ٥ دروس', icon:'word', color:'#4f46e5', lessons:[
-    {id:'w1',title:'جمع في القصة',sub:'لدي ٣ تفاحات...',type:'wordadd',xp:20},
-    {id:'w2',title:'طرح في القصة',sub:'لدي ٥ حلوى...',type:'wordsub',xp:20},
-    {id:'w3',title:'ضرب في القصة',sub:'٣ علب × ٤',type:'wordmul',xp:25},
-    {id:'w4',title:'قسمة في القصة',sub:'١٢ حلوى ÷ ٣',type:'worddiv',xp:25},
-    {id:'w5',title:'مسائل مختلطة',sub:'جميع العمليات',type:'wordmix',xp:30},
-  ]},
-];
-
-// ---------- State ----------
-const state = { stars:0, xp:0, progress:{}, currentPath:null, currentLesson:null, questions:[], qIndex:0, score:0, answers:[], char:0, settings:{sound:true,voice:true}, selectedPath:0, dailyGoal:5, dailyDone:0, streak:0, lastDate:null };
-function loadState(){ try{ const s=JSON.parse(localStorage.getItem('mathlingo_v3')||'{}'); if(s.stars)state.stars=s.stars; if(s.xp)state.xp=s.xp; if(s.progress)state.progress=s.progress; if(s.settings)state.settings=s.settings; if(typeof s.selectedPath==='number')state.selectedPath=s.selectedPath; if(s.dailyGoal)state.dailyGoal=s.dailyGoal; if(s.dailyDone)state.dailyDone=s.dailyDone; if(s.streak)state.streak=s.streak; if(s.lastDate)state.lastDate=s.lastDate;}catch{} }
-function saveState(){ try{ localStorage.setItem('mathlingo_v3', JSON.stringify({stars:state.stars,xp:state.xp,progress:state.progress,settings:state.settings,selectedPath:state.selectedPath,dailyGoal:state.dailyGoal,dailyDone:state.dailyDone,streak:state.streak,lastDate:state.lastDate})); }catch{} }
-loadState();
-
-// daily reset
-const today = new Date().toDateString();
-if (state.lastDate !== today) { state.dailyDone = 0; state.lastDate = today; saveState(); }
-
-// ---------- Helpers ----------
-function rand(a,b){ return Math.floor(Math.random()*(b-a+1))+a; }
-function shuffle(arr){ for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];} return arr; }
-function toAr(n){ return String(n).replace(/\d/g,d=>'٠١٢٣٤٥٦٧٨٩'[d]); }
-function makeChoices(ans,min,max){ const set=new Set([ans]); while(set.size<4) set.add(rand(min,max)); return shuffle([...set]); }
-
-// ---------- TTS ----------
-let voicesLoaded=false;
-function loadVoices(){ if(voicesLoaded) return; try{ speechSynthesis.getVoices(); voicesLoaded=true;}catch{} }
-if('speechSynthesis' in window){ loadVoices(); window.speechSynthesis.onvoiceschanged=loadVoices; }
-function speak(text){ if(!('speechSynthesis' in window)||!state.settings.voice) return; try{ window.speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(text); u.lang='ar-SA'; u.rate=0.9; u.pitch=1.05; const voices=window.speechSynthesis.getVoices(); const ar=voices.find(v=>v.lang&&v.lang.startsWith('ar')); if(ar)u.voice=ar; window.speechSynthesis.speak(u);}catch{} }
-function speakNumber(n){ speak(toAr(n)); }
-
-// ---------- Characters ----------
-const CHARACTERS = [
-  { id:'giraffe', name:'الزرافة لولو', svg: I('<circle cx="12" cy="14" r="6" fill="#fbbf24" stroke="#b45309" stroke-width="1.5"/><path d="M9 9l-1-5 2 3M15 9l1-5-2 3" fill="#fbbf24" stroke="#b45309" stroke-width="1.5"/><circle cx="9.5" cy="13" r="1.3" fill="#2c2114"/><circle cx="14.5" cy="13" r="1.3" fill="#2c2114"/><circle cx="9" cy="10" r="0.9" fill="#8d2f24"/><circle cx="15" cy="10" r="0.9" fill="#8d2f24"/><path d="M10 16q2 2 4 0" stroke="#2c2114" fill="none" stroke-width="1.2"/>', {size:46}), greet:'مرحباً! أنا لولو الزرافة، سأساعدك في العد!' },
-  { id:'dog', name:'الكلب ركس', svg: I('<circle cx="12" cy="14" r="6" fill="#a16207" stroke="#78350f" stroke-width="1.5"/><path d="M6 10c-1-3 0-6 2-6s2 3 1 5M18 10c1-3 0-6-2-6s-2 3-1 5" fill="#a16207" stroke="#78350f" stroke-width="1.5"/><circle cx="9.5" cy="13" r="1.3" fill="#2c2114"/><circle cx="14.5" cy="13" r="1.3" fill="#2c2114"/><ellipse cx="12" cy="16" rx="1.6" ry="1.2" fill="#2c2114"/><path d="M10.5 17.5q1.5 1.5 3 0" stroke="#fbf0d7" fill="none" stroke-width="1"/>', {size:46}), greet:'أهلاً! أنا ركس الكلب، سأساعدك في العمليات!' },
-];
-function charFor(pathId){ return PATHS.indexOf(PATHS.find(p=>p.id===pathId)) % 2 === 0 ? CHARACTERS[0] : CHARACTERS[1]; }
-
-// ---------- Question generator ----------
-function genQuestions(lesson, n=8) {
-  const qs=[];
-  for(let i=0;i<n;i++){
-    let q,ans,choices,type='mc';
-    switch(lesson.type){
-      case 'count': { const x=rand(1,lesson.max); q='كم نجمة؟ '+'⭐'.repeat(Math.min(x,12)); ans=x; choices=makeChoices(ans,1,lesson.max); break; }
-      case 'countdown': { const x=rand(5,lesson.max); q='عد تنازلياً: '+toAr(x)+', ?, ?'; ans=x-1; choices=makeChoices(ans,1,lesson.max); break; }
-      case 'even': { const x=rand(1,lesson.max); q='هل '+toAr(x)+' عدد زوجي؟'; ans=(x%2===0)?'نعم':'لا'; choices=['نعم','لا']; type='tf'; break; }
-      case 'compare': { const a=rand(1,lesson.max),b=rand(1,lesson.max); q='أي عدد أكبر؟ '+toAr(a)+'  أو  '+toAr(b); ans=Math.max(a,b); choices=shuffle([a,b,rand(1,lesson.max),rand(1,lesson.max)]).slice(0,4); break; }
-      case 'add': { const a=rand(1,Math.floor(lesson.max/2)),b=rand(1,Math.floor(lesson.max/2)); q=toAr(a)+' + '+toAr(b)+' = ؟'; ans=a+b; choices=makeChoices(ans,0,lesson.max*2); break; }
-      case 'add3': { const a=rand(1,5),b=rand(1,5),c=rand(1,5); q=toAr(a)+' + '+toAr(b)+' + '+toAr(c)+' = ؟'; ans=a+b+c; choices=makeChoices(ans,0,15); break; }
-      case 'sub': { const a=rand(2,lesson.max),b=rand(1,a); q=toAr(a)+' − '+toAr(b)+' = ؟'; ans=a-b; choices=makeChoices(ans,0,lesson.max); break; }
-      case 'mul': { const f=lesson.factor,x=rand(1,9); q=toAr(f)+' × '+toAr(x)+' = ؟'; ans=f*x; choices=makeChoices(ans,0,81); break; }
-      case 'mulmix': { const f=rand(2,9),x=rand(2,9); q=toAr(f)+' × '+toAr(x)+' = ؟'; ans=f*x; choices=makeChoices(ans,0,81); break; }
-      case 'div': { const f=lesson.factor||rand(2,5),x=rand(1,9); q=toAr(f*x)+' ÷ '+toAr(f)+' = ؟'; ans=x; choices=makeChoices(ans,0,9); break; }
-      case 'worddiv': { const f=rand(2,5),x=rand(2,6); q='لدي '+toAr(f*x)+' حلوى، أريد توزيعها على '+toAr(f)+' أصدقاء بالتساوي. كم لكل صديق؟'; ans=x; choices=makeChoices(ans,0,9); break; }
-      case 'frac': { const d=lesson.denom; const num=rand(1,d-1); q='أي كسر يمثل '+toAr(num)+' من '+toAr(d)+' أجزاء متساوية؟'; ans=num+'/'+d; choices=shuffle([1,2,3,4].map(n=>n+'/'+d)).slice(0,4); if(!choices.includes(ans))choices[0]=ans; choices=shuffle(choices); type='str'; break; }
-      case 'fracadd': { q='١/٢ + ١/٢ = ؟'; ans='١'; choices=['١','١/٢','٢','١/٤']; type='str'; break; }
-      case 'fraccmp': { const a=rand(1,3),b=rand(1,3); q='أي كسر أكبر: '+a+'/4  أو  '+b+'/4 ؟'; ans=(a>b?a+'/4':b+'/4'); choices=[a+'/4',b+'/4','1/2','1/4']; type='str'; break; }
-      case 'shape': { const names={square:'مربع',triangle:'مثلث',circle:'دائرة',rect:'مستطيل'}; const shapes={square:'⬜',triangle:'🔺',circle:'⚪',rect:'▬'}; q='أي شكل هو '+names[lesson.shape]+'؟'; ans=shapes[lesson.shape]; choices=shuffle(['⬜','🔺','⚪','▬']); type='emoji'; break; }
-      case 'sides': { const opts=[{n:3,e:'🔺'},{n:4,e:'⬜'},{n:0,e:'⚪'}]; const pk=opts[rand(0,2)]; q='كم ضلعاً لهذا الشكل؟ '+pk.e; ans=pk.n; choices=shuffle([3,4,0,5]); break; }
-      case 'area': { const l=rand(2,6),w=rand(2,6); q='مستطيل طوله '+toAr(l)+' وعرضه '+toAr(w)+'. ما مساحته؟'; ans=l*w; choices=makeChoices(ans,0,40); break; }
-      case 'time': { const h=rand(1,12); q='الساعة تشير إلى '+toAr(h)+':00. ما الوقت؟'; ans=h; choices=makeChoices(ans,1,12); break; }
-      case 'length': { q='أي أداة نستخدم لقياس الطول؟'; ans='مسطرة'; choices=['مسطرة','ميزان','ساعة','محرارة']; type='str'; break; }
-      case 'weight': { q='أي أداة نستخدم لقياس الوزن؟'; ans='ميزان'; choices=['مسطرة','ميزان','ساعة','محرارة']; type='str'; break; }
-      case 'wordadd': { const a=rand(2,6),b=rand(2,6); q='لدى سارة '+toAr(a)+' تفاحات، وأعطتها أمها '+toAr(b)+' تفاحات. كم تفاحة لديها الآن؟'; ans=a+b; choices=makeChoices(ans,0,15); break; }
-      case 'wordsub': { const a=rand(5,9),b=rand(1,4); q='لدى علي '+toAr(a)+' حلوى، أكل '+toAr(b)+' حلوى. كم حلوى بقيت؟'; ans=a-b; choices=makeChoices(ans,0,9); break; }
-      case 'wordmul': { const a=rand(2,4),b=rand(2,4); q='هناك '+toAr(a)+' علب، في كل علبة '+toAr(b)+' أقلام. كم قلماً in total?'; ans=a*b; choices=makeChoices(ans,0,20); break; }
-      case 'worddiv': { const f=rand(2,5),x=rand(2,6); q='لدي '+toAr(f*x)+' حلوى، أريد توزيعها على '+toAr(f)+' أصدقاء بالتساوي. كم لكل صديق؟'; ans=x; choices=makeChoices(ans,0,9); break; }
-      case 'wordmix': { const r=rand(0,3); if(r===0){const a=rand(2,6),b=rand(2,6);q='لدى سارة '+toAr(a)+' تفاحات + '+toAr(b)+'. كم؟';ans=a+b;choices=makeChoices(ans,0,15);}
-        else if(r===1){const a=rand(5,9),b=rand(1,4);q='لدى علي '+toAr(a)+' حلوى − '+toAr(b)+'. كم بقي؟';ans=a-b;choices=makeChoices(ans,0,9);}
-        else if(r===2){const a=rand(2,4),b=rand(2,4);q=toAr(a)+' × '+toAr(b)+' = ؟';ans=a*b;choices=makeChoices(ans,0,20);}
-        else {const f=rand(2,5),x=rand(2,6);q=toAr(f*x)+' ÷ '+toAr(f)+' = ؟';ans=x;choices=makeChoices(ans,0,9);}
-        break; }
-    }
-    if(type!=='str'&&type!=='emoji'&&type!=='tf'){ choices=shuffle([...new Set(choices)]); while(choices.length<4) choices.push(rand(0,20)); choices=shuffle(choices.slice(0,4)); }
-    qs.push({q,ans,choices,type});
-  }
-  return qs;
-}
-
-// ---------- State ----------
-const state = { stars:0, xp:0, progress:{}, currentPath:null, currentLesson:null, questions:[], qIndex:0, score:0, answers:[], char:0, settings:{sound:true,voice:true}, selectedPath:0, dailyGoal:5, dailyDone:0, streak:0, lastDate:null };
-function loadState(){ try{ const s=JSON.parse(localStorage.getItem('mathlingo_v3')||'{}'); if(s.stars)state.stars=s.stars; if(s.xp)state.xp=s.xp; if(s.progress)state.progress=s.progress; if(s.settings)state.settings=s.settings; if(typeof s.selectedPath==='number')state.selectedPath=s.selectedPath; if(s.dailyGoal)state.dailyGoal=s.dailyGoal; if(s.dailyDone)state.dailyDone=s.dailyDone; if(s.streak)state.streak=s.streak; if(s.lastDate)state.lastDate=s.lastDate;}catch{} }
-function saveState(){ try{ localStorage.setItem('mathlingo_v3', JSON.stringify({stars:state.stars,xp:state.xp,progress:state.progress,settings:state.settings,selectedPath:state.selectedPath,dailyGoal:state.dailyGoal,dailyDone:state.dailyDone,streak:state.streak,lastDate:state.lastDate})); }catch{} }
-loadState();
-const today = new Date().toDateString();
-if (state.lastDate !== today) { state.dailyDone = 0; state.lastDate = today; saveState(); }
-
-// ---------- Helpers ----------
-function rand(a,b){ return Math.floor(Math.random()*(b-a+1))+a; }
-function shuffle(arr){ for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];} return arr; }
-function toAr(n){ return String(n).replace(/\d/g,d=>'٠١٢٣٤٥٦٧٨٩'[d]); }
-function makeChoices(ans,min,max){ const set=new Set([ans]); while(set.size<4) set.add(rand(min,max)); return shuffle([...set]); }
-
-// ---------- TTS ----------
-let voicesLoaded=false;
-function loadVoices(){ if(voicesLoaded) return; try{ speechSynthesis.getVoices(); voicesLoaded=true;}catch{} }
-if('speechSynthesis' in window){ loadVoices(); window.speechSynthesis.onvoiceschanged=loadVoices; }
-function speak(text){ if(!('speechSynthesis' in window)||!state.settings.voice) return; try{ window.speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(text); u.lang='ar-SA'; u.rate=0.9; u.pitch=1.05; const voices=window.speechSynthesis.getVoices(); const ar=voices.find(v=>v.lang&&v.lang.startsWith('ar')); if(ar)u.voice=ar; window.speechSynthesis.speak(u);}catch{} }
-function speakNumber(n){ speak(toAr(n)); }
-
-// ---------- Characters ----------
-const CHARACTERS = [
-  { id:'giraffe', name:'الزرافة لولو', svg: I('<circle cx="12" cy="14" r="6" fill="#fbbf24" stroke="#b45309" stroke-width="1.5"/><path d="M9 9l-1-5 2 3M15 9l1-5-2 3" fill="#fbbf24" stroke="#b45309" stroke-width="1.5"/><circle cx="9.5" cy="13" r="1.3" fill="#2c2114"/><circle cx="14.5" cy="13" r="1.3" fill="#2c2114"/><circle cx="9" cy="10" r="0.9" fill="#8d2f24"/><circle cx="15" cy="10" r="0.9" fill="#8d2f24"/><path d="M10 16q2 2 4 0" stroke="#2c2114" fill="none" stroke-width="1.2"/>', {size:46}), greet:'مرحباً! أنا لولو الزرافة، سأساعدك في العد!' },
-  { id:'dog', name:'الكلب ركس', svg: I('<circle cx="12" cy="14" r="6" fill="#a16207" stroke="#78350f" stroke-width="1.5"/><path d="M6 10c-1-3 0-6 2-6s2 3 1 5M18 10c1-3 0-6-2-6s-2 3-1 5" fill="#a16207" stroke="#78350f" stroke-width="1.5"/><circle cx="9.5" cy="13" r="1.3" fill="#2c2114"/><circle cx="14.5" cy="13" r="1.3" fill="#2c2114"/><ellipse cx="12" cy="16" rx="1.6" ry="1.2" fill="#2c2114"/><path d="M10.5 17.5q1.5 1.5 3 0" stroke="#fbf0d7" fill="none" stroke-width="1"/>', {size:46}), greet:'أهلاً! أنا ركس الكلب، سأساعدك في العمليات!' },
-];
-function charFor(pathId){ return PATHS.indexOf(PATHS.find(p=>p.id===pathId)) % 2 === 0 ? CHARACTERS[0] : CHARACTERS[1]; }
-
-// ---------- Icon library ----------
-const I = (d, opts={}) => {
-  const s = opts.size || 24, fill = opts.fill || 'currentColor', stroke = opts.stroke || 'none', sw = opts.sw || 0;
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="${s}" height="${s}" viewBox="0 0 24 24" fill="${fill}" stroke="${stroke}" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round">${d}</svg>`;
-};
-const ICONS = {
-  'chevron-right': I('<path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.5"/>'),
-  'calculator': I('<rect x="3" y="2" width="18" height="20" rx="3" fill="#a56c18"/><rect x="5" y="4" width="14" height="4" rx="1" fill="#fbf0d7"/><circle cx="7" cy="12" r="1.3" fill="#fbf0d7"/><circle cx="12" cy="12" r="1.3" fill="#fbf0d7"/><circle cx="17" cy="12" r="1.3" fill="#fbf0d7"/><circle cx="7" cy="17" r="1.3" fill="#fbf0d7"/><circle cx="12" cy="17" r="1.3" fill="#fbf0d7"/><circle cx="17" cy="17" r="1.3" fill="#fbf0d7"/>'),
-  'star-filled': I('<path d="M12 2l3 6.5 7 1-5 4.9 1.2 7-6.2-3.3-6.2 3.3 1.2-7-5-4.9 7-1z" fill="#d97706" stroke="#9a7a00" stroke-width="1"/>'),
-  'home': I('<path d="M3 11l9-8 9 8v10a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z" fill="currentColor"/>'),
-  'map': I('<polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21" fill="#4f46e5" stroke="#3730a3" stroke-width="1"/><line x1="9" y1="3" x2="9" y2="18" stroke="#fff" stroke-width="1.2"/><line x1="15" y1="6" x2="15" y2="21" stroke="#fff" stroke-width="1.2"/>'),
-  'pencil': I('<path d="M3 21l3-1 13-13-2-2-13 13-1 3z" fill="#0891b2" stroke="#0e7490" stroke-width="1"/><path d="M14 5l2 2 2-2-2-2z" fill="#fbbf24"/>'),
-  'trophy': I('<path d="M6 3h12v4a6 6 0 0 1-12 0V3z" fill="#d97706" stroke="#9a7a00" stroke-width="1"/><path d="M6 5H4a1 1 0 0 0-1 1v2a3 3 0 0 0 3 3M18 5h2a1 1 0 0 1 1 1v2a3 3 0 0 1-3 3" fill="none" stroke="#9a7a00" stroke-width="1.5"/><rect x="9" y="13" width="6" height="3" fill="#8d5a12"/><rect x="7" y="16" width="10" height="4" rx="1" fill="#8d5a12"/>'),
-  'lock': I('<rect x="4" y="10" width="16" height="12" rx="3" fill="#8a7355" stroke="#5b4730" stroke-width="1"/><path d="M8 10V7a4 4 0 0 1 8 0v3" fill="none" stroke="#5b4730" stroke-width="2"/>'),
-  'check': I('<circle cx="12" cy="12" r="9" fill="#4d9560" stroke="#3a7a45" stroke-width="1"/><path d="M7 12l3.5 3.5 6-7" fill="none" stroke="#fff" stroke-width="2.2"/>'),
-  'count': I('<circle cx="6" cy="7" r="2.5" fill="#3b82f6"/><circle cx="12" cy="7" r="2.5" fill="#3b82f6"/><circle cx="18" cy="7" r="2.5" fill="#3b82f6"/><circle cx="6" cy="17" r="2.5" fill="#3b82f6"/><circle cx="12" cy="17" r="2.5" fill="#3b82f6"/><circle cx="18" cy="17" r="2.5" fill="#3b82f6"/>'),
-  'add': I('<circle cx="12" cy="12" r="10" fill="#4d9560" stroke="#3a7a45" stroke-width="1"/><path d="M12 7v10M7 12h10" stroke="#fff" stroke-width="2.5"/>'),
-  'sub': I('<circle cx="12" cy="12" r="10" fill="#8d2f24" stroke="#6f2118" stroke-width="1"/><path d="M7 12h10" stroke="#fff" stroke-width="2.5"/>'),
-  'mul': I('<circle cx="12" cy="12" r="10" fill="#7c3aed" stroke="#5b21b6" stroke-width="1"/><path d="M8 8l8 8M16 8l-8 8" stroke="#fff" stroke-width="2.5"/>'),
-  'div': I('<circle cx="12" cy="12" r="10" fill="#0891b2" stroke="#0e7490" stroke-width="1"/><circle cx="12" cy="7" r="1.2" fill="#fff"/><circle cx="12" cy="17" r="1.2" fill="#fff"/><path d="M7 12h10" stroke="#fff" stroke-width="2.5"/>'),
-  'frac': I('<circle cx="12" cy="12" r="9" fill="#d97706" stroke="#9a7a00" stroke-width="1"/><path d="M12 3v18M3 12h18" stroke="#fff" stroke-width="1.8"/>'),
-  'geo': I('<polygon points="12 3 21 20 3 20" fill="#db2777" stroke="#9d174d" stroke-width="1"/><circle cx="12" cy="14" r="2" fill="#fff"/>'),
-  'meas': I('<rect x="3" y="7" width="18" height="10" rx="2" fill="#0891b2" stroke="#0e7490" stroke-width="1"/><path d="M6 7v4M9 7v2M12 7v4M15 7v2M18 7v4" stroke="#fff" stroke-width="1.5"/>'),
-  'word': I('<rect x="4" y="3" width="16" height="18" rx="2" fill="#4f46e5" stroke="#3730a3" stroke-width="1"/><path d="M7 8h10M7 12h10M7 16h6" stroke="#fff" stroke-width="1.5"/>'),
-  'speaker': I('<path d="M3 9h3l4-4v14l-4-4H3z" fill="#a56c18" stroke="#8d5a12" stroke-width="1"/><path d="M14 8a4 4 0 0 1 0 8M17 5a7 7 0 0 1 0 14" fill="none" stroke="#a56c18" stroke-width="1.8"/>'),
-  'play': I('<circle cx="12" cy="12" r="10" fill="#a56c18" stroke="#8d5a12" stroke-width="1"/><path d="M9 7l8 5-8 5z" fill="#fbf0d7"/>'),
-  'next': I('<circle cx="12" cy="12" r="10" fill="#a56c18" stroke="#8d5a12" stroke-width="1"/><path d="M9 8l5 4-5 4" fill="none" stroke="#fbf0d7" stroke-width="2"/>'),
-  'check-circle': I('<circle cx="12" cy="12" r="10" fill="#4d9560" stroke="#3a7a45" stroke-width="1"/><path d="M7 12l3.5 3.5 6-7" fill="none" stroke="#fff" stroke-width="2.2"/>'),
-  'gear': I('<circle cx="12" cy="12" r="3" fill="#8a7355"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" fill="#8a7355" stroke="#5b4730" stroke-width="1"/>'),
-  'giraffe': I('<circle cx="12" cy="14" r="6" fill="#fbbf24" stroke="#b45309" stroke-width="1.5"/><path d="M9 9l-1-5 2 3M15 9l1-5-2 3" fill="#fbbf24" stroke="#b45309" stroke-width="1.5"/><circle cx="9.5" cy="13" r="1.3" fill="#2c2114"/><circle cx="14.5" cy="13" r="1.3" fill="#2c2114"/><circle cx="9" cy="10" r="0.9" fill="#8d2f24"/><circle cx="15" cy="10" r="0.9" fill="#8d2f24"/><path d="M10 16q2 2 4 0" stroke="#2c2114" fill="none" stroke-width="1.2"/>', {size:46}),
-  'dog': I('<circle cx="12" cy="14" r="6" fill="#a16207" stroke="#78350f" stroke-width="1.5"/><path d="M6 10c-1-3 0-6 2-6s2 3 1 5M18 10c1-3 0-6-2-6s-2 3-1 5" fill="#a16207" stroke="#78350f" stroke-width="1.5"/><circle cx="9.5" cy="13" r="1.3" fill="#2c2114"/><circle cx="14.5" cy="13" r="1.3" fill="#2c2114"/><ellipse cx="12" cy="16" rx="1.6" ry="1.2" fill="#2c2114"/><path d="M10.5 17.5q1.5 1.5 3 0" stroke="#fbf0d7" fill="none" stroke-width="1"/>', {size:46}),
 };
 function icon(name, size=20){ return `<span class="svg-icon" style="width:${size}px;height:${size}px">${ICONS[name]||''}</span>`; }
 
@@ -767,78 +324,8 @@ function speakNumber(n){ speak(toAr(n)); }
 
 // ---------- Characters ----------
 const CHARACTERS = [
-  { id:'giraffe', name:'الزرافة لولو', svg: I('<circle cx="12" cy="14" r="6" fill="#fbbf24" stroke="#b45309" stroke-width="1.5"/><path d="M9 9l-1-5 2 3M15 9l1-5-2 3" fill="#fbbf24" stroke="#b45309" stroke-width="1.5"/><circle cx="9.5" cy="13" r="1.3" fill="#2c2114"/><circle cx="14.5" cy="13" r="1.3" fill="#2c2114"/><circle cx="9" cy="10" r="0.9" fill="#8d2f24"/><circle cx="15" cy="10" r="0.9" fill="#8d2f24"/><path d="M10 16q2 2 4 0" stroke="#2c2114" fill="none" stroke-width="1.2"/>', {size:46}), greet:'مرحباً! أنا لولو الزرافة، سأساعدك في العد!' },
-  { id:'dog', name:'الكلب ركس', svg: I('<circle cx="12" cy="14" r="6" fill="#a16207" stroke="#78350f" stroke-width="1.5"/><path d="M6 10c-1-3 0-6 2-6s2 3 1 5M18 10c1-3 0-6-2-6s-2 3-1 5" fill="#a16207" stroke="#78350f" stroke-width="1.5"/><circle cx="9.5" cy="13" r="1.3" fill="#2c2114"/><circle cx="14.5" cy="13" r="1.3" fill="#2c2114"/><ellipse cx="12" cy="16" rx="1.6" ry="1.2" fill="#2c2114"/><path d="M10.5 17.5q1.5 1.5 3 0" stroke="#fbf0d7" fill="none" stroke-width="1"/>', {size:46}), greet:'أهلاً! أنا ركس الكلب، سأساعدك في العمليات!' },
-];
-function charFor(pathId){ return PATHS.indexOf(PATHS.find(p=>p.id===pathId)) % 2 === 0 ? CHARACTERS[0] : CHARACTERS[1]; }
-
-// ---------- Question generator ----------
-function genQuestions(lesson, n=8) {
-  const qs=[];
-  for(let i=0;i<n;i++){
-    let q,ans,choices,type='mc';
-    switch(lesson.type){
-      case 'count': { const x=rand(1,lesson.max); q='كم نجمة؟ '+'⭐'.repeat(Math.min(x,12)); ans=x; choices=makeChoices(ans,1,lesson.max); break; }
-      case 'countdown': { const x=rand(5,lesson.max); q='عد تنازلياً: '+toAr(x)+', ?, ?'; ans=x-1; choices=makeChoices(ans,1,lesson.max); break; }
-      case 'even': { const x=rand(1,lesson.max); q='هل '+toAr(x)+' عدد زوجي؟'; ans=(x%2===0)?'نعم':'لا'; choices=['نعم','لا']; type='tf'; break; }
-      case 'compare': { const a=rand(1,lesson.max),b=rand(1,lesson.max); q='أي عدد أكبر؟ '+toAr(a)+'  أو  '+toAr(b); ans=Math.max(a,b); choices=shuffle([a,b,rand(1,lesson.max),rand(1,lesson.max)]).slice(0,4); break; }
-      case 'add': { const a=rand(1,Math.floor(lesson.max/2)),b=rand(1,Math.floor(lesson.max/2)); q=toAr(a)+' + '+toAr(b)+' = ؟'; ans=a+b; choices=makeChoices(ans,0,lesson.max*2); break; }
-      case 'add3': { const a=rand(1,5),b=rand(1,5),c=rand(1,5); q=toAr(a)+' + '+toAr(b)+' + '+toAr(c)+' = ؟'; ans=a+b+c; choices=makeChoices(ans,0,15); break; }
-      case 'sub': { const a=rand(2,lesson.max),b=rand(1,a); q=toAr(a)+' − '+toAr(b)+' = ؟'; ans=a-b; choices=makeChoices(ans,0,lesson.max); break; }
-      case 'mul': { const f=lesson.factor,x=rand(1,9); q=toAr(f)+' × '+toAr(x)+' = ؟'; ans=f*x; choices=makeChoices(ans,0,81); break; }
-      case 'mulmix': { const f=rand(2,9),x=rand(2,9); q=toAr(f)+' × '+toAr(x)+' = ؟'; ans=f*x; choices=makeChoices(ans,0,81); break; }
-      case 'div': { const f=lesson.factor||rand(2,5),x=rand(1,9); q=toAr(f*x)+' ÷ '+toAr(f)+' = ؟'; ans=x; choices=makeChoices(ans,0,9); break; }
-      case 'worddiv': { const f=rand(2,5),x=rand(2,6); q='لدي '+toAr(f*x)+' حلوى، أريد توزيعها على '+toAr(f)+' أصدقاء بالتساوي. كم لكل صديق؟'; ans=x; choices=makeChoices(ans,0,9); break; }
-      case 'frac': { const d=lesson.denom; const num=rand(1,d-1); q='أي كسر يمثل '+toAr(num)+' من '+toAr(d)+' أجزاء متساوية؟'; ans=num+'/'+d; choices=shuffle([1,2,3,4].map(n=>n+'/'+d)).slice(0,4); if(!choices.includes(ans))choices[0]=ans; choices=shuffle(choices); type='str'; break; }
-      case 'fracadd': { q='١/٢ + ١/٢ = ؟'; ans='١'; choices=['١','١/٢','٢','١/٤']; type='str'; break; }
-      case 'fraccmp': { const a=rand(1,3),b=rand(1,3); q='أي كسر أكبر: '+a+'/4  أو  '+b+'/4 ؟'; ans=(a>b?a+'/4':b+'/4'); choices=[a+'/4',b+'/4','1/2','1/4']; type='str'; break; }
-      case 'shape': { const names={square:'مربع',triangle:'مثلث',circle:'دائرة',rect:'مستطيل'}; const shapes={square:'⬜',triangle:'🔺',circle:'⚪',rect:'▬'}; q='أي شكل هو '+names[lesson.shape]+'؟'; ans=shapes[lesson.shape]; choices=shuffle(['⬜','🔺','⚪','▬']); type='emoji'; break; }
-      case 'sides': { const opts=[{n:3,e:'🔺'},{n:4,e:'⬜'},{n:0,e:'⚪'}]; const pk=opts[rand(0,2)]; q='كم ضلعاً لهذا الشكل؟ '+pk.e; ans=pk.n; choices=shuffle([3,4,0,5]); break; }
-      case 'area': { const l=rand(2,6),w=rand(2,6); q='مستطيل طوله '+toAr(l)+' وعرضه '+toAr(w)+'. ما مساحته؟'; ans=l*w; choices=makeChoices(ans,0,40); break; }
-      case 'time': { const h=rand(1,12); q='الساعة تشير إلى '+toAr(h)+':00. ما الوقت؟'; ans=h; choices=makeChoices(ans,1,12); break; }
-      case 'length': { q='أي أداة نستخدم لقياس الطول؟'; ans='مسطرة'; choices=['مسطرة','ميزان','ساعة','محرارة']; type='str'; break; }
-      case 'weight': { q='أي أداة نستخدم لقياس الوزن؟'; ans='ميزان'; choices=['مسطرة','ميزان','ساعة','محرارة']; type='str'; break; }
-      case 'wordadd': { const a=rand(2,6),b=rand(2,6); q='لدى سارة '+toAr(a)+' تفاحات، وأعطتها أمها '+toAr(b)+' تفاحات. كم تفاحة لديها الآن؟'; ans=a+b; choices=makeChoices(ans,0,15); break; }
-      case 'wordsub': { const a=rand(5,9),b=rand(1,4); q='لدى علي '+toAr(a)+' حلوى، أكل '+toAr(b)+' حلوى. كم حلوى بقيت؟'; ans=a-b; choices=makeChoices(ans,0,9); break; }
-      case 'wordmul': { const a=rand(2,4),b=rand(2,4); q='هناك '+toAr(a)+' علب، في كل علبة '+toAr(b)+' أقلام. كم قلماً in total?'; ans=a*b; choices=makeChoices(ans,0,20); break; }
-      case 'worddiv': { const f=rand(2,5),x=rand(2,6); q='لدي '+toAr(f*x)+' حلوى، أريد توزيعها على '+toAr(f)+' أصدقاء بالتساوي. كم لكل صديق؟'; ans=x; choices=makeChoices(ans,0,9); break; }
-      case 'wordmix': { const r=rand(0,3); if(r===0){const a=rand(2,6),b=rand(2,6);q='لدى سارة '+toAr(a)+' تفاحات + '+toAr(b)+'. كم؟';ans=a+b;choices=makeChoices(ans,0,15);}
-        else if(r===1){const a=rand(5,9),b=rand(1,4);q='لدى علي '+toAr(a)+' حلوى − '+toAr(b)+'. كم بقي؟';ans=a-b;choices=makeChoices(ans,0,9);}
-        else if(r===2){const a=rand(2,4),b=rand(2,4);q=toAr(a)+' × '+toAr(b)+' = ؟';ans=a*b;choices=makeChoices(ans,0,20);}
-        else {const f=rand(2,5),x=rand(2,6);q=toAr(f*x)+' ÷ '+toAr(f)+' = ؟';ans=x;choices=makeChoices(ans,0,9);}
-        break; }
-    }
-    if(type!=='str'&&type!=='emoji'&&type!=='tf'){ choices=shuffle([...new Set(choices)]); while(choices.length<4) choices.push(rand(0,20)); choices=shuffle(choices.slice(0,4)); }
-    qs.push({q,ans,choices,type});
-  }
-  return qs;
-}
-
-// ---------- State ----------
-const state = { stars:0, xp:0, progress:{}, currentPath:null, currentLesson:null, questions:[], qIndex:0, score:0, answers:[], char:0, settings:{sound:true,voice:true}, selectedPath:0, dailyGoal:5, dailyDone:0, streak:0, lastDate:null };
-function loadState(){ try{ const s=JSON.parse(localStorage.getItem('mathlingo_v3')||'{}'); if(s.stars)state.stars=s.stars; if(s.xp)state.xp=s.xp; if(s.progress)state.progress=s.progress; if(s.settings)state.settings=s.settings; if(typeof s.selectedPath==='number')state.selectedPath=s.selectedPath; if(s.dailyGoal)state.dailyGoal=s.dailyGoal; if(s.dailyDone)state.dailyDone=s.dailyDone; if(s.streak)state.streak=s.streak; if(s.lastDate)state.lastDate=s.lastDate;}catch{} }
-function saveState(){ try{ localStorage.setItem('mathlingo_v3', JSON.stringify({stars:state.stars,xp:state.xp,progress:state.progress,settings:state.settings,selectedPath:state.selectedPath,dailyGoal:state.dailyGoal,dailyDone:state.dailyDone,streak:state.streak,lastDate:state.lastDate})); }catch{} }
-loadState();
-const today = new Date().toDateString();
-if (state.lastDate !== today) { state.dailyDone = 0; state.lastDate = today; saveState(); }
-
-// ---------- Helpers ----------
-function rand(a,b){ return Math.floor(Math.random()*(b-a+1))+a; }
-function shuffle(arr){ for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];} return arr; }
-function toAr(n){ return String(n).replace(/\d/g,d=>'٠١٢٣٤٥٦٧٨٩'[d]); }
-function makeChoices(ans,min,max){ const set=new Set([ans]); while(set.size<4) set.add(rand(min,max)); return shuffle([...set]); }
-
-// ---------- TTS ----------
-let voicesLoaded=false;
-function loadVoices(){ if(voicesLoaded) return; try{ speechSynthesis.getVoices(); voicesLoaded=true;}catch{} }
-if('speechSynthesis' in window){ loadVoices(); window.speechSynthesis.onvoiceschanged=loadVoices; }
-function speak(text){ if(!('speechSynthesis' in window)||!state.settings.voice) return; try{ window.speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(text); u.lang='ar-SA'; u.rate=0.9; u.pitch=1.05; const voices=window.speechSynthesis.getVoices(); const ar=voices.find(v=>v.lang&&v.lang.startsWith('ar')); if(ar)u.voice=ar; window.speechSynthesis.speak(u);}catch{} }
-function speakNumber(n){ speak(toAr(n)); }
-
-// ---------- Characters ----------
-const CHARACTERS = [
-  { id:'giraffe', name:'الزرافة لولو', svg: I('<circle cx="12" cy="14" r="6" fill="#fbbf24" stroke="#b45309" stroke-width="1.5"/><path d="M9 9l-1-5 2 3M15 9l1-5-2 3" fill="#fbbf24" stroke="#b45309" stroke-width="1.5"/><circle cx="9.5" cy="13" r="1.3" fill="#2c2114"/><circle cx="14.5" cy="13" r="1.3" fill="#2c2114"/><circle cx="9" cy="10" r="0.9" fill="#8d2f24"/><circle cx="15" cy="10" r="0.9" fill="#8d2f24"/><path d="M10 16q2 2 4 0" stroke="#2c2114" fill="none" stroke-width="1.2"/>', {size:46}), greet:'مرحباً! أنا لولو الزرافة، سأساعدك في العد!' },
-  { id:'dog', name:'الكلب ركس', svg: I('<circle cx="12" cy="14" r="6" fill="#a16207" stroke="#78350f" stroke-width="1.5"/><path d="M6 10c-1-3 0-6 2-6s2 3 1 5M18 10c1-3 0-6-2-6s-2 3-1 5" fill="#a16207" stroke="#78350f" stroke-width="1.5"/><circle cx="9.5" cy="13" r="1.3" fill="#2c2114"/><circle cx="14.5" cy="13" r="1.3" fill="#2c2114"/><ellipse cx="12" cy="16" rx="1.6" ry="1.2" fill="#2c2114"/><path d="M10.5 17.5q1.5 1.5 3 0" stroke="#fbf0d7" fill="none" stroke-width="1"/>', {size:46}), greet:'أهلاً! أنا ركس الكلب، سأساعدك في العمليات!' },
+  { id:'giraffe', name:'الزرافة لولو', svg:'🦒', greet:'مرحباً! أنا لولو الزرافة، سأساعدك في العد!' },
+  { id:'dog', name:'الكلب ركس', svg:'🐶', greet:'أهلاً! أنا ركس الكلب، سأساعدك في العمليات!' },
 ];
 function charFor(pathId){ return PATHS.indexOf(PATHS.find(p=>p.id===pathId)) % 2 === 0 ? CHARACTERS[0] : CHARACTERS[1]; }
 
@@ -871,119 +358,9 @@ const ICONS = {
   'next': I('<circle cx="12" cy="12" r="10" fill="#a56c18" stroke="#8d5a12" stroke-width="1"/><path d="M9 8l5 4-5 4" fill="none" stroke="#fbf0d7" stroke-width="2"/>'),
   'check-circle': I('<circle cx="12" cy="12" r="10" fill="#4d9560" stroke="#3a7a45" stroke-width="1"/><path d="M7 12l3.5 3.5 6-7" fill="none" stroke="#fff" stroke-width="2.2"/>'),
   'gear': I('<circle cx="12" cy="12" r="3" fill="#8a7355"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" fill="#8a7355" stroke="#5b4730" stroke-width="1"/>'),
-  'giraffe': I('<circle cx="12" cy="14" r="6" fill="#fbbf24" stroke="#b45309" stroke-width="1.5"/><path d="M9 9l-1-5 2 3M15 9l1-5-2 3" fill="#fbbf24" stroke="#b45309" stroke-width="1.5"/><circle cx="9.5" cy="13" r="1.3" fill="#2c2114"/><circle cx="14.5" cy="13" r="1.3" fill="#2c2114"/><circle cx="9" cy="10" r="0.9" fill="#8d2f24"/><circle cx="15" cy="10" r="0.9" fill="#8d2f24"/><path d="M10 16q2 2 4 0" stroke="#2c2114" fill="none" stroke-width="1.2"/>', {size:46}),
-  'dog': I('<circle cx="12" cy="14" r="6" fill="#a16207" stroke="#78350f" stroke-width="1.5"/><path d="M6 10c-1-3 0-6 2-6s2 3 1 5M18 10c1-3 0-6-2-6s-2 3-1 5" fill="#a16207" stroke="#78350f" stroke-width="1.5"/><circle cx="9.5" cy="13" r="1.3" fill="#2c2114"/><circle cx="14.5" cy="13" r="1.3" fill="#2c2114"/><ellipse cx="12" cy="16" rx="1.6" ry="1.2" fill="#2c2114"/><path d="M10.5 17.5q1.5 1.5 3 0" stroke="#fbf0d7" fill="none" stroke-width="1"/>', {size:46}),
 };
 function icon(name, size=20){ return `<span class="svg-icon" style="width:${size}px;height:${size}px">${ICONS[name]||''}</span>`; }
 
-// ---------- Data ----------
-const PATHS = [
-  { id:'count', name:'العد والأعداد', sub:'الأعداد ١-١٠٠ · ٨ دروس', icon:'count', color:'#a56c18', lessons:[
-    {id:'c1',title:'العد من ١ إلى ١٠',sub:'تعرّف على الأعداد',type:'count',max:10,xp:10},
-    {id:'c2',title:'العد من ١ إلى ٢٠',sub:'أعداد أكبر',type:'count',max:20,xp:10},
-    {id:'c3',title:'أي عدد أكبر؟',sub:'مقارنة',type:'compare',max:20,xp:15},
-    {id:'c4',title:'العد من ١ إلى ٥٠',sub:'حتى ٥٠',type:'count',max:50,xp:15},
-    {id:'c5',title:'العد من ١ إلى ١٠٠',sub:'حتى ١٠٠',type:'count',max:100,xp:20},
-    {id:'c6',title:'ترتيب الأعداد',sub:'أكبر/أصغر',type:'compare',max:100,xp:20},
-    {id:'c7',title:'العد تنازلياً',sub:'من ٢٠ إلى ١',type:'countdown',max:20,xp:20},
-    {id:'c8',title:'الأعداد الزوجية',sub:'٢,٤,٦,...',type:'even',max:50,xp:25},
-  ]},
-  { id:'add', name:'الجمع', sub:'جمع الأعداد · ٨ دروس', icon:'add', color:'#4d9560', lessons:[
-    {id:'a1',title:'جمع حتى ٥',sub:'١+١=٢',type:'add',max:5,xp:10},
-    {id:'a2',title:'جمع حتى ١٠',sub:'٥+٣=٨',type:'add',max:10,xp:10},
-    {id:'a3',title:'جمع حتى ٢٠',sub:'٩+٧=١٦',type:'add',max:20,xp:15},
-    {id:'a4',title:'جمع ٣ أعداد',sub:'٢+٣+٤',type:'add3',max:10,xp:15},
-    {id:'a5',title:'جمع حتى ٥٠',sub:'٢٣+١٧',type:'add',max:50,xp:20},
-    {id:'a6',title:'جمع حتى ١٠٠',sub:'٤٧+٣٨',type:'add',max:100,xp:20},
-    {id:'a7',title:'جمع with carrying',sub:'٥٨+٤٧',type:'add',max:100,xp:25},
-    {id:'a8',title:'مسائل جمع',sub:'قصص',type:'wordadd',max:20,xp:25},
-  ]},
-  { id:'sub', name:'الطرح', sub:'طرح الأعداد · ٧ دروس', icon:'sub', color:'#8d2f24', lessons:[
-    {id:'s1',title:'طرح حتى ٥',sub:'٣-١=٢',type:'sub',max:5,xp:10},
-    {id:'s2',title:'طرح حتى ١٠',sub:'٧-٤=٣',type:'sub',max:10,xp:10},
-    {id:'s3',title:'طرح حتى ٢٠',sub:'١٥-٨=٧',type:'sub',max:20,xp:15},
-    {id:'s4',title:'طرح حتى ٥٠',sub:'٤٠-١٧',type:'sub',max:50,xp:20},
-    {id:'s5',title:'طرح حتى ١٠٠',sub:'٨٣-٢٩',type:'sub',max:100,xp:20},
-    {id:'s6',title:'طرح with borrowing',sub:'٧٢-٣٨',type:'sub',max:100,xp:25},
-    {id:'s7',title:'مسائل طرح',sub:'قصص',type:'wordsub',max:20,xp:25},
-  ]},
-  { id:'mul', name:'الضرب', sub:'جدول الضرب · ٩ دروس', icon:'mul', color:'#7c3aed', lessons:[
-    {id:'m1',title:'ضرب ×٢',sub:'٢×٣=٦',type:'mul',factor:2,xp:15},
-    {id:'m2',title:'ضرب ×٣',sub:'٣×٤=١٢',type:'mul',factor:3,xp:15},
-    {id:'m3',title:'ضرب ×٤',sub:'٤×٥=٢٠',type:'mul',factor:4,xp:15},
-    {id:'m4',title:'ضرب ×٥',sub:'٥×٦=٣٠',type:'mul',factor:5,xp:15},
-    {id:'m5',title:'ضرب ×٦',sub:'٦×٧=٤٢',type:'mul',factor:6,xp:20},
-    {id:'m6',title:'ضرب ×٧',sub:'٧×٨=٥٦',type:'mul',factor:7,xp:20},
-    {id:'m7',title:'ضرب ×٨',sub:'٨×٩=٧٢',type:'mul',factor:8,xp:20},
-    {id:'m8',title:'ضرب ×٩',sub:'٩×٩=٨١',type:'mul',factor:9,xp:20},
-    {id:'m9',title:'ضرب مختلط',sub:'جميع الجداول',type:'mulmix',factor:0,xp:30},
-  ]},
-  { id:'div', name:'القسمة', sub:'قسمة الأعداد · ٦ دروس', icon:'div', color:'#0891b2', lessons:[
-    {id:'d1',title:'قسمة على ٢',sub:'٦÷٢=٣',type:'div',factor:2,xp:15},
-    {id:'d2',title:'قسمة على ٣',sub:'٩÷٣=٣',type:'div',factor:3,xp:15},
-    {id:'d3',title:'قسمة على ٤',sub:'١٢÷٤=٣',type:'div',factor:4,xp:15},
-    {id:'d4',title:'قسمة على ٥',sub:'٢٠÷٥=٤',type:'div',factor:5,xp:15},
-    {id:'d5',title:'قسمة على ٦-٩',sub:'مختلط',type:'div',factor:0,xp:25},
-    {id:'d6',title:'مسائل قسمة',sub:'قصص',type:'worddiv',max:30,xp:25},
-  ]},
-  { id:'frac', name:'الكسور', sub:'أجزاء من كل · ٥ دروس', icon:'frac', color:'#d97706', lessons:[
-    {id:'f1',title:'نصف (١/٢)',sub:'جزء من كل',type:'frac',denom:2,xp:15},
-    {id:'f2',title:'ثلث (١/٣)',sub:'جزء من كل',type:'frac',denom:3,xp:15},
-    {id:'f3',title:'ربع (١/٤)',sub:'جزء من كل',type:'frac',denom:4,xp:15},
-    {id:'f4',title:'جمع كسور',sub:'١/٢+١/٢',type:'fracadd',xp:20},
-    {id:'f5',title:'مقارنة كسور',sub:'أكبر/أصغر',type:'fraccmp',xp:20},
-  ]},
-  { id:'geo', name:'الهندسة', sub:'الأشكال · ٦ دروس', icon:'geo', color:'#db2777', lessons:[
-    {id:'g1',title:'المربع',sub:'٤ أضلاع متساوية',type:'shape',shape:'square',xp:10},
-    {id:'g2',title:'المثلث',sub:'٣ أضلاع',type:'shape',shape:'triangle',xp:10},
-    {id:'g3',title:'الدائرة',sub:'بدون أضلاع',type:'shape',shape:'circle',xp:10},
-    {id:'g4',title:'المستطيل',sub:'أضلاع متقابلة',type:'shape',shape:'rect',xp:10},
-    {id:'g5',title:'عد الأضلاع',sub:'كم ضلعاً؟',type:'sides',xp:15},
-    {id:'g6',title:'المساحة',sub:'طول × عرض',type:'area',xp:25},
-  ]},
-  { id:'meas', name:'القياس', sub:'الوقت والطول · ٤ دروس', icon:'meas', color:'#0891b2', lessons:[
-    {id:'ms1',title:'الساعة (ساعة)',sub:'قراءة الوقت',type:'time',xp:15},
-    {id:'ms2',title:'الساعة (دقيقة)',sub:'قراءة الوقت',type:'time',xp:20},
-    {id:'ms3',title:'الطول (سم)',sub:'قياس',type:'length',xp:15},
-    {id:'ms4',title:'الوزن (كغ)',sub:'قياس',type:'weight',xp:15},
-  ]},
-  { id:'word', name:'مسائل كلامية', sub:'تطبيق · ٥ دروس', icon:'word', color:'#4f46e5', lessons:[
-    {id:'w1',title:'جمع في القصة',sub:'لدي ٣ تفاحات...',type:'wordadd',xp:20},
-    {id:'w2',title:'طرح في القصة',sub:'لدي ٥ حلوى...',type:'wordsub',xp:20},
-    {id:'w3',title:'ضرب في القصة',sub:'٣ علب × ٤',type:'wordmul',xp:25},
-    {id:'w4',title:'قسمة في القصة',sub:'١٢ حلوى ÷ ٣',type:'worddiv',xp:25},
-    {id:'w5',title:'مسائل مختلطة',sub:'جميع العمليات',type:'wordmix',xp:30},
-  ]},
-];
-
-// ---------- State ----------
-const state = { stars:0, xp:0, progress:{}, currentPath:null, currentLesson:null, questions:[], qIndex:0, score:0, answers:[], char:0, settings:{sound:true,voice:true}, selectedPath:0, dailyGoal:5, dailyDone:0, streak:0, lastDate:null };
-function loadState(){ try{ const s=JSON.parse(localStorage.getItem('mathlingo_v3')||'{}'); if(s.stars)state.stars=s.stars; if(s.xp)state.xp=s.xp; if(s.progress)state.progress=s.progress; if(s.settings)state.settings=s.settings; if(typeof s.selectedPath==='number')state.selectedPath=s.selectedPath; if(s.dailyGoal)state.dailyGoal=s.dailyGoal; if(s.dailyDone)state.dailyDone=s.dailyDone; if(s.streak)state.streak=s.streak; if(s.lastDate)state.lastDate=s.lastDate;}catch{} }
-function saveState(){ try{ localStorage.setItem('mathlingo_v3', JSON.stringify({stars:state.stars,xp:state.xp,progress:state.progress,settings:state.settings,selectedPath:state.selectedPath,dailyGoal:state.dailyGoal,dailyDone:state.dailyDone,streak:state.streak,lastDate:state.lastDate})); }catch{} }
-loadState();
-const today = new Date().toDateString();
-if (state.lastDate !== today) { state.dailyDone = 0; state.lastDate = today; saveState(); }
-
-// ---------- Helpers ----------
-function rand(a,b){ return Math.floor(Math.random()*(b-a+1))+a; }
-function shuffle(arr){ for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];} return arr; }
-function toAr(n){ return String(n).replace(/\d/g,d=>'٠١٢٣٤٥٦٧٨٩'[d]); }
-function makeChoices(ans,min,max){ const set=new Set([ans]); while(set.size<4) set.add(rand(min,max)); return shuffle([...set]); }
-
-// ---------- TTS ----------
-let voicesLoaded=false;
-function loadVoices(){ if(voicesLoaded) return; try{ speechSynthesis.getVoices(); voicesLoaded=true;}catch{} }
-if('speechSynthesis' in window){ loadVoices(); window.speechSynthesis.onvoiceschanged=loadVoices; }
-function speak(text){ if(!('speechSynthesis' in window)||!state.settings.voice) return; try{ window.speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(text); u.lang='ar-SA'; u.rate=0.9; u.pitch=1.05; const voices=window.speechSynthesis.getVoices(); const ar=voices.find(v=>v.lang&&v.lang.startsWith('ar')); if(ar)u.voice=ar; window.speechSynthesis.speak(u);}catch{} }
-function speakNumber(n){ speak(toAr(n)); }
-
-// ---------- Characters ----------
-const CHARACTERS = [
-  { id:'giraffe', name:'الزرافة لولو', svg: I('<circle cx="12" cy="14" r="6" fill="#fbbf24" stroke="#b45309" stroke-width="1.5"/><path d="M9 9l-1-5 2 3M15 9l1-5-2 3" fill="#fbbf24" stroke="#b45309" stroke-width="1.5"/><circle cx="9.5" cy="13" r="1.3" fill="#2c2114"/><circle cx="14.5" cy="13" r="1.3" fill="#2c2114"/><circle cx="9" cy="10" r="0.9" fill="#8d2f24"/><circle cx="15" cy="10" r="0.9" fill="#8d2f24"/><path d="M10 16q2 2 4 0" stroke="#2c2114" fill="none" stroke-width="1.2"/>', {size:46}), greet:'مرحباً! أنا لولو الزرافة، سأساعدك في العد!' },
-  { id:'dog', name:'الكلب ركس', svg: I('<circle cx="12" cy="14" r="6" fill="#a16207" stroke="#78350f" stroke-width="1.5"/><path d="M6 10c-1-3 0-6 2-6s2 3 1 5M18 10c1-3 0-6-2-6s-2 3-1 5" fill="#a16207" stroke="#78350f" stroke-width="1.5"/><circle cx="9.5" cy="13" r="1.3" fill="#2c2114"/><circle cx="14.5" cy="13" r="1.3" fill="#2c2114"/><ellipse cx="12" cy="16" rx="1.6" ry="1.2" fill="#2c2114"/><path d="M10.5 17.5q1.5 1.5 3 0" stroke="#fbf0d7" fill="none" stroke-width="1"/>', {size:46}), greet:'أهلاً! أنا ركس الكلب، سأساعدك في العمليات!' },
-];
-function charFor(pathId){ return PATHS.indexOf(PATHS.find(p=>p.id===pathId)) % 2 === 0 ? CHARACTERS[0] : CHARACTERS[1]; }
-
 // ---------- Question generator ----------
 function genQuestions(lesson, n=8) {
   const qs=[];
@@ -1026,13 +403,6 @@ function genQuestions(lesson, n=8) {
   return qs;
 }
 
-// ---------- State ----------
-const state = { stars:0, xp:0, progress:{}, currentPath:null, currentLesson:null, questions:[], qIndex:0, score:0, answers:[], char:0, settings:{sound:true,voice:true}, selectedPath:0, dailyGoal:5, dailyDone:0, streak:0, lastDate:null };
-function loadState(){ try{ const s=JSON.parse(localStorage.getItem('mathlingo_v3')||'{}'); if(s.stars)state.stars=s.stars; if(s.xp)state.xp=s.xp; if(s.progress)state.progress=s.progress; if(s.settings)state.settings=s.settings; if(typeof s.selectedPath==='number')state.selectedPath=s.selectedPath; if(s.dailyGoal)state.dailyGoal=s.dailyGoal; if(s.dailyDone)state.dailyDone=s.dailyDone; if(s.streak)state.streak=s.streak; if(s.lastDate)state.lastDate=s.lastDate;}catch{} }
-function saveState(){ try{ localStorage.setItem('mathlingo_v3', JSON.stringify({stars:state.stars,xp:state.xp,progress:state.progress,settings:state.settings,selectedPath:state.selectedPath,dailyGoal:state.dailyGoal,dailyDone:state.dailyDone,streak:state.streak,lastDate:state.lastDate})); }catch{} }
-loadState();
-const today = new Date().toDateString();
-if (state.lastDate !== today) { state.dailyDone = 0; state.lastDate = today; saveState(); }
 
 // ---------- Helpers ----------
 function rand(a,b){ return Math.floor(Math.random()*(b-a+1))+a; }
@@ -1049,8 +419,8 @@ function speakNumber(n){ speak(toAr(n)); }
 
 // ---------- Characters ----------
 const CHARACTERS = [
-  { id:'giraffe', name:'الزرافة لولو', svg: I('<circle cx="12" cy="14" r="6" fill="#fbbf24" stroke="#b45309" stroke-width="1.5"/><path d="M9 9l-1-5 2 3M15 9l1-5-2 3" fill="#fbbf24" stroke="#b45309" stroke-width="1.5"/><circle cx="9.5" cy="13" r="1.3" fill="#2c2114"/><circle cx="14.5" cy="13" r="1.3" fill="#2c2114"/><circle cx="9" cy="10" r="0.9" fill="#8d2f24"/><circle cx="15" cy="10" r="0.9" fill="#8d2f24"/><path d="M10 16q2 2 4 0" stroke="#2c2114" fill="none" stroke-width="1.2"/>', {size:46}), greet:'مرحباً! أنا لولو الزرافة، سأساعدك في العد!' },
-  { id:'dog', name:'الكلب ركس', svg: I('<circle cx="12" cy="14" r="6" fill="#a16207" stroke="#78350f" stroke-width="1.5"/><path d="M6 10c-1-3 0-6 2-6s2 3 1 5M18 10c1-3 0-6-2-6s-2 3-1 5" fill="#a16207" stroke="#78350f" stroke-width="1.5"/><circle cx="9.5" cy="13" r="1.3" fill="#2c2114"/><circle cx="14.5" cy="13" r="1.3" fill="#2c2114"/><ellipse cx="12" cy="16" rx="1.6" ry="1.2" fill="#2c2114"/><path d="M10.5 17.5q1.5 1.5 3 0" stroke="#fbf0d7" fill="none" stroke-width="1"/>', {size:46}), greet:'أهلاً! أنا ركس الكلب، سأساعدك في العمليات!' },
+  { id:'giraffe', name:'الزرافة لولو', svg:'🦒', greet:'مرحباً! أنا لولو الزرافة، سأساعدك في العد!' },
+  { id:'dog', name:'الكلب ركس', svg:'🐶', greet:'أهلاً! أنا ركس الكلب، سأساعدك في العمليات!' },
 ];
 function charFor(pathId){ return PATHS.indexOf(PATHS.find(p=>p.id===pathId)) % 2 === 0 ? CHARACTERS[0] : CHARACTERS[1]; }
 
@@ -1083,8 +453,6 @@ const ICONS = {
   'next': I('<circle cx="12" cy="12" r="10" fill="#a56c18" stroke="#8d5a12" stroke-width="1"/><path d="M9 8l5 4-5 4" fill="none" stroke="#fbf0d7" stroke-width="2"/>'),
   'check-circle': I('<circle cx="12" cy="12" r="10" fill="#4d9560" stroke="#3a7a45" stroke-width="1"/><path d="M7 12l3.5 3.5 6-7" fill="none" stroke="#fff" stroke-width="2.2"/>'),
   'gear': I('<circle cx="12" cy="12" r="3" fill="#8a7355"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" fill="#8a7355" stroke="#5b4730" stroke-width="1"/>'),
-  'giraffe': I('<circle cx="12" cy="14" r="6" fill="#fbbf24" stroke="#b45309" stroke-width="1.5"/><path d="M9 9l-1-5 2 3M15 9l1-5-2 3" fill="#fbbf24" stroke="#b45309" stroke-width="1.5"/><circle cx="9.5" cy="13" r="1.3" fill="#2c2114"/><circle cx="14.5" cy="13" r="1.3" fill="#2c2114"/><circle cx="9" cy="10" r="0.9" fill="#8d2f24"/><circle cx="15" cy="10" r="0.9" fill="#8d2f24"/><path d="M10 16q2 2 4 0" stroke="#2c2114" fill="none" stroke-width="1.2"/>', {size:46}),
-  'dog': I('<circle cx="12" cy="14" r="6" fill="#a16207" stroke="#78350f" stroke-width="1.5"/><path d="M6 10c-1-3 0-6 2-6s2 3 1 5M18 10c1-3 0-6-2-6s-2 3-1 5" fill="#a16207" stroke="#78350f" stroke-width="1.5"/><circle cx="9.5" cy="13" r="1.3" fill="#2c2114"/><circle cx="14.5" cy="13" r="1.3" fill="#2c2114"/><ellipse cx="12" cy="16" rx="1.6" ry="1.2" fill="#2c2114"/><path d="M10.5 17.5q1.5 1.5 3 0" stroke="#fbf0d7" fill="none" stroke-width="1"/>', {size:46}),
 };
 function icon(name, size=20){ return `<span class="svg-icon" style="width:${size}px;height:${size}px">${ICONS[name]||''}</span>`; }
 
@@ -1271,7 +639,7 @@ function renderQuestion(){
       ansBtns.forEach(b=>b.disabled=true);
       const chosen = btn.dataset.choice;
       const correct = String(chosen)===String(q.ans);
-      if(correct){ btn.classList.add('correct'); document.getElementById('feedback').innerHTML=icon('check',18)+' أحسنت!'; document.getElementById('feedback').className='feedback ok'; state.score++; confetti(); speakText('أحسنت'); if(state.settings.sound){} }
+      if(correct){ btn.classList.add('correct'); document.getElementById('feedback').innerHTML=icon('check',18)+' أحسنت!'; document.getElementById('feedback').className='feedback ok'; state.score++; confetti(); speakText('أحسنت'); }
       else { btn.classList.add('wrong'); ansBtns.forEach(b=>{ if(String(b.dataset.choice)===String(q.ans)) b.classList.add('correct'); }); document.getElementById('feedback').innerHTML=icon('sub',16)+' الإجابة: '+q.ans; document.getElementById('feedback').className='feedback bad'; speakText('حاول مرة أخرى'); }
       state.answers.push({q:q.q,chosen,correct,ans:q.ans});
       const nb=document.getElementById('nextBtn'); nb.disabled=false;
@@ -1417,28 +785,13 @@ function renderSettings(){
       <button class="btn-danger" id="resetBtn">إعادة تعيين</button>
     </div>
     <div class="setting-row">
-      <div><div class="label">التحقق من التحديثات</div><div class="sub">الإصدار الحالي: 1.0.4</div></div>
-      <button class="toggle" id="checkUpdateBtn" style="width:auto;padding:0 14px;border-radius:10px;background:var(--brass);color:var(--tint)">فحص</button>
-    </div>
-    <div class="setting-row">
-      <div><div class="label">الإصدار</div><div class="sub">Math Kids 1.0.4 (preview)</div></div>
+      <div><div class="label">الإصدار</div><div class="sub">Math Kids 1.0.0 (preview)</div></div>
     </div>
   `;
   document.getElementById('toggleSound').addEventListener('click',function(){ state.settings.sound=!state.settings.sound; saveState(); this.classList.toggle('on'); });
   document.getElementById('toggleVoice').addEventListener('click',function(){ state.settings.voice=!state.settings.voice; saveState(); this.classList.toggle('on'); });
   document.getElementById('resetBtn').addEventListener('click',()=>{
     if(confirm('هل أنت متأكد؟ سيتم حذف جميع النجوم والدروس.')){ state.stars=0; state.xp=0; state.progress={}; saveState(); updateStars(); renderSettings(); }
-  });
-  const cuBtn = document.getElementById('checkUpdateBtn');
-  if (cuBtn) cuBtn.addEventListener('click', async () => {
-    cuBtn.textContent = '...';
-    await checkForUpdate();
-    if (availableUpdate) {
-      cuBtn.textContent = 'تحديث!'; cuBtn.style.background = 'var(--green)';
-      downloadUpdate(availableUpdate);
-    } else {
-      cuBtn.textContent = 'محدّث'; cuBtn.style.background = 'var(--muted)';
-    }
   });
   backBtn.style.visibility='hidden';
   backBtn.onclick=null;
@@ -1472,63 +825,9 @@ function initIcons() {
     el.style.display = 'inline-block';
   });
 }
-// ---------- App version & update check ----------
-const APP_VERSION = '1.0.4';
-const UPDATE_URL = 'https://englishtok-eight.vercel.app/math-kids-latest.json';
-let availableUpdate = null;
-
-async function checkForUpdate() {
-  try {
-    const res = await fetch(UPDATE_URL, { cache: 'no-store' });
-    if (!res.ok) return;
-    const m = await res.json();
-    if (m && m.version && m.version !== APP_VERSION) {
-      availableUpdate = m;
-      const banner = document.getElementById('updateBanner');
-      const btn = document.getElementById('updateBtn');
-      if (banner) banner.style.display = 'flex';
-      if (btn) btn.onclick = () => downloadUpdate(m);
-    }
-  } catch (e) { /* offline */ }
-}
-function isNewerVersion(a, b) {
-  const pa = a.split('.').map(Number);
-  const pb = b.split('.').map(Number);
-  for (let i = 0; i < Math.max(pa.length, pb.length); i++) {
-    const x = pa[i] || 0, y = pb[i] || 0;
-    if (x > y) return true;
-    if (x < y) return false;
-  }
-  return false;
-}
-async function downloadUpdate(m) {
-  const url = m.downloadUrl || m.apkUrl;
-  if (!url) { alert('رابط التحميل غير متوفر'); return; }
-  try {
-    if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.Browser) {
-      await window.Capacitor.Plugins.Browser.open({ url });
-    } else {
-      const a = document.createElement('a');
-      a.href = url;
-      a.target = '_blank';
-      a.rel = 'noopener';
-      a.download = 'math-kids-update.apk';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-    }
-  } catch (e) {
-    try { window.open(url, '_system'); } catch (e2) { window.open(url, '_blank'); }
-  }
-  const btn = document.getElementById('updateBtn');
-  if (btn) { btn.textContent = 'جارٍ التحميل...'; btn.disabled = true; }
-  setTimeout(() => { if (btn) { btn.textContent = 'تحديث الآن'; btn.disabled = false; } }, 5000);
-}
-
 loadState();
 initIcons();
 renderHome();
-checkForUpdate();
 </script>
 </body>
 </html>
