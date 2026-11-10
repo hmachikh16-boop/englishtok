@@ -120,6 +120,8 @@ const formatTime = (iso: string): string => {
   return date.toLocaleTimeString('ar', { hour: '2-digit', minute: '2-digit' });
 };
 
+const membersLabel = (count: number): string => `${count} ${count === 1 ? 'عضو' : 'أعضاء'}`;
+
 const QUICK_PHRASES = [
   'Hi! How are you?',
   'Let’s practise English together.',
@@ -691,18 +693,7 @@ export const FriendsChat: React.FC<FriendsChatProps> = ({ onClose, userName = ''
 
           {tab === 'groups' && !activeGroup && (
             <>
-              <div className="friends-my-code-card">
-                <div>
-                  <span className="friends-my-code-label">كودك لمشاركة الصداقة</span>
-                  <code className="friends-my-code-value" dir="ltr">
-                    {myCode}
-                  </code>
-                </div>
-                <button type="button" className="friends-copy-btn" onClick={() => void handleCopyCode(myCode)} aria-label="نسخ الكود">
-                  {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-                  <span>{copied ? 'تم النسخ' : 'نسخ'}</span>
-                </button>
-              </div>
+              {myCodeCard}
 
               <div className="friends-group-forms">
                 <div className="friends-group-form">
@@ -795,7 +786,7 @@ export const FriendsChat: React.FC<FriendsChatProps> = ({ onClose, userName = ''
                           <div>
                             <strong>{g.name}</strong>
                             <small>
-                              {g.members.length} أعضاء • <span dir="ltr">{g.code}</span>
+                              {membersLabel(g.members.length)} • <span dir="ltr">{g.code}</span>
                             </small>
                           </div>
                           <MessageCircle className="friends-item-icon h-4 w-4" aria-hidden="true" />
@@ -816,7 +807,7 @@ export const FriendsChat: React.FC<FriendsChatProps> = ({ onClose, userName = ''
                 </button>
                 <div className="friends-thread-peer">
                   <strong>{activeGroup.name}</strong>
-                  <small>{activeGroup.members.length} أعضاء • {activeGroup.code}</small>
+                  <small>{membersLabel(activeGroup.members.length)} • {activeGroup.code}</small>
                 </div>
                 <button
                   type="button"

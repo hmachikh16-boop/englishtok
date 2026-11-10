@@ -1,11 +1,11 @@
 {
-    "version":  "1.1.63",
+    "version":  "1.1.64",
     "packageId":  "com.englishtok.gold",
-    "apkUrl":  "/lin-go-gold-1.1.63.apk",
-    "sha256":  "25F75219D70EC032F8C76FAEB8916FCBB5613E32F25A039607F8C12F4CEAB01B",
-    "size":  91486529,
+    "apkUrl":  "/lin-go-gold-1.1.64.apk",
+    "sha256":  "6011E4C7E2C645A8F5B7CA6D7832474699DC080059BEE3000EBAED46B7C97DDC",
+    "size":  91488561,
     "minimumAndroidSdk":  24,
-    "notes":  "تحديث Gold 1.1.63: نظام أصدقاء التعلّم — أضف صديقاً بكود الصداقة الخاص وتبادلا طلبات الصداقة، ثم تحدّثا بالإنجليزية داخل التطبيق مع عبارات جاهزة للتدرّب. زر «أصدقاء» احترافي بمظهر الرق، وكود الصداقة مشتق من ترخيصك دون كشفه. جميع الدروس (740) والألعاب (19) محفوظة.",
-    "releaseUrl":  "https://github.com/hmachikh16-boop/englishtok/releases/tag/gold-v1.1.63",
-    "publishedAt":  "2026-11-10T13:07:56.000Z"
+    "notes":  "تحديث Gold 1.1.64: مجموعات الدراسة — أنشئ مجموعة وشارك كود الانضمام، وانضم لمجموعات أصدقائك، وتحدّثوا بالإنجليزية داخل مجموعة مع شريط الأعضاء وإمكانية المغادرة. الخادم يتحقق من العضوية. جميع الدروس (740) والألعاب (19) محفوظة.",
+    "releaseUrl":  "https://github.com/hmachikh16-boop/englishtok/releases/tag/gold-v1.1.64",
+    "publishedAt":  "2026-11-10T14:02:39.000Z"
 }
