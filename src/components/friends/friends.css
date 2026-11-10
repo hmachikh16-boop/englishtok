@@ -561,3 +561,151 @@
   width: 22px;
   height: 22px;
 }
+
+/* ---------- tabs ---------- */
+.friends-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  padding: 10px 16px 0;
+}
+
+.friends-tab {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 38px;
+  padding: 0 12px;
+  border: 1.5px solid #d8c49a;
+  border-radius: 12px;
+  background: #fffdf7;
+  color: #5b4730;
+  font-size: 12px;
+  font-weight: 900;
+  cursor: pointer;
+  transition: background 160ms ease, border-color 160ms ease, color 160ms ease;
+}
+
+.friends-tab:hover {
+  border-color: #a56c18;
+  color: #2c2114;
+}
+
+.friends-tab.is-active {
+  background: linear-gradient(180deg, #a56c18, #8d5a12);
+  border-color: #8d5a12;
+  color: #fbf0d7;
+  box-shadow: 0 3px 0 #6b430e;
+}
+
+.friends-tab-badge {
+  display: inline-grid;
+  place-items: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: #8d2f24;
+  color: #fbf0d7;
+  font-size: 9.5px;
+  font-weight: 900;
+}
+
+.friends-tab.is-active .friends-tab-badge {
+  background: #fbf0d7;
+  color: #8d5a12;
+}
+
+/* ---------- groups ---------- */
+.friends-group-forms {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.friends-group-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  border: 1.5px solid #d8c49a;
+  border-radius: 14px;
+  background: #fffdf7;
+}
+
+.friends-group-form h3 {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 900;
+  color: #2c2114;
+}
+
+.friends-create-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 40px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 12px;
+  background: linear-gradient(180deg, #a56c18, #8d5a12);
+  color: #fbf0d7;
+  font-size: 12px;
+  font-weight: 900;
+  cursor: pointer;
+  box-shadow: 0 3px 0 #6b430e;
+}
+
+.friends-create-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.friends-group-item {
+  align-items: center;
+}
+
+.friends-group-avatar {
+  background: linear-gradient(145deg, #8d2f24, #6f2118);
+}
+
+.friends-group-desc {
+  margin: 0;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: #f4e8cc;
+  border: 1px solid #d8c49a;
+  color: #5b4730;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.friends-members-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.friends-member-chip {
+  width: 26px;
+  height: 26px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: #f4e8cc;
+  border: 1.5px solid #d8c49a;
+  color: #5b4730;
+  font-size: 10px;
+  font-weight: 900;
+}
+
+.friends-member-more {
+  width: auto;
+  padding: 0 7px;
+  border-radius: 999px;
+  background: #efd9ad;
+}

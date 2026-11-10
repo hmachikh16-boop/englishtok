@@ -80,6 +80,31 @@ interface FriendChatMessage {
   read?: boolean;
 }
 
+interface GroupMember {
+  code: string;
+  name: string;
+  joinedAtUtc: string;
+}
+
+interface StudyGroup {
+  id: string;
+  name: string;
+  description: string;
+  code: string;
+  ownerCode: string;
+  createdAtUtc: string;
+  members: GroupMember[];
+}
+
+interface GroupChatMessage {
+  id: string;
+  groupId: string;
+  senderCode: string;
+  senderName: string;
+  message: string;
+  at: string;
+}
+
 interface LicenseSettings {
   /** When true, the Gold app opens for everyone without a license code. */
   freeMode: boolean;
@@ -93,6 +118,8 @@ interface LicenseDatabase {
   chats: ChatMessage[];
   friends: FriendRecord[];
   friendChats: FriendChatMessage[];
+  groups: StudyGroup[];
+  groupChats: GroupChatMessage[];
   settings: LicenseSettings;
 }
 
@@ -251,6 +278,8 @@ const emptyDatabase = (): LicenseDatabase => ({
   chats: [],
   friends: [],
   friendChats: [],
+  groups: [],
+  groupChats: [],
   settings: { freeMode: false },
 });
 
@@ -297,6 +326,55 @@ const normalizeFriendChat = (raw: unknown): FriendChatMessage[] => {
     const at = normalizeDate(pick(source, 'at', 'At')) || nowIso();
     if (!conversationId || !message) continue;
     messages.push({ id, conversationId, senderCode, senderName, message, at, read: asBoolean(pick(source, 'read', 'Read')) });
+  }
+  return messages;
+};
+
+const normalizeGroups = (raw: unknown): StudyGroup[] => {
+  if (!Array.isArray(raw)) return [];
+  const groups: StudyGroup[] = [];
+  for (const item of raw.slice(0, 2000)) {
+    if (!item || typeof item !== 'object' || Array.isArray(item)) continue;
+    const source = item as Record<string, unknown>;
+    const id = asString(pick(source, 'id', 'Id'), 80) || randomUUID();
+    const name = asString(pick(source, 'name', 'Name'), 80);
+    const description = asString(pick(source, 'description', 'Description'), 300);
+    const code = normalizeCode(pick(source, 'code', 'Code'));
+    const ownerCode = normalizeCode(pick(source, 'ownerCode', 'OwnerCode'));
+    const createdAtUtc = normalizeDate(pick(source, 'createdAtUtc', 'CreatedAtUtc')) || nowIso();
+    if (!name || !code) continue;
+    const rawMembers = Array.isArray(source.members) ? source.members : [];
+    const members: GroupMember[] = [];
+    for (const m of rawMembers.slice(0, 500)) {
+      if (!m || typeof m !== 'object' || Array.isArray(m)) continue;
+      const ms = m as Record<string, unknown>;
+      const memberCode = normalizeCode(pick(ms, 'code', 'Code'));
+      if (!memberCode) continue;
+      members.push({
+        code: memberCode,
+        name: asString(pick(ms, 'name', 'Name'), 160),
+        joinedAtUtc: normalizeDate(pick(ms, 'joinedAtUtc', 'JoinedAtUtc')) || createdAtUtc,
+      });
+    }
+    groups.push({ id, name, description, code, ownerCode, createdAtUtc, members });
+  }
+  return groups;
+};
+
+const normalizeGroupChat = (raw: unknown): GroupChatMessage[] => {
+  if (!Array.isArray(raw)) return [];
+  const messages: GroupChatMessage[] = [];
+  for (const item of raw.slice(0, 5000)) {
+    if (!item || typeof item !== 'object' || Array.isArray(item)) continue;
+    const source = item as Record<string, unknown>;
+    const id = asString(pick(source, 'id', 'Id'), 80) || randomUUID();
+    const groupId = asString(pick(source, 'groupId', 'GroupId'), 80);
+    const senderCode = normalizeCode(pick(source, 'senderCode', 'SenderCode'));
+    const senderName = asString(pick(source, 'senderName', 'SenderName'), 160);
+    const message = asString(pick(source, 'message', 'Message'), 2000);
+    const at = normalizeDate(pick(source, 'at', 'At')) || nowIso();
+    if (!groupId || !message) continue;
+    messages.push({ id, groupId, senderCode, senderName, message, at });
   }
   return messages;
 };
@@ -356,6 +434,8 @@ const normalizeDatabase = (raw: unknown): LicenseDatabase => {
     chats: normalizeChat(source.chats ?? source.Chats),
     friends: normalizeFriends(source.friends ?? source.Friends),
     friendChats: normalizeFriendChat(source.friendChats ?? source.FriendChats),
+    groups: normalizeGroups(source.groups ?? source.Groups),
+    groupChats: normalizeGroupChat(source.groupChats ?? source.GroupChats),
     settings: normalizeSettings(source.settings ?? source.Settings),
   };
 };
@@ -1185,6 +1265,152 @@ const handleFriendsChatSend = async (body: Record<string, unknown>) => {
   return { ok: true, id };
 };
 
+const GROUP_CODE_ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+const generateGroupCode = (): string => {
+  let out = '';
+  for (let i = 0; i < 6; i += 1) {
+    out += GROUP_CODE_ALPHABET.charAt(Math.floor(Math.random() * GROUP_CODE_ALPHABET.length));
+  }
+  return `G-${out}`;
+};
+
+const findGroupByCode = (database: LicenseDatabase, code: string): StudyGroup | undefined =>
+  database.groups.find((g) => g.code === code);
+
+const isGroupMember = (group: StudyGroup, code: string): boolean =>
+  group.ownerCode === code || group.members.some((m) => m.code === code);
+
+const publicGroup = (group: StudyGroup) => ({
+  id: group.id,
+  name: group.name,
+  description: group.description,
+  code: group.code,
+  ownerCode: group.ownerCode,
+  createdAtUtc: group.createdAtUtc,
+  members: group.members.map((m) => ({ code: m.code, name: m.name, joinedAtUtc: m.joinedAtUtc })),
+});
+
+const handleGroupsCreate = async (body: Record<string, unknown>) => {
+  const code = normalizeCode(body.code);
+  const userName = asString(body.userName, 160);
+  const name = asString(body.name, 80);
+  const description = asString(body.description, 300);
+  if (!code) throw new HttpError(400, 'كود المستخدم مطلوب.');
+  if (!name) throw new HttpError(400, 'اسم المجموعة مطلوب.');
+  const group = await withDatabaseLock(async () => {
+    const database = await loadDatabase();
+    let groupCode = generateGroupCode();
+    let guard = 0;
+    while (findGroupByCode(database, groupCode) && guard < 20) {
+      groupCode = generateGroupCode();
+      guard += 1;
+    }
+    const record: StudyGroup = {
+      id: randomUUID(),
+      name: name.slice(0, 80),
+      description: description.slice(0, 300),
+      code: groupCode,
+      ownerCode: code,
+      createdAtUtc: nowIso(),
+      members: [{ code, name: userName || code, joinedAtUtc: nowIso() }],
+    };
+    database.groups.push(record);
+    if (database.groups.length > 2000) database.groups = database.groups.slice(database.groups.length - 2000);
+    await saveDatabase(database);
+    return record;
+  });
+  return { ok: true, group: publicGroup(group) };
+};
+
+const handleGroupsJoin = async (body: Record<string, unknown>) => {
+  const code = normalizeCode(body.code);
+  const userName = asString(body.userName, 160);
+  const groupCode = normalizeCode(body.groupCode);
+  if (!code || !groupCode) throw new HttpError(400, 'كود المستخدم وكود المجموعة مطلوبان.');
+  const group = await withDatabaseLock(async () => {
+    const database = await loadDatabase();
+    const target = findGroupByCode(database, groupCode);
+    if (!target) throw new HttpError(404, 'المجموعة غير موجودة.');
+    if (isGroupMember(target, code)) return target;
+    if (target.members.length >= 200) throw new HttpError(409, 'المجموعة ممتلئة (200 عضو).');
+    target.members.push({ code, name: userName || code, joinedAtUtc: nowIso() });
+    await saveDatabase(database);
+    return target;
+  });
+  return { ok: true, group: publicGroup(group) };
+};
+
+const handleGroupsList = async (query: Record<string, string | string[] | undefined>) => {
+  const code = normalizeCode(Array.isArray(query.code) ? query.code[0] : query.code);
+  if (!code) return { groups: [] };
+  const database = await loadDatabase();
+  const groups = database.groups.filter((g) => isGroupMember(g, code)).map(publicGroup);
+  return { groups };
+};
+
+const handleGroupsLeave = async (body: Record<string, unknown>) => {
+  const code = normalizeCode(body.code);
+  const groupId = asString(body.groupId, 80);
+  if (!code || !groupId) throw new HttpError(400, 'كود و groupId مطلوبان.');
+  await withDatabaseLock(async () => {
+    const database = await loadDatabase();
+    const group = database.groups.find((g) => g.id === groupId);
+    if (!group) return;
+    group.members = group.members.filter((m) => m.code !== code);
+    if (group.ownerCode === code) {
+      if (group.members.length === 0) {
+        database.groups = database.groups.filter((g) => g.id !== groupId);
+        database.groupChats = database.groupChats.filter((m) => m.groupId !== groupId);
+      } else {
+        group.ownerCode = group.members[0].code;
+      }
+    }
+    await saveDatabase(database);
+  });
+  return { ok: true };
+};
+
+const handleGroupsChatGet = async (query: Record<string, string | string[] | undefined>) => {
+  const code = normalizeCode(Array.isArray(query.code) ? query.code[0] : query.code);
+  const groupId = asString(Array.isArray(query.groupId) ? query.groupId[0] : query.groupId, 80);
+  if (!code || !groupId) return { messages: [] };
+  const database = await loadDatabase();
+  const group = database.groups.find((g) => g.id === groupId);
+  if (!group || !isGroupMember(group, code)) return { messages: [] };
+  const messages = database.groupChats
+    .filter((m) => m.groupId === groupId)
+    .sort((a, b) => (a.at < b.at ? -1 : 1))
+    .slice(-200);
+  return { messages };
+};
+
+const handleGroupsChatSend = async (body: Record<string, unknown>) => {
+  const code = normalizeCode(body.code);
+  const userName = asString(body.userName, 160);
+  const groupId = asString(body.groupId, 80);
+  const message = asString(body.message, 2000);
+  if (!code || !groupId || message.length < 1) throw new HttpError(400, 'كود و groupId ورسالة مطلوبة.');
+  const id = await withDatabaseLock(async () => {
+    const database = await loadDatabase();
+    const group = database.groups.find((g) => g.id === groupId);
+    if (!group) throw new HttpError(404, 'المجموعة غير موجودة.');
+    if (!isGroupMember(group, code)) throw new HttpError(403, 'أنت لست عضواً في هذه المجموعة.');
+    const msg: GroupChatMessage = {
+      id: randomUUID(),
+      groupId,
+      senderCode: code,
+      senderName: userName || code,
+      message: message.slice(0, 2000),
+      at: nowIso(),
+    };
+    database.groupChats.push(msg);
+    if (database.groupChats.length > 5000) database.groupChats = database.groupChats.slice(database.groupChats.length - 5000);
+    await saveDatabase(database);
+    return msg.id;
+  });
+  return { ok: true, id };
+};
+
 const handleChatGet = async (query: Record<string, string | string[] | undefined>) => {
   const code = asString(Array.isArray(query.code) ? query.code[0] : query.code, 48);
   const device = asString(Array.isArray(query.device) ? query.device[0] : query.device, 240);
@@ -1298,7 +1524,7 @@ export default async function adminHandler(
   const body = readBody(request.body);
   const action = getAction(request, body);
   if (method === 'OPTIONS') {
-    if (action === 'check' || action === 'support' || action === 'mode' || action === 'chat' || action === 'chat_get' || action.startsWith('friends_')) setCheckCors(response);
+    if (action === 'check' || action === 'support' || action === 'mode' || action === 'chat' || action === 'chat_get' || action.startsWith('friends_') || action.startsWith('groups_')) setCheckCors(response);
     response.setHeader('Allow', 'GET, POST, OPTIONS');
     return response.status(204).json({});
   }
@@ -1419,6 +1645,55 @@ export default async function adminHandler(
         return response.status(405).json({ error: 'Method not allowed.' });
       }
       return response.status(200).json(await handleFriendsChatSend(body));
+    }
+
+    // ---- Study groups ----
+    if (action === 'groups_list') {
+      setCheckCors(response);
+      if (method !== 'GET') {
+        response.setHeader('Allow', 'GET, OPTIONS');
+        return response.status(405).json({ error: 'Method not allowed.' });
+      }
+      return response.status(200).json(await handleGroupsList(request.query ?? {}));
+    }
+
+    if (action === 'groups_create') {
+      setCheckCors(response);
+      if (method !== 'POST') {
+        response.setHeader('Allow', 'POST, OPTIONS');
+        return response.status(405).json({ error: 'Method not allowed.' });
+      }
+      return response.status(200).json(await handleGroupsCreate(body));
+    }
+
+    if (action === 'groups_join') {
+      setCheckCors(response);
+      if (method !== 'POST') {
+        response.setHeader('Allow', 'POST, OPTIONS');
+        return response.status(405).json({ error: 'Method not allowed.' });
+      }
+      return response.status(200).json(await handleGroupsJoin(body));
+    }
+
+    if (action === 'groups_leave') {
+      setCheckCors(response);
+      if (method !== 'POST') {
+        response.setHeader('Allow', 'POST, OPTIONS');
+        return response.status(405).json({ error: 'Method not allowed.' });
+      }
+      return response.status(200).json(await handleGroupsLeave(body));
+    }
+
+    if (action === 'groups_chat') {
+      setCheckCors(response);
+      if (method === 'GET') {
+        return response.status(200).json(await handleGroupsChatGet(request.query ?? {}));
+      }
+      if (method !== 'POST') {
+        response.setHeader('Allow', 'GET, POST, OPTIONS');
+        return response.status(405).json({ error: 'Method not allowed.' });
+      }
+      return response.status(200).json(await handleGroupsChatSend(body));
     }
 
     if (action === 'mode') {
