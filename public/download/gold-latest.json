@@ -1,11 +1,11 @@
 {
-    "version":  "1.1.65",
+    "version":  "1.1.66",
     "packageId":  "com.englishtok.gold",
-    "apkUrl":  "/lin-go-gold-1.1.65.apk",
-    "sha256":  "7FA98D3ED7223A21B7F69A4BF623C9E5F6AC8513ABB0C7CE12FDBDB46A8166A0",
-    "size":  91491410,
+    "apkUrl":  "/lin-go-gold-1.1.66.apk",
+    "sha256":  "15FB9D6029F3CFE6D56C1599CDEBC8FB06BBED19292F7BB4F5F9547C39A69584",
+    "size":  91551120,
     "minimumAndroidSdk":  24,
-    "notes":  "تحديث Gold 1.1.65: دردشة بنمط Messenger بجلد ورقي — قائمة محادثات مع معاينة آخر رسالة وشارات غير مقروء، تبويبات الكل/أصدقاء/مجموعات، بحث، فقاعات messages، فواصل أيام، إشارات قراءة، لوحة أعضاء، شارات غير مقروءة على زر الأصدقاء. 740 درساً و19 لعبة محفوظة.",
-    "releaseUrl":  "https://github.com/hmachikh16-boop/englishtok/releases/tag/gold-v1.1.65",
-    "publishedAt":  "2026-11-10T14:38:09.000Z"
+    "notes":  "تحديث Gold 1.1.66: حضور (نقطة خضراء عندما يكون صديقك نشطاً) + إشعارات للهاتف (رسالة من صديق، تحديث جديد). 740 درساً و19 لعبة محفوظة.",
+    "releaseUrl":  "https://github.com/hmachikh16-boop/englishtok/releases/tag/gold-v1.1.66",
+    "publishedAt":  "2026-11-10T15:21:23.000Z"
 }
