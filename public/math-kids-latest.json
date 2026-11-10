@@ -1,12 +1,12 @@
 {
-  "version": "1.0.2",
+  "version": "1.0.3",
   "packageId": "com.mathkids.app",
   "appName": "Math Kids",
-  "apkUrl": "https://github.com/hmachikh16-boop/englishtok/releases/download/math-kids-v1.0.2/math-kids-1.0.2.apk",
-  "sha256": "08368011898EDC7E844F014FCBDCDFF776BB7A3EC9EEA41EFBC8A9AB5377C9D3",
-  "size": 4151700,
+  "apkUrl": "https://github.com/hmachikh16-boop/englishtok/releases/download/math-kids-v1.0.3/math-kids-1.0.3.apk",
+  "sha256": "345274A9A9378C00343215897862254FF65B98935531BD4AC2D48FFB772B714A",
+  "size": 7419217,
   "minimumAndroidSdk": 21,
-  "notes": "تحديث Math Kids 1.0.2: إصلاح تحميل الدروس + نظام تحديث تلقائي. ٩ مسارات، ٥٠+ درس، جلد ورقي، أيقونات SVG، شخصيات (زرافة لولو + كلب ركس)، نطق TTS.",
-  "releaseUrl": "https://github.com/hmachikh16-boop/englishtok/releases/tag/math-kids-v1.0.2",
-  "publishedAt": "2026-11-10T16:00:00.000Z"
+  "notes": "تحديث Math Kids 1.0.3: إصلاح تحميل الدروس + نظام تحديث (修復 download) + @capacitor/browser. ٩ مسارات، ٥٠+ درس، جلد ورقي، أيقونات SVG، شخصيات (زرافة لولو + كلب ركس)، نطق TTS.",
+  "releaseUrl": "https://github.com/hmachikh16-boop/englishtok/releases/tag/math-kids-v1.0.3",
+  "publishedAt": "2026-11-10T17:00:00.000Z"
 }

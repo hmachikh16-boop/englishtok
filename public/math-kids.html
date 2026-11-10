@@ -903,7 +903,7 @@ function initIcons() {
   });
 }
 // ---------- App version & update check ----------
-const APP_VERSION = '1.0.2';
+const APP_VERSION = '1.0.3';
 const UPDATE_URL = 'https://englishtok-eight.vercel.app/math-kids-latest.json';
 let availableUpdate = null;
 
@@ -933,19 +933,29 @@ function isNewerVersion(a, b) {
 }
 async function downloadUpdate(m) {
   const url = m.downloadUrl || m.apkUrl;
-  if (!url) return;
+  if (!url) { alert('رابط التحميل غير متوفر'); return; }
   try {
-    // Try Capacitor Browser (in-app)
     if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.Browser) {
       await window.Capacitor.Plugins.Browser.open({ url });
     } else {
-      window.open(url, '_blank');
+      // Fallback: create anchor and click
+      const a = document.createElement('a');
+      a.href = url;
+      a.target = '_blank';
+      a.rel = 'noopener';
+      a.download = 'math-kids-update.apk';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
     }
   } catch (e) {
-    window.open(url, '_blank');
+    // Fallback to window.open
+    try { window.open(url, '_system'); } catch (e2) { window.open(url, '_blank'); }
   }
   const btn = document.getElementById('updateBtn');
   if (btn) { btn.textContent = 'جارٍ التحميل...'; btn.disabled = true; }
+  // Reset button after 5s
+  setTimeout(() => { if (btn) { btn.textContent = 'تحديث الآن'; btn.disabled = false; } }, 5000);
 }
 
 loadState();
