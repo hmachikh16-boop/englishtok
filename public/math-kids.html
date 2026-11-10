@@ -426,12 +426,6 @@ const PATHS = [
   ]},
 ];
 
-// ---------- State ----------
-const state = { stars:0, xp:0, progress:{}, currentPath:null, currentLesson:null, questions:[], qIndex:0, score:0, answers:[], char:0 };
-function loadState(){ try{ const s=JSON.parse(localStorage.getItem('mathparch_v4')||'{}'); if(s.stars)state.stars=s.stars; if(s.xp)state.xp=s.xp; if(s.progress)state.progress=s.progress;}catch{} }
-function saveState(){ try{ localStorage.setItem('mathparch_v4', JSON.stringify({stars:state.stars,xp:state.xp,progress:state.progress})); }catch{} }
-loadState();
-
 // ---------- Helpers ----------
 function rand(a,b){ return Math.floor(Math.random()*(b-a+1))+a; }
 function shuffle(arr){ for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];} return arr; }
