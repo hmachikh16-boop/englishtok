@@ -193,6 +193,16 @@ try {
   await pipeline(Readable.fromWeb(goldResponse.body), createWriteStream(goldTarget));
   const goldSha256 = await sha256File(goldTarget);
   const goldSize = statSync(goldTarget).size;
+  let committedGold = null;
+  try {
+    committedGold = JSON.parse(readFileSync(goldLatestFile, 'utf8'));
+  } catch {
+    committedGold = null;
+  }
+  const fallbackNotes =
+    'تحديث Gold ' +
+    goldVersion +
+    ': تحديثات وتحسينات جديدة للتطبيق والدروس.';
   const goldLatest = {
     version: goldVersion,
     packageId: 'com.englishtok.gold',
@@ -201,9 +211,14 @@ try {
     size: goldSize,
     minimumAndroidSdk: 24,
     notes:
-      'تحديث Gold ' + goldVersion + ': +20 درسًا في Stage 1 (740 إجمالي)، رفع حد «عرض المزيد» 125→1000 (جميع الدروس قابلة للوصول)، إصلاح تحميل APK، تحسين صفحة التحميل (احترافية، لقطة حقيقية، شارة تحقق).',
+      committedGold && committedGold.version === goldVersion && typeof committedGold.notes === 'string'
+        ? committedGold.notes
+        : fallbackNotes,
     releaseUrl: `https://github.com/${repository}/releases/tag/gold-v${goldVersion}`,
-    publishedAt: new Date().toISOString(),
+    publishedAt:
+      committedGold && committedGold.version === goldVersion && typeof committedGold.publishedAt === 'string'
+        ? committedGold.publishedAt
+        : new Date().toISOString(),
   };
   mkdirSync(latestDir, { recursive: true });
   writeFileSync(goldLatestFile, `${JSON.stringify(goldLatest, null, 2)}\n`, 'utf8');

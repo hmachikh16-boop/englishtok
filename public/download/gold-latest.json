@@ -1,11 +1,11 @@
 {
-  "version": "1.1.62",
-  "packageId": "com.englishtok.gold",
-  "apkUrl": "/lin-go-gold-1.1.62.apk",
-  "sha256": "18D0751DAE07032419DBDA95A449CCAC054487A250DFA9DCC5D7B6CBB27767F9",
-  "size": 91482736,
-  "minimumAndroidSdk": 24,
-  "notes": "تحديث 1.1.62: مسار الدروس احترافي (progressive unlock) — إظهار 5 دروس inicialmente، وفتح 5 التالية بعد إكمال 5. إزالة زر «عرض المزيد». تحسين سلاسة الواجهة. TSC ✅ Build ✅. جميع الدروس (740) محفوظة. الألعاب (19) + parchment UI + مسار الألعاب (Phase 1+2) محفوظة.",
-  "releaseUrl": "https://github.com/hmachikh16-boop/englishtok/releases/tag/gold-v1.1.62",
-  "publishedAt": "2026-11-09T15:00:00.000Z"
+    "version":  "1.1.63",
+    "packageId":  "com.englishtok.gold",
+    "apkUrl":  "/lin-go-gold-1.1.63.apk",
+    "sha256":  "25F75219D70EC032F8C76FAEB8916FCBB5613E32F25A039607F8C12F4CEAB01B",
+    "size":  91486529,
+    "minimumAndroidSdk":  24,
+    "notes":  "تحديث Gold 1.1.63: نظام أصدقاء التعلّم — أضف صديقاً بكود الصداقة الخاص وتبادلا طلبات الصداقة، ثم تحدّثا بالإنجليزية داخل التطبيق مع عبارات جاهزة للتدرّب. زر «أصدقاء» احترافي بمظهر الرق، وكود الصداقة مشتق من ترخيصك دون كشفه. جميع الدروس (740) والألعاب (19) محفوظة.",
+    "releaseUrl":  "https://github.com/hmachikh16-boop/englishtok/releases/tag/gold-v1.1.63",
+    "publishedAt":  "2026-11-10T13:07:56.000Z"
 }

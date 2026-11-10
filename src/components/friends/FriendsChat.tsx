@@ -47,10 +47,34 @@ const createLocalId = (): string => {
   return `U-${out}`;
 };
 
-/** A stable friend identity: the Gold license code when present, otherwise a per-device ID. */
+/**
+ * A stable, non-reversible friend code derived from the licence. It never
+ * exposes the licence itself, so sharing it can't be used to activate Gold on
+ * another phone or trip the device-limit anti-cheat.
+ */
+const hashToFriendCode = (input: string): string => {
+  let forward = 0x811c9dc5;
+  for (let i = 0; i < input.length; i += 1) {
+    forward ^= input.charCodeAt(i);
+    forward = Math.imul(forward, 0x01000193) >>> 0;
+  }
+  let backward = 0x811c9dc5;
+  for (let i = input.length - 1; i >= 0; i -= 1) {
+    backward ^= input.charCodeAt(i);
+    backward = Math.imul(backward, 0x01000193) >>> 0;
+  }
+  const body = (forward.toString(36) + backward.toString(36))
+    .toUpperCase()
+    .replace(/[^A-Z0-9]/g, '')
+    .slice(0, 10)
+    .padEnd(8, '0');
+  return `U-${body}`;
+};
+
+/** A stable friend identity: derived from the licence when present, otherwise a per-device ID. */
 const readFriendIdentity = (): string => {
   const license = normalizeCode(getStoredGoldLicenseCode() || '');
-  if (license) return license;
+  if (license) return hashToFriendCode(license);
   try {
     const stored = localStorage.getItem(FRIEND_ID_KEY);
     if (stored && /^U-[A-Z0-9]{6,12}$/.test(stored)) return stored;
