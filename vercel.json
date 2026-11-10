@@ -130,6 +130,18 @@
       "destination": "/control.html"
     },
     {
+      "source": "/apps",
+      "destination": "/apps.html"
+    },
+    {
+      "source": "/math",
+      "destination": "/math-kids.html"
+    },
+    {
+      "source": "/math-kids",
+      "destination": "/math-kids.html"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }
