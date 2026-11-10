@@ -142,6 +142,10 @@
       "destination": "/math-kids.html"
     },
     {
+      "source": "/qr",
+      "destination": "/qr.html"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>كيو كود — QR Codes للتحميل</title>
+<style>
+  :root {
+    --paper: #f4e8cc; --paper2: #efd9ad; --ink: #2c2114; --soft: #5b4730;
+    --muted: #8a7355; --brass: #a56c18; --brass2: #8d5a12; --border: #d8c49a;
+    --tint: #fbf0d7; --white: #fffdf7; --shadow: 0 10px 30px rgba(44,33,20,0.12);
+    --r: 20px;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 0; min-height: 100vh;
+    font-family: 'Segoe UI', 'Tahoma', 'Arial', sans-serif;
+    background: linear-gradient(180deg, var(--paper) 0%, var(--paper2) 100%);
+    color: var(--ink);
+  }
+  .container { max-width: 960px; margin: 0 auto; padding: 32px 20px 60px; }
+  .header { text-align: center; margin-bottom: 28px; }
+  .header h1 { margin: 0; font-size: 32px; font-weight: 900; }
+  .header p { margin: 6px 0 0; color: var(--soft); font-weight: 600; font-size: 14px; }
+  .qr-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; }
+  .qr-card {
+    background: var(--white); border-radius: var(--r); padding: 20px;
+    box-shadow: var(--shadow); border: 1.5px solid var(--border);
+    text-align: center; display: flex; flex-direction: column; gap: 12px;
+  }
+  .qr-card h3 { margin: 0; font-size: 18px; font-weight: 900; color: var(--ink); }
+  .qr-card p { margin: 0; font-size: 12px; color: var(--muted); font-weight: 600; }
+  .qr-img { background: #fff; border-radius: 12px; padding: 10px; border: 1.5px solid var(--border); display: inline-block; margin: 0 auto; }
+  .qr-img img { width: 200px; height: 200px; display: block; }
+  .qr-url { font-size: 10px; color: var(--muted); word-break: break-all; font-family: monospace; background: var(--paper); padding: 6px 8px; border-radius: 8px; border: 1px solid var(--border); }
+  .btn { display: inline-flex; align-items: center; gap: 7px; min-height: 40px; padding: 0 14px; border-radius: 10px; border: 0; font-size: 12px; font-weight: 900; cursor: pointer; text-decoration: none; background: linear-gradient(160deg, var(--brass), var(--brass2)); color: var(--tint); box-shadow: 0 3px 0 var(--brass2); }
+  .btn:hover { transform: translateY(-2px); }
+  .footer { text-align: center; margin-top: 32px; padding-top: 20px; border-top: 1.5px solid var(--border); color: var(--muted); font-size: 12px; font-weight: 600; }
+  .footer a { color: var(--brass); text-decoration: none; font-weight: 800; }
+  .note { background: var(--tint); border: 1.5px solid var(--border); border-radius: 14px; padding: 12px 14px; margin-bottom: 24px; font-size: 12px; color: var(--soft); font-weight: 600; line-height: 1.6; }
+  .note strong { color: var(--brass); }
+  @media (max-width: 600px) { .header h1 { font-size: 24px; } .container { padding: 20px 14px 40px; } }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <h1>📱 كيو كود — QR Codes</h1>
+    <p>امسح الكود بالكاميرا لتحميل التطبيق</p>
+  </div>
+
+  <div class="note">
+    <strong>كيفية الاستخدام:</strong> افتح كاميرا الهاتف (أو تطبيق QR scanner) ووجّهها نحو الكيو كود. سيظهر رابط التحميل — اضغط عليه لتحميل APK.
+  </div>
+
+  <div class="qr-grid">
+    <div class="qr-card">
+      <h3>Math Kids</h3>
+      <p>تطبيق ریاضيات للأطفال (v1.0.0)</p>
+      <div class="qr-img"><img src="/qr-math-kids.png" alt="QR Math Kids" /></div>
+      <div class="qr-url">github.com/.../math-kids-1.0.0.apk</div>
+      <a class="btn" href="https://github.com/hmachikh16-boop/englishtok/releases/download/math-kids-v1.0.0/math-kids-1.0.0.apk" download>تحميل APK</a>
+    </div>
+
+    <div class="qr-card">
+      <h3>Lin Go Gold+</h3>
+      <p>تطبيق تعلّم الإنجليزية (v1.1.67)</p>
+      <div class="qr-img"><img src="/qr-gold.png" alt="QR Lin Go Gold" /></div>
+      <div class="qr-url">github.com/.../lin-go-gold-1.1.67.apk</div>
+      <a class="btn" href="https://github.com/hmachikh16-boop/englishtok/releases/download/gold-v1.1.67/lin-go-gold-1.1.67.apk" download>تحميل APK</a>
+    </div>
+
+    <div class="qr-card">
+      <h3>صفحة التطبيقات</h3>
+      <p>جميع التطبيقات (Free + Gold + Math Kids)</p>
+      <div class="qr-img"><img src="/qr-apps.png" alt="QR Apps" /></div>
+      <div class="qr-url">englishtok-eight.vercel.app/apps</div>
+      <a class="btn" href="/apps">فتح الصفحة</a>
+    </div>
+  </div>
+
+  <div class="footer">
+    <p><a href="/apps">← العودة لصفحة التطبيقات</a> · <a href="/">الرئيسية</a></p>
+    <p style="margin-top:8px; font-size:11px;">© 2026 · <a href="https://www.facebook.com/hma.chikh14/">Facebook</a></p>
+  </div>
+</div>
+</body>
+</html>
