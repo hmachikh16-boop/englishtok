@@ -3,38 +3,24 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-<title>ریاضيات — مسارات التعلّم (جلد ورقي)</title>
+<title>ریاضيات — مسارات التعلّم</title>
 <style>
   :root {
-    --paper: #f4e8cc;
-    --paper2: #efd9ad;
-    --paper3: #e8d9b0;
-    --ink: #2c2114;
-    --soft: #5b4730;
-    --muted: #8a7355;
-    --brass: #a56c18;
-    --brass2: #8d5a12;
-    --oxblood: #8d2f24;
-    --border: #d8c49a;
-    --border2: #c9b38a;
-    --tint: #fbf0d7;
-    --white: #fffdf7;
-    --green: #4d9560;
-    --red: #8d2f24;
-    --shadow: 0 8px 24px rgba(44,33,20,0.14);
-    --shadow2: 0 3px 10px rgba(44,33,20,0.08);
+    --paper: #f4e8cc; --paper2: #efd9ad; --paper3: #e8d9b0;
+    --ink: #2c2114; --soft: #5b4730; --muted: #8a7355;
+    --brass: #a56c18; --brass2: #8d5a12; --oxblood: #8d2f24;
+    --border: #d8c49a; --border2: #c9b38a; --tint: #fbf0d7; --white: #fffdf7;
+    --green: #4d9560; --red: #8d2f24;
+    --shadow: 0 8px 24px rgba(44,33,20,0.14); --shadow2: 0 3px 10px rgba(44,33,20,0.08);
     --r: 18px;
   }
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   html, body { margin: 0; padding: 0; height: 100%; }
   body {
     font-family: 'Segoe UI', 'Tahoma', 'Arial', sans-serif;
-    background:
-      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.18'/%3E%3C/svg%3E"),
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.18'/%3E%3C/svg%3E"),
       linear-gradient(180deg, var(--paper) 0%, var(--paper2) 100%);
-    color: var(--ink);
-    overflow: hidden;
-    user-select: none;
+    color: var(--ink); overflow: hidden; user-select: none;
   }
   .app { max-width: 520px; margin: 0 auto; height: 100vh; display: flex; flex-direction: column; position: relative; }
   .svg-icon { display: inline-block; vertical-align: middle; flex: 0 0 auto; }
@@ -71,93 +57,68 @@
   .screen::-webkit-scrollbar { width: 6px; }
   .screen::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 999px; }
 
-  /* Hero */
-  .home-hero {
-    background: linear-gradient(135deg, var(--brass) 0%, var(--brass2) 100%);
-    border-radius: var(--r); padding: 18px 16px; color: var(--tint); margin-bottom: 16px;
-    box-shadow: 0 12px 30px rgba(165,108,24,0.25);
-    position: relative; overflow: hidden; border: 1.5px solid var(--brass2);
-  }
-  .home-hero::after {
-    content: ''; position: absolute; right: -30px; top: -30px;
-    width: 120px; height: 120px; border-radius: 50%;
-    background: rgba(255,253,247,0.10);
-  }
-  .home-hero h1 { margin: 0; font-size: 22px; font-weight: 900; }
-  .home-hero p { margin: 4px 0 14px; font-size: 12px; font-weight: 600; opacity: 0.9; }
-  .hero-stats { display: flex; gap: 10px; }
-  .hero-stat {
-    background: rgba(255,253,247,0.18); border-radius: 12px;
-    padding: 8px 12px; flex: 1; text-align: center; border: 1px solid rgba(255,253,247,0.2);
-  }
-  .hero-stat .v { font-size: 20px; font-weight: 900; }
-  .hero-stat .l { font-size: 10px; font-weight: 700; opacity: 0.85; margin-top: 1px; }
-
-  .section-title {
-    font-size: 14px; font-weight: 900; margin: 16px 4px 10px;
-    display: flex; align-items: center; gap: 8px; color: var(--ink);
-  }
-  .section-title .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--brass); }
-
-  /* Paths grid */
-  .paths-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .path-card {
-    background: var(--white); border-radius: var(--r); padding: 14px 12px;
-    box-shadow: var(--shadow2); border: 1.5px solid var(--border);
-    cursor: pointer; transition: transform 180ms ease, box-shadow 180ms ease;
-    display: flex; flex-direction: column; gap: 8px; position: relative; overflow: hidden;
-  }
-  .path-card:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
-  .path-card.locked { opacity: 0.5; filter: grayscale(0.5); cursor: not-allowed; }
-  .path-icon {
-    width: 46px; height: 46px; border-radius: 14px;
-    display: grid; place-items: center; color: var(--tint);
-    box-shadow: inset 0 2px 0 rgba(255,253,247,0.25);
-  }
-  .path-icon svg { width: 26px; height: 26px; }
-  .path-name { font-size: 14px; font-weight: 900; color: var(--ink); }
-  .path-sub { font-size: 10.5px; color: var(--muted); font-weight: 600; }
-  .path-progress { height: 6px; background: var(--paper); border-radius: 999px; overflow: hidden; border: 1px solid var(--border); }
-  .path-progress > div { height: 100%; border-radius: 999px; transition: width 500ms ease; }
-  .path-meta { display: flex; justify-content: space-between; align-items: center; font-size: 10.5px; font-weight: 800; color: var(--soft); }
-
-  /* Path view */
+  /* Home/Path header */
   .path-header {
     background: var(--white); border-radius: var(--r); padding: 16px;
     border: 1.5px solid var(--border); margin-bottom: 14px;
     display: flex; align-items: center; gap: 12px; box-shadow: var(--shadow2);
   }
-  .path-header .icon { width: 56px; height: 56px; border-radius: 16px; display: grid; place-items: center; color: var(--tint); box-shadow: inset 0 2px 0 rgba(255,253,247,0.25); }
-  .path-header .icon svg { width: 28px; height: 28px; }
+  .path-header .icon { width: 52px; height: 52px; border-radius: 14px; display: grid; place-items: center; color: var(--tint); box-shadow: inset 0 2px 0 rgba(255,253,247,0.25); }
+  .path-header .icon svg { width: 26px; height: 26px; }
   .path-header h2 { margin: 0; font-size: 17px; font-weight: 900; color: var(--ink); }
   .path-header p { margin: 3px 0 0; font-size: 11px; color: var(--muted); font-weight: 600; }
   .path-header .progress-bar { height: 7px; background: var(--paper); border-radius: 999px; overflow: hidden; margin-top: 8px; border: 1px solid var(--border); }
   .path-header .progress-bar > div { height: 100%; border-radius: 999px; transition: width 500ms; }
 
-  .lessons-list { display: flex; flex-direction: column; gap: 9px; }
-  .lesson-node {
-    display: flex; align-items: center; gap: 12px;
-    background: var(--white); border-radius: 14px; padding: 12px 13px;
-    border: 1.5px solid var(--border); cursor: pointer;
-    transition: transform 160ms ease, box-shadow 160ms ease;
+  /* Path selector chips */
+  .path-chips { display: flex; gap: 6px; overflow-x: auto; padding: 4px 2px 10px; scrollbar-width: none; }
+  .path-chips::-webkit-scrollbar { display: none; }
+  .path-chip {
+    flex: 0 0 auto; padding: 7px 13px; border-radius: 999px;
+    background: var(--white); border: 1.5px solid var(--border);
+    font-size: 12px; font-weight: 800; color: var(--soft); cursor: pointer;
+    display: flex; align-items: center; gap: 6px; transition: all 150ms;
     box-shadow: var(--shadow2);
   }
-  .lesson-node:hover { transform: translateX(-3px); box-shadow: var(--shadow); }
-  .lesson-node.locked { opacity: 0.45; cursor: not-allowed; filter: grayscale(0.6); }
-  .lesson-node.done { border-color: var(--green); }
-  .lesson-node.current { border-color: var(--brass); box-shadow: 0 0 0 3px rgba(165,108,24,0.15); }
-  .lesson-num {
-    width: 44px; height: 44px; border-radius: 12px;
-    display: grid; place-items: center; font-weight: 900; font-size: 14px;
-    color: var(--tint); flex: 0 0 auto; box-shadow: inset 0 2px 0 rgba(255,253,247,0.25);
+  .path-chip.active { background: var(--brass); color: var(--tint); border-color: var(--brass); }
+  .path-chip svg { width: 16px; height: 16px; }
+
+  /* Vertical path (like Lin Go) */
+  .path-vertical { position: relative; padding: 10px 0 20px; }
+  .path-line {
+    position: absolute; top: 0; bottom: 0; right: 50%; width: 4px;
+    background: linear-gradient(180deg, var(--border2), var(--border)); border-radius: 999px;
+    transform: translateX(50%);
   }
-  .lesson-num svg { width: 20px; height: 20px; }
-  .lesson-info { flex: 1 1 auto; min-width: 0; }
-  .lesson-title { font-size: 13.5px; font-weight: 900; color: var(--ink); }
-  .lesson-sub { font-size: 10.5px; color: var(--muted); font-weight: 600; margin-top: 2px; }
-  .lesson-meta { display: flex; align-items: center; gap: 8px; margin-top: 4px; }
-  .lesson-stars { font-size: 11px; color: #9a7a00; font-weight: 900; }
-  .lesson-xp { font-size: 9.5px; color: var(--soft); font-weight: 700; background: var(--paper); padding: 2px 7px; border-radius: 999px; border: 1px solid var(--border); }
+  .path-node {
+    position: relative; display: flex; align-items: center; gap: 12px;
+    margin: 12px 0; cursor: pointer; transition: transform 160ms;
+  }
+  .path-node:hover { transform: scale(1.02); }
+  .path-node.locked { opacity: 0.45; cursor: not-allowed; filter: grayscale(0.6); }
+  .path-node.done .node-circle { background: var(--green); border-color: var(--green); }
+  .path-node.current .node-circle { box-shadow: 0 0 0 4px rgba(165,108,24,0.25); border-color: var(--brass); }
+  .node-circle {
+    width: 52px; height: 52px; border-radius: 50%;
+    display: grid; place-items: center; color: var(--tint);
+    background: var(--brass); border: 3px solid var(--brass2);
+    box-shadow: 0 4px 0 var(--brass2), var(--shadow2);
+    flex: 0 0 auto; font-weight: 900; font-size: 16px; z-index: 2;
+  }
+  .node-circle svg { width: 22px; height: 22px; }
+  .node-info {
+    flex: 1 1 auto; min-width: 0;
+    background: var(--white); border-radius: 14px; padding: 10px 12px;
+    border: 1.5px solid var(--border); box-shadow: var(--shadow2);
+  }
+  .path-node:nth-child(odd) .node-info { margin-left: 60px; }
+  .path-node:nth-child(even) .node-info { margin-right: 60px; }
+  .node-title { font-size: 13px; font-weight: 900; color: var(--ink); }
+  .node-sub { font-size: 10px; color: var(--muted); font-weight: 600; margin-top: 2px; }
+  .node-meta { display: flex; align-items: center; gap: 8px; margin-top: 4px; }
+  .node-stars { font-size: 11px; color: #9a7a00; font-weight: 900; }
+  .node-xp { font-size: 9.5px; color: var(--soft); font-weight: 700; background: var(--paper); padding: 2px 7px; border-radius: 999px; border: 1px solid var(--border); }
+  .node-mastery { width: 12px; height: 12px; border-radius: 50%; border: 2px solid var(--border2); border-top-color: var(--brass); }
 
   /* Lesson intro */
   .lesson-intro {
@@ -201,6 +162,18 @@
   .feedback.ok { color: var(--green); }
   .feedback.bad { color: var(--oxblood); }
   .feedback svg { width: 18px; height: 18px; }
+  .hint-btn {
+    min-height: 36px; padding: 0 14px; border-radius: 10px; border: 1.5px dashed var(--border2);
+    background: var(--paper); color: var(--soft); font-size: 12px; font-weight: 800; cursor: pointer;
+    display: inline-flex; align-items: center; gap: 6px; margin-top: 8px;
+  }
+  .hint-btn svg { width: 14px; height: 14px; }
+  .explanation {
+    background: var(--paper); border-radius: 12px; padding: 10px 12px; margin-top: 8px;
+    border: 1px solid var(--border); font-size: 12px; font-weight: 600; color: var(--soft); line-height: 1.6;
+    display: none;
+  }
+  .explanation.show { display: block; }
   .next-btn {
     min-height: 48px; border-radius: 12px; border: 0; width: 100%;
     background: linear-gradient(160deg, var(--brass), var(--brass2));
@@ -233,7 +206,7 @@
 
   /* Bottom nav */
   .bottomnav {
-    display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px;
+    display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px;
     padding: 8px 10px calc(8px + env(safe-area-inset-bottom));
     background: linear-gradient(180deg, var(--tint), var(--paper));
     border-top: 1.5px solid var(--border); flex: 0 0 auto;
@@ -241,14 +214,14 @@
   .nav-btn {
     display: flex; flex-direction: column; align-items: center; gap: 3px;
     min-height: 50px; border: 0; background: transparent;
-    color: var(--muted); font-size: 10px; font-weight: 800; cursor: pointer;
+    color: var(--muted); font-size: 9.5px; font-weight: 800; cursor: pointer;
     border-radius: 12px; transition: all 150ms;
   }
   .nav-btn.active { color: var(--brass); background: rgba(165,108,24,0.10); }
-  .nav-btn .ico { width: 22px; height: 22px; }
-  .nav-btn .ico svg { width: 22px; height: 22px; }
+  .nav-btn .ico { width: 20px; height: 20px; }
+  .nav-btn .ico svg { width: 20px; height: 20px; }
 
-  /* Character */
+  /* Char bar */
   .char-bar {
     display: flex; align-items: center; gap: 10px;
     background: var(--white); border-radius: 14px; padding: 10px 12px;
@@ -289,6 +262,45 @@
   .count-chip:hover { background: var(--brass); color: var(--tint); border-color: var(--brass); }
   .count-chip:active { transform: scale(0.95); }
 
+  /* Progress view */
+  .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+  .stat-card { background: var(--white); border-radius: 14px; padding: 14px; border: 1.5px solid var(--border); box-shadow: var(--shadow2); text-align: center; }
+  .stat-card .v { font-size: 24px; font-weight: 900; color: var(--brass); }
+  .stat-card .l { font-size: 10.5px; color: var(--muted); font-weight: 700; margin-top: 2px; }
+  .path-progress-card { background: var(--white); border-radius: 14px; padding: 12px 14px; border: 1.5px solid var(--border); margin-bottom: 8px; box-shadow: var(--shadow2); }
+  .path-progress-card .row { display: flex; align-items: center; gap: 10px; }
+  .path-progress-card .icon { width: 36px; height: 36px; border-radius: 10px; display: grid; place-items: center; color: var(--tint); }
+  .path-progress-card .icon svg { width: 18px; height: 18px; }
+  .path-progress-card .info { flex: 1 1 auto; min-width: 0; }
+  .path-progress-card .name { font-size: 13px; font-weight: 900; color: var(--ink); }
+  .path-progress-card .bar { height: 6px; background: var(--paper); border-radius: 999px; overflow: hidden; margin-top: 4px; border: 1px solid var(--border); }
+  .path-progress-card .bar > div { height: 100%; border-radius: 999px; transition: width 500ms; }
+  .path-progress-card .pct { font-size: 10.5px; color: var(--muted); font-weight: 700; margin-top: 3px; }
+
+  /* Settings */
+  .setting-row {
+    display: flex; align-items: center; justify-content: space-between;
+    background: var(--white); border-radius: 14px; padding: 14px 16px;
+    border: 1.5px solid var(--border); margin-bottom: 8px; box-shadow: var(--shadow2);
+  }
+  .setting-row .label { font-size: 13px; font-weight: 800; color: var(--ink); }
+  .setting-row .sub { font-size: 10.5px; color: var(--muted); font-weight: 600; margin-top: 2px; }
+  .toggle {
+    width: 46px; height: 26px; border-radius: 999px; background: var(--border2);
+    position: relative; cursor: pointer; transition: background 200ms; border: 0; flex: 0 0 auto;
+  }
+  .toggle.on { background: var(--brass); }
+  .toggle::after {
+    content: ''; position: absolute; top: 3px; right: 3px; width: 20px; height: 20px;
+    border-radius: 50%; background: var(--white); transition: right 200ms; box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  }
+  .toggle.on::after { right: 23px; }
+  .btn-danger {
+    min-height: 44px; padding: 0 16px; border-radius: 12px; border: 0; width: 100%;
+    background: var(--oxblood); color: var(--tint); font-size: 13px; font-weight: 900; cursor: pointer;
+    box-shadow: 0 4px 0 #6f2118;
+  }
+
   .empty { text-align: center; padding: 36px 20px; color: var(--muted); font-weight: 700; }
   .star { color: #c9a227; }
 </style>
@@ -305,13 +317,14 @@
     <button class="nav-btn active" data-nav="home"><span class="ico" data-icon="home"></span>الرئيسية</button>
     <button class="nav-btn" data-nav="paths"><span class="ico" data-icon="map"></span>المسارات</button>
     <button class="nav-btn" data-nav="practice"><span class="ico" data-icon="pencil"></span>تدريب</button>
-    <button class="nav-btn" data-nav="rewards"><span class="ico" data-icon="trophy"></span>جوائز</button>
+    <button class="nav-btn" data-nav="progress"><span class="ico" data-icon="trophy"></span>التقدم</button>
+    <button class="nav-btn" data-nav="settings"><span class="ico" data-icon="gear"></span>الإعدادات</button>
   </div>
 </div>
 <div class="confetti" id="confetti"></div>
 
 <script>
-// ---------- Icon library (playful filled SVG for kids) ----------
+// ---------- Icon library ----------
 const I = (d, opts={}) => {
   const s = opts.size || 24, fill = opts.fill || 'currentColor', stroke = opts.stroke || 'none', sw = opts.sw || 0;
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${s}" height="${s}" viewBox="0 0 24 24" fill="${fill}" stroke="${stroke}" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round">${d}</svg>`;
@@ -339,10 +352,10 @@ const ICONS = {
   'play': I('<circle cx="12" cy="12" r="10" fill="#a56c18" stroke="#8d5a12" stroke-width="1"/><path d="M9 7l8 5-8 5z" fill="#fbf0d7"/>'),
   'next': I('<circle cx="12" cy="12" r="10" fill="#a56c18" stroke="#8d5a12" stroke-width="1"/><path d="M9 8l5 4-5 4" fill="none" stroke="#fbf0d7" stroke-width="2"/>'),
   'check-circle': I('<circle cx="12" cy="12" r="10" fill="#4d9560" stroke="#3a7a45" stroke-width="1"/><path d="M7 12l3.5 3.5 6-7" fill="none" stroke="#fff" stroke-width="2.2"/>'),
-  'fox': I('<circle cx="12" cy="13" r="7" fill="#d97706" stroke="#8d5a12" stroke-width="1.5"/><path d="M5 8l3-5 2 4M19 8l-3-5-2 4" fill="#d97706" stroke="#8d5a12" stroke-width="1.5"/><circle cx="9" cy="12" r="1.3" fill="#2c2114"/><circle cx="15" cy="12" r="1.3" fill="#2c2114"/><path d="M10 15q2 2 4 0" stroke="#2c2114" fill="none" stroke-width="1.2"/>'),
-  'giraffe': I('<circle cx="12" cy="14" r="6" fill="#fbbf24" stroke="#b45309" stroke-width="1.5"/><path d="M9 9l-1-5 2 3M15 9l1-5-2 3" fill="#fbbf24" stroke="#b45309" stroke-width="1.5"/><circle cx="9.5" cy="13" r="1.3" fill="#2c2114"/><circle cx="14.5" cy="13" r="1.3" fill="#2c2114"/><circle cx="9" cy="10" r="0.9" fill="#8d2f24"/><circle cx="15" cy="10" r="0.9" fill="#8d2f24"/><path d="M10 16q2 2 4 0" stroke="#2c2114" fill="none" stroke-width="1.2"/>'),
-  'dog': I('<circle cx="12" cy="14" r="6" fill="#a16207" stroke="#78350f" stroke-width="1.5"/><path d="M6 10c-1-3 0-6 2-6s2 3 1 5M18 10c1-3 0-6-2-6s-2 3-1 5" fill="#a16207" stroke="#78350f" stroke-width="1.5"/><circle cx="9.5" cy="13" r="1.3" fill="#2c2114"/><circle cx="14.5" cy="13" r="1.3" fill="#2c2114"/><ellipse cx="12" cy="16" rx="1.6" ry="1.2" fill="#2c2114"/><path d="M10.5 17.5q1.5 1.5 3 0" stroke="#fbf0d7" fill="none" stroke-width="1"/>'),
-  'owl': I('<circle cx="12" cy="13" r="7" fill="#5b4730" stroke="#2c2114" stroke-width="1.5"/><path d="M5 8l2-4 3 3M19 8l-2-4-3 3" fill="#5b4730" stroke="#2c2114" stroke-width="1.5"/><circle cx="9" cy="12" r="2" fill="#fbf0d7"/><circle cx="15" cy="12" r="2" fill="#fbf0d7"/><circle cx="9" cy="12" r="0.9" fill="#2c2114"/><circle cx="15" cy="12" r="0.9" fill="#2c2114"/><path d="M11 15.5h2" stroke="#fbf0d7" stroke-width="1.5"/>'),
+  'gear': I('<circle cx="12" cy="12" r="3" fill="#8a7355"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" fill="#8a7355" stroke="#5b4730" stroke-width="1"/>'),
+  'gear': I('<circle cx="12" cy="12" r="3" fill="#8a7355"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" fill="#8a7355" stroke="#5b4730" stroke-width="1"/>'),
+  'giraffe': I('<circle cx="12" cy="14" r="6" fill="#fbbf24" stroke="#b45309" stroke-width="1.5"/><path d="M9 9l-1-5 2 3M15 9l1-5-2 3" fill="#fbbf24" stroke="#b45309" stroke-width="1.5"/><circle cx="9.5" cy="13" r="1.3" fill="#2c2114"/><circle cx="14.5" cy="13" r="1.3" fill="#2c2114"/><circle cx="9" cy="10" r="0.9" fill="#8d2f24"/><circle cx="15" cy="10" r="0.9" fill="#8d2f24"/><path d="M10 16q2 2 4 0" stroke="#2c2114" fill="none" stroke-width="1.2"/>', {size:46}),
+  'dog': I('<circle cx="12" cy="14" r="6" fill="#a16207" stroke="#78350f" stroke-width="1.5"/><path d="M6 10c-1-3 0-6 2-6s2 3 1 5M18 10c1-3 0-6-2-6s-2 3-1 5" fill="#a16207" stroke="#78350f" stroke-width="1.5"/><circle cx="9.5" cy="13" r="1.3" fill="#2c2114"/><circle cx="14.5" cy="13" r="1.3" fill="#2c2114"/><ellipse cx="12" cy="16" rx="1.6" ry="1.2" fill="#2c2114"/><path d="M10.5 17.5q1.5 1.5 3 0" stroke="#fbf0d7" fill="none" stroke-width="1"/>', {size:46}),
 };
 function icon(name, size=20){ return `<span class="svg-icon" style="width:${size}px;height:${size}px">${ICONS[name]||''}</span>`; }
 
@@ -436,7 +449,7 @@ function makeChoices(ans,min,max){ const set=new Set([ans]); while(set.size<4) s
 let voicesLoaded=false;
 function loadVoices(){ if(voicesLoaded) return; try{ speechSynthesis.getVoices(); voicesLoaded=true;}catch{} }
 if('speechSynthesis' in window){ loadVoices(); window.speechSynthesis.onvoiceschanged=loadVoices; }
-function speak(text){ if(!('speechSynthesis' in window)) return; try{ window.speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(text); u.lang='ar-SA'; u.rate=0.9; u.pitch=1.05; const voices=window.speechSynthesis.getVoices(); const ar=voices.find(v=>v.lang&&v.lang.startsWith('ar')); if(ar)u.voice=ar; window.speechSynthesis.speak(u);}catch{} }
+function speak(text){ if(!('speechSynthesis' in window)||!state.settings.voice) return; try{ window.speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(text); u.lang='ar-SA'; u.rate=0.9; u.pitch=1.05; const voices=window.speechSynthesis.getVoices(); const ar=voices.find(v=>v.lang&&v.lang.startsWith('ar')); if(ar)u.voice=ar; window.speechSynthesis.speak(u);}catch{} }
 function speakNumber(n){ speak(toAr(n)); }
 
 // ---------- Characters (giraffe + dog) ----------
@@ -446,8 +459,8 @@ const CHARACTERS = [
 ];
 function charFor(pathId){ return PATHS.indexOf(PATHS.find(p=>p.id===pathId)) % 2 === 0 ? CHARACTERS[0] : CHARACTERS[1]; }
 
-// ---------- Question generator ----------
-function genQuestions(lesson, n=8) { /* same as before */
+// ---------- Question generator (same) ----------
+function genQuestions(lesson, n=8) {
   const qs=[];
   for(let i=0;i<n;i++){
     let q,ans,choices,type='mc';
@@ -489,9 +502,9 @@ function genQuestions(lesson, n=8) { /* same as before */
 }
 
 // ---------- State ----------
-const state = { stars:0, xp:0, progress:{}, currentPath:null, currentLesson:null, questions:[], qIndex:0, score:0, answers:[], char:0 };
-function loadState(){ try{ const s=JSON.parse(localStorage.getItem('mathparch_v5')||'{}'); if(s.stars)state.stars=s.stars; if(s.xp)state.xp=s.xp; if(s.progress)state.progress=s.progress;}catch{} }
-function saveState(){ try{ localStorage.setItem('mathparch_v5', JSON.stringify({stars:state.stars,xp:state.xp,progress:state.progress})); }catch{} }
+const state = { stars:0, xp:0, progress:{}, currentPath:null, currentLesson:null, questions:[], qIndex:0, score:0, answers:[], char:0, settings:{sound:true,voice:true}, selectedPath:0 };
+function loadState(){ try{ const s=JSON.parse(localStorage.getItem('mathlingo_v2')||'{}'); if(s.stars)state.stars=s.stars; if(s.xp)state.xp=s.xp; if(s.progress)state.progress=s.progress; if(s.settings)state.settings=s.settings; if(typeof s.selectedPath==='number')state.selectedPath=s.selectedPath;}catch{} }
+function saveState(){ try{ localStorage.setItem('mathlingo_v2', JSON.stringify({stars:state.stars,xp:state.xp,progress:state.progress,settings:state.settings,selectedPath:state.selectedPath})); }catch{} }
 loadState();
 
 // ---------- Progress helpers ----------
@@ -508,52 +521,73 @@ function isUnlocked(path, idx){
   return isLessonDone(path.lessons[idx-1].id);
 }
 
-// ---------- Render: Home ----------
+// ---------- Render ----------
 const screen=document.getElementById('screen');
 const backBtn=document.getElementById('backBtn');
 const totalStarsEl=document.getElementById('totalStars');
 
 function renderHome(){
   backBtn.style.visibility='hidden';
-  const totalDone = PATHS.reduce((s,p)=>s+completedCount(p),0);
-  const totalLessons = PATHS.reduce((s,p)=>s+p.lessons.length,0);
-  const cards = PATHS.map(p=>{
-    const done = completedCount(p);
-    const pct = Math.round(done/p.lessons.length*100);
-    const stars = p.lessons.reduce((s,l)=>s+lessonStars(l.id),0);
-    const maxStars = p.lessons.length*3;
-    return `<div class="path-card" data-path="${p.id}">
-      <div class="path-icon" style="background:${p.color}">${icon(p.icon,26,'var(--tint)')}</div>
-      <div class="path-name">${p.name}</div>
-      <div class="path-sub">${p.sub}</div>
-      <div class="path-progress"><div style="width:${pct}%;background:${p.color}"></div></div>
-      <div class="path-meta"><span>${icon('star-filled',12,'#9a7a00')} ${stars}/${maxStars}</span><span>${done}/${p.lessons.length}</span></div>
+  const p = PATHS[state.selectedPath];
+  state.currentPath = p;
+  state.char = charFor(p.id);
+  const done = completedCount(p);
+  const pct = Math.round(done/p.lessons.length*100);
+  const stars = p.lessons.reduce((s,l)=>s+lessonStars(l.id),0);
+  const maxStars = p.lessons.length*3;
+  const visible = visibleLessons(p);
+  const lessons = visible.map((l)=>{
+    const globalIdx = p.lessons.indexOf(l);
+    const isDone = isLessonDone(l.id);
+    const st = lessonStars(l.id);
+    const unlocked = isUnlocked(p, globalIdx);
+    const current = !isDone && unlocked && (globalIdx===0 || isLessonDone(p.lessons[globalIdx-1].id));
+    const numContent = !unlocked ? icon('lock',18,'var(--tint)') : (isDone ? icon('check',18,'var(--tint)') : (globalIdx+1));
+    return `<div class="path-node ${isDone?'done':''} ${!unlocked?'locked':''} ${current?'current':''}" data-lesson="${l.id}" data-idx="${globalIdx}">
+      <div class="node-circle" style="background:${unlocked?p.color:'var(--muted)'}">${numContent}</div>
+      <div class="node-info">
+        <div class="node-title">${l.title}</div>
+        <div class="node-sub">${l.sub}</div>
+        <div class="node-meta">
+          <span class="node-stars">${'⭐'.repeat(st)}${'☆'.repeat(3-st)}</span>
+          <span class="node-xp">+${l.xp} XP</span>
+          <span class="node-mastery"></span>
+        </div>
+      </div>
     </div>`;
   }).join('');
-  const ch = CHARACTERS[0];
+  const ch = state.char;
+  const totalDone = PATHS.reduce((s,pp)=>s+completedCount(pp),0);
+  const totalLessons = PATHS.reduce((s,pp)=>s+pp.lessons.length,0);
+  const chips = PATHS.map((pp,i)=>`<div class="path-chip ${i===state.selectedPath?'active':''}" data-idx="${i}">${icon(pp.icon,16)} ${pp.name}</div>`).join('');
   screen.innerHTML = `
     <div class="char-bar">
       <div class="char-avatar">${ch.svg}</div>
-      <div class="char-bubble">${ch.greet}</div>
-      <button class="char-speak" onclick="speakText('${ch.greet}')" title="استمع">${icon('speaker',16)}</button>
+      <div class="char-bubble">${ch.greet.replace('العد', p.name)}</div>
+      <button class="char-speak" onclick="speakText('${ch.greet.replace('العد', p.name)}')" title="استمع">${icon('speaker',16)}</button>
     </div>
-    <div class="home-hero">
-      <h1>مرحباً! 👋</h1>
-      <p>اختر مساراً للبدء بالتعلّم — ٩ مسارات، ${totalLessons} درساً</p>
-      <div class="hero-stats">
-        <div class="hero-stat"><div class="v">${state.stars}</div><div class="l">نجوم</div></div>
-        <div class="hero-stat"><div class="v">${totalDone}</div><div class="l">دروس</div></div>
-        <div class="hero-stat"><div class="v">${state.xp}</div><div class="l">XP</div></div>
+    <div class="path-chips" id="pathChips">${chips}</div>
+    <div class="path-header">
+      <div class="icon" style="background:${p.color}">${icon(p.icon,26,'var(--tint)')}</div>
+      <div style="flex:1">
+        <h2>${p.name}</h2>
+        <p>${p.sub}</p>
+        <div class="progress-bar"><div style="width:${pct}%;background:${p.color}"></div></div>
+        <div style="font-size:10.5px;color:var(--muted);font-weight:700;margin-top:4px">${done}/${p.lessons.length} درس · ${pct}% · ⭐ ${stars}/${maxStars}</div>
       </div>
     </div>
-    <div class="section-title"><span class="dot"></span>المسارات</div>
-    <div class="paths-grid">${cards}</div>
+    <div class="path-vertical">
+      <div class="path-line"></div>
+      ${lessons}
+    </div>
+    ${visible.length < p.lessons.length ? `<div class="empty" style="padding:14px">أكمل ${5-(done%5)||5} دروس لفتح ٥ دروس جديدة</div>` : ''}
     <div style="margin-top:14px">
       <div class="section-title"><span class="dot"></span>العد (استمع)</div>
       <div class="count-strip" id="countStrip"></div>
     </div>
   `;
-  screen.querySelectorAll('.path-card').forEach(el=>el.addEventListener('click',()=>openPath(el.dataset.path)));
+  document.getElementById('pathChips').querySelectorAll('.path-chip').forEach(el=>el.addEventListener('click',()=>{ state.selectedPath=parseInt(el.dataset.idx); saveState(); renderHome(); }));
+  screen.querySelectorAll('.path-node:not(.locked)').forEach(el=>el.addEventListener('click',()=>startLesson(el.dataset.lesson)));
   const strip = document.getElementById('countStrip');
   for(let i=1;i<=10;i++){
     const chip=document.createElement('div'); chip.className='count-chip'; chip.textContent=toAr(i);
@@ -561,60 +595,22 @@ function renderHome(){
     strip.appendChild(chip);
   }
   updateStars();
+  backBtn.style.visibility='hidden';
+  backBtn.onclick=null;
 }
 
 function openPath(id){
-  const p = PATHS.find(x=>x.id===id);
-  state.currentPath = p;
-  state.char = charFor(p.id);
-  backBtn.style.visibility='visible';
-  backBtn.onclick = renderHome;
-  const visible = visibleLessons(p);
-  const lessons = visible.map((l)=>{
-    const globalIdx = p.lessons.indexOf(l);
-    const done = isLessonDone(l.id);
-    const stars = lessonStars(l.id);
-    const unlocked = isUnlocked(p, globalIdx);
-    const current = !done && unlocked && (globalIdx===0 || isLessonDone(p.lessons[globalIdx-1].id));
-    const numContent = !unlocked ? icon('lock',18,'var(--tint)') : (done ? icon('check',18,'var(--tint)') : (globalIdx+1));
-    return `<div class="lesson-node ${done?'done':''} ${!unlocked?'locked':''} ${current?'current':''}" data-lesson="${l.id}" data-idx="${globalIdx}">
-      <div class="lesson-num" style="background:${unlocked?p.color:'var(--muted)'}">${numContent}</div>
-      <div class="lesson-info">
-        <div class="lesson-title">${l.title}</div>
-        <div class="lesson-sub">${l.sub}</div>
-        <div class="lesson-meta">
-          <span class="lesson-stars">${'⭐'.repeat(stars)}${'☆'.repeat(3-stars)}</span>
-          <span class="lesson-xp">+${l.xp} XP</span>
-        </div>
-      </div>
-    </div>`;
-  }).join('');
-  const done = completedCount(p);
-  const pct = Math.round(done/p.lessons.length*100);
-  const ch = state.char;
-  screen.innerHTML = `
-    <div class="char-bar">
-      <div class="char-avatar">${ch.svg}</div>
-      <div class="char-bubble">${ch.greet.replace('العد', p.name)}</div>
-      <button class="char-speak" onclick="speakText('${ch.greet.replace('العد', p.name)}')" title="استمع">${icon('speaker',16)}</button>
-    </div>
-    <div class="path-header">
-      <div class="icon" style="background:${p.color}">${icon(p.icon,28,'var(--tint)')}</div>
-      <div style="flex:1">
-        <h2>${p.name}</h2>
-        <p>${p.sub}</p>
-        <div class="progress-bar"><div style="width:${pct}%;background:${p.color}"></div></div>
-        <div style="font-size:10.5px;color:var(--muted);font-weight:700;margin-top:4px">${done}/${p.lessons.length} درس · ${pct}%</div>
-      </div>
-    </div>
-    <div class="lessons-list">${lessons}</div>
-    ${visible.length < p.lessons.length ? `<div class="empty" style="padding:14px">أكمل ${5-(done%5)||5} دروس لفتح ٥ دروس جديدة</div>` : ''}
-  `;
-  screen.querySelectorAll('.lesson-node:not(.locked)').forEach(el=>el.addEventListener('click',()=>startLesson(el.dataset.lesson)));
+  const idx = PATHS.findIndex(p=>p.id===id);
+  state.selectedPath = idx>=0 ? idx : 0;
+  saveState();
+  renderHome();
+  // scroll to top
+  document.getElementById('screen').scrollTop=0;
 }
 
 function startLesson(id){
-  const p = state.currentPath;
+  const p = state.currentPath || PATHS[state.selectedPath];
+  state.currentPath = p;
   const lesson = p.lessons.find(l=>l.id===id);
   state.currentLesson = lesson;
   state.questions = genQuestions(lesson, 8);
@@ -626,7 +622,7 @@ function startLesson(id){
 
 function renderIntro(lesson){
   backBtn.style.visibility='visible';
-  backBtn.onclick = ()=>openPath(state.currentPath.id);
+  backBtn.onclick = ()=>renderHome();
   const ch = state.char;
   const introText = 'هذا الدرس: '+lesson.title+'. '+lesson.sub+'. ٨ أسئلة. هيا نبدأ!';
   screen.innerHTML = `
@@ -649,7 +645,7 @@ function renderQuestion(){
   const lesson = state.currentLesson;
   const q = state.questions[state.qIndex];
   const total = state.questions.length;
-  backBtn.onclick = ()=>openPath(state.currentPath.id);
+  backBtn.onclick = ()=>renderHome();
   let choicesHtml;
   if(q.type==='str'||q.type==='emoji'){
     choicesHtml = q.choices.map(c=>`<button class="ans-btn" data-choice="${c}" style="font-size:${q.type==='emoji'?'24px':'16px'}">${c}</button>`).join('');
@@ -666,12 +662,19 @@ function renderQuestion(){
       <div class="q-progress">سؤال ${state.qIndex+1} / ${total}</div>
       <div class="q-text">${q.q}</div>
       <div class="q-hint">اختر الإجابة الصحيحة</div>
+      <button class="hint-btn" id="hintBtn">${icon('speaker',14)} تلميح</button>
+      <div class="explanation" id="expl"></div>
     </div>
     <div class="answers">${choicesHtml}</div>
     <div class="feedback" id="feedback"></div>
     <button class="next-btn" id="nextBtn" disabled>التالي ${icon('next',16)}</button>
   `;
   setTimeout(()=>speakText(q.q), 300);
+  document.getElementById('hintBtn').addEventListener('click',()=>{
+    const expl = document.getElementById('expl');
+    expl.textContent = 'الإجابة: '+q.ans;
+    expl.classList.add('show');
+  });
   const ansBtns = screen.querySelectorAll('.ans-btn');
   ansBtns.forEach(btn=>{
     btn.addEventListener('click',()=>{
@@ -727,8 +730,9 @@ function renderResult(){
   `;
   if(stars>=2) confetti();
   speakText(resultText);
-  document.getElementById('backToPath').addEventListener('click',()=>openPath(state.currentPath.id));
-  backBtn.onclick=()=>openPath(state.currentPath.id);
+  document.getElementById('backToPath').addEventListener('click',()=>renderHome());
+  backBtn.style.visibility='hidden';
+  backBtn.onclick=null;
   updateStars();
 }
 
@@ -747,27 +751,126 @@ function confetti(){
 
 function updateStars(){ totalStarsEl.textContent=state.stars; }
 
-// Nav
+// ---------- Views ----------
+function renderPaths(){
+  const totalDone = PATHS.reduce((s,p)=>s+completedCount(p),0);
+  const totalLessons = PATHS.reduce((s,p)=>s+p.lessons.length,0);
+  const cards = PATHS.map(p=>{
+    const done = completedCount(p);
+    const pct = Math.round(done/p.lessons.length*100);
+    const stars = p.lessons.reduce((s,l)=>s+lessonStars(l.id),0);
+    const maxStars = p.lessons.length*3;
+    return `<div class="path-card" data-path="${p.id}">
+      <div class="path-icon" style="background:${p.color}">${icon(p.icon,26,'var(--tint)')}</div>
+      <div class="path-name">${p.name}</div>
+      <div class="path-sub">${p.sub}</div>
+      <div class="path-progress"><div style="width:${pct}%;background:${p.color}"></div></div>
+      <div class="path-meta"><span>${icon('star-filled',12,'#9a7a00')} ${stars}/${maxStars}</span><span>${done}/${p.lessons.length}</span></div>
+    </div>`;
+  }).join('');
+  screen.innerHTML = `
+    <div class="section-title"><span class="dot"></span>جميع المسارات (${PATHS.length})</div>
+    <div class="paths-grid">${cards}</div>
+  `;
+  screen.querySelectorAll('.path-card').forEach(el=>el.addEventListener('click',()=>{ const idx=PATHS.findIndex(p=>p.id===el.dataset.path); state.selectedPath=idx; saveState(); renderHome(); }));
+}
+
+function renderProgress(){
+  const totalDone = PATHS.reduce((s,p)=>s+completedCount(p),0);
+  const totalLessons = PATHS.reduce((s,p)=>s+p.lessons.length,0);
+  const totalStars = state.stars;
+  const totalXp = state.xp;
+  const cards = PATHS.map(p=>{
+    const done = completedCount(p);
+    const pct = Math.round(done/p.lessons.length*100);
+    const stars = p.lessons.reduce((s,l)=>s+lessonStars(l.id),0);
+    const maxStars = p.lessons.length*3;
+    return `<div class="path-progress-card">
+      <div class="row">
+        <div class="icon" style="background:${p.color}">${icon(p.icon,18,'var(--tint)')}</div>
+        <div class="info">
+          <div class="name">${p.name}</div>
+          <div class="bar"><div style="width:${pct}%;background:${p.color}"></div></div>
+          <div class="pct">${done}/${p.lessons.length} درس · ⭐ ${stars}/${maxStars} · ${pct}%</div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+  screen.innerHTML = `
+    <div class="stat-grid">
+      <div class="stat-card"><div class="v">${totalStars}</div><div class="l">نجوم</div></div>
+      <div class="stat-card"><div class="v">${totalXp}</div><div class="l">XP</div></div>
+      <div class="stat-card"><div class="v">${totalDone}</div><div class="l">دروس مكتملة</div></div>
+      <div class="stat-card"><div class="v">${totalLessons}</div><div class="l">إجمالي الدروس</div></div>
+    </div>
+    <div class="section-title"><span class="dot"></span>تقدم المسارات</div>
+    ${cards}
+  `;
+  backBtn.style.visibility='hidden';
+  backBtn.onclick=null;
+}
+
+function renderSettings(){
+  const soundOn = state.settings.sound;
+  const voiceOn = state.settings.voice;
+  screen.innerHTML = `
+    <div class="section-title"><span class="dot"></span>الإعدادات</div>
+    <div class="setting-row">
+      <div><div class="label">المؤثرات الصوتية</div><div class="sub">أصوات الإجابة (صحيح/خطأ)</div></div>
+      <button class="toggle ${soundOn?'on':''}" id="toggleSound"></button>
+    </div>
+    <div class="setting-row">
+      <div><div class="label">النطق (TTS)</div><div class="sub">نطق الأعداد والأسئلة</div></div>
+      <button class="toggle ${voiceOn?'on':''}" id="toggleVoice"></button>
+    </div>
+    <div class="setting-row">
+      <div><div class="label">إعادة تعيين التقدم</div><div class="sub">حذف جميع النجوم والدروس</div></div>
+      <button class="btn-danger" id="resetBtn">إعادة تعيين</button>
+    </div>
+    <div class="setting-row">
+      <div><div class="label">الإصدار</div><div class="sub">Math Kids 1.0.0 (preview)</div></div>
+    </div>
+  `;
+  document.getElementById('toggleSound').addEventListener('click',function(){ state.settings.sound=!state.settings.sound; saveState(); this.classList.toggle('on'); });
+  document.getElementById('toggleVoice').addEventListener('click',function(){ state.settings.voice=!state.settings.voice; saveState(); this.classList.toggle('on'); });
+  document.getElementById('resetBtn').addEventListener('click',()=>{
+    if(confirm('هل أنت متأكد؟ سيتم حذف جميع النجوم والدروس.')){ state.stars=0; state.xp=0; state.progress={}; saveState(); updateStars(); renderSettings(); }
+  });
+  backBtn.style.visibility='hidden';
+  backBtn.onclick=null;
+}
+
+// ---------- Nav ----------
 document.querySelectorAll('.nav-btn').forEach(btn=>{
   btn.addEventListener('click',()=>{
     document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
     btn.classList.add('active');
     const nav=btn.dataset.nav;
-    if(nav==='home'||nav==='paths') renderHome();
+    if(nav==='home') renderHome();
+    else if(nav==='paths') renderPaths();
     else if(nav==='practice'){
       let target=null;
       for(const p of PATHS){ for(const l of p.lessons){ if(!isLessonDone(l.id)){ target={p,l}; break;} } if(target) break; }
       if(!target){ target={p:PATHS[0],l:PATHS[0].lessons[0]}; }
-      state.currentPath=target.p; state.char=charFor(target.p.id); startLesson(target.l.id);
+      state.currentPath=target.p; state.char=charFor(target.p.id); state.selectedPath=PATHS.indexOf(target.p); saveState(); startLesson(target.l.id);
     }
-    else if(nav==='rewards'){
-      screen.innerHTML=`<div class="result-card"><div class="result-emoji">${icon('trophy',36,'var(--tint)')}</div><h2 class="result-title">جوائزك</h2><p class="result-sub">نجوم مجمّعة: ${state.stars} · XP: ${state.xp}</p><div class="result-stars">${'⭐'.repeat(Math.min(state.stars,15))}</div><p class="result-sub" style="margin-top:12px">أكمل الدروس لجمع المزيد من النجوم!</p></div>`;
-      backBtn.style.visibility='hidden';
-    }
+    else if(nav==='progress') renderProgress();
+    else if(nav==='settings') renderSettings();
   });
 });
 
+function initIcons() {
+  document.querySelectorAll('[data-icon]').forEach(el => {
+    const name = el.getAttribute('data-icon');
+    const size = el.classList.contains('ico') ? 20 : (el.parentElement && el.parentElement.classList.contains('back-btn') ? 20 : 24);
+    el.innerHTML = ICONS[name] || '';
+    el.style.width = size + 'px';
+    el.style.height = size + 'px';
+    el.style.display = 'inline-block';
+  });
+}
 loadState();
+initIcons();
 renderHome();
 </script>
 </body>
