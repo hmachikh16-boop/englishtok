@@ -172,6 +172,7 @@
 </head>
 <body>
 <div class="app">
+  <div id="debugOverlay" style="position:fixed;top:0;left:0;right:0;background:#ff0000;color:#fff;padding:8px;font-size:12px;z-index:9999;display:none;white-space:pre-wrap;max-height:200px;overflow:auto;"></div>
   <div class="topbar">
     <button class="back-btn" id="backBtn" style="visibility:hidden"><span data-icon="chevron-right"></span></button>
     <div class="title"><span class="mascot" data-icon="calculator"></span> ریاضيات — مسارات</div>
@@ -825,9 +826,33 @@ function initIcons() {
     el.style.display = 'inline-block';
   });
 }
-loadState();
-initIcons();
-renderHome();
+// Global error handler
+window.onerror = function(msg, url, line, col, err) {
+  const overlay = document.getElementById('debugOverlay');
+  if (overlay) {
+    overlay.style.display = 'block';
+    overlay.textContent += (overlay.textContent ? '\n' : '') + 'ERROR: ' + msg + ' (line ' + line + ')';
+  }
+  return false;
+};
+window.addEventListener('unhandledrejection', function(e) {
+  const overlay = document.getElementById('debugOverlay');
+  if (overlay) {
+    overlay.style.display = 'block';
+    overlay.textContent += (overlay.textContent ? '\n' : '') + 'PROMISE: ' + (e.reason && e.reason.message ? e.reason.message : e.reason);
+  }
+});
+try {
+  loadState();
+  initIcons();
+  renderHome();
+} catch (e) {
+  const overlay = document.getElementById('debugOverlay');
+  if (overlay) {
+    overlay.style.display = 'block';
+    overlay.textContent = 'INIT ERROR: ' + e.message + '\n' + e.stack;
+  }
+}
 </script>
 </body>
 </html>
