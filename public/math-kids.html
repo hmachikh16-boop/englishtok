@@ -172,7 +172,6 @@
 </head>
 <body>
 <div class="app">
-  <div id="debugOverlay" style="position:fixed;top:0;left:0;right:0;background:#ff0000;color:#fff;padding:8px;font-size:12px;z-index:9999;display:none;white-space:pre-wrap;max-height:200px;overflow:auto;"></div>
   <div class="topbar">
     <button class="back-btn" id="backBtn" style="visibility:hidden"><span data-icon="chevron-right"></span></button>
     <div class="title"><span class="mascot" data-icon="calculator"></span> ریاضيات — مسارات</div>
@@ -329,39 +328,6 @@ const CHARACTERS = [
   { id:'dog', name:'الكلب ركس', svg:'🐶', greet:'أهلاً! أنا ركس الكلب، سأساعدك في العمليات!' },
 ];
 function charFor(pathId){ return PATHS.indexOf(PATHS.find(p=>p.id===pathId)) % 2 === 0 ? CHARACTERS[0] : CHARACTERS[1]; }
-
-// ---------- Icon library ----------
-const I = (d, opts={}) => {
-  const s = opts.size || 24, fill = opts.fill || 'currentColor', stroke = opts.stroke || 'none', sw = opts.sw || 0;
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="${s}" height="${s}" viewBox="0 0 24 24" fill="${fill}" stroke="${stroke}" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round">${d}</svg>`;
-};
-const ICONS = {
-  'chevron-right': I('<path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.5"/>'),
-  'calculator': I('<rect x="3" y="2" width="18" height="20" rx="3" fill="#a56c18"/><rect x="5" y="4" width="14" height="4" rx="1" fill="#fbf0d7"/><circle cx="7" cy="12" r="1.3" fill="#fbf0d7"/><circle cx="12" cy="12" r="1.3" fill="#fbf0d7"/><circle cx="17" cy="12" r="1.3" fill="#fbf0d7"/><circle cx="7" cy="17" r="1.3" fill="#fbf0d7"/><circle cx="12" cy="17" r="1.3" fill="#fbf0d7"/><circle cx="17" cy="17" r="1.3" fill="#fbf0d7"/>'),
-  'star-filled': I('<path d="M12 2l3 6.5 7 1-5 4.9 1.2 7-6.2-3.3-6.2 3.3 1.2-7-5-4.9 7-1z" fill="#d97706" stroke="#9a7a00" stroke-width="1"/>'),
-  'home': I('<path d="M3 11l9-8 9 8v10a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z" fill="currentColor"/>'),
-  'map': I('<polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21" fill="#4f46e5" stroke="#3730a3" stroke-width="1"/><line x1="9" y1="3" x2="9" y2="18" stroke="#fff" stroke-width="1.2"/><line x1="15" y1="6" x2="15" y2="21" stroke="#fff" stroke-width="1.2"/>'),
-  'pencil': I('<path d="M3 21l3-1 13-13-2-2-13 13-1 3z" fill="#0891b2" stroke="#0e7490" stroke-width="1"/><path d="M14 5l2 2 2-2-2-2z" fill="#fbbf24"/>'),
-  'trophy': I('<path d="M6 3h12v4a6 6 0 0 1-12 0V3z" fill="#d97706" stroke="#9a7a00" stroke-width="1"/><path d="M6 5H4a1 1 0 0 0-1 1v2a3 3 0 0 0 3 3M18 5h2a1 1 0 0 1 1 1v2a3 3 0 0 1-3 3" fill="none" stroke="#9a7a00" stroke-width="1.5"/><rect x="9" y="13" width="6" height="3" fill="#8d5a12"/><rect x="7" y="16" width="10" height="4" rx="1" fill="#8d5a12"/>'),
-  'lock': I('<rect x="4" y="10" width="16" height="12" rx="3" fill="#8a7355" stroke="#5b4730" stroke-width="1"/><path d="M8 10V7a4 4 0 0 1 8 0v3" fill="none" stroke="#5b4730" stroke-width="2"/>'),
-  'check': I('<circle cx="12" cy="12" r="9" fill="#4d9560" stroke="#3a7a45" stroke-width="1"/><path d="M7 12l3.5 3.5 6-7" fill="none" stroke="#fff" stroke-width="2.2"/>'),
-  'count': I('<circle cx="6" cy="7" r="2.5" fill="#3b82f6"/><circle cx="12" cy="7" r="2.5" fill="#3b82f6"/><circle cx="18" cy="7" r="2.5" fill="#3b82f6"/><circle cx="6" cy="17" r="2.5" fill="#3b82f6"/><circle cx="12" cy="17" r="2.5" fill="#3b82f6"/><circle cx="18" cy="17" r="2.5" fill="#3b82f6"/>'),
-  'add': I('<circle cx="12" cy="12" r="10" fill="#4d9560" stroke="#3a7a45" stroke-width="1"/><path d="M12 7v10M7 12h10" stroke="#fff" stroke-width="2.5"/>'),
-  'sub': I('<circle cx="12" cy="12" r="10" fill="#8d2f24" stroke="#6f2118" stroke-width="1"/><path d="M7 12h10" stroke="#fff" stroke-width="2.5"/>'),
-  'mul': I('<circle cx="12" cy="12" r="10" fill="#7c3aed" stroke="#5b21b6" stroke-width="1"/><path d="M8 8l8 8M16 8l-8 8" stroke="#fff" stroke-width="2.5"/>'),
-  'div': I('<circle cx="12" cy="12" r="10" fill="#0891b2" stroke="#0e7490" stroke-width="1"/><circle cx="12" cy="7" r="1.2" fill="#fff"/><circle cx="12" cy="17" r="1.2" fill="#fff"/><path d="M7 12h10" stroke="#fff" stroke-width="2.5"/>'),
-  'frac': I('<circle cx="12" cy="12" r="9" fill="#d97706" stroke="#9a7a00" stroke-width="1"/><path d="M12 3v18M3 12h18" stroke="#fff" stroke-width="1.8"/>'),
-  'geo': I('<polygon points="12 3 21 20 3 20" fill="#db2777" stroke="#9d174d" stroke-width="1"/><circle cx="12" cy="14" r="2" fill="#fff"/>'),
-  'meas': I('<rect x="3" y="7" width="18" height="10" rx="2" fill="#0891b2" stroke="#0e7490" stroke-width="1"/><path d="M6 7v4M9 7v2M12 7v4M15 7v2M18 7v4" stroke="#fff" stroke-width="1.5"/>'),
-  'word': I('<rect x="4" y="3" width="16" height="18" rx="2" fill="#4f46e5" stroke="#3730a3" stroke-width="1"/><path d="M7 8h10M7 12h10M7 16h6" stroke="#fff" stroke-width="1.5"/>'),
-  'speaker': I('<path d="M3 9h3l4-4v14l-4-4H3z" fill="#a56c18" stroke="#8d5a12" stroke-width="1"/><path d="M14 8a4 4 0 0 1 0 8M17 5a7 7 0 0 1 0 14" fill="none" stroke="#a56c18" stroke-width="1.8"/>'),
-  'play': I('<circle cx="12" cy="12" r="10" fill="#a56c18" stroke="#8d5a12" stroke-width="1"/><path d="M9 7l8 5-8 5z" fill="#fbf0d7"/>'),
-  'next': I('<circle cx="12" cy="12" r="10" fill="#a56c18" stroke="#8d5a12" stroke-width="1"/><path d="M9 8l5 4-5 4" fill="none" stroke="#fbf0d7" stroke-width="2"/>'),
-  'check-circle': I('<circle cx="12" cy="12" r="10" fill="#4d9560" stroke="#3a7a45" stroke-width="1"/><path d="M7 12l3.5 3.5 6-7" fill="none" stroke="#fff" stroke-width="2.2"/>'),
-  'gear': I('<circle cx="12" cy="12" r="3" fill="#8a7355"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" fill="#8a7355" stroke="#5b4730" stroke-width="1"/>'),
-};
-function icon(name, size=20){ return `<span class="svg-icon" style="width:${size}px;height:${size}px">${ICONS[name]||''}</span>`; }
-
 // ---------- Question generator ----------
 function genQuestions(lesson, n=8) {
   const qs=[];
@@ -403,59 +369,6 @@ function genQuestions(lesson, n=8) {
   }
   return qs;
 }
-
-
-// ---------- Helpers ----------
-function rand(a,b){ return Math.floor(Math.random()*(b-a+1))+a; }
-function shuffle(arr){ for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];} return arr; }
-function toAr(n){ return String(n).replace(/\d/g,d=>'٠١٢٣٤٥٦٧٨٩'[d]); }
-function makeChoices(ans,min,max){ const set=new Set([ans]); while(set.size<4) set.add(rand(min,max)); return shuffle([...set]); }
-
-// ---------- TTS ----------
-let voicesLoaded=false;
-function loadVoices(){ if(voicesLoaded) return; try{ speechSynthesis.getVoices(); voicesLoaded=true;}catch{} }
-if('speechSynthesis' in window){ loadVoices(); window.speechSynthesis.onvoiceschanged=loadVoices; }
-function speak(text){ if(!('speechSynthesis' in window)||!state.settings.voice) return; try{ window.speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(text); u.lang='ar-SA'; u.rate=0.9; u.pitch=1.05; const voices=window.speechSynthesis.getVoices(); const ar=voices.find(v=>v.lang&&v.lang.startsWith('ar')); if(ar)u.voice=ar; window.speechSynthesis.speak(u);}catch{} }
-function speakNumber(n){ speak(toAr(n)); }
-
-// ---------- Characters ----------
-const CHARACTERS = [
-  { id:'giraffe', name:'الزرافة لولو', svg:'🦒', greet:'مرحباً! أنا لولو الزرافة، سأساعدك في العد!' },
-  { id:'dog', name:'الكلب ركس', svg:'🐶', greet:'أهلاً! أنا ركس الكلب، سأساعدك في العمليات!' },
-];
-function charFor(pathId){ return PATHS.indexOf(PATHS.find(p=>p.id===pathId)) % 2 === 0 ? CHARACTERS[0] : CHARACTERS[1]; }
-
-// ---------- Icon library ----------
-const I = (d, opts={}) => {
-  const s = opts.size || 24, fill = opts.fill || 'currentColor', stroke = opts.stroke || 'none', sw = opts.sw || 0;
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="${s}" height="${s}" viewBox="0 0 24 24" fill="${fill}" stroke="${stroke}" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round">${d}</svg>`;
-};
-const ICONS = {
-  'chevron-right': I('<path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.5"/>'),
-  'calculator': I('<rect x="3" y="2" width="18" height="20" rx="3" fill="#a56c18"/><rect x="5" y="4" width="14" height="4" rx="1" fill="#fbf0d7"/><circle cx="7" cy="12" r="1.3" fill="#fbf0d7"/><circle cx="12" cy="12" r="1.3" fill="#fbf0d7"/><circle cx="17" cy="12" r="1.3" fill="#fbf0d7"/><circle cx="7" cy="17" r="1.3" fill="#fbf0d7"/><circle cx="12" cy="17" r="1.3" fill="#fbf0d7"/><circle cx="17" cy="17" r="1.3" fill="#fbf0d7"/>'),
-  'star-filled': I('<path d="M12 2l3 6.5 7 1-5 4.9 1.2 7-6.2-3.3-6.2 3.3 1.2-7-5-4.9 7-1z" fill="#d97706" stroke="#9a7a00" stroke-width="1"/>'),
-  'home': I('<path d="M3 11l9-8 9 8v10a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z" fill="currentColor"/>'),
-  'map': I('<polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21" fill="#4f46e5" stroke="#3730a3" stroke-width="1"/><line x1="9" y1="3" x2="9" y2="18" stroke="#fff" stroke-width="1.2"/><line x1="15" y1="6" x2="15" y2="21" stroke="#fff" stroke-width="1.2"/>'),
-  'pencil': I('<path d="M3 21l3-1 13-13-2-2-13 13-1 3z" fill="#0891b2" stroke="#0e7490" stroke-width="1"/><path d="M14 5l2 2 2-2-2-2z" fill="#fbbf24"/>'),
-  'trophy': I('<path d="M6 3h12v4a6 6 0 0 1-12 0V3z" fill="#d97706" stroke="#9a7a00" stroke-width="1"/><path d="M6 5H4a1 1 0 0 0-1 1v2a3 3 0 0 0 3 3M18 5h2a1 1 0 0 1 1 1v2a3 3 0 0 1-3 3" fill="none" stroke="#9a7a00" stroke-width="1.5"/><rect x="9" y="13" width="6" height="3" fill="#8d5a12"/><rect x="7" y="16" width="10" height="4" rx="1" fill="#8d5a12"/>'),
-  'lock': I('<rect x="4" y="10" width="16" height="12" rx="3" fill="#8a7355" stroke="#5b4730" stroke-width="1"/><path d="M8 10V7a4 4 0 0 1 8 0v3" fill="none" stroke="#5b4730" stroke-width="2"/>'),
-  'check': I('<circle cx="12" cy="12" r="9" fill="#4d9560" stroke="#3a7a45" stroke-width="1"/><path d="M7 12l3.5 3.5 6-7" fill="none" stroke="#fff" stroke-width="2.2"/>'),
-  'count': I('<circle cx="6" cy="7" r="2.5" fill="#3b82f6"/><circle cx="12" cy="7" r="2.5" fill="#3b82f6"/><circle cx="18" cy="7" r="2.5" fill="#3b82f6"/><circle cx="6" cy="17" r="2.5" fill="#3b82f6"/><circle cx="12" cy="17" r="2.5" fill="#3b82f6"/><circle cx="18" cy="17" r="2.5" fill="#3b82f6"/>'),
-  'add': I('<circle cx="12" cy="12" r="10" fill="#4d9560" stroke="#3a7a45" stroke-width="1"/><path d="M12 7v10M7 12h10" stroke="#fff" stroke-width="2.5"/>'),
-  'sub': I('<circle cx="12" cy="12" r="10" fill="#8d2f24" stroke="#6f2118" stroke-width="1"/><path d="M7 12h10" stroke="#fff" stroke-width="2.5"/>'),
-  'mul': I('<circle cx="12" cy="12" r="10" fill="#7c3aed" stroke="#5b21b6" stroke-width="1"/><path d="M8 8l8 8M16 8l-8 8" stroke="#fff" stroke-width="2.5"/>'),
-  'div': I('<circle cx="12" cy="12" r="10" fill="#0891b2" stroke="#0e7490" stroke-width="1"/><circle cx="12" cy="7" r="1.2" fill="#fff"/><circle cx="12" cy="17" r="1.2" fill="#fff"/><path d="M7 12h10" stroke="#fff" stroke-width="2.5"/>'),
-  'frac': I('<circle cx="12" cy="12" r="9" fill="#d97706" stroke="#9a7a00" stroke-width="1"/><path d="M12 3v18M3 12h18" stroke="#fff" stroke-width="1.8"/>'),
-  'geo': I('<polygon points="12 3 21 20 3 20" fill="#db2777" stroke="#9d174d" stroke-width="1"/><circle cx="12" cy="14" r="2" fill="#fff"/>'),
-  'meas': I('<rect x="3" y="7" width="18" height="10" rx="2" fill="#0891b2" stroke="#0e7490" stroke-width="1"/><path d="M6 7v4M9 7v2M12 7v4M15 7v2M18 7v4" stroke="#fff" stroke-width="1.5"/>'),
-  'word': I('<rect x="4" y="3" width="16" height="18" rx="2" fill="#4f46e5" stroke="#3730a3" stroke-width="1"/><path d="M7 8h10M7 12h10M7 16h6" stroke="#fff" stroke-width="1.5"/>'),
-  'speaker': I('<path d="M3 9h3l4-4v14l-4-4H3z" fill="#a56c18" stroke="#8d5a12" stroke-width="1"/><path d="M14 8a4 4 0 0 1 0 8M17 5a7 7 0 0 1 0 14" fill="none" stroke="#a56c18" stroke-width="1.8"/>'),
-  'play': I('<circle cx="12" cy="12" r="10" fill="#a56c18" stroke="#8d5a12" stroke-width="1"/><path d="M9 7l8 5-8 5z" fill="#fbf0d7"/>'),
-  'next': I('<circle cx="12" cy="12" r="10" fill="#a56c18" stroke="#8d5a12" stroke-width="1"/><path d="M9 8l5 4-5 4" fill="none" stroke="#fbf0d7" stroke-width="2"/>'),
-  'check-circle': I('<circle cx="12" cy="12" r="10" fill="#4d9560" stroke="#3a7a45" stroke-width="1"/><path d="M7 12l3.5 3.5 6-7" fill="none" stroke="#fff" stroke-width="2.2"/>'),
-  'gear': I('<circle cx="12" cy="12" r="3" fill="#8a7355"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" fill="#8a7355" stroke="#5b4730" stroke-width="1"/>'),
-};
-function icon(name, size=20){ return `<span class="svg-icon" style="width:${size}px;height:${size}px">${ICONS[name]||''}</span>`; }
 
 // ---------- Render: Home ----------
 const screen=document.getElementById('screen');
@@ -826,33 +739,9 @@ function initIcons() {
     el.style.display = 'inline-block';
   });
 }
-// Global error handler
-window.onerror = function(msg, url, line, col, err) {
-  const overlay = document.getElementById('debugOverlay');
-  if (overlay) {
-    overlay.style.display = 'block';
-    overlay.textContent += (overlay.textContent ? '\n' : '') + 'ERROR: ' + msg + ' (line ' + line + ')';
-  }
-  return false;
-};
-window.addEventListener('unhandledrejection', function(e) {
-  const overlay = document.getElementById('debugOverlay');
-  if (overlay) {
-    overlay.style.display = 'block';
-    overlay.textContent += (overlay.textContent ? '\n' : '') + 'PROMISE: ' + (e.reason && e.reason.message ? e.reason.message : e.reason);
-  }
-});
-try {
-  loadState();
-  initIcons();
-  renderHome();
-} catch (e) {
-  const overlay = document.getElementById('debugOverlay');
-  if (overlay) {
-    overlay.style.display = 'block';
-    overlay.textContent = 'INIT ERROR: ' + e.message + '\n' + e.stack;
-  }
-}
+loadState();
+initIcons();
+renderHome();
 </script>
 </body>
 </html>
