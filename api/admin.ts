@@ -64,6 +64,7 @@ interface FriendRecord {
   fromDevice: string;
   fromName: string;
   toCode: string;
+  toName: string;
   status: 'pending' | 'accepted' | 'rejected';
   createdAtUtc: string;
   updatedAtUtc: string;
@@ -270,13 +271,14 @@ const normalizeFriends = (raw: unknown): FriendRecord[] => {
     const fromDevice = asString(pick(source, 'fromDevice', 'FromDevice'), 240);
     const fromName = asString(pick(source, 'fromName', 'FromName'), 160);
     const toCode = normalizeCode(pick(source, 'toCode', 'ToCode'));
+    const toName = asString(pick(source, 'toName', 'ToName'), 160);
     const statusRaw = asString(pick(source, 'status', 'Status'), 16).toLowerCase();
     const status: 'pending' | 'accepted' | 'rejected' =
       statusRaw === 'accepted' ? 'accepted' : statusRaw === 'rejected' ? 'rejected' : 'pending';
     const createdAtUtc = normalizeDate(pick(source, 'createdAtUtc', 'CreatedAtUtc')) || nowIso();
     const updatedAtUtc = normalizeDate(pick(source, 'updatedAtUtc', 'UpdatedAtUtc')) || createdAtUtc;
     if (!fromCode || !toCode || fromCode === toCode) continue;
-    records.push({ id, fromCode, fromDevice, fromName, toCode, status, createdAtUtc, updatedAtUtc });
+    records.push({ id, fromCode, fromDevice, fromName, toCode, toName, status, createdAtUtc, updatedAtUtc });
   }
   return records;
 };
@@ -1030,10 +1032,10 @@ const handleChatSend = async (body: Record<string, unknown>) => {
 };
 
 const handleFriendsRequest = async (body: Record<string, unknown>) => {
-  const fromCode = asString(body.code, 48);
+  const fromCode = normalizeCode(body.code);
   const fromDevice = asString(body.device, 240);
   const fromName = asString(body.userName, 160);
-  const toCode = asString(body.targetCode, 48);
+  const toCode = normalizeCode(body.targetCode);
   if (!fromCode || !toCode) throw new HttpError(400, 'كود المرسل والمستهدف مطلوبان.');
   if (fromCode === toCode) throw new HttpError(400, 'لا يمكنك إضافة نفسك.');
   const id = await withDatabaseLock(async () => {
@@ -1045,6 +1047,15 @@ const handleFriendsRequest = async (body: Record<string, unknown>) => {
     if (existing) {
       if (existing.status === 'accepted') throw new HttpError(409, 'أنتما أصدقاء بالفعل.');
       if (existing.status === 'pending') throw new HttpError(409, 'طلب صداقة معلق بالفعل.');
+      // A rejected request can be re-sent: revive it.
+      existing.status = 'pending';
+      existing.fromCode = fromCode;
+      existing.fromDevice = fromDevice;
+      existing.fromName = fromName;
+      existing.toCode = toCode;
+      existing.updatedAtUtc = nowIso();
+      await saveDatabase(database);
+      return existing.id;
     }
     const record: FriendRecord = {
       id: randomUUID(),
@@ -1052,6 +1063,7 @@ const handleFriendsRequest = async (body: Record<string, unknown>) => {
       fromDevice,
       fromName,
       toCode,
+      toName: '',
       status: 'pending',
       createdAtUtc: nowIso(),
       updatedAtUtc: nowIso(),
@@ -1065,7 +1077,8 @@ const handleFriendsRequest = async (body: Record<string, unknown>) => {
 };
 
 const handleFriendsAccept = async (body: Record<string, unknown>) => {
-  const code = asString(body.code, 48);
+  const code = normalizeCode(body.code);
+  const userName = asString(body.userName, 160);
   const requestId = asString(body.requestId, 80);
   if (!code || !requestId) throw new HttpError(400, 'كود و requestId مطلوبان.');
   await withDatabaseLock(async () => {
@@ -1073,6 +1086,7 @@ const handleFriendsAccept = async (body: Record<string, unknown>) => {
     const record = database.friends.find((f) => f.id === requestId && f.toCode === code && f.status === 'pending');
     if (!record) throw new HttpError(404, 'طلب الصداقة غير موجود.');
     record.status = 'accepted';
+    record.toName = userName || record.toName;
     record.updatedAtUtc = nowIso();
     await saveDatabase(database);
   });
@@ -1080,7 +1094,7 @@ const handleFriendsAccept = async (body: Record<string, unknown>) => {
 };
 
 const handleFriendsReject = async (body: Record<string, unknown>) => {
-  const code = asString(body.code, 48);
+  const code = normalizeCode(body.code);
   const requestId = asString(body.requestId, 80);
   if (!code || !requestId) throw new HttpError(400, 'كود و requestId مطلوبان.');
   await withDatabaseLock(async () => {
@@ -1095,17 +1109,17 @@ const handleFriendsReject = async (body: Record<string, unknown>) => {
 };
 
 const handleFriendsList = async (query: Record<string, string | string[] | undefined>) => {
-  const code = asString(Array.isArray(query.code) ? query.code[0] : query.code, 48);
-  const device = asString(Array.isArray(query.device) ? query.device[0] : query.device, 240);
+  const code = normalizeCode(Array.isArray(query.code) ? query.code[0] : query.code);
   if (!code) return { friends: [], requests: [] };
   const database = await loadDatabase();
   const friends: Array<{ code: string; name: string; status: 'accepted' }> = [];
   const requests: Array<{ id: string; fromCode: string; fromName: string; createdAtUtc: string }> = [];
   for (const f of database.friends) {
     if (f.status === 'accepted' && (f.fromCode === code || f.toCode === code)) {
-      const otherCode = f.fromCode === code ? f.toCode : f.fromCode;
-      const otherName = f.fromCode === code ? '' : f.fromName;
-      friends.push({ code: otherCode, name: otherName, status: 'accepted' });
+      const mine = f.fromCode === code;
+      const otherCode = mine ? f.toCode : f.fromCode;
+      const otherName = mine ? f.toName : f.fromName;
+      friends.push({ code: otherCode, name: otherName || '', status: 'accepted' });
     }
     if (f.status === 'pending' && f.toCode === code) {
       requests.push({ id: f.id, fromCode: f.fromCode, fromName: f.fromName, createdAtUtc: f.createdAtUtc });
@@ -1115,8 +1129,8 @@ const handleFriendsList = async (query: Record<string, string | string[] | undef
 };
 
 const handleFriendsRemove = async (body: Record<string, unknown>) => {
-  const code = asString(body.code, 48);
-  const friendCode = asString(body.friendCode, 48);
+  const code = normalizeCode(body.code);
+  const friendCode = normalizeCode(body.friendCode);
   if (!code || !friendCode) throw new HttpError(400, 'كود و friendCode مطلوبان.');
   await withDatabaseLock(async () => {
     const database = await loadDatabase();
@@ -1132,8 +1146,8 @@ const handleFriendsRemove = async (body: Record<string, unknown>) => {
 };
 
 const handleFriendsChatGet = async (query: Record<string, string | string[] | undefined>) => {
-  const code = asString(Array.isArray(query.code) ? query.code[0] : query.code, 48);
-  const friendCode = asString(Array.isArray(query.friendCode) ? query.friendCode[0] : query.friendCode, 48);
+  const code = normalizeCode(Array.isArray(query.code) ? query.code[0] : query.code);
+  const friendCode = normalizeCode(Array.isArray(query.friendCode) ? query.friendCode[0] : query.friendCode);
   if (!code || !friendCode) return { messages: [] };
   const convId = [code, friendCode].sort().join('::');
   const database = await loadDatabase();
@@ -1145,10 +1159,10 @@ const handleFriendsChatGet = async (query: Record<string, string | string[] | un
 };
 
 const handleFriendsChatSend = async (body: Record<string, unknown>) => {
-  const code = asString(body.code, 48);
+  const code = normalizeCode(body.code);
   const device = asString(body.device, 240);
   const userName = asString(body.userName, 160);
-  const friendCode = asString(body.friendCode, 48);
+  const friendCode = normalizeCode(body.friendCode);
   const message = asString(body.message, 2000);
   if (!code || !friendCode || message.length < 1) throw new HttpError(400, 'كود و friendCode ورسالة مطلوبة.');
   const convId = [code, friendCode].sort().join('::');

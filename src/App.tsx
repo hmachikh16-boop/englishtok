@@ -800,14 +800,10 @@ const [supportChatOpen, setSupportChatOpen] = useState(false);
 
         {/* Friends Chat Modal */}
         {friendsChatOpen && (
-          <div className="fixed inset-0 z-50 flex items-end justify-center bg-[#2c2114]/55 p-0 sm:items-center sm:p-4">
-            <div className="w-full max-w-lg">
-              <FriendsChat
-                userName={userProfile.displayName}
-                onClose={() => setFriendsChatOpen(false)}
-              />
-            </div>
-          </div>
+          <FriendsChat
+            userName={userProfile.displayName}
+            onClose={() => setFriendsChatOpen(false)}
+          />
         )}
 
       </div>
