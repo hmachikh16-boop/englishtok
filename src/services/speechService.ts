@@ -215,11 +215,73 @@ class SpeechService {
           if (!response.ok) throw new Error(`Speech preload failed (${response.status}).`);
           const blob = await response.blob();
           if (blob.size < 256) throw new Error('Speech preload returned an empty clip.');
-          this.preloadedSpeechBlobs.set(key, blob);
+          const normalized = this.normalizeAudioBlob(blob, '');
+          this.preloadedSpeechBlobs.set(key, normalized);
+          // Persist so the clip survives a reload and plays offline.
+          void this.writePersistentAudio(`gen:${key}`, normalized).catch(() => undefined);
         })
         .catch(() => undefined)
         .finally(() => this.preloadedSpeechRequests.delete(key));
       this.preloadedSpeechRequests.set(key, request);
+    }
+  }
+
+  /** Fetch a generated TTS clip, using the in-memory + persistent cache when
+   * available, otherwise synthesising it via the server and persisting the
+   * result so the next play is instant and works offline. */
+  public async fetchGeneratedClip(
+    language: 'en' | 'fr',
+    text: string,
+  ): Promise<Blob> {
+    const cleaned = normalizeClipText(text);
+    if (!cleaned) throw new Error('There is no text to speak.');
+    const chunk = splitSpeechChunks(speechTextForTts(cleaned, language))[0];
+    if (!chunk) throw new Error('There is no text to speak.');
+    const key = `${language}:${chunk}`;
+    const genKey = `gen:${language}:${chunk}`;
+
+    const memory = this.preloadedSpeechBlobs.get(key);
+    if (memory) return memory;
+
+    try {
+      const persisted = await this.readPersistentAudio(genKey);
+      if (persisted) {
+        const normalized = this.normalizeAudioBlob(persisted, '');
+        this.preloadedSpeechBlobs.set(key, normalized);
+        return normalized;
+      }
+    } catch {
+      // ignore cache read errors
+    }
+
+    const response = await fetch(
+      apiUrl(`/api/tts?lang=${language}&q=${encodeURIComponent(chunk)}`),
+      { headers: { Accept: 'audio/mpeg' } },
+    );
+    if (!response.ok) throw new Error(`Speech fetch failed (${response.status}).`);
+    const blob = await response.blob();
+    if (blob.size < 256) throw new Error('Speech fetch returned an empty clip.');
+    const normalized = this.normalizeAudioBlob(blob, '');
+    this.preloadedSpeechBlobs.set(key, normalized);
+    void this.writePersistentAudio(genKey, normalized).catch(() => undefined);
+    return normalized;
+  }
+
+  /** Download & persist every audio chunk of a lesson in the background so the
+   *  lesson plays smoothly and works offline afterwards. */
+  public prefetchLessonAudio(lesson: { dialogue?: { textEn: string }[]; vocabulary?: { word: string; exampleSentence?: string }[]; structureSentence?: string }, language: 'en' | 'fr' = 'en') {
+    if (Capacitor.getPlatform() === 'android') return;
+    const texts: string[] = [];
+    if (lesson.structureSentence) texts.push(lesson.structureSentence);
+    for (const line of lesson.dialogue ?? []) {
+      if (line?.textEn) texts.push(line.textEn);
+    }
+    for (const word of lesson.vocabulary ?? []) {
+      if (word?.word) texts.push(word.word);
+      if (word?.exampleSentence) texts.push(word.exampleSentence);
+    }
+    for (const text of texts) {
+      this.preloadSpeech(text, language, 99);
     }
   }
 
@@ -339,7 +401,7 @@ class SpeechService {
       this.prefetchedAudio.push(audio);
     };
 
-    const playNext = () => {
+    const playNext = async () => {
       if (failed || requestId !== this.requestId) return;
       if (index >= chunks.length) {
         finish();
@@ -351,7 +413,18 @@ class SpeechService {
       index += 1;
       const prefetchedAudio = prefetched.get(currentIndex);
       prefetched.delete(currentIndex);
-      const cachedBlob = this.preloadedSpeechBlobs.get(`${language}:${chunk}`);
+      let cachedBlob = this.preloadedSpeechBlobs.get(`${language}:${chunk}`);
+      if (!cachedBlob) {
+        try {
+          const persisted = await this.readPersistentAudio(`gen:${language}:${chunk}`);
+          if (persisted) {
+            cachedBlob = this.normalizeAudioBlob(persisted, '');
+            this.preloadedSpeechBlobs.set(`${language}:${chunk}`, cachedBlob);
+          }
+        } catch {
+          // ignore cache read errors
+        }
+      }
       let audio: HTMLAudioElement;
       if (cachedBlob) {
         // A warm Blob avoids a second network round-trip and starts instantly.
@@ -372,6 +445,8 @@ class SpeechService {
         if (prefetchedAudio) {
           this.prefetchedAudio = this.prefetchedAudio.filter((item) => item !== prefetchedAudio);
         }
+        // Persist this chunk in the background so the next play is instant/offline.
+        void this.fetchGeneratedClip(language, chunk).catch(() => {});
       }
       this.currentAudio = audio;
 

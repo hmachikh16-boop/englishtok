@@ -198,6 +198,12 @@ export const LessonSession: React.FC<LessonSessionProps> = ({
   const [goldPictureChecked, setGoldPictureChecked] = useState(false);
   const [goldPictureCorrect, setGoldPictureCorrect] = useState(false);
   const [goldPictureBonusXp, setGoldPictureBonusXp] = useState(0);
+
+  // Warm the local speech cache in the background so the lesson plays smoothly
+  // and works offline. The current player UI is unchanged.
+  useEffect(() => {
+    speechService.prefetchLessonAudio(lesson, 'en');
+  }, [lesson.id]);
   const [finalScore, setFinalScore] = useState(0);
   const [finalCorrect, setFinalCorrect] = useState(0);
 
