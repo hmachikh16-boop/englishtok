@@ -1,31 +1,18 @@
 import type { Lesson } from '../types';
-import {
-  LESSON_SPECS,
-  LEVEL_CHARACTERS,
-  buildLesson,
-} from './curriculumContent';
+import { LEVEL_CHARACTERS } from './curriculumContent';
 import { buildExpansionLesson } from './expansion/buildExpansionLesson';
 import { STAGE_2A_LESSONS } from './expansion/stage2a';
-import { STAGE_2B_LESSONS } from './expansion/stage2b';
-import { STAGE_2_PLUS_LESSONS } from './expansionPlus/stage2';
-import { STAGE_2_PLUS2_LESSONS } from './expansionPlus2/stage2';
-import { STAGE_2_PLUS3_LESSONS } from './expansionPlus3/stage2';
-import { STAGE_2_PLUS4_LESSONS } from './expansionPlus4/stage2';
 
+/**
+ * Stage 2 (المرحلة الثانية) — A2/B1 "التعلم القائم على المهام والتواصل اليومي".
+ *
+ * Replaces the previous Stage 2 track with the roadmap designed for the app:
+ * daily routine, a day in the city, restaurant & preferences, past events and
+ * future plans & directions. The old A2/B1 expansion packs (stage2a, stage2b,
+ * expansionPlus stage2) remain on disk but are no longer loaded here.
+ */
 export async function loadStageLessons(): Promise<Lesson[]> {
-  const specs = [
-    ...STAGE_2A_LESSONS,
-    ...STAGE_2B_LESSONS,
-    ...STAGE_2_PLUS_LESSONS,
-    ...STAGE_2_PLUS2_LESSONS,
-    ...STAGE_2_PLUS3_LESSONS,
-    ...STAGE_2_PLUS4_LESSONS,
-  ];
-  const baseLessons = LESSON_SPECS.filter((spec) => spec.stage === 2).map(buildLesson);
-  const expansionLessons = specs.map((spec) =>
+  return STAGE_2A_LESSONS.map((spec) =>
     buildExpansionLesson(spec, LEVEL_CHARACTERS[2]),
-  );
-  return [...baseLessons, ...expansionLessons].sort(
-    (left, right) => (left.curriculumStage ?? 0) - (right.curriculumStage ?? 0),
   );
 }

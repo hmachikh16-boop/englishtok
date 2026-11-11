@@ -243,6 +243,7 @@ const SPECS: Record<TargetLanguage, Record<number, ExpansionLessonSpec>> = {
  * original "after the first lesson" position.
  */
 const STAGE_1_PROJECT_ANCHOR_ID = 'a1-fnd-18-introduce-yourself';
+const STAGE_2_PROJECT_ANCHOR_ID = 'a2-06-directions';
 
 /**
  * Adds the four Gold projects to a curriculum without touching the original
@@ -257,6 +258,9 @@ export const applyGoldCurriculum = (
   if (lessons.length === 0) return lessons;
   const stage1Anchor = lessons.some((lesson) => lesson.id === STAGE_1_PROJECT_ANCHOR_ID)
     ? STAGE_1_PROJECT_ANCHOR_ID
+    : null;
+  const stage2Anchor = lessons.some((lesson) => lesson.id === STAGE_2_PROJECT_ANCHOR_ID)
+    ? STAGE_2_PROJECT_ANCHOR_ID
     : null;
   // Only skip stages that already have a Gold project inserted; keep inserting
   // the remaining ones so partial (stage-by-stage) loads stay complete.
@@ -287,6 +291,7 @@ export const applyGoldCurriculum = (
     const stage = lesson.curriculumStage;
     if (!stage || inserted.has(stage)) continue;
     if (stage === 1 && stage1Anchor && lesson.id !== stage1Anchor) continue;
+    if (stage === 2 && stage2Anchor && lesson.id !== stage2Anchor) continue;
     const goldProject = projects.get(stage);
     if (goldProject) {
       result.push(goldProject);
