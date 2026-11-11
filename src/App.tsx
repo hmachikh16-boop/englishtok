@@ -40,7 +40,10 @@ import { TopBar } from './components/navigation/TopBar';
 import { BottomTabBar } from './components/navigation/BottomTabBar';
 import { SupportChat } from './components/support/SupportChat';
 import { FriendsChat } from './components/friends/FriendsChat';
+import { normalizeFriendCode, readFriendIdentity } from './services/friendIdentity';
+import { ensureNotificationPermission, notifyLocal } from './services/notifications';
 import './components/friends/friends.css';
+import './components/floating-actions.css';
 const LessonLibraryTab = lazy(() =>
   import('./components/library/LessonLibraryTab').then((module) => ({ default: module.LessonLibraryTab })),
 );
@@ -118,6 +121,35 @@ export default function App() {
   const [activeTab, setActiveTab] = useState<ActiveTab>('categories');
 const [supportChatOpen, setSupportChatOpen] = useState(false);
   const [friendsChatOpen, setFriendsChatOpen] = useState(false);
+  const [friendsUnread, setFriendsUnread] = useState(0);
+
+  useEffect(() => {
+    let cancelled = false;
+    const load = async () => {
+      try {
+        const code = readFriendIdentity();
+        const response = await fetch(
+          `https://englishtok-eight.vercel.app/api/admin?action=social_summary&code=${encodeURIComponent(code)}`,
+          { cache: 'no-store' },
+        );
+        if (!response.ok) return;
+        const payload = await response.json().catch(() => ({}));
+        if (!cancelled && typeof payload.unreadTotal === 'number') {
+          setFriendsUnread(payload.unreadTotal);
+        }
+      } catch {
+        /* offline */
+      }
+    };
+    if (!friendsChatOpen) void load();
+    const interval = window.setInterval(() => {
+      if (!friendsChatOpen) void load();
+    }, 45000);
+    return () => {
+      cancelled = true;
+      window.clearInterval(interval);
+    };
+  }, [friendsChatOpen]);
   const [selectedLessonId, setSelectedLessonId] = useState<string | null>(learningPath.nextLessonId);
   const [isPhoneFrameView, setIsPhoneFrameView] = useState<boolean>(false);
   const [speechNotice, setSpeechNotice] = useState<string | null>(null);
@@ -173,6 +205,88 @@ const [supportChatOpen, setSupportChatOpen] = useState(false);
       void resumeListener.then((handle) => handle.remove());
     };
   }, []);
+
+  // Presence heartbeat + friend-message / update notifications
+  useEffect(() => {
+    void ensureNotificationPermission();
+    const myCode = readFriendIdentity();
+    const device = Capacitor.getPlatform();
+    const CHAT_BASE = 'https://englishtok-eight.vercel.app/api/admin';
+    const lastMessageByFriend = new Map<string, string>();
+    let cancelled = false;
+
+    const pingPresence = async () => {
+      try {
+        await fetch(`${CHAT_BASE}?action=presence_ping`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          body: JSON.stringify({ code: myCode, device }),
+        });
+      } catch {
+        /* offline */
+      }
+    };
+
+    const pollFriends = async () => {
+      try {
+        const response = await fetch(
+          `${CHAT_BASE}?action=friends_list&code=${encodeURIComponent(myCode)}&device=${encodeURIComponent(device)}`,
+          { headers: { Accept: 'application/json' }, cache: 'no-store' },
+        );
+        if (!response.ok) return;
+        const payload = await response.json().catch(() => ({}));
+        const friends = Array.isArray(payload.friends) ? payload.friends : [];
+        let unreadTotal = 0;
+        for (const friend of friends) {
+          unreadTotal += friend.unread ?? 0;
+          const prev = lastMessageByFriend.get(friend.code);
+          if (
+            prev !== undefined &&
+            prev !== (friend.lastMessage ?? '') &&
+            friend.lastSenderCode &&
+            normalizeFriendCode(friend.lastSenderCode) !== myCode
+          ) {
+            const preview = (friend.lastMessage ?? '').slice(0, 80);
+            void notifyLocal(`رسالة من ${friend.name || friend.code}`, preview || 'رسالة جديدة');
+          }
+          lastMessageByFriend.set(friend.code, friend.lastMessage ?? '');
+        }
+        // seed on first run without notifying
+        if (lastMessageByFriend.size === 0) {
+          for (const friend of friends) lastMessageByFriend.set(friend.code, friend.lastMessage ?? '');
+        }
+        setFriendsUnread(unreadTotal);
+      } catch {
+        /* offline */
+      }
+    };
+
+    void pingPresence();
+    void pollFriends();
+    const presenceInterval = window.setInterval(() => void pingPresence(), 30000);
+    const friendsInterval = window.setInterval(() => void pollFriends(), 45000);
+
+    const handleVisibility = () => {
+      if (document.visibilityState === 'visible') {
+        void pingPresence();
+        void pollFriends();
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibility);
+
+    return () => {
+      cancelled = true;
+      window.clearInterval(presenceInterval);
+      window.clearInterval(friendsInterval);
+      document.removeEventListener('visibilitychange', handleVisibility);
+    };
+  }, []);
+
+  // Notify when a new app update is available
+  useEffect(() => {
+    if (!availableAppUpdate) return;
+    void notifyLocal('تحديث جديد لـ Lin Go Gold+', 'إصدار جديد متاح — افتح الإعدادات للتحديث.');
+  }, [availableAppUpdate]);
 
   const handleDownloadAppUpdate = async () => {
     if (!availableAppUpdate) return;
@@ -734,44 +848,29 @@ const [supportChatOpen, setSupportChatOpen] = useState(false);
           onChangeTab={handleChangeTab}
         />}
 
-        {/* Floating Support Chat Button (Messenger-style, above the Reels button) */}
+        {/* Floating Support Chat Button (paper/brass plaque, above the Reels entry) */}
         {activeTab !== 'lesson' && activeTab !== 'chat' && (
           <button
             type="button"
             onClick={() => setSupportChatOpen(true)}
             aria-label="دردشة مع الدعم"
-            className="fixed right-4 z-40 flex items-center gap-2 rounded-full border border-[#6d4610]/70 px-1.5 py-1.5 transition hover:-translate-y-0.5 active:translate-y-0.5"
+            className="support-fab"
             style={{
               bottom: IS_GOLD_EDITION && activeTab === 'categories' ? 148 : 84,
-              background:
-                'linear-gradient(180deg, rgba(255,255,255,0.5), rgba(255,255,255,0) 44%), linear-gradient(150deg, #fbe8b8 0%, #e7c477 52%, #d4a94f 100%)',
-              boxShadow:
-                '0 1px 0 rgba(255,255,255,0.7) inset, 0 3px 0 #8a5a12, 0 12px 24px rgba(74,51,25,0.3)',
             }}
           >
-            <span
-              className="grid h-9 w-9 flex-none place-items-center rounded-full text-[#fbe8b8]"
-              style={{
-                background:
-                  'radial-gradient(circle at 32% 26%, rgba(255,255,255,0.28), transparent 44%), linear-gradient(150deg, #a83a2c, #7d241b)',
-                boxShadow: '0 1px 0 rgba(255,255,255,0.24) inset, 0 2px 5px rgba(74,51,25,0.38)',
-              }}
-            >
-              <MessageCircle className="h-5 w-5" />
+            <span className="support-fab-medallion" aria-hidden="true">
+              <MessageCircle />
+              <span className="support-fab-dot" />
             </span>
-            <span className="flex flex-col items-start gap-0.5 leading-none">
-              <strong className="text-[13px] font-black text-[#2c2114]">الدعم</strong>
-              <small className="text-[8px] font-extrabold tracking-wide text-[#7a5a2a]">دردشة مباشرة</small>
+            <span className="support-fab-copy">
+              <strong>الدعم</strong>
+              <small>دردشة مباشرة</small>
             </span>
-            <span
-              className="ml-0.5 mr-1 h-2 w-2 flex-none rounded-full bg-[#8d2f24]"
-              style={{ boxShadow: '0 0 0 2px #f7e2b0, 0 0 0 4px rgba(141,47,36,0.14)' }}
-              aria-hidden="true"
-            />
           </button>
         )}
 
-        {/* Floating Friends Chat Button (parchment, left side) */}
+        {/* Floating Friends Chat Button (paper/brass plaque, left side) */}
         {activeTab !== 'lesson' && activeTab !== 'chat' && (
           <button
             type="button"
@@ -782,7 +881,14 @@ const [supportChatOpen, setSupportChatOpen] = useState(false);
               bottom: IS_GOLD_EDITION && activeTab === 'categories' ? 148 : 84,
             }}
           >
-            <Users className="h-5 w-5" />
+            <span className="friends-fab-medallion" aria-hidden="true">
+              <Users />
+            </span>
+            {friendsUnread > 0 && (
+              <span className="friends-fab-badge">
+                {friendsUnread > 99 ? '99+' : friendsUnread}
+              </span>
+            )}
           </button>
         )}
 

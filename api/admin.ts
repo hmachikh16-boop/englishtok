@@ -78,12 +78,16 @@ interface FriendChatMessage {
   message: string;
   at: string;
   read?: boolean;
+  /** Friend codes that have opened the thread after this message was sent. */
+  readBy?: string[];
 }
 
 interface GroupMember {
   code: string;
   name: string;
   joinedAtUtc: string;
+  /** ISO timestamp of the last time this member opened the group thread. */
+  lastReadAt?: string;
 }
 
 interface StudyGroup {
@@ -105,6 +109,12 @@ interface GroupChatMessage {
   at: string;
 }
 
+interface PresenceRecord {
+  code: string;
+  lastSeenAt: string;
+  device?: string;
+}
+
 interface LicenseSettings {
   /** When true, the Gold app opens for everyone without a license code. */
   freeMode: boolean;
@@ -120,6 +130,7 @@ interface LicenseDatabase {
   friendChats: FriendChatMessage[];
   groups: StudyGroup[];
   groupChats: GroupChatMessage[];
+  presence: PresenceRecord[];
   settings: LicenseSettings;
 }
 
@@ -280,6 +291,7 @@ const emptyDatabase = (): LicenseDatabase => ({
   friendChats: [],
   groups: [],
   groupChats: [],
+  presence: [],
   settings: { freeMode: false },
 });
 
@@ -325,7 +337,11 @@ const normalizeFriendChat = (raw: unknown): FriendChatMessage[] => {
     const message = asString(pick(source, 'message', 'Message'), 2000);
     const at = normalizeDate(pick(source, 'at', 'At')) || nowIso();
     if (!conversationId || !message) continue;
-    messages.push({ id, conversationId, senderCode, senderName, message, at, read: asBoolean(pick(source, 'read', 'Read')) });
+    const rawReadBy = pick(source, 'readBy', 'ReadBy');
+    const readBy = Array.isArray(rawReadBy)
+      ? rawReadBy.map((entry) => normalizeCode(entry)).filter(Boolean).slice(0, 50)
+      : [];
+    messages.push({ id, conversationId, senderCode, senderName, message, at, read: asBoolean(pick(source, 'read', 'Read')), readBy });
   }
   return messages;
 };
@@ -354,6 +370,7 @@ const normalizeGroups = (raw: unknown): StudyGroup[] => {
         code: memberCode,
         name: asString(pick(ms, 'name', 'Name'), 160),
         joinedAtUtc: normalizeDate(pick(ms, 'joinedAtUtc', 'JoinedAtUtc')) || createdAtUtc,
+        lastReadAt: normalizeDate(pick(ms, 'lastReadAt', 'LastReadAt')) || undefined,
       });
     }
     groups.push({ id, name, description, code, ownerCode, createdAtUtc, members });
@@ -408,6 +425,20 @@ const normalizeChat = (raw: unknown): ChatMessage[] => {
   return messages;
 };
 
+const normalizePresence = (raw: unknown): PresenceRecord[] => {
+  if (!Array.isArray(raw)) return [];
+  const records: PresenceRecord[] = [];
+  for (const item of raw.slice(0, 5000)) {
+    if (!item || typeof item !== 'object' || Array.isArray(item)) continue;
+    const source = item as Record<string, unknown>;
+    const code = normalizeCode(pick(source, 'code', 'Code'));
+    if (!code) continue;
+    const lastSeenAt = normalizeDate(pick(source, 'lastSeenAt', 'LastSeenAt')) || nowIso();
+    records.push({ code, lastSeenAt, device: asString(pick(source, 'device', 'Device'), 240) || undefined });
+  }
+  return records;
+};
+
 const normalizeDatabase = (raw: unknown): LicenseDatabase => {
   if (!raw || typeof raw !== 'object' || Array.isArray(raw)) {
     throw new HttpError(400, 'صيغة قاعدة البيانات غير صالحة.');
@@ -436,6 +467,7 @@ const normalizeDatabase = (raw: unknown): LicenseDatabase => {
     friendChats: normalizeFriendChat(source.friendChats ?? source.FriendChats),
     groups: normalizeGroups(source.groups ?? source.Groups),
     groupChats: normalizeGroupChat(source.groupChats ?? source.GroupChats),
+    presence: normalizePresence(source.presence ?? source.Presence),
     settings: normalizeSettings(source.settings ?? source.Settings),
   };
 };
@@ -1188,24 +1220,74 @@ const handleFriendsReject = async (body: Record<string, unknown>) => {
   return { ok: true };
 };
 
+const handlePresencePing = async (body: Record<string, unknown>) => {
+  const code = normalizeCode(body.code);
+  if (!code) throw new HttpError(400, 'كود مطلوب.');
+  await withDatabaseLock(async () => {
+    const database = await loadDatabase();
+    const now = nowIso();
+    const existing = database.presence.find((p) => p.code === code);
+    if (existing) {
+      existing.lastSeenAt = now;
+      const device = asString(body.device, 240);
+      if (device) existing.device = device;
+    } else {
+      database.presence.push({ code, lastSeenAt: now, device: asString(body.device, 240) || undefined });
+      if (database.presence.length > 5000) database.presence = database.presence.slice(database.presence.length - 5000);
+    }
+    await saveDatabase(database);
+  });
+  return { ok: true };
+};
+
 const handleFriendsList = async (query: Record<string, string | string[] | undefined>) => {
   const code = normalizeCode(Array.isArray(query.code) ? query.code[0] : query.code);
-  if (!code) return { friends: [], requests: [] };
+  if (!code) return { friends: [], requests: [], unreadTotal: 0 };
   const database = await loadDatabase();
-  const friends: Array<{ code: string; name: string; status: 'accepted' }> = [];
+  const presenceMap = new Map(database.presence.map((p) => [p.code, p.lastSeenAt]));
+  const friends: Array<{
+    code: string;
+    name: string;
+    status: 'accepted';
+    lastMessage: string;
+    lastAt: string;
+    lastSenderCode: string;
+    unread: number;
+    lastSeenAt: string;
+  }> = [];
   const requests: Array<{ id: string; fromCode: string; fromName: string; createdAtUtc: string }> = [];
+  let unreadTotal = 0;
   for (const f of database.friends) {
     if (f.status === 'accepted' && (f.fromCode === code || f.toCode === code)) {
       const mine = f.fromCode === code;
       const otherCode = mine ? f.toCode : f.fromCode;
       const otherName = mine ? f.toName : f.fromName;
-      friends.push({ code: otherCode, name: otherName || '', status: 'accepted' });
+      const convId = [code, otherCode].sort().join('::');
+      const conversation = database.friendChats
+        .filter((m) => m.conversationId === convId)
+        .sort((a, b) => (a.at < b.at ? -1 : 1));
+      const last = conversation[conversation.length - 1];
+      const unread = conversation.filter(
+        (m) => m.senderCode !== code && !(m.readBy ?? []).includes(code),
+      ).length;
+      unreadTotal += unread;
+      friends.push({
+        code: otherCode,
+        name: otherName || '',
+        status: 'accepted',
+        lastMessage: last?.message ?? '',
+        lastAt: last?.at ?? '',
+        lastSenderCode: last?.senderCode ?? '',
+        unread,
+        lastSeenAt: presenceMap.get(otherCode) ?? '',
+      });
     }
     if (f.status === 'pending' && f.toCode === code) {
       requests.push({ id: f.id, fromCode: f.fromCode, fromName: f.fromName, createdAtUtc: f.createdAtUtc });
     }
   }
-  return { friends, requests };
+  friends.sort((a, b) => (b.lastAt || '').localeCompare(a.lastAt || ''));
+  return { friends, requests, unreadTotal };
 };
 
 const handleFriendsRemove = async (body: Record<string, unknown>) => {
@@ -1230,11 +1312,26 @@ const handleFriendsChatGet = async (query: Record<string, string | string[] | un
   const friendCode = normalizeCode(Array.isArray(query.friendCode) ? query.friendCode[0] : query.friendCode);
   if (!code || !friendCode) return { messages: [] };
   const convId = [code, friendCode].sort().join('::');
-  const database = await loadDatabase();
-  const messages = database.friendChats
-    .filter((m) => m.conversationId === convId)
-    .sort((a, b) => (a.at < b.at ? -1 : 1))
-    .slice(-100);
+  const messages = await withDatabaseLock(async () => {
+    const database = await loadDatabase();
+    const conversation = database.friendChats
+      .filter((m) => m.conversationId === convId)
+      .sort((a, b) => (a.at < b.at ? -1 : 1));
+    let changed = false;
+    for (const m of conversation) {
+      if (m.senderCode === code) continue;
+      const readBy = m.readBy ?? [];
+      if (!readBy.includes(code)) {
+        m.readBy = [...readBy, code].slice(0, 50);
+        changed = true;
+      }
+    }
+    if (changed) {
+      database.updatedAtUtc = nowIso();
+      await saveDatabase(database);
+    }
+    return conversation.slice(-100);
+  });
   return { messages };
 };
 
@@ -1256,6 +1353,7 @@ const handleFriendsChatSend = async (body: Record<string, unknown>) => {
       message: message.slice(0, 2000),
       at: nowIso(),
       read: false,
+      readBy: [code],
     };
     database.friendChats.push(msg);
     if (database.friendChats.length > 5000) database.friendChats = database.friendChats.slice(database.friendChats.length - 5000);
@@ -1312,7 +1410,7 @@ const handleGroupsCreate = async (body: Record<string, unknown>) => {
       code: groupCode,
       ownerCode: code,
       createdAtUtc: nowIso(),
-      members: [{ code, name: userName || code, joinedAtUtc: nowIso() }],
+      members: [{ code, name: userName || code, joinedAtUtc: nowIso(), lastReadAt: nowIso() }],
     };
     database.groups.push(record);
     if (database.groups.length > 2000) database.groups = database.groups.slice(database.groups.length - 2000);
@@ -1333,7 +1431,7 @@ const handleGroupsJoin = async (body: Record<string, unknown>) => {
     if (!target) throw new HttpError(404, 'المجموعة غير موجودة.');
     if (isGroupMember(target, code)) return target;
     if (target.members.length >= 200) throw new HttpError(409, 'المجموعة ممتلئة (200 عضو).');
-    target.members.push({ code, name: userName || code, joinedAtUtc: nowIso() });
+    target.members.push({ code, name: userName || code, joinedAtUtc: nowIso(), lastReadAt: nowIso() });
     await saveDatabase(database);
     return target;
   });
@@ -1342,10 +1440,39 @@ const handleGroupsJoin = async (body: Record<string, unknown>) => {
 
 const handleGroupsList = async (query: Record<string, string | string[] | undefined>) => {
   const code = normalizeCode(Array.isArray(query.code) ? query.code[0] : query.code);
-  if (!code) return { groups: [] };
+  if (!code) return { groups: [], unreadTotal: 0 };
   const database = await loadDatabase();
-  const groups = database.groups.filter((g) => isGroupMember(g, code)).map(publicGroup);
-  return { groups };
+  const presenceMap = new Map(database.presence.map((p) => [p.code, p.lastSeenAt]));
+  let unreadTotal = 0;
+  const groups = database.groups
+    .filter((g) => isGroupMember(g, code))
+    .map((group) => {
+      const member = group.members.find((m) => m.code === code);
+      const lastReadAt = member?.lastReadAt ?? '';
+      const conversation = database.groupChats
+        .filter((m) => m.groupId === group.id)
+        .sort((a, b) => (a.at < b.at ? -1 : 1));
+      const last = conversation[conversation.length - 1];
+      const unread = conversation.filter(
+        (m) => m.senderCode !== code && (!lastReadAt || m.at > lastReadAt),
+      ).length;
+      unreadTotal += unread;
+      const enrichedGroup = publicGroup(group);
+      enrichedGroup.members = enrichedGroup.members.map((m) => ({
+        ...m,
+        lastSeenAt: presenceMap.get(m.code) ?? '',
+      }));
+      return {
+        ...enrichedGroup,
+        lastMessage: last?.message ?? '',
+        lastAt: last?.at ?? '',
+        lastSenderCode: last?.senderCode ?? '',
+        lastSenderName: last?.senderName ?? '',
+        unread,
+      };
+    })
+    .sort((a, b) => (b.lastAt || '').localeCompare(a.lastAt || ''));
+  return { groups, unreadTotal };
 };
 
 const handleGroupsLeave = async (body: Record<string, unknown>) => {
@@ -1374,13 +1501,22 @@ const handleGroupsChatGet = async (query: Record<string, string | string[] | und
   const code = normalizeCode(Array.isArray(query.code) ? query.code[0] : query.code);
   const groupId = asString(Array.isArray(query.groupId) ? query.groupId[0] : query.groupId, 80);
   if (!code || !groupId) return { messages: [] };
-  const database = await loadDatabase();
-  const group = database.groups.find((g) => g.id === groupId);
-  if (!group || !isGroupMember(group, code)) return { messages: [] };
-  const messages = database.groupChats
-    .filter((m) => m.groupId === groupId)
-    .sort((a, b) => (a.at < b.at ? -1 : 1))
-    .slice(-200);
+  const messages = await withDatabaseLock(async () => {
+    const database = await loadDatabase();
+    const group = database.groups.find((g) => g.id === groupId);
+    if (!group || !isGroupMember(group, code)) return [];
+    const conversation = database.groupChats
+      .filter((m) => m.groupId === groupId)
+      .sort((a, b) => (a.at < b.at ? -1 : 1));
+    const member = group.members.find((m) => m.code === code);
+    const last = conversation[conversation.length - 1];
+    if (member && last && (!member.lastReadAt || member.lastReadAt < last.at)) {
+      member.lastReadAt = nowIso();
+      database.updatedAtUtc = nowIso();
+      await saveDatabase(database);
+    }
+    return conversation.slice(-200);
+  });
   return { messages };
 };
 
@@ -1409,6 +1545,31 @@ const handleGroupsChatSend = async (body: Record<string, unknown>) => {
     return msg.id;
   });
   return { ok: true, id };
+};
+
+/** Lightweight unread counter for the friends/groups floating button badge. */
+const handleSocialSummary = async (query: Record<string, string | string[] | undefined>) => {
+  const code = normalizeCode(Array.isArray(query.code) ? query.code[0] : query.code);
+  if (!code) return { unreadTotal: 0 };
+  const database = await loadDatabase();
+  let unreadTotal = 0;
+  for (const f of database.friends) {
+    if (f.status !== 'accepted') continue;
+    if (f.fromCode !== code && f.toCode !== code) continue;
+    const otherCode = f.fromCode === code ? f.toCode : f.fromCode;
+    const convId = [code, otherCode].sort().join('::');
+    unreadTotal += database.friendChats.filter(
+      (m) => m.conversationId === convId && m.senderCode !== code && !(m.readBy ?? []).includes(code),
+    ).length;
+  }
+  for (const group of database.groups) {
+    const member = group.members.find((m) => m.code === code);
+    if (!member) continue;
+    unreadTotal += database.groupChats.filter(
+      (m) => m.groupId === group.id && m.senderCode !== code && (!member.lastReadAt || m.at > member.lastReadAt),
+    ).length;
+  }
+  return { unreadTotal };
 };
 
 const handleChatGet = async (query: Record<string, string | string[] | undefined>) => {
@@ -1524,7 +1685,7 @@ export default async function adminHandler(
   const body = readBody(request.body);
   const action = getAction(request, body);
   if (method === 'OPTIONS') {
-    if (action === 'check' || action === 'support' || action === 'mode' || action === 'chat' || action === 'chat_get' || action.startsWith('friends_') || action.startsWith('groups_')) setCheckCors(response);
+    if (action === 'check' || action === 'support' || action === 'mode' || action === 'chat' || action === 'chat_get' || action === 'social_summary' || action === 'presence_ping' || action.startsWith('friends_') || action.startsWith('groups_')) setCheckCors(response);
     response.setHeader('Allow', 'GET, POST, OPTIONS');
     return response.status(204).json({});
   }
@@ -1648,6 +1809,24 @@ export default async function adminHandler(
     }
 
     // ---- Study groups ----
+    if (action === 'social_summary') {
+      setCheckCors(response);
+      if (method !== 'GET') {
+        response.setHeader('Allow', 'GET, OPTIONS');
+        return response.status(405).json({ error: 'Method not allowed.' });
+      }
+      return response.status(200).json(await handleSocialSummary(request.query ?? {}));
+    }
+
+    if (action === 'presence_ping') {
+      setCheckCors(response);
+      if (method !== 'POST') {
+        response.setHeader('Allow', 'POST, OPTIONS');
+        return response.status(405).json({ error: 'Method not allowed.' });
+      }
+      return response.status(200).json(await handlePresencePing(body));
+    }
+
     if (action === 'groups_list') {
       setCheckCors(response);
       if (method !== 'GET') {

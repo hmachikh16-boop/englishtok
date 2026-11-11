@@ -236,15 +236,28 @@ const SPECS: Record<TargetLanguage, Record<number, ExpansionLessonSpec>> = {
 };
 
 /**
+ * Stage 1 now opens with the primary-school foundations (letter sounds, first
+ * words, first grammar). The Gold project reuses the language of the
+ * introductions lesson, so it waits for that lesson instead of interrupting the
+ * phonics sequence. If the anchor is absent the project falls back to the
+ * original "after the first lesson" position.
+ */
+const STAGE_1_PROJECT_ANCHOR_ID = 'a1-fnd-18-introduce-yourself';
+
+/**
  * Adds the four Gold projects to a curriculum without touching the original
  * lessons. The project is inserted immediately after the first lesson of each
- * stage so a learner can see it without completing 100 lessons first.
+ * stage (after the introductions lesson for stage 1) so a learner can see it
+ * without completing 100 lessons first.
  */
 export const applyGoldCurriculum = (
   lessons: Lesson[],
   language: TargetLanguage = 'en',
 ): Lesson[] => {
   if (lessons.length === 0) return lessons;
+  const stage1Anchor = lessons.some((lesson) => lesson.id === STAGE_1_PROJECT_ANCHOR_ID)
+    ? STAGE_1_PROJECT_ANCHOR_ID
+    : null;
   // Only skip stages that already have a Gold project inserted; keep inserting
   // the remaining ones so partial (stage-by-stage) loads stay complete.
   const insertedStages = new Set(
@@ -273,6 +286,7 @@ export const applyGoldCurriculum = (
     result.push(lesson);
     const stage = lesson.curriculumStage;
     if (!stage || inserted.has(stage)) continue;
+    if (stage === 1 && stage1Anchor && lesson.id !== stage1Anchor) continue;
     const goldProject = projects.get(stage);
     if (goldProject) {
       result.push(goldProject);

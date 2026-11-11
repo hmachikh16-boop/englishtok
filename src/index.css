@@ -6412,3 +6412,437 @@ button.journey-frame-toggle svg { color: var(--duo-blue); }
   object-fit: contain;
   vertical-align: middle;
 }
+
+/* ============================================================
+   Vocabulary bank — calm pagination over the full dictionary
+   ============================================================ */
+.vocab-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 12px;
+}
+
+@media (min-width: 720px) {
+  .vocab-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.vocab-list-meta {
+  min-height: 22px;
+}
+
+.vocab-list-count {
+  padding: 2px 9px;
+  border-radius: 999px;
+  background: rgba(120, 100, 70, 0.12);
+}
+
+.vocab-list-item {
+  animation: vocabCardIn 0.3s ease backwards;
+}
+
+@keyframes vocabCardIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.vocab-load-more,
+.vocab-load-less {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 46px;
+  padding: 10px 14px;
+  border: 1px dashed rgba(120, 100, 70, 0.38);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.42);
+  color: inherit;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.16s ease, background 0.16s ease, border-color 0.16s ease;
+}
+
+.vocab-load-more:hover,
+.vocab-load-less:hover {
+  background: rgba(255, 255, 255, 0.62);
+  border-color: rgba(120, 100, 70, 0.6);
+}
+
+.vocab-load-more:active,
+.vocab-load-less:active {
+  transform: translateY(1px);
+}
+
+.vocab-load-more:focus-visible,
+.vocab-load-less:focus-visible {
+  outline: 2px solid rgba(109, 70, 16, 0.55);
+  outline-offset: 3px;
+}
+
+.vocab-load-more-count {
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.07);
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.vocab-load-less {
+  min-height: 40px;
+  border-style: solid;
+  background: transparent;
+  font-weight: 700;
+  opacity: 0.85;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vocab-list-item {
+    animation: none;
+  }
+}
+
+/* ============================================================
+   Stage-1 phonics lab — the wall chart rebuilt for the app
+   ============================================================ */
+.alphabet-tabs {
+  display: flex;
+  gap: 6px;
+  margin-top: 10px;
+  padding: 4px;
+  border: 1px solid rgba(109, 70, 16, 0.2);
+  border-radius: 14px;
+  background: rgba(255, 252, 240, 0.55);
+}
+.alphabet-tab {
+  flex: 1 1 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 8px 10px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: transparent;
+  color: #6d5838;
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+}
+.alphabet-tab.is-active {
+  background: linear-gradient(180deg, #f3d79a, #e6c37c);
+  border-color: rgba(109, 70, 16, 0.3);
+  color: #2c2114;
+  box-shadow: 0 1px 0 rgba(140, 104, 53, 0.35);
+}
+
+.phonics-lab {
+  display: grid;
+  gap: 10px;
+  margin-top: 12px;
+}
+.phonics-group-rail {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding: 2px 2px 6px;
+  scrollbar-width: none;
+}
+.phonics-group-rail::-webkit-scrollbar { display: none; }
+.phonics-group-chip {
+  flex: 0 0 auto;
+  padding: 6px 10px;
+  border: 1px solid rgba(109, 70, 16, 0.26);
+  border-radius: 999px;
+  background: rgba(255, 252, 240, 0.7);
+  color: #5b4730;
+  font-size: 10.5px;
+  font-weight: 800;
+  cursor: pointer;
+}
+.phonics-group-chip.is-active {
+  background: linear-gradient(180deg, #f3d79a, #e6c37c);
+  border-color: rgba(140, 104, 53, 0.6);
+  color: #2c2114;
+  box-shadow: 0 1px 0 rgba(140, 104, 53, 0.35);
+}
+.phonics-group-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.phonics-group-title {
+  font-size: 13px;
+  font-weight: 900;
+  color: #2c2114;
+}
+.phonics-group-en {
+  margin: 1px 0 0;
+  font-size: 9.5px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  color: #8a6a38;
+  text-transform: uppercase;
+}
+.phonics-quiz-start {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 10px;
+  border: 1px solid rgba(109, 70, 16, 0.32);
+  border-radius: 12px;
+  background: linear-gradient(180deg, #f3d79a, #e6c37c);
+  color: #2c2114;
+  font-size: 10.5px;
+  font-weight: 900;
+  white-space: nowrap;
+  cursor: pointer;
+  box-shadow: 0 2px 0 rgba(140, 104, 53, 0.35);
+}
+.phonics-quiz-start:active { transform: scale(0.96); }
+.phonics-group-note {
+  margin: 0;
+  padding: 8px 10px;
+  border: 1px dashed rgba(126, 91, 43, 0.35);
+  border-radius: 12px;
+  background: rgba(165, 108, 24, 0.1);
+  color: #6d4c1c;
+  font-size: 10.5px;
+  font-weight: 700;
+  line-height: 1.7;
+}
+.phonics-sound-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 8px;
+}
+.phonics-sound-card {
+  display: grid;
+  gap: 7px;
+  padding: 10px;
+  border: 1px solid rgba(109, 70, 16, 0.24);
+  border-radius: 14px;
+  background: linear-gradient(180deg, #fdf6e3, #f6ead0);
+  box-shadow: 0 2px 0 rgba(216, 196, 154, 0.55);
+}
+.phonics-sound-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.phonics-sound-symbol {
+  display: grid;
+  place-items: center;
+  min-width: 46px;
+  height: 40px;
+  padding: 0 10px;
+  border: 1px solid rgba(140, 104, 53, 0.45);
+  border-radius: 12px;
+  background: radial-gradient(circle at 32% 26%, #fdf4dc, #eed6a2 56%, #d6b87c);
+  color: #8d2f24;
+  font-family: 'Georgia', 'Times New Roman', serif;
+  font-size: 20px;
+  font-weight: 900;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.85), 0 1px 2px rgba(74, 51, 25, 0.18);
+}
+.phonics-sound-hint {
+  font-size: 10.5px;
+  font-weight: 800;
+  color: #5b4730;
+}
+.phonics-word-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+.phonics-word-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 7px;
+  border: 1px solid rgba(109, 70, 16, 0.2);
+  border-radius: 999px;
+  background: rgba(255, 252, 240, 0.85);
+  color: #3f2f1c;
+  cursor: pointer;
+  transition: transform 0.12s ease, background 0.12s ease;
+}
+.phonics-word-chip:hover { background: #fffdf7; }
+.phonics-word-chip:active { transform: scale(0.96); }
+.phonics-word-en { font-size: 11px; font-weight: 800; }
+.phonics-word-ar { font-size: 9.5px; font-weight: 700; color: #7a5a2a; }
+.phonics-sound-listen {
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: #a56c18;
+  font-size: 9.5px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.phonics-quiz {
+  display: grid;
+  gap: 12px;
+  margin-top: 12px;
+}
+.phonics-quiz-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.phonics-quiz-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 900;
+  color: #5b3d12;
+}
+.phonics-quiz-progress {
+  font-size: 10px;
+  font-weight: 800;
+  color: #7a5a2a;
+}
+.phonics-quiz-stage {
+  display: grid;
+  place-items: center;
+  gap: 8px;
+  padding: 18px 12px;
+  border: 1px solid rgba(109, 70, 16, 0.24);
+  border-radius: 16px;
+  background: linear-gradient(180deg, #fdf6e3, #f6ead0);
+  text-align: center;
+}
+.phonics-listen-big {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 20px;
+  border: 1px solid rgba(140, 104, 53, 0.5);
+  border-radius: 999px;
+  background: radial-gradient(circle at 32% 26%, #fdf4dc, #eed6a2 56%, #d6b87c);
+  color: #8d2f24;
+  font-size: 12px;
+  font-weight: 900;
+  cursor: pointer;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.85), 0 2px 0 rgba(140, 104, 53, 0.3);
+}
+.phonics-listen-big:active { transform: scale(0.97); }
+.phonics-quiz-prompt {
+  margin: 0;
+  font-size: 11.5px;
+  font-weight: 800;
+  color: #5b4730;
+}
+.phonics-quiz-options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+.phonics-quiz-option {
+  display: grid;
+  gap: 2px;
+  padding: 12px 8px;
+  border: 1px solid rgba(109, 70, 16, 0.24);
+  border-radius: 14px;
+  background: rgba(255, 252, 240, 0.8);
+  text-align: center;
+  cursor: pointer;
+}
+.phonics-quiz-option.is-correct {
+  border-color: rgba(55, 120, 70, 0.6);
+  background: rgba(214, 240, 214, 0.65);
+}
+.phonics-quiz-option.is-wrong {
+  border-color: rgba(150, 50, 40, 0.6);
+  background: rgba(250, 220, 214, 0.7);
+}
+.phonics-quiz-option-word {
+  font-size: 15px;
+  font-weight: 900;
+  color: #2c2114;
+}
+.phonics-quiz-option-ar {
+  font-size: 9.5px;
+  font-weight: 700;
+  color: #7a5a2a;
+}
+.phonics-quiz-feedback {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.phonics-quiz-feedback .is-correct {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: #2f7a4f;
+  font-size: 11px;
+  font-weight: 900;
+}
+.phonics-quiz-feedback .is-wrong {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: #8d2f24;
+  font-size: 11px;
+  font-weight: 900;
+}
+.phonics-quiz-exit {
+  justify-self: center;
+  border: none;
+  background: transparent;
+  color: #7a5a2a;
+  font-size: 10.5px;
+  font-weight: 800;
+  text-decoration: underline;
+  cursor: pointer;
+}
+@media (prefers-reduced-motion: reduce) {
+  .alphabet-tab,
+  .phonics-word-chip { transition: none; }
+}
+
+.phonics-result {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 10px;
+  border: 1px solid rgba(55, 120, 70, 0.35);
+  border-radius: 12px;
+  background: rgba(214, 240, 214, 0.5);
+  color: #2f6b45;
+  font-size: 11px;
+  font-weight: 800;
+}
+.phonics-result strong { font-weight: 900; }
+.phonics-result button {
+  border: none;
+  background: transparent;
+  color: #2f6b45;
+  font-size: 10px;
+  font-weight: 800;
+  text-decoration: underline;
+  cursor: pointer;
+}

@@ -677,8 +677,8 @@ export const CategoriesTab: React.FC<CategoriesTabProps> = ({
             <button type="button" className="home-window-tile" onClick={() => toggleHomePanel('alphabet')}>
               <span className="home-tile-medallion" aria-hidden="true"><Type /></span>
               <span className="home-tile-copy">
-                <strong>الحروف الأبجدية</strong>
-                <small>26 حرفًا · تعلّم بالذكاء</small>
+                <strong>الحروف والصوتيات</strong>
+                <small>26 حرفًا · أصوات وحركات بالنطق</small>
               </span>
             </button>
             {!isSchoolYearCourse && path.levels.length > 0 && (

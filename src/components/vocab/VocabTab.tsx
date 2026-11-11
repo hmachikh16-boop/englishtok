@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { 
   Search, 
   Volume2, 
@@ -7,10 +7,14 @@ import {
   Sparkles, 
   RotateCw, 
   Layers, 
-  Award 
+  Award,
+  ChevronDown,
+  ChevronUp
 } from 'lucide-react';
 import { Lesson, VocabularyWord, UserProfile } from '../../types';
 import { speechService } from '../../services/speechService';
+
+const VOCAB_PAGE_SIZE = 10;
 
 interface VocabTabProps {
   lessons: Lesson[];
@@ -28,6 +32,7 @@ export const VocabTab: React.FC<VocabTabProps> = ({
   const [isFlashcardMode, setIsFlashcardMode] = useState(false);
   const [flashcardIdx, setFlashcardIdx] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
+  const [visibleCount, setVisibleCount] = useState(VOCAB_PAGE_SIZE);
 
   // Gather all unique vocabulary across all lessons
   const allVocab: VocabularyWord[] = [];
@@ -61,6 +66,21 @@ export const VocabTab: React.FC<VocabTabProps> = ({
 
     return matchesFilter && matchesSearch;
   });
+
+  // The curriculum dictionary holds hundreds of words; render a calm first
+  // page of ten and let the learner pull the rest in on demand.
+  useEffect(() => {
+    setVisibleCount(VOCAB_PAGE_SIZE);
+  }, [filterMode, searchQuery]);
+
+  useEffect(() => {
+    setFlashcardIdx(0);
+    setIsFlipped(false);
+  }, [filterMode, searchQuery]);
+
+  const visibleVocab = displayedVocab.slice(0, visibleCount);
+  const remainingWordCount = Math.max(0, displayedVocab.length - visibleVocab.length);
+  const hasMoreWords = remainingWordCount > 0;
 
   const handlePronounce = (text: string) => {
     speechService.speakText({
@@ -119,13 +139,13 @@ export const VocabTab: React.FC<VocabTabProps> = ({
   };
 
   return (
-    <div className="journey-secondary w-full h-full max-w-4xl mx-auto overflow-y-auto no-scrollbar p-4 sm:p-6 text-slate-100 flex flex-col gap-4">
+    <div className="journey-secondary w-full h-full max-w-4xl mx-auto overflow-y-auto no-scrollbar p-4 pb-28 sm:p-6 sm:pb-24 text-slate-100 flex flex-col gap-4">
       {/* Header & Mode Switcher */}
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-base font-bold text-white flex items-center gap-2">
             <span>بنك الكلمات والمفردات</span>
-            <span className="text-xs px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-400 font-mono-num font-bold">
+            <span className="text-xs px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-400 font-mono-num font-bold whitespace-nowrap">
               {displayedVocab.length} كلمة
             </span>
           </h2>
@@ -317,94 +337,148 @@ export const VocabTab: React.FC<VocabTabProps> = ({
               </p>
             </div>
           ) : (
-            displayedVocab.map((vocab) => {
-              const isSaved = userProfile.savedWordIds.includes(vocab.id);
-              const isMastered = userProfile.masteredWordIds.includes(vocab.id);
-              const isUnderReview = userProfile.reviewWordIds.includes(vocab.id);
+            <>
+              <div className="vocab-list-meta flex items-center justify-between gap-2 px-1">
+                <span className="text-[11px] font-black text-slate-300">
+                  {filterMode === 'saved'
+                    ? 'كلماتي المحفوظة'
+                    : filterMode === 'review'
+                      ? 'كلمات للمراجعة'
+                      : 'قائمة الكلمات'}
+                </span>
+                <span className="vocab-list-count font-mono-num text-[10px] font-bold text-slate-400">
+                  عرض {visibleVocab.length} من {displayedVocab.length}
+                </span>
+              </div>
 
-              return (
-                <div
-                  key={vocab.id}
-                  className="vocab-card bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-col gap-2.5 shadow-lg hover:border-slate-700 transition-colors"
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2.5">
-                      <button
-                        onClick={() => handlePronounce(vocab.word)}
-                        className="w-9 h-9 rounded-full bg-sky-500/10 text-sky-400 border border-sky-500/30 flex items-center justify-center hover:bg-sky-500/20 active:scale-90 transition-transform"
-                        title="استمع للنطق"
-                      >
-                        <Volume2 className="w-4 h-4" />
-                      </button>
-                      <div>
-                        <h4
-                          dir="ltr"
-                          className="text-base font-bold text-white font-en tracking-wide text-left"
-                        >
-                          {vocab.word}
-                        </h4>
-                        <div className="flex items-center gap-1.5 text-[11px] text-slate-400">
-                          {vocab.phonetic && <><span className="font-mono-num text-sky-300 font-en">
-                            {vocab.phonetic}
-                          </span><span>·</span></>}
-                          <span className="text-slate-500">{vocab.partOfSpeech}</span>
+              <div className="vocab-grid">
+                {visibleVocab.map((vocab, index) => {
+                  const isSaved = userProfile.savedWordIds.includes(vocab.id);
+                  const isMastered = userProfile.masteredWordIds.includes(vocab.id);
+                  const isUnderReview = userProfile.reviewWordIds.includes(vocab.id);
+
+                  return (
+                    <div
+                      key={vocab.id}
+                      className="vocab-card vocab-list-item bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-col gap-2.5 shadow-lg hover:border-slate-700 transition-colors"
+                      style={{ animationDelay: `${(index % VOCAB_PAGE_SIZE) * 28}ms` }}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2.5">
+                          <button
+                            onClick={() => handlePronounce(vocab.word)}
+                            className="w-9 h-9 rounded-full bg-sky-500/10 text-sky-400 border border-sky-500/30 flex items-center justify-center hover:bg-sky-500/20 active:scale-90 transition-transform"
+                            title="استمع للنطق"
+                          >
+                            <Volume2 className="w-4 h-4" />
+                          </button>
+                          <div>
+                            <h4
+                              dir="ltr"
+                              className="text-base font-bold text-white font-en tracking-wide text-left"
+                            >
+                              {vocab.word}
+                            </h4>
+                            <div className="flex items-center gap-1.5 text-[11px] text-slate-400">
+                              {vocab.phonetic && <><span className="font-mono-num text-sky-300 font-en">
+                                {vocab.phonetic}
+                              </span><span>·</span></>}
+                              <span className="text-slate-500">{vocab.partOfSpeech}</span>
+                            </div>
+                            {isUnderReview && <span className="mt-1 inline-block rounded-full bg-rose-500/10 px-2 py-0.5 text-[10px] font-bold text-rose-300">مراجعة من اختبار</span>}
+                          </div>
                         </div>
-                        {isUnderReview && <span className="mt-1 inline-block rounded-full bg-rose-500/10 px-2 py-0.5 text-[10px] font-bold text-rose-300">مراجعة من اختبار</span>}
+
+                        <div className="flex items-center gap-1.5">
+                          <button
+                            onClick={() => handleToggleMastered(vocab.id)}
+                            className={`p-2 rounded-xl text-xs font-bold border transition-all active:scale-90 ${
+                              isMastered
+                                ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-400'
+                                : 'bg-slate-800/80 border-slate-700 text-slate-400 hover:text-white'
+                            }`}
+                            title={isMastered ? 'كلمة متقنة' : 'تحديد كمتقنة'}
+                          >
+                            <Award className="w-4 h-4" />
+                          </button>
+
+                          <button
+                            onClick={() => handleToggleSave(vocab.id)}
+                            className={`p-2 rounded-xl text-xs font-bold border transition-all active:scale-90 ${
+                              isSaved
+                                ? 'bg-amber-500/20 border-amber-500/50 text-amber-400'
+                                : 'bg-slate-800/80 border-slate-700 text-slate-400 hover:text-white'
+                            }`}
+                            title={isSaved ? 'إزالة من المحفوظات' : 'حفظ'}
+                          >
+                            <Bookmark className={`w-4 h-4 ${isSaved ? 'fill-current' : ''}`} />
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="bg-slate-950/70 border border-slate-800/70 px-3 py-1.5 rounded-xl flex items-center justify-between text-xs">
+                        <span className="text-slate-400">الترجمة:</span>
+                        <span className="font-bold text-amber-300">{vocab.translationAr}</span>
+                      </div>
+
+                      <div className="pt-1.5 border-t border-slate-800/60 text-xs flex flex-col gap-1">
+                        <div
+                          dir="ltr"
+                          className="flex items-center justify-between text-slate-300 font-en text-left"
+                        >
+                          <span>"{vocab.exampleSentence}"</span>
+                          <button
+                            onClick={() => handlePronounce(vocab.exampleSentence)}
+                            className="text-slate-400 hover:text-sky-300 p-1"
+                          >
+                            <Volume2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                        <p className="text-slate-400 text-[11px] text-right">
+                          {vocab.exampleSentenceAr}
+                        </p>
                       </div>
                     </div>
+                  );
+                })}
+              </div>
 
-                    <div className="flex items-center gap-1.5">
-                      <button
-                        onClick={() => handleToggleMastered(vocab.id)}
-                        className={`p-2 rounded-xl text-xs font-bold border transition-all active:scale-90 ${
-                          isMastered
-                            ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-400'
-                            : 'bg-slate-800/80 border-slate-700 text-slate-400 hover:text-white'
-                        }`}
-                        title={isMastered ? 'كلمة متقنة' : 'تحديد كمتقنة'}
-                      >
-                        <Award className="w-4 h-4" />
-                      </button>
-
-                      <button
-                        onClick={() => handleToggleSave(vocab.id)}
-                        className={`p-2 rounded-xl text-xs font-bold border transition-all active:scale-90 ${
-                          isSaved
-                            ? 'bg-amber-500/20 border-amber-500/50 text-amber-400'
-                            : 'bg-slate-800/80 border-slate-700 text-slate-400 hover:text-white'
-                        }`}
-                        title={isSaved ? 'إزالة من المحفوظات' : 'حفظ'}
-                      >
-                        <Bookmark className={`w-4 h-4 ${isSaved ? 'fill-current' : ''}`} />
-                      </button>
-                    </div>
-                  </div>
-
-                  <div className="bg-slate-950/70 border border-slate-800/70 px-3 py-1.5 rounded-xl flex items-center justify-between text-xs">
-                    <span className="text-slate-400">الترجمة:</span>
-                    <span className="font-bold text-amber-300">{vocab.translationAr}</span>
-                  </div>
-
-                  <div className="pt-1.5 border-t border-slate-800/60 text-xs flex flex-col gap-1">
-                    <div
-                      dir="ltr"
-                      className="flex items-center justify-between text-slate-300 font-en text-left"
+              {(hasMoreWords || visibleCount > VOCAB_PAGE_SIZE) && (
+                <div className="vocab-pager flex flex-col gap-2 pt-1">
+                  {hasMoreWords && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        speechService.playPop();
+                        setVisibleCount((current) =>
+                          Math.min(current + VOCAB_PAGE_SIZE, displayedVocab.length),
+                        );
+                      }}
+                      className="vocab-load-more"
                     >
-                      <span>"{vocab.exampleSentence}"</span>
-                      <button
-                        onClick={() => handlePronounce(vocab.exampleSentence)}
-                        className="text-slate-400 hover:text-sky-300 p-1"
-                      >
-                        <Volume2 className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
-                    <p className="text-slate-400 text-[11px] text-right">
-                      {vocab.exampleSentenceAr}
-                    </p>
-                  </div>
+                      <ChevronDown className="w-4 h-4" />
+                      <span>عرض المزيد</span>
+                      <span className="vocab-load-more-count font-mono-num">
+                        {remainingWordCount} متبقية
+                      </span>
+                    </button>
+                  )}
+                  {visibleCount > VOCAB_PAGE_SIZE && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        speechService.playPop();
+                        setVisibleCount(VOCAB_PAGE_SIZE);
+                      }}
+                      className="vocab-load-less"
+                    >
+                      <ChevronUp className="w-4 h-4" />
+                      <span>عرض أقل</span>
+                    </button>
+                  )}
                 </div>
-              );
-            })
+              )}
+            </>
           )}
         </div>
       )}

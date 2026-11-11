@@ -1,11 +1,14 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
+  ArrowRight,
   Check,
+  CheckCheck,
   Copy,
   LogOut,
-  MessageCircle,
   Plus,
+  Search,
   Send,
+  Smile,
   Trash2,
   UserPlus,
   Users,
@@ -13,12 +16,17 @@ import {
   X,
 } from 'lucide-react';
 import { Capacitor } from '@capacitor/core';
-import { getStoredGoldLicenseCode } from '../../services/goldLicense';
+import { normalizeFriendCode, readFriendIdentity } from '../../services/friendIdentity';
 
 interface FriendRecord {
   code: string;
   name: string;
   status: 'accepted';
+  lastMessage?: string;
+  lastAt?: string;
+  lastSenderCode?: string;
+  unread?: number;
+  lastSeenAt?: string;
 }
 
 interface FriendRequest {
@@ -34,12 +42,15 @@ interface FriendMessage {
   senderName: string;
   message: string;
   at: string;
+  readBy?: string[];
 }
 
 interface GroupMember {
   code: string;
   name: string;
   joinedAtUtc: string;
+  lastReadAt?: string;
+  lastSeenAt?: string;
 }
 
 interface StudyGroup {
@@ -50,6 +61,11 @@ interface StudyGroup {
   ownerCode: string;
   createdAtUtc: string;
   members: GroupMember[];
+  lastMessage?: string;
+  lastAt?: string;
+  lastSenderCode?: string;
+  lastSenderName?: string;
+  unread?: number;
 }
 
 interface GroupMessage {
@@ -61,66 +77,28 @@ interface GroupMessage {
   at: string;
 }
 
+type Screen =
+  | { name: 'inbox' }
+  | { name: 'dm'; code: string }
+  | { name: 'group'; id: string }
+  | { name: 'addFriend' }
+  | { name: 'newGroup' }
+  | { name: 'joinGroup' };
+
+type InboxFilter = 'all' | 'friends' | 'groups';
+
+interface Conversation {
+  kind: 'dm' | 'group';
+  id: string;
+  title: string;
+  subtitle: string;
+  lastMessage: string;
+  lastAt: string;
+  lastSenderCode: string;
+  unread: number;
+}
+
 const CHAT_BASE = 'https://englishtok-eight.vercel.app/api/admin';
-const FRIEND_ID_KEY = 'lin-go-friend-id-v1';
-
-const normalizeCode = (value: string): string => value.trim().toUpperCase().replace(/\s+/g, '');
-
-const createLocalId = (): string => {
-  const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-  let out = '';
-  for (let i = 0; i < 8; i += 1) {
-    out += alphabet.charAt(Math.floor(Math.random() * alphabet.length));
-  }
-  return `U-${out}`;
-};
-
-/**
- * A stable, non-reversible friend code derived from the licence. It never
- * exposes the licence itself, so sharing it can't be used to activate Gold on
- * another phone or trip the device-limit anti-cheat.
- */
-const hashToFriendCode = (input: string): string => {
-  let forward = 0x811c9dc5;
-  for (let i = 0; i < input.length; i += 1) {
-    forward ^= input.charCodeAt(i);
-    forward = Math.imul(forward, 0x01000193) >>> 0;
-  }
-  let backward = 0x811c9dc5;
-  for (let i = input.length - 1; i >= 0; i -= 1) {
-    backward ^= input.charCodeAt(i);
-    backward = Math.imul(backward, 0x01000193) >>> 0;
-  }
-  const body = (forward.toString(36) + backward.toString(36))
-    .toUpperCase()
-    .replace(/[^A-Z0-9]/g, '')
-    .slice(0, 10)
-    .padEnd(8, '0');
-  return `U-${body}`;
-};
-
-/** A stable friend identity: derived from the licence when present, otherwise a per-device ID. */
-const readFriendIdentity = (): string => {
-  const license = normalizeCode(getStoredGoldLicenseCode() || '');
-  if (license) return hashToFriendCode(license);
-  try {
-    const stored = localStorage.getItem(FRIEND_ID_KEY);
-    if (stored && /^U-[A-Z0-9]{6,12}$/.test(stored)) return stored;
-    const created = createLocalId();
-    localStorage.setItem(FRIEND_ID_KEY, created);
-    return created;
-  } catch {
-    return createLocalId();
-  }
-};
-
-const formatTime = (iso: string): string => {
-  const date = new Date(iso);
-  if (Number.isNaN(date.getTime())) return '';
-  return date.toLocaleTimeString('ar', { hour: '2-digit', minute: '2-digit' });
-};
-
-const membersLabel = (count: number): string => `${count} ${count === 1 ? 'عضو' : 'أعضاء'}`;
 
 const QUICK_PHRASES = [
   'Hi! How are you?',
@@ -129,7 +107,65 @@ const QUICK_PHRASES = [
   'Great job! 🎉',
 ];
 
-type Tab = 'friends' | 'groups';
+const formatTime = (iso: string): string => {
+  const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) return '';
+  return date.toLocaleTimeString('ar', { hour: '2-digit', minute: '2-digit' });
+};
+
+const startOfDay = (date: Date): number =>
+  new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
+
+const formatListTime = (iso: string): string => {
+  const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) return '';
+  const today = startOfDay(new Date());
+  const day = startOfDay(date);
+  if (day === today) return formatTime(iso);
+  if (day === today - 86400000) return 'أمس';
+  return date.toLocaleDateString('ar', { day: '2-digit', month: '2-digit' });
+};
+
+const formatDayLabel = (iso: string): string => {
+  const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) return '';
+  const today = startOfDay(new Date());
+  const day = startOfDay(date);
+  if (day === today) return 'اليوم';
+  if (day === today - 86400000) return 'أمس';
+  return date.toLocaleDateString('ar', { weekday: 'long', day: 'numeric', month: 'long' });
+};
+
+const initialsOf = (value: string): string => {
+  const parts = (value || '').trim().split(/\s+/).filter(Boolean);
+  if (parts.length === 0) return '؟';
+  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+  return (parts[0].charAt(0) + parts[1].charAt(0)).toUpperCase();
+};
+
+const avatarTone = (value: string): string => {
+  let sum = 0;
+  for (let i = 0; i < value.length; i += 1) sum = (sum + value.charCodeAt(i) * (i + 3)) % 997;
+  return `is-tone-${(sum % 5) + 1}`;
+};
+
+const membersLabel = (count: number): string => `${count} ${count === 1 ? 'عضو' : 'أعضاء'}`;
+
+const isOnline = (lastSeenAt?: string): boolean => {
+  if (!lastSeenAt) return false;
+  const time = new Date(lastSeenAt).getTime();
+  if (Number.isNaN(time)) return false;
+  return Date.now() - time < 2 * 60 * 1000;
+};
+
+const previewOf = (conversation: Conversation, myCode: string): string => {
+  if (!conversation.lastMessage) {
+    return conversation.kind === 'group' ? 'ابدأ المحادثة الجماعية' : 'ابدأ المحادثة';
+  }
+  const mine = normalizeFriendCode(conversation.lastSenderCode) === myCode;
+  const prefix = mine ? 'أنت: ' : '';
+  return `${prefix}${conversation.lastMessage}`;
+};
 
 interface FriendsChatProps {
   onClose?: () => void;
@@ -146,11 +182,14 @@ export const FriendsChat: React.FC<FriendsChatProps> = ({ onClose, userName = ''
     }
   }, []);
 
-  const [tab, setTab] = useState<Tab>('friends');
+  const [screen, setScreen] = useState<Screen>({ name: 'inbox' });
+  const [filter, setFilter] = useState<InboxFilter>('all');
+  const [query, setQuery] = useState('');
   const [friends, setFriends] = useState<FriendRecord[]>([]);
   const [requests, setRequests] = useState<FriendRequest[]>([]);
-  const [activeFriend, setActiveFriend] = useState<FriendRecord | null>(null);
+  const [groups, setGroups] = useState<StudyGroup[]>([]);
   const [messages, setMessages] = useState<FriendMessage[]>([]);
+  const [groupMessages, setGroupMessages] = useState<GroupMessage[]>([]);
   const [input, setInput] = useState('');
   const [sending, setSending] = useState(false);
   const [status, setStatus] = useState('');
@@ -158,38 +197,47 @@ export const FriendsChat: React.FC<FriendsChatProps> = ({ onClose, userName = ''
   const [addCode, setAddCode] = useState('');
   const [adding, setAdding] = useState(false);
   const [copied, setCopied] = useState(false);
-  const [loadingFriends, setLoadingFriends] = useState(true);
-
-  const [groups, setGroups] = useState<StudyGroup[]>([]);
-  const [activeGroup, setActiveGroup] = useState<StudyGroup | null>(null);
-  const [groupMessages, setGroupMessages] = useState<GroupMessage[]>([]);
+  const [loadingLists, setLoadingLists] = useState(true);
   const [groupName, setGroupName] = useState('');
   const [groupDesc, setGroupDesc] = useState('');
   const [creatingGroup, setCreatingGroup] = useState(false);
   const [joinCode, setJoinCode] = useState('');
   const [joiningGroup, setJoiningGroup] = useState(false);
-  const [loadingGroups, setLoadingGroups] = useState(true);
+  const [showMembers, setShowMembers] = useState(false);
+  const [showQuick, setShowQuick] = useState(false);
 
   const threadRef = useRef<HTMLDivElement | null>(null);
-  const groupThreadRef = useRef<HTMLDivElement | null>(null);
 
   const notify = useCallback((message: string, tone: 'info' | 'ok' | 'error' = 'info') => {
     setStatus(message);
     setStatusTone(tone);
   }, []);
 
-  const loadFriends = useCallback(async () => {
+  const loadLists = useCallback(async () => {
     try {
-      const url = `${CHAT_BASE}?action=friends_list&code=${encodeURIComponent(myCode)}&device=${encodeURIComponent(device)}`;
-      const response = await fetch(url, { headers: { Accept: 'application/json' }, cache: 'no-store' });
-      if (!response.ok) return;
-      const payload = await response.json().catch(() => ({}));
-      if (Array.isArray(payload.friends)) setFriends(payload.friends);
-      if (Array.isArray(payload.requests)) setRequests(payload.requests);
+      const [friendsResponse, groupsResponse] = await Promise.all([
+        fetch(`${CHAT_BASE}?action=friends_list&code=${encodeURIComponent(myCode)}&device=${encodeURIComponent(device)}`, {
+          headers: { Accept: 'application/json' },
+          cache: 'no-store',
+        }),
+        fetch(`${CHAT_BASE}?action=groups_list&code=${encodeURIComponent(myCode)}`, {
+          headers: { Accept: 'application/json' },
+          cache: 'no-store',
+        }),
+      ]);
+      if (friendsResponse.ok) {
+        const payload = await friendsResponse.json().catch(() => ({}));
+        if (Array.isArray(payload.friends)) setFriends(payload.friends);
+        if (Array.isArray(payload.requests)) setRequests(payload.requests);
+      }
+      if (groupsResponse.ok) {
+        const payload = await groupsResponse.json().catch(() => ({}));
+        if (Array.isArray(payload.groups)) setGroups(payload.groups);
+      }
     } catch {
-      /* offline — keep the last known list */
+      /* offline — keep the last known lists */
     } finally {
-      setLoadingFriends(false);
+      setLoadingLists(false);
     }
   }, [myCode, device]);
 
@@ -208,20 +256,6 @@ export const FriendsChat: React.FC<FriendsChatProps> = ({ onClose, userName = ''
     [myCode],
   );
 
-  const loadGroups = useCallback(async () => {
-    try {
-      const url = `${CHAT_BASE}?action=groups_list&code=${encodeURIComponent(myCode)}`;
-      const response = await fetch(url, { headers: { Accept: 'application/json' }, cache: 'no-store' });
-      if (!response.ok) return;
-      const payload = await response.json().catch(() => ({}));
-      if (Array.isArray(payload.groups)) setGroups(payload.groups);
-    } catch {
-      /* offline */
-    } finally {
-      setLoadingGroups(false);
-    }
-  }, [myCode]);
-
   const loadGroupMessages = useCallback(
     async (groupId: string) => {
       try {
@@ -238,39 +272,109 @@ export const FriendsChat: React.FC<FriendsChatProps> = ({ onClose, userName = ''
   );
 
   useEffect(() => {
-    void loadFriends();
-    void loadGroups();
-    const interval = window.setInterval(() => {
-      void loadFriends();
-      void loadGroups();
-    }, 15000);
+    void loadLists();
+    const interval = window.setInterval(() => void loadLists(), 5000);
     return () => window.clearInterval(interval);
-  }, [loadFriends, loadGroups]);
+  }, [loadLists]);
+
+  const dmCode = screen.name === 'dm' ? screen.code : '';
+  const groupId = screen.name === 'group' ? screen.id : '';
 
   useEffect(() => {
-    if (!activeFriend) return;
-    void loadMessages(activeFriend.code);
-    const interval = window.setInterval(() => void loadMessages(activeFriend.code), 7000);
+    if (!dmCode) return;
+    void loadMessages(dmCode);
+    const interval = window.setInterval(() => void loadMessages(dmCode), 2000);
     return () => window.clearInterval(interval);
-  }, [activeFriend, loadMessages]);
+  }, [dmCode, loadMessages]);
 
   useEffect(() => {
-    if (!activeGroup) return;
-    void loadGroupMessages(activeGroup.id);
-    const interval = window.setInterval(() => void loadGroupMessages(activeGroup.id), 7000);
+    if (!groupId) return;
+    void loadGroupMessages(groupId);
+    const interval = window.setInterval(() => void loadGroupMessages(groupId), 2000);
     return () => window.clearInterval(interval);
-  }, [activeGroup, loadGroupMessages]);
+  }, [groupId, loadGroupMessages]);
+
+  const threadMessages: Array<FriendMessage | GroupMessage> =
+    screen.name === 'group' ? groupMessages : messages;
 
   useEffect(() => {
-    if (threadRef.current) threadRef.current.scrollTop = threadRef.current.scrollHeight;
-  }, [messages]);
+    const node = threadRef.current;
+    if (node) node.scrollTop = node.scrollHeight;
+  }, [threadMessages, screen.name]);
 
-  useEffect(() => {
-    if (groupThreadRef.current) groupThreadRef.current.scrollTop = groupThreadRef.current.scrollHeight;
-  }, [groupMessages]);
+  const activeFriend = useMemo(
+    () => (screen.name === 'dm' ? friends.find((f) => f.code === screen.code) ?? null : null),
+    [screen, friends],
+  );
+
+  const activeGroup = useMemo(
+    () => (screen.name === 'group' ? groups.find((g) => g.id === screen.id) ?? null : null),
+    [screen, groups],
+  );
+
+  const conversations = useMemo<Conversation[]>(() => {
+    const dmItems: Conversation[] = friends.map((f) => ({
+      kind: 'dm',
+      id: f.code,
+      title: f.name || f.code,
+      subtitle: f.code,
+      lastMessage: f.lastMessage ?? '',
+      lastAt: f.lastAt ?? '',
+      lastSenderCode: f.lastSenderCode ?? '',
+      unread: f.unread ?? 0,
+    }));
+    const groupItems: Conversation[] = groups.map((g) => ({
+      kind: 'group',
+      id: g.id,
+      title: g.name,
+      subtitle: membersLabel(g.members.length),
+      lastMessage: g.lastMessage ?? '',
+      lastAt: g.lastAt ?? '',
+      lastSenderCode: g.lastSenderCode ?? '',
+      unread: g.unread ?? 0,
+    }));
+    const merged = filter === 'friends' ? dmItems : filter === 'groups' ? groupItems : [...dmItems, ...groupItems];
+    const needle = query.trim().toLowerCase();
+    const filtered = needle
+      ? merged.filter(
+          (item) =>
+            item.title.toLowerCase().includes(needle) ||
+            item.subtitle.toLowerCase().includes(needle) ||
+            item.lastMessage.toLowerCase().includes(needle),
+        )
+      : merged;
+    return filtered.sort((a, b) => (b.lastAt || '').localeCompare(a.lastAt || ''));
+  }, [friends, groups, filter, query]);
+
+  const totalUnread = useMemo(
+    () => friends.reduce((sum, f) => sum + (f.unread ?? 0), 0) + groups.reduce((sum, g) => sum + (g.unread ?? 0), 0),
+    [friends, groups],
+  );
+
+  const openConversation = (conversation: Conversation) => {
+    setStatus('');
+    setShowMembers(false);
+    setShowQuick(false);
+    setInput('');
+    if (conversation.kind === 'dm') {
+      setMessages([]);
+      setScreen({ name: 'dm', code: conversation.id });
+    } else {
+      setGroupMessages([]);
+      setScreen({ name: 'group', id: conversation.id });
+    }
+  };
+
+  const goInbox = () => {
+    setStatus('');
+    setShowMembers(false);
+    setShowQuick(false);
+    setInput('');
+    setScreen({ name: 'inbox' });
+  };
 
   const handleAddFriend = async () => {
-    const target = normalizeCode(addCode);
+    const target = normalizeFriendCode(addCode);
     if (!target || adding) return;
     if (target === myCode) {
       notify('هذا كودك أنت — شاركه مع صديقك.', 'error');
@@ -288,7 +392,7 @@ export const FriendsChat: React.FC<FriendsChatProps> = ({ onClose, userName = ''
       if (!response.ok) throw new Error(payload.error || 'تعذر إرسال الطلب.');
       setAddCode('');
       notify('تم إرسال طلب الصداقة — بانتظار الموافقة.', 'ok');
-      await loadFriends();
+      await loadLists();
     } catch (error) {
       notify(error instanceof Error ? error.message : 'تعذر إرسال الطلب.', 'error');
     } finally {
@@ -305,7 +409,7 @@ export const FriendsChat: React.FC<FriendsChatProps> = ({ onClose, userName = ''
       });
       if (!response.ok) throw new Error('تعذر قبول الطلب.');
       notify('تمت إضافة الصديق ✅', 'ok');
-      await loadFriends();
+      await loadLists();
     } catch (error) {
       notify(error instanceof Error ? error.message : 'تعذر قبول الطلب.', 'error');
     }
@@ -319,7 +423,7 @@ export const FriendsChat: React.FC<FriendsChatProps> = ({ onClose, userName = ''
         body: JSON.stringify({ code: myCode, device, requestId }),
       });
       if (!response.ok) throw new Error('تعذر رفض الطلب.');
-      await loadFriends();
+      await loadLists();
     } catch (error) {
       notify(error instanceof Error ? error.message : 'تعذر رفض الطلب.', 'error');
     }
@@ -334,29 +438,55 @@ export const FriendsChat: React.FC<FriendsChatProps> = ({ onClose, userName = ''
         body: JSON.stringify({ code: myCode, device, friendCode }),
       });
       if (!response.ok) throw new Error('تعذر إزالة الصديق.');
-      setActiveFriend(null);
-      setMessages([]);
+      goInbox();
       notify('تمت إزالة الصديق.', 'ok');
-      await loadFriends();
+      await loadLists();
     } catch (error) {
       notify(error instanceof Error ? error.message : 'تعذر إزالة الصديق.', 'error');
     }
   };
 
-  const handleSendFriend = async () => {
+  const handleSend = async () => {
     const text = input.trim();
-    if (!text || sending || !activeFriend) return;
+    if (!text || sending) return;
     setSending(true);
     try {
-      const response = await fetch(`${CHAT_BASE}?action=friends_chat`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify({ code: myCode, device, userName, friendCode: activeFriend.code, message: text }),
-      });
-      const payload = await response.json().catch(() => ({}));
-      if (!response.ok) throw new Error(payload.error || 'تعذر إرسال الرسالة.');
-      setInput('');
-      await loadMessages(activeFriend.code);
+      if (screen.name === 'dm' && activeFriend) {
+        const response = await fetch(`${CHAT_BASE}?action=friends_chat`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          body: JSON.stringify({
+            code: myCode,
+            device,
+            userName,
+            friendCode: activeFriend.code,
+            message: text,
+          }),
+        });
+        const payload = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(payload.error || 'تعذر إرسال الرسالة.');
+        setInput('');
+        setShowQuick(false);
+        await loadMessages(activeFriend.code);
+      } else if (screen.name === 'group' && activeGroup) {
+        const response = await fetch(`${CHAT_BASE}?action=groups_chat`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          body: JSON.stringify({
+            code: myCode,
+            device,
+            userName,
+            groupId: activeGroup.id,
+            message: text,
+          }),
+        });
+        const payload = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(payload.error || 'تعذر إرسال الرسالة.');
+        setInput('');
+        setShowQuick(false);
+        await loadGroupMessages(activeGroup.id);
+      }
+      await loadLists();
     } catch (error) {
       notify(error instanceof Error ? error.message : 'تعذر إرسال الرسالة.', 'error');
     } finally {
@@ -379,9 +509,12 @@ export const FriendsChat: React.FC<FriendsChatProps> = ({ onClose, userName = ''
       if (!response.ok) throw new Error(payload.error || 'تعذر إنشاء المجموعة.');
       setGroupName('');
       setGroupDesc('');
-      notify('تم إنشاء المجموعة — شارك كودها مع أصدقائك.', 'ok');
-      await loadGroups();
-      if (payload.group) setActiveGroup(payload.group as StudyGroup);
+      setStatus('');
+      await loadLists();
+      if (payload.group) {
+        setGroupMessages([]);
+        setScreen({ name: 'group', id: (payload.group as StudyGroup).id });
+      }
     } catch (error) {
       notify(error instanceof Error ? error.message : 'تعذر إنشاء المجموعة.', 'error');
     } finally {
@@ -390,7 +523,7 @@ export const FriendsChat: React.FC<FriendsChatProps> = ({ onClose, userName = ''
   };
 
   const handleJoinGroup = async () => {
-    const code = normalizeCode(joinCode);
+    const code = normalizeFriendCode(joinCode);
     if (!code || joiningGroup) return;
     setJoiningGroup(true);
     notify('');
@@ -403,9 +536,12 @@ export const FriendsChat: React.FC<FriendsChatProps> = ({ onClose, userName = ''
       const payload = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(payload.error || 'تعذر الانضمام.');
       setJoinCode('');
-      notify('انضممت إلى المجموعة ✅', 'ok');
-      await loadGroups();
-      if (payload.group) setActiveGroup(payload.group as StudyGroup);
+      setStatus('');
+      await loadLists();
+      if (payload.group) {
+        setGroupMessages([]);
+        setScreen({ name: 'group', id: (payload.group as StudyGroup).id });
+      }
     } catch (error) {
       notify(error instanceof Error ? error.message : 'تعذر الانضمام.', 'error');
     } finally {
@@ -422,37 +558,15 @@ export const FriendsChat: React.FC<FriendsChatProps> = ({ onClose, userName = ''
         body: JSON.stringify({ code: myCode, device, groupId: group.id }),
       });
       if (!response.ok) throw new Error('تعذر مغادرة المجموعة.');
-      setActiveGroup(null);
-      setGroupMessages([]);
+      goInbox();
       notify('غادرت المجموعة.', 'ok');
-      await loadGroups();
+      await loadLists();
     } catch (error) {
       notify(error instanceof Error ? error.message : 'تعذر مغادرة المجموعة.', 'error');
     }
   };
 
-  const handleSendGroup = async () => {
-    const text = input.trim();
-    if (!text || sending || !activeGroup) return;
-    setSending(true);
-    try {
-      const response = await fetch(`${CHAT_BASE}?action=groups_chat`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify({ code: myCode, device, userName, groupId: activeGroup.id, message: text }),
-      });
-      const payload = await response.json().catch(() => ({}));
-      if (!response.ok) throw new Error(payload.error || 'تعذر إرسال الرسالة.');
-      setInput('');
-      await loadGroupMessages(activeGroup.id);
-    } catch (error) {
-      notify(error instanceof Error ? error.message : 'تعذر إرسال الرسالة.', 'error');
-    } finally {
-      setSending(false);
-    }
-  };
-
-  const handleCopyCode = async (value: string) => {
+  const handleCopy = async (value: string) => {
     try {
       await navigator.clipboard.writeText(value);
       setCopied(true);
@@ -462,428 +576,515 @@ export const FriendsChat: React.FC<FriendsChatProps> = ({ onClose, userName = ''
     }
   };
 
-  const myCodeCard = (
-    <div className="friends-my-code-card">
-      <div>
-        <span className="friends-my-code-label">كودك لمشاركة الصداقة</span>
-        <code className="friends-my-code-value" dir="ltr">
-          {myCode}
-        </code>
+  /* ---------------- render helpers ---------------- */
+
+  const renderAvatar = (label: string, tone: string, size: 'lg' | 'md' | 'sm' | 'xs', group = false, online = false) => (
+    <span className={`msgr-avatar-wrap msgr-avatar-wrap-${size}`} aria-hidden="true">
+      <span className={`msgr-avatar ${size} ${group ? 'is-group' : tone}`}>
+        {group ? <UsersRound /> : initialsOf(label)}
+      </span>
+      {online && !group && <span className="msgr-online-dot" />}
+    </span>
+  );
+
+  const renderInbox = () => (
+    <div className="msgr-inbox">
+      <div className="msgr-search">
+        <Search className="msgr-search-icon" aria-hidden="true" />
+        <input
+          type="search"
+          value={query}
+          onChange={(event) => setQuery(event.target.value)}
+          placeholder="ابحث في المحادثات"
+          aria-label="بحث في المحادثات"
+        />
+        {query && (
+          <button type="button" className="msgr-search-clear" onClick={() => setQuery('')} aria-label="مسح البحث">
+            <X />
+          </button>
+        )}
       </div>
-      <button type="button" className="friends-copy-btn" onClick={() => void handleCopyCode(myCode)} aria-label="نسخ الكود">
-        {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-        <span>{copied ? 'تم النسخ' : 'نسخ'}</span>
-      </button>
+
+      <div className="msgr-seg" role="tablist" aria-label="تصفية المحادثات">
+        {(
+          [
+            ['all', 'الكل'],
+            ['friends', 'أصدقاء'],
+            ['groups', 'مجموعات'],
+          ] as Array<[InboxFilter, string]>
+        ).map(([value, label]) => (
+          <button
+            key={value}
+            type="button"
+            role="tab"
+            aria-selected={filter === value}
+            className={`msgr-seg-btn ${filter === value ? 'is-active' : ''}`}
+            onClick={() => setFilter(value)}
+          >
+            {label}
+          </button>
+        ))}
+      </div>
+
+      <div className="msgr-scroll">
+        {requests.length > 0 && (
+          <section className="msgr-requests">
+            <header>
+              <span className="msgr-requests-dot" />
+              طلبات صداقة
+              <b>{requests.length}</b>
+            </header>
+            <ul>
+              {requests.map((request) => (
+                <li key={request.id}>
+                  {renderAvatar(request.fromName || request.fromCode, avatarTone(request.fromCode), 'md')}
+                  <div className="msgr-request-main">
+                    <strong>{request.fromName || request.fromCode}</strong>
+                    <small dir="ltr">{request.fromCode}</small>
+                  </div>
+                  <div className="msgr-request-actions">
+                    <button type="button" className="msgr-accept" onClick={() => void handleAccept(request.id)}>
+                      قبول
+                    </button>
+                    <button type="button" className="msgr-reject" onClick={() => void handleReject(request.id)}>
+                      رفض
+                    </button>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+
+        {status && <p className={`msgr-status is-${statusTone}`}>{status}</p>}
+
+        {loadingLists && conversations.length === 0 ? (
+          <div className="msgr-empty">
+            <span className="msgr-spinner" aria-hidden="true" />
+            <p>جارٍ تحميل المحادثات…</p>
+          </div>
+        ) : conversations.length === 0 ? (
+          <div className="msgr-empty">
+            <div className="msgr-empty-art">
+              <Users />
+            </div>
+            <h3>{query ? 'لا نتائج' : 'لا محادثات بعد'}</h3>
+            <p>
+              {query
+                ? 'جرّب اسماً آخر أو كوداً.'
+                : 'أضف صديقاً بكوده، أو أنشئ مجموعة دراسة وشارك كودها.'}
+            </p>
+          </div>
+        ) : (
+          <ul className="msgr-list">
+            {conversations.map((conversation) => (
+              <li key={`${conversation.kind}-${conversation.id}`}>
+                <button
+                  type="button"
+                  className={`msgr-row ${conversation.unread > 0 ? 'is-unread' : ''}`}
+                  onClick={() => openConversation(conversation)}
+                >
+                  {renderAvatar(
+                    conversation.title,
+                    avatarTone(conversation.id),
+                    'lg',
+                    conversation.kind === 'group',
+                    conversation.kind === 'dm' &&
+                      isOnline(friends.find((friend) => friend.code === conversation.id)?.lastSeenAt),
+                  )}
+                  <span className="msgr-row-main">
+                    <span className="msgr-row-top">
+                      <strong>{conversation.title}</strong>
+                      <time>{conversation.lastAt ? formatListTime(conversation.lastAt) : ''}</time>
+                    </span>
+                    <span className="msgr-row-bottom">
+                      <span className="msgr-preview">{previewOf(conversation, myCode)}</span>
+                      {conversation.unread > 0 && <span className="msgr-unread">{conversation.unread}</span>}
+                    </span>
+                  </span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+
+      <div className="msgr-actions">
+        <button type="button" className="msgr-action" onClick={() => setScreen({ name: 'addFriend' })}>
+          <UserPlus />
+          <span>إضافة صديق</span>
+        </button>
+        <button type="button" className="msgr-action" onClick={() => setScreen({ name: 'newGroup' })}>
+          <Plus />
+          <span>مجموعة جديدة</span>
+        </button>
+        <button type="button" className="msgr-action" onClick={() => setScreen({ name: 'joinGroup' })}>
+          <UsersRound />
+          <span>انضمام بكود</span>
+        </button>
+      </div>
     </div>
   );
 
-  return (
-    <div className="friends-chat-modal" role="dialog" aria-modal="true" aria-labelledby="friends-chat-title">
-      <div className="friends-chat-panel">
-        <header className="friends-chat-header">
-          <div className="friends-chat-title">
-            <Users className="h-5 w-5" aria-hidden="true" />
-            <h2 id="friends-chat-title">تعلّم مع الأصدقاء</h2>
+  const renderThread = () => {
+    const isGroup = screen.name === 'group';
+    const peerTitle = isGroup ? activeGroup?.name ?? '' : activeFriend?.name || activeFriend?.code || '';
+    const peerCode = isGroup ? activeGroup?.code ?? '' : activeFriend?.code ?? '';
+    const peerSubtitle = isGroup
+      ? activeGroup
+        ? membersLabel(activeGroup.members.length)
+        : ''
+      : peerCode;
+
+    return (
+      <div className="msgr-thread">
+        <header className="msgr-thread-head">
+          <button type="button" className="msgr-back" onClick={goInbox} aria-label="رجوع">
+            <ArrowRight />
+          </button>
+          {renderAvatar(peerTitle, avatarTone(peerCode), 'md', isGroup, !isGroup && isOnline(activeFriend?.lastSeenAt))}
+          <div className="msgr-peer">
+            <strong>{peerTitle}</strong>
+            <small>{peerSubtitle}</small>
           </div>
-          {onClose && (
-            <button type="button" className="friends-chat-close" onClick={onClose} aria-label="إغلاق">
-              <X className="h-4 w-4" />
+          {isGroup ? (
+            <>
+              <button
+                type="button"
+                className={`msgr-head-btn ${showMembers ? 'is-active' : ''}`}
+                onClick={() => setShowMembers((value) => !value)}
+                aria-label="أعضاء المجموعة"
+              >
+                <Users />
+              </button>
+              <button
+                type="button"
+                className="msgr-head-btn is-danger"
+                onClick={() => activeGroup && void handleLeaveGroup(activeGroup)}
+                aria-label="مغادرة المجموعة"
+              >
+                <LogOut />
+              </button>
+            </>
+          ) : (
+            <button
+              type="button"
+              className="msgr-head-btn is-danger"
+              onClick={() => activeFriend && void handleRemoveFriend(activeFriend.code)}
+              aria-label="إزالة الصديق"
+            >
+              <Trash2 />
             </button>
           )}
         </header>
 
-        {!activeFriend && !activeGroup && (
-          <div className="friends-tabs" role="tablist" aria-label="أصدقاء ومجموعات">
-            <button
-              type="button"
-              role="tab"
-              aria-selected={tab === 'friends'}
-              className={`friends-tab ${tab === 'friends' ? 'is-active' : ''}`}
-              onClick={() => {
-                setTab('friends');
-                notify('');
-              }}
-            >
-              <Users className="h-4 w-4" />
-              أصدقاء
-              {requests.length > 0 && <span className="friends-tab-badge">{requests.length}</span>}
-            </button>
-            <button
-              type="button"
-              role="tab"
-              aria-selected={tab === 'groups'}
-              className={`friends-tab ${tab === 'groups' ? 'is-active' : ''}`}
-              onClick={() => {
-                setTab('groups');
-                notify('');
-              }}
-            >
-              <UsersRound className="h-4 w-4" />
-              مجموعات
-              {groups.length > 0 && <span className="friends-tab-badge">{groups.length}</span>}
+        {isGroup && showMembers && activeGroup && (
+          <div className="msgr-members-panel">
+            {activeGroup.description && <p className="msgr-group-desc">{activeGroup.description}</p>}
+            <ul>
+              {activeGroup.members.map((member) => (
+                <li key={member.code}>
+                  {renderAvatar(member.name || member.code, avatarTone(member.code), 'sm', false, isOnline(member.lastSeenAt))}
+                  <span>{member.name || member.code}</span>
+                  {member.code === activeGroup.ownerCode && <em>المشرف</em>}
+                </li>
+              ))}
+            </ul>
+            <button type="button" className="msgr-code-chip" onClick={() => void handleCopy(activeGroup.code)}>
+              <Copy />
+              <span dir="ltr">{activeGroup.code}</span>
+              <b>{copied ? 'تم النسخ' : 'نسخ كود المجموعة'}</b>
             </button>
           </div>
         )}
 
-        <div className="friends-chat-body">
-          {tab === 'friends' && !activeFriend && (
-            <>
-              {myCodeCard}
-
-              <div className="friends-add-row">
-                <input
-                  type="text"
-                  value={addCode}
-                  onChange={(e) => setAddCode(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                      e.preventDefault();
-                      void handleAddFriend();
-                    }
-                  }}
-                  placeholder="أدخل كود صديقك لإضافته"
-                  className="friends-add-input"
-                  dir="ltr"
-                  inputMode="text"
-                  autoComplete="off"
-                  spellCheck={false}
-                />
-                <button
-                  type="button"
-                  className="friends-add-btn"
-                  onClick={() => void handleAddFriend()}
-                  disabled={adding || !addCode.trim()}
-                >
-                  <UserPlus className="h-4 w-4" />
-                  {adding ? '…' : 'إضافة'}
-                </button>
+        <div className="msgr-scroll msgr-messages" ref={threadRef}>
+          {threadMessages.length === 0 ? (
+            <div className="msgr-empty is-thread">
+              <div className="msgr-empty-art">
+                <Smile />
               </div>
-
-              {status && <p className={`friends-status is-${statusTone}`}>{status}</p>}
-
-              {requests.length > 0 && (
-                <section className="friends-section">
-                  <h3>طلبات صداقة ({requests.length})</h3>
-                  <ul className="friends-list">
-                    {requests.map((req) => (
-                      <li key={req.id} className="friends-request-item">
-                        <span className="friends-avatar">{(req.fromName || req.fromCode).charAt(0).toUpperCase()}</span>
-                        <div>
-                          <strong>{req.fromName || req.fromCode}</strong>
-                          <small>{req.fromCode}</small>
-                        </div>
-                        <div className="friends-request-actions">
-                          <button type="button" onClick={() => void handleAccept(req.id)} className="friends-accept-btn">
-                            قبول
-                          </button>
-                          <button type="button" onClick={() => void handleReject(req.id)} className="friends-reject-btn">
-                            رفض
-                          </button>
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
-                </section>
-              )}
-
-              <section className="friends-section">
-                <h3>أصدقائي ({friends.length})</h3>
-                {loadingFriends && friends.length === 0 ? (
-                  <p className="friends-empty">جارٍ تحميل الأصدقاء…</p>
-                ) : friends.length === 0 ? (
-                  <p className="friends-empty">
-                    لا أصدقاء بعد. شارك كودك مع صديقك أو أدخل كوده أعلاه للبدء.
-                  </p>
-                ) : (
-                  <ul className="friends-list">
-                    {friends.map((f) => (
-                      <li key={f.code}>
-                        <button
-                          type="button"
-                          className="friends-item"
-                          onClick={() => {
-                            setActiveFriend(f);
-                            setMessages([]);
-                            notify('');
-                          }}
-                        >
-                          <span className="friends-avatar">{(f.name || f.code).charAt(0).toUpperCase()}</span>
-                          <div>
-                            <strong>{f.name || f.code}</strong>
-                            <small>{f.code}</small>
-                          </div>
-                          <MessageCircle className="friends-item-icon h-4 w-4" aria-hidden="true" />
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </section>
-            </>
-          )}
-
-          {tab === 'friends' && activeFriend && (
-            <>
-              <div className="friends-thread-head">
-                <button type="button" className="friends-back-btn" onClick={() => setActiveFriend(null)}>
-                  ← رجوع
-                </button>
-                <div className="friends-thread-peer">
-                  <strong>{activeFriend.name || activeFriend.code}</strong>
-                  <small dir="ltr">{activeFriend.code}</small>
-                </div>
-                <button
-                  type="button"
-                  className="friends-remove-btn"
-                  onClick={() => void handleRemoveFriend(activeFriend.code)}
-                  aria-label="إزالة الصديق"
-                >
-                  <Trash2 className="h-4 w-4" />
-                </button>
-              </div>
-
-              <div className="friends-chat-thread" ref={threadRef}>
-                {messages.length === 0 ? (
-                  <p className="friends-empty">ابدأ المحادثة بالإنجليزية — تدرّب مع صديقك! 🇬🇧</p>
-                ) : (
-                  messages.map((m) => {
-                    const mine = normalizeCode(m.senderCode) === myCode;
-                    return (
-                      <div key={m.id} className={`friends-bubble ${mine ? 'is-mine' : 'is-theirs'}`}>
-                        <span className="friends-bubble-author">{mine ? 'أنت' : m.senderName || m.senderCode}</span>
-                        <p dir="auto">{m.message}</p>
-                        <time>{formatTime(m.at)}</time>
+              <h3>ابدأ المحادثة</h3>
+              <p>تدرّب على الإنجليزية مع {isGroup ? 'المجموعة' : 'صديقك'} — جملة واحدة تكفي للبدء.</p>
+            </div>
+          ) : (
+            threadMessages.map((message, index) => {
+              const previous = threadMessages[index - 1];
+              const showDay =
+                !previous || startOfDay(new Date(previous.at)) !== startOfDay(new Date(message.at));
+              const mine = normalizeFriendCode(message.senderCode) === myCode;
+              const authorName = message.senderName || message.senderCode;
+              const readByPeer =
+                !isGroup && activeFriend
+                  ? ((message as FriendMessage).readBy ?? []).includes(activeFriend.code)
+                  : false;
+              return (
+                <React.Fragment key={message.id}>
+                  {showDay && <div className="msgr-day">{formatDayLabel(message.at)}</div>}
+                  <div className={`msgr-msg ${mine ? 'is-mine' : 'is-theirs'}`}>
+                    {!mine && renderAvatar(authorName, avatarTone(message.senderCode), 'xs')}
+                    <div className="msgr-msg-body">
+                      {!mine && isGroup && <span className="msgr-author">{authorName}</span>}
+                      <div className="msgr-bubble" dir="auto">
+                        {message.message}
                       </div>
-                    );
-                  })
-                )}
-              </div>
-
-              <div className="friends-quick-row">
-                {QUICK_PHRASES.map((phrase) => (
-                  <button key={phrase} type="button" className="friends-quick-chip" onClick={() => setInput(phrase)}>
-                    {phrase}
-                  </button>
-                ))}
-              </div>
-
-              <form
-                className="friends-chat-input-row"
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  void handleSendFriend();
-                }}
-              >
-                <input
-                  type="text"
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  placeholder="اكتب بالإنجليزية…"
-                  className="friends-chat-input"
-                  dir="ltr"
-                  autoComplete="off"
-                />
-                <button type="submit" className="friends-chat-send" disabled={sending || !input.trim()} aria-label="إرسال">
-                  <Send className="h-4 w-4" />
-                </button>
-              </form>
-              {status && <p className={`friends-status is-${statusTone}`}>{status}</p>}
-            </>
-          )}
-
-          {tab === 'groups' && !activeGroup && (
-            <>
-              {myCodeCard}
-
-              <div className="friends-group-forms">
-                <div className="friends-group-form">
-                  <h3>إنشاء مجموعة دراسة</h3>
-                  <input
-                    type="text"
-                    value={groupName}
-                    onChange={(e) => setGroupName(e.target.value)}
-                    placeholder="اسم المجموعة (مثال: نادي المحادثة)"
-                    className="friends-add-input"
-                    maxLength={80}
-                  />
-                  <input
-                    type="text"
-                    value={groupDesc}
-                    onChange={(e) => setGroupDesc(e.target.value)}
-                    placeholder="وصف مختصر (اختياري)"
-                    className="friends-add-input"
-                    maxLength={300}
-                  />
-                  <button
-                    type="button"
-                    className="friends-create-btn"
-                    onClick={() => void handleCreateGroup()}
-                    disabled={creatingGroup || !groupName.trim()}
-                  >
-                    <Plus className="h-4 w-4" />
-                    {creatingGroup ? '…' : 'إنشاء مجموعة'}
-                  </button>
-                </div>
-
-                <div className="friends-group-form">
-                  <h3>الانضمام بكود</h3>
-                  <div className="friends-add-row">
-                    <input
-                      type="text"
-                      value={joinCode}
-                      onChange={(e) => setJoinCode(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                          e.preventDefault();
-                          void handleJoinGroup();
-                        }
-                      }}
-                      placeholder="أدخل كود المجموعة (G-XXXXXX)"
-                      className="friends-add-input"
-                      dir="ltr"
-                      autoComplete="off"
-                      spellCheck={false}
-                    />
-                    <button
-                      type="button"
-                      className="friends-add-btn"
-                      onClick={() => void handleJoinGroup()}
-                      disabled={joiningGroup || !joinCode.trim()}
-                    >
-                      <UsersRound className="h-4 w-4" />
-                      {joiningGroup ? '…' : 'انضمام'}
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              {status && <p className={`friends-status is-${statusTone}`}>{status}</p>}
-
-              <section className="friends-section">
-                <h3>مجموعاتي ({groups.length})</h3>
-                {loadingGroups && groups.length === 0 ? (
-                  <p className="friends-empty">جارٍ تحميل المجموعات…</p>
-                ) : groups.length === 0 ? (
-                  <p className="friends-empty">
-                    لا مجموعات بعد. أنشئ مجموعة وشارك كودها، أو انضم بكود صديقك.
-                  </p>
-                ) : (
-                  <ul className="friends-list">
-                    {groups.map((g) => (
-                      <li key={g.id}>
-                        <button
-                          type="button"
-                          className="friends-item friends-group-item"
-                          onClick={() => {
-                            setActiveGroup(g);
-                            setGroupMessages([]);
-                            notify('');
-                          }}
-                        >
-                          <span className="friends-avatar friends-group-avatar">
-                            <UsersRound className="h-4 w-4" />
+                      <span className="msgr-meta">
+                        {formatTime(message.at)}
+                        {mine && !isGroup && (
+                          <span className={`msgr-ticks ${readByPeer ? 'is-read' : ''}`} aria-hidden="true">
+                            {readByPeer ? <CheckCheck /> : <Check />}
                           </span>
-                          <div>
-                            <strong>{g.name}</strong>
-                            <small>
-                              {membersLabel(g.members.length)} • <span dir="ltr">{g.code}</span>
-                            </small>
-                          </div>
-                          <MessageCircle className="friends-item-icon h-4 w-4" aria-hidden="true" />
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </section>
-            </>
-          )}
-
-          {tab === 'groups' && activeGroup && (
-            <>
-              <div className="friends-thread-head">
-                <button type="button" className="friends-back-btn" onClick={() => setActiveGroup(null)}>
-                  ← رجوع
-                </button>
-                <div className="friends-thread-peer">
-                  <strong>{activeGroup.name}</strong>
-                  <small>{membersLabel(activeGroup.members.length)} • {activeGroup.code}</small>
-                </div>
-                <button
-                  type="button"
-                  className="friends-remove-btn"
-                  onClick={() => void handleLeaveGroup(activeGroup)}
-                  aria-label="مغادرة المجموعة"
-                >
-                  <LogOut className="h-4 w-4" />
-                </button>
-              </div>
-
-              {activeGroup.description && (
-                <p className="friends-group-desc">{activeGroup.description}</p>
-              )}
-
-              <div className="friends-members-row">
-                {activeGroup.members.slice(0, 8).map((m) => (
-                  <span key={m.code} className="friends-member-chip" title={m.code}>
-                    {(m.name || m.code).charAt(0).toUpperCase()}
-                  </span>
-                ))}
-                {activeGroup.members.length > 8 && (
-                  <span className="friends-member-chip friends-member-more">+{activeGroup.members.length - 8}</span>
-                )}
-              </div>
-
-              <div className="friends-chat-thread" ref={groupThreadRef}>
-                {groupMessages.length === 0 ? (
-                  <p className="friends-empty">ابدأوا المحادثة بالإنجليزية — تدرّبوا معًا! 🇬🇧</p>
-                ) : (
-                  groupMessages.map((m) => {
-                    const mine = normalizeCode(m.senderCode) === myCode;
-                    return (
-                      <div key={m.id} className={`friends-bubble ${mine ? 'is-mine' : 'is-theirs'}`}>
-                        <span className="friends-bubble-author">{mine ? 'أنت' : m.senderName || m.senderCode}</span>
-                        <p dir="auto">{m.message}</p>
-                        <time>{formatTime(m.at)}</time>
-                      </div>
-                    );
-                  })
-                )}
-              </div>
-
-              <div className="friends-quick-row">
-                {QUICK_PHRASES.map((phrase) => (
-                  <button key={phrase} type="button" className="friends-quick-chip" onClick={() => setInput(phrase)}>
-                    {phrase}
-                  </button>
-                ))}
-              </div>
-
-              <form
-                className="friends-chat-input-row"
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  void handleSendGroup();
-                }}
-              >
-                <input
-                  type="text"
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  placeholder="اكتب بالإنجليزية…"
-                  className="friends-chat-input"
-                  dir="ltr"
-                  autoComplete="off"
-                />
-                <button type="submit" className="friends-chat-send" disabled={sending || !input.trim()} aria-label="إرسال">
-                  <Send className="h-4 w-4" />
-                </button>
-              </form>
-              {status && <p className={`friends-status is-${statusTone}`}>{status}</p>}
-            </>
+                        )}
+                      </span>
+                    </div>
+                  </div>
+                </React.Fragment>
+              );
+            })
           )}
         </div>
+
+        {status && <p className={`msgr-status is-${statusTone}`}>{status}</p>}
+
+        {showQuick && (
+          <div className="msgr-quick">
+            {QUICK_PHRASES.map((phrase) => (
+              <button
+                key={phrase}
+                type="button"
+                className="msgr-quick-chip"
+                onClick={() => {
+                  setInput(phrase);
+                  setShowQuick(false);
+                }}
+              >
+                {phrase}
+              </button>
+            ))}
+          </div>
+        )}
+
+        <form
+          className="msgr-composer"
+          onSubmit={(event) => {
+            event.preventDefault();
+            void handleSend();
+          }}
+        >
+          <button
+            type="button"
+            className={`msgr-composer-btn ${showQuick ? 'is-active' : ''}`}
+            onClick={() => setShowQuick((value) => !value)}
+            aria-label="عبارات جاهزة"
+          >
+            <Smile />
+          </button>
+          <input
+            type="text"
+            value={input}
+            onChange={(event) => setInput(event.target.value)}
+            placeholder="اكتب بالإنجليزية…"
+            className="msgr-input"
+            dir="auto"
+            autoComplete="off"
+            aria-label="رسالة"
+          />
+          <button
+            type="submit"
+            className="msgr-send"
+            disabled={sending || !input.trim()}
+            aria-label="إرسال"
+          >
+            <Send />
+          </button>
+        </form>
+      </div>
+    );
+  };
+
+  const renderSubScreen = () => {
+    if (screen.name === 'addFriend') {
+      return (
+        <div className="msgr-sub">
+          <header className="msgr-sub-head">
+            <button type="button" className="msgr-back" onClick={goInbox} aria-label="رجوع">
+              <ArrowRight />
+            </button>
+            <h2>إضافة صديق</h2>
+          </header>
+          <div className="msgr-scroll">
+            <div className="msgr-code-card">
+              <small>كودك الشخصي</small>
+              <code dir="ltr">{myCode}</code>
+              <button type="button" onClick={() => void handleCopy(myCode)}>
+                {copied ? <Check /> : <Copy />}
+                <span>{copied ? 'تم النسخ' : 'نسخ كودي'}</span>
+              </button>
+              <p>شارك هذا الكود مع صديقك ليرسل لك طلب صداقة. لا يكشف الكود ترخيصك.</p>
+            </div>
+
+            <label className="msgr-field">
+              <span>كود صديقك</span>
+              <input
+                type="text"
+                value={addCode}
+                onChange={(event) => setAddCode(event.target.value)}
+                onKeyDown={(event) => {
+                  if (event.key === 'Enter') {
+                    event.preventDefault();
+                    void handleAddFriend();
+                  }
+                }}
+                placeholder="U-XXXXXXXX"
+                dir="ltr"
+                autoComplete="off"
+                spellCheck={false}
+              />
+            </label>
+
+            <button
+              type="button"
+              className="msgr-primary"
+              onClick={() => void handleAddFriend()}
+              disabled={adding || !addCode.trim()}
+            >
+              <UserPlus />
+              <span>{adding ? 'جارٍ الإرسال…' : 'إرسال طلب صداقة'}</span>
+            </button>
+
+            {status && <p className={`msgr-status is-${statusTone}`}>{status}</p>}
+          </div>
+        </div>
+      );
+    }
+
+    if (screen.name === 'newGroup') {
+      return (
+        <div className="msgr-sub">
+          <header className="msgr-sub-head">
+            <button type="button" className="msgr-back" onClick={goInbox} aria-label="رجوع">
+              <ArrowRight />
+            </button>
+            <h2>مجموعة جديدة</h2>
+          </header>
+          <div className="msgr-scroll">
+            <label className="msgr-field">
+              <span>اسم المجموعة</span>
+              <input
+                type="text"
+                value={groupName}
+                onChange={(event) => setGroupName(event.target.value)}
+                placeholder="مثال: نادي المحادثة"
+                maxLength={80}
+              />
+            </label>
+            <label className="msgr-field">
+              <span>الوصف (اختياري)</span>
+              <textarea
+                value={groupDesc}
+                onChange={(event) => setGroupDesc(event.target.value)}
+                placeholder="ما هدف المجموعة؟"
+                maxLength={300}
+                rows={3}
+              />
+            </label>
+            <button
+              type="button"
+              className="msgr-primary"
+              onClick={() => void handleCreateGroup()}
+              disabled={creatingGroup || !groupName.trim()}
+            >
+              <Plus />
+              <span>{creatingGroup ? 'جارٍ الإنشاء…' : 'إنشاء المجموعة'}</span>
+            </button>
+            <p className="msgr-hint">سيُنشأ كود انضمام تلقائي مثل <b dir="ltr">G-XXXXXX</b> لمشاركته مع أصدقائك.</p>
+            {status && <p className={`msgr-status is-${statusTone}`}>{status}</p>}
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <div className="msgr-sub">
+        <header className="msgr-sub-head">
+          <button type="button" className="msgr-back" onClick={goInbox} aria-label="رجوع">
+            <ArrowRight />
+          </button>
+          <h2>الانضمام إلى مجموعة</h2>
+        </header>
+        <div className="msgr-scroll">
+          <label className="msgr-field">
+            <span>كود المجموعة</span>
+            <input
+              type="text"
+              value={joinCode}
+              onChange={(event) => setJoinCode(event.target.value)}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter') {
+                  event.preventDefault();
+                  void handleJoinGroup();
+                }
+              }}
+              placeholder="G-XXXXXX"
+              dir="ltr"
+              autoComplete="off"
+              spellCheck={false}
+            />
+          </label>
+          <button
+            type="button"
+            className="msgr-primary"
+            onClick={() => void handleJoinGroup()}
+            disabled={joiningGroup || !joinCode.trim()}
+          >
+            <UsersRound />
+            <span>{joiningGroup ? 'جارٍ الانضمام…' : 'انضمام'}</span>
+          </button>
+          {status && <p className={`msgr-status is-${statusTone}`}>{status}</p>}
+        </div>
+      </div>
+    );
+  };
+
+  const title = screen.name === 'inbox' ? 'المحادثات' : 'تعلّم مع الأصدقاء';
+
+  return (
+    <div className="msgr-overlay" role="dialog" aria-modal="true" aria-labelledby="msgr-title">
+      <div className="msgr-app">
+        <header className="msgr-topbar">
+          <div className="msgr-topbar-title">
+            <span className="msgr-logo" aria-hidden="true">
+              <MessageBadge />
+            </span>
+            <h1 id="msgr-title">{title}</h1>
+            {totalUnread > 0 && screen.name === 'inbox' && (
+              <span className="msgr-total-unread">{totalUnread > 99 ? '99+' : totalUnread}</span>
+            )}
+          </div>
+          {onClose && (
+            <button type="button" className="msgr-close" onClick={onClose} aria-label="إغلاق">
+              <X />
+            </button>
+          )}
+        </header>
+
+        {screen.name === 'inbox' && renderInbox()}
+        {(screen.name === 'dm' || screen.name === 'group') && renderThread()}
+        {(screen.name === 'addFriend' || screen.name === 'newGroup' || screen.name === 'joinGroup') &&
+          renderSubScreen()}
       </div>
     </div>
   );
 };
+
+const MessageBadge: React.FC = () => (
+  <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <path
+      d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);

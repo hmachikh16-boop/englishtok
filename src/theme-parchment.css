@@ -2864,3 +2864,30 @@ html .settings-section h3 svg {
 html .settings-section p {
   color: #5b4730 !important;
 }
+
+/* ---------- Vocabulary bank pagination (parchment accents) ---------- */
+html .vocab-list-count {
+  background: rgba(126, 91, 43, 0.12) !important;
+  color: #7a5a2a !important;
+}
+
+html .vocab-load-more {
+  border-color: rgba(126, 91, 43, 0.4) !important;
+  background: rgba(255, 250, 240, 0.5) !important;
+  color: #7a5a2a !important;
+}
+
+html .vocab-load-more:hover {
+  border-color: rgba(165, 108, 24, 0.6) !important;
+  background: rgba(255, 250, 240, 0.82) !important;
+}
+
+html .vocab-load-more-count {
+  background: rgba(126, 91, 43, 0.14) !important;
+  color: #5b3d12 !important;
+}
+
+html .vocab-load-less {
+  border-color: rgba(126, 91, 43, 0.28) !important;
+  color: #7a5a2a !important;
+}
