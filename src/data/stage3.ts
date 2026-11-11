@@ -1,31 +1,19 @@
 import type { Lesson } from '../types';
-import {
-  LESSON_SPECS,
-  LEVEL_CHARACTERS,
-  buildLesson,
-} from './curriculumContent';
+import { LEVEL_CHARACTERS } from './curriculumContent';
 import { buildExpansionLesson } from './expansion/buildExpansionLesson';
 import { STAGE_3A_LESSONS } from './expansion/stage3a';
-import { STAGE_3B_LESSONS } from './expansion/stage3b';
-import { STAGE_3_PLUS_LESSONS } from './expansionPlus/stage3';
-import { STAGE_3_PLUS2_LESSONS } from './expansionPlus2/stage3';
-import { STAGE_3_PLUS3_LESSONS } from './expansionPlus3/stage3';
-import { STAGE_3_PLUS4_LESSONS } from './expansionPlus4/stage3';
 
+/**
+ * Stage 3 (المرحلة الثالثة) — B2 "التواصل الناقد والتعبير عن الرأي والمصطلحات".
+ *
+ * Replaces the previous Stage 3 track with the roadmap designed for the app:
+ * expressing opinions & debating, professional debate project, idioms & phrasal
+ * verbs, complex grammar & conditionals, contemporary issues & future. The old
+ * B2 expansion packs (stage3a, stage3b, expansionPlus stage3) remain on disk
+ * but are no longer loaded here.
+ */
 export async function loadStageLessons(): Promise<Lesson[]> {
-  const specs = [
-    ...STAGE_3A_LESSONS,
-    ...STAGE_3B_LESSONS,
-    ...STAGE_3_PLUS_LESSONS,
-    ...STAGE_3_PLUS2_LESSONS,
-    ...STAGE_3_PLUS3_LESSONS,
-    ...STAGE_3_PLUS4_LESSONS,
-  ];
-  const baseLessons = LESSON_SPECS.filter((spec) => spec.stage === 3).map(buildLesson);
-  const expansionLessons = specs.map((spec) =>
+  return STAGE_3A_LESSONS.map((spec) =>
     buildExpansionLesson(spec, LEVEL_CHARACTERS[3]),
-  );
-  return [...baseLessons, ...expansionLessons].sort(
-    (left, right) => (left.curriculumStage ?? 0) - (right.curriculumStage ?? 0),
   );
 }
