@@ -1,11 +1,11 @@
 {
-    "version":  "1.1.67",
+    "version":  "1.1.68",
     "packageId":  "com.englishtok.gold",
-    "apkUrl":  "/lin-go-gold-1.1.67.apk",
-    "sha256":  "398C875865DA507FD41848AB373B38F1086AA85B6C121E7B7AA17A655488D9EC",
-    "size":  91551124,
+    "apkUrl":  "/lin-go-gold-1.1.68.apk",
+    "sha256":  "C71040E5C2D9761ED9A04ACECCDFE4B1C3A79962E73CE17E61CA6CEF7C3C7E8C",
+    "size":  91453688,
     "minimumAndroidSdk":  24,
-    "notes":  "تحديث Gold 1.1.67: دردشة مباشرة (تحديث كل 2 ثانية) + كل ميزات 1.1.66. 740 درساً و19 لعبة محفوظة.",
-    "releaseUrl":  "https://github.com/hmachikh16-boop/englishtok/releases/tag/gold-v1.1.67",
-    "publishedAt":  "2026-11-10T15:31:05.000Z"
+    "notes":  "Gold 1.1.68: Stage 1 foundations (30 lessons + phonics lab with pronunciation & listening) + floating actions + vocab pagination. 574 total lessons.",
+    "releaseUrl":  "https://github.com/hmachikh16-boop/englishtok/releases/tag/gold-v1.1.68",
+    "publishedAt":  "2026-11-11T11:40:00.000Z"
 }
