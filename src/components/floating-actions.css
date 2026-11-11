@@ -1,0 +1,297 @@
+/* ============================================================
+   Lin Go — Floating home actions (الدعم · الأصدقاء · Reels)
+   One shared plaque recipe so the three floating entries read as a
+   single, deliberate family: aged-paper body, brass rim, gold
+   medallion and ink-coloured labels. Positioning lives here too so
+   the buttons never drift apart between the home tab and the rest.
+   ============================================================ */
+
+:root {
+  --fab-ink: #2c2114;
+  --fab-ink-soft: #7a5a2a;
+  --fab-rim: rgba(109, 70, 16, 0.42);
+  --fab-rim-soft: rgba(109, 70, 16, 0.24);
+  --fab-paper-hi: #fdf7e6;
+  --fab-paper: #f4e3bd;
+  --fab-paper-lo: #e6cf9e;
+  --fab-medallion-hi: #fffdf7;
+  --fab-medallion: #f1dcae;
+  --fab-medallion-lo: #dcc086;
+  --fab-brass: #7a4d10;
+  --fab-oxblood: #8d2f24;
+  --fab-emerald: #2f7a55;
+}
+
+.support-fab,
+.reels-fab,
+.friends-fab {
+  position: fixed;
+  z-index: 40;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 50px;
+  padding-block: 5px;
+  padding-inline: 7px 15px;
+  border: 1px solid var(--fab-rim);
+  border-radius: 999px;
+  color: var(--fab-ink);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0) 48%),
+    linear-gradient(158deg, var(--fab-paper-hi) 0%, var(--fab-paper) 58%, var(--fab-paper-lo) 100%);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.85) inset,
+    0 2px 0 rgba(138, 90, 18, 0.26),
+    0 12px 26px rgba(44, 33, 20, 0.16);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  transition:
+    transform 0.16s ease,
+    box-shadow 0.16s ease,
+    filter 0.16s ease;
+}
+
+/* Hairline inner rim — the same inset line the home window tiles carry. */
+.support-fab::before,
+.reels-fab::before,
+.friends-fab::before {
+  content: '';
+  position: absolute;
+  inset: 3px;
+  border-radius: inherit;
+  border: 1px solid rgba(255, 250, 238, 0.55);
+  pointer-events: none;
+}
+
+.support-fab:hover,
+.reels-fab:hover,
+.friends-fab:hover {
+  filter: brightness(1.02);
+  transform: translateY(-1px);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.85) inset,
+    0 3px 0 rgba(138, 90, 18, 0.3),
+    0 16px 30px rgba(44, 33, 20, 0.2);
+}
+
+.support-fab:active,
+.reels-fab:active,
+.friends-fab:active {
+  transform: translateY(1px);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.7) inset,
+    0 1px 0 rgba(138, 90, 18, 0.26),
+    0 6px 14px rgba(44, 33, 20, 0.18);
+}
+
+.support-fab:focus-visible,
+.reels-fab:focus-visible,
+.friends-fab:focus-visible {
+  outline: 2px solid rgba(109, 70, 16, 0.6);
+  outline-offset: 3px;
+}
+
+/* ---------- Placement ---------- */
+.support-fab {
+  right: 16px;
+}
+
+.reels-fab {
+  right: 16px;
+  bottom: 84px;
+}
+
+.friends-fab {
+  left: 16px;
+  /* Icon-only coin: the same brass medallion as the two plaques, so the left
+     entry never covers the home tiles while still matching the family. */
+  justify-content: center;
+  width: 50px;
+  padding: 5px;
+}
+
+/* ---------- Medallion ---------- */
+.support-fab-medallion,
+.reels-fab-medallion,
+.friends-fab-medallion {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  flex: 0 0 38px;
+  border: 1px solid var(--fab-rim-soft);
+  border-radius: 50%;
+  color: var(--fab-brass);
+  background: radial-gradient(
+    circle at 34% 26%,
+    #fdf4dc,
+    #eed6a2 54%,
+    #d6b87c 100%
+  );
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.92) inset,
+    0 1px 2px rgba(74, 51, 25, 0.22);
+}
+
+.support-fab-medallion svg,
+.reels-fab-medallion svg,
+.friends-fab-medallion svg {
+  width: 19px;
+  height: 19px;
+}
+
+/* The parchment skin paints every span that wraps a lucide icon with its soft
+   ink colour (!important). Re-assert the medallion ink at a higher specificity
+   so the glyphs stay crisp inside the brass plaques. */
+html .support-fab .support-fab-medallion,
+html .reels-fab .reels-fab-medallion {
+  color: var(--fab-oxblood) !important;
+}
+
+html .friends-fab .friends-fab-medallion {
+  color: var(--fab-brass) !important;
+}
+
+/* ---------- Labels ---------- */
+.support-fab-copy,
+.reels-fab-copy,
+.friends-fab-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  min-width: 0;
+  line-height: 1;
+  text-align: start;
+}
+
+.support-fab-copy strong,
+.reels-fab-copy strong,
+.friends-fab-copy strong {
+  font-size: 12.5px;
+  font-weight: 900;
+  color: var(--fab-ink);
+  white-space: nowrap;
+}
+
+.support-fab-copy small,
+.reels-fab-copy small,
+.friends-fab-copy small {
+  font-size: 8px;
+  font-weight: 800;
+  color: var(--fab-ink-soft);
+  white-space: nowrap;
+}
+
+/* ---------- Status dot ---------- */
+/* Presence bead pinned to the support medallion, like a chat avatar. */
+.support-fab-dot {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--fab-emerald);
+  box-shadow:
+    0 0 0 2px #fdf6e4,
+    0 1px 2px rgba(44, 33, 20, 0.28);
+}
+
+/* "New" bead for Reels, smaller and calmer than a recording light. */
+.reels-fab-live {
+  width: 7px;
+  height: 7px;
+  flex: 0 0 7px;
+  border-radius: 50%;
+  background: var(--fab-oxblood);
+  box-shadow: 0 0 0 2px #fbf0d7, 0 0 0 3px rgba(141, 47, 36, 0.14);
+  animation: fabStatusPulse 3s ease-in-out infinite;
+}
+
+@keyframes fabStatusPulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* ---------- Unread badge (friends) ---------- */
+.friends-fab-badge {
+  position: absolute;
+  top: -5px;
+  inset-inline-end: -5px;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  border: 2px solid #fbf0d7;
+  background: var(--fab-oxblood);
+  color: #fbf0d7;
+  font-size: 10px;
+  font-weight: 900;
+  line-height: 1;
+  box-shadow: 0 2px 6px rgba(44, 33, 20, 0.3);
+}
+
+/* ---------- Compact phones ---------- */
+@media (max-width: 380px) {
+  .support-fab,
+  .reels-fab,
+  .friends-fab {
+    gap: 8px;
+    min-height: 46px;
+    padding-inline: 6px 12px;
+  }
+
+  .friends-fab {
+    width: 46px;
+    padding: 5px;
+  }
+
+  .support-fab-medallion,
+  .reels-fab-medallion,
+  .friends-fab-medallion {
+    width: 34px;
+    height: 34px;
+    flex-basis: 34px;
+  }
+
+  .support-fab-medallion svg,
+  .reels-fab-medallion svg,
+  .friends-fab-medallion svg {
+    width: 17px;
+    height: 17px;
+  }
+
+  .support-fab-copy strong,
+  .reels-fab-copy strong,
+  .friends-fab-copy strong {
+    font-size: 12px;
+  }
+
+  .friends-fab {
+    width: 46px;
+    padding: 5px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .support-fab,
+  .reels-fab,
+  .friends-fab {
+    transition: none;
+  }
+
+  .reels-fab-live {
+    animation: none;
+  }
+}
