@@ -2,6 +2,7 @@ import type { Lesson } from '../types';
 import { LEVEL_CHARACTERS } from './curriculumContent';
 import { buildExpansionLesson } from './expansion/buildExpansionLesson';
 import { STAGE_3A_LESSONS } from './expansion/stage3a';
+import { STAGE_3F_LESSONS } from './expansion/stage3f';
 
 /**
  * Stage 3 (المرحلة الثالثة) — B2 "التواصل الناقد والتعبير عن الرأي والمصطلحات".
@@ -13,7 +14,8 @@ import { STAGE_3A_LESSONS } from './expansion/stage3a';
  * but are no longer loaded here.
  */
 export async function loadStageLessons(): Promise<Lesson[]> {
-  return STAGE_3A_LESSONS.map((spec) =>
-    buildExpansionLesson(spec, LEVEL_CHARACTERS[3]),
-  );
+  return [
+    ...STAGE_3A_LESSONS,
+    ...STAGE_3F_LESSONS,
+  ].map((spec) => buildExpansionLesson(spec, LEVEL_CHARACTERS[3]));
 }

@@ -2,6 +2,7 @@ import type { Lesson } from '../types';
 import { LEVEL_CHARACTERS } from './curriculumContent';
 import { buildExpansionLesson } from './expansion/buildExpansionLesson';
 import { STAGE_4A_LESSONS } from './expansion/stage4a';
+import { STAGE_4F_LESSONS } from './expansion/stage4f';
 
 /**
  * Stage 4 (المرحلة الرابعة) — C1/C2 "الدقة، الطلاقة، والمصطلحات المتخصصة".
@@ -13,7 +14,8 @@ import { STAGE_4A_LESSONS } from './expansion/stage4a';
  * on disk but are no longer loaded here.
  */
 export async function loadStageLessons(): Promise<Lesson[]> {
-  return STAGE_4A_LESSONS.map((spec) =>
-    buildExpansionLesson(spec, LEVEL_CHARACTERS[4]),
-  );
+  return [
+    ...STAGE_4A_LESSONS,
+    ...STAGE_4F_LESSONS,
+  ].map((spec) => buildExpansionLesson(spec, LEVEL_CHARACTERS[4]));
 }
