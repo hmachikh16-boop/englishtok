@@ -11740,6 +11740,2628 @@
       "savedCount": 230
     },
     {
+      "id": "a1-supp-01-wh-questions",
+      "slug": "supp-wh-questions",
+      "title": "Wh-Questions",
+      "titleAr": "أسئلة WH",
+      "descriptionAr": "What، Where، When، Who، How — أسئلة بسيطة.",
+      "learningNoteAr": "الهدف: طرح أسئلة بسيطة باستخدام What/Where/When/Who/How. البنية: What is your name? (ما اسمك؟). ابدأ بـ What/Where/When/Who/How، ثم الفعل، ثم الاسم.",
+      "category": "grammar",
+      "level": "A1",
+      "curriculumStage": 1,
+      "sceneType": "classroom",
+      "characterA": {
+        "id": "leo",
+        "name": "Leo",
+        "nameAr": "ليو",
+        "roleAr": "الكلب الذكي",
+        "avatar": "🐶",
+        "voiceGender": "male",
+        "voicePitch": 0.95,
+        "shirtColor": "#f59e0b",
+        "skinTone": "#f4c28f",
+        "hairColor": "#7c4a1e",
+        "hairStyle": "short",
+        "design": "dog-leo"
+      },
+      "characterB": {
+        "id": "gigi",
+        "name": "Gigi",
+        "nameAr": "جيجي",
+        "roleAr": "الزرافة المبدعة",
+        "avatar": "🦒",
+        "voiceGender": "female",
+        "voicePitch": 1.08,
+        "shirtColor": "#ec4899",
+        "skinTone": "#f9d3a8",
+        "hairColor": "#b45309",
+        "hairStyle": "ponytail",
+        "design": "giraffe-gigi"
+      },
+      "dialogue": [
+        {
+          "id": "a1-supp-01-wh-questions-s01",
+          "speakerId": "gigi",
+          "textEn": "Let us ask questions the English way.",
+          "textAr": "لنسأل الأسئلة بالطريقة الإنجليزية.",
+          "durationSec": 2.5,
+          "emotion": "curious"
+        },
+        {
+          "id": "a1-supp-01-wh-questions-s02",
+          "speakerId": "leo",
+          "textEn": "What is your name?",
+          "textAr": "ما اسمك؟",
+          "durationSec": 2.2,
+          "emotion": "explaining",
+          "highlightWords": [
+            "what"
+          ]
+        },
+        {
+          "id": "a1-supp-01-wh-questions-s03",
+          "speakerId": "gigi",
+          "textEn": "Where do you live?",
+          "textAr": "أين تسكن؟",
+          "durationSec": 2.2,
+          "emotion": "happy",
+          "highlightWords": [
+            "where"
+          ]
+        },
+        {
+          "id": "a1-supp-01-wh-questions-s04",
+          "speakerId": "leo",
+          "textEn": "When do you wake up?",
+          "textAr": "متى تستيقظ؟",
+          "durationSec": 2.2,
+          "emotion": "curious",
+          "highlightWords": [
+            "when"
+          ]
+        },
+        {
+          "id": "a1-supp-01-wh-questions-s05",
+          "speakerId": "gigi",
+          "textEn": "How are you?",
+          "textAr": "كيف حالك؟",
+          "durationSec": 2.2,
+          "emotion": "surprised",
+          "highlightWords": [
+            "how"
+          ]
+        },
+        {
+          "id": "a1-supp-01-wh-questions-s06",
+          "speakerId": "leo",
+          "textEn": "What, where, when, who, how — you can ask anything now.",
+          "textAr": "What، where، when، who، how — تستطيع السؤال عن أي شيء الآن.",
+          "durationSec": 4,
+          "emotion": "happy"
+        },
+        {
+          "id": "a1-supp-01-wh-questions-s07",
+          "speakerId": "leo",
+          "textEn": "Can you say what?",
+          "textAr": "هل يمكنك قول ماذا / ما؟",
+          "durationSec": 2.2,
+          "emotion": "curious"
+        },
+        {
+          "id": "a1-supp-01-wh-questions-s08",
+          "speakerId": "gigi",
+          "textEn": "what! What is your name?",
+          "textAr": "ماذا / ما! ما اسمك؟",
+          "durationSec": 2.2,
+          "emotion": "happy",
+          "highlightWords": [
+            "what"
+          ]
+        },
+        {
+          "id": "a1-supp-01-wh-questions-s09",
+          "speakerId": "gigi",
+          "textEn": "Can you say where?",
+          "textAr": "هل يمكنك قول أين؟",
+          "durationSec": 2.2,
+          "emotion": "curious"
+        },
+        {
+          "id": "a1-supp-01-wh-questions-s10",
+          "speakerId": "leo",
+          "textEn": "where! Where do you live?",
+          "textAr": "أين! أين تسكن؟",
+          "durationSec": 2.2,
+          "emotion": "happy",
+          "highlightWords": [
+            "where"
+          ]
+        },
+        {
+          "id": "a1-supp-01-wh-questions-s11",
+          "speakerId": "leo",
+          "textEn": "Can you say when?",
+          "textAr": "هل يمكنك قول متى؟",
+          "durationSec": 2.2,
+          "emotion": "curious"
+        },
+        {
+          "id": "a1-supp-01-wh-questions-s12",
+          "speakerId": "gigi",
+          "textEn": "when! When do you wake up?",
+          "textAr": "متى! متى تستيقظ؟",
+          "durationSec": 2.2,
+          "emotion": "happy",
+          "highlightWords": [
+            "when"
+          ]
+        },
+        {
+          "id": "a1-supp-01-wh-questions-s13",
+          "speakerId": "gigi",
+          "textEn": "Can you say how?",
+          "textAr": "هل يمكنك قول كيف؟",
+          "durationSec": 2.2,
+          "emotion": "curious"
+        },
+        {
+          "id": "a1-supp-01-wh-questions-s14",
+          "speakerId": "leo",
+          "textEn": "how! How are you?",
+          "textAr": "كيف! كيف حالك؟",
+          "durationSec": 2.2,
+          "emotion": "happy",
+          "highlightWords": [
+            "how"
+          ]
+        },
+        {
+          "id": "a1-supp-01-wh-questions-s15",
+          "speakerId": "leo",
+          "textEn": "Can you say what?",
+          "textAr": "هل يمكنك قول ماذا / ما؟",
+          "durationSec": 2.2,
+          "emotion": "curious"
+        }
+      ],
+      "vocabulary": [
+        {
+          "id": "a1-supp-01-wh-questions-v1",
+          "word": "what",
+          "phonetic": "/wɒt/",
+          "partOfSpeech": "ضمير استفهام",
+          "translationAr": "ماذا / ما",
+          "exampleSentence": "What is your name?",
+          "exampleSentenceAr": "ما اسمك؟"
+        },
+        {
+          "id": "a1-supp-01-wh-questions-v2",
+          "word": "where",
+          "phonetic": "/weər/",
+          "partOfSpeech": "ضمير استفهام",
+          "translationAr": "أين",
+          "exampleSentence": "Where do you live?",
+          "exampleSentenceAr": "أين تسكن؟"
+        },
+        {
+          "id": "a1-supp-01-wh-questions-v3",
+          "word": "when",
+          "phonetic": "/wen/",
+          "partOfSpeech": "ضمير استفهام",
+          "translationAr": "متى",
+          "exampleSentence": "When do you wake up?",
+          "exampleSentenceAr": "متى تستيقظ؟"
+        },
+        {
+          "id": "a1-supp-01-wh-questions-v4",
+          "word": "how",
+          "phonetic": "/haʊ/",
+          "partOfSpeech": "ضمير استفهام",
+          "translationAr": "كيف",
+          "exampleSentence": "How are you?",
+          "exampleSentenceAr": "كيف حالك؟"
+        }
+      ],
+      "quiz": [
+        {
+          "id": "a1-supp-01-wh-questions-q1",
+          "type": "multiple_choice",
+          "questionAr": "ما معنى كلمة «what»؟",
+          "options": [
+            "كيف",
+            "ماذا / ما",
+            "أين",
+            "متى"
+          ],
+          "correctAnswer": "ماذا / ما",
+          "explanationAr": "what تعني «ماذا / ما». مثال: What is your name?"
+        },
+        {
+          "id": "a1-supp-01-wh-questions-q2",
+          "type": "fill_blank",
+          "questionAr": "أكمل الجملة: ___ do you live?",
+          "questionEn": "___ do you live?",
+          "options": [],
+          "correctAnswer": "where",
+          "explanationAr": "الإجابة الصحيحة: where. أين تسكن؟"
+        },
+        {
+          "id": "a1-supp-01-wh-questions-q3",
+          "type": "arrange_sentence",
+          "questionAr": "رتّب الكلمات لتكوين جملة صحيحة:",
+          "promptAr": "ما اسمك؟",
+          "options": [
+            "What",
+            "your",
+            "is",
+            "name"
+          ],
+          "correctAnswer": "What is your name?",
+          "explanationAr": "الترتيب الصحيح: What is your name?"
+        },
+        {
+          "id": "a1-supp-01-wh-questions-q4",
+          "type": "multiple_choice",
+          "questionAr": "أي كلمة تعني «كيف»؟",
+          "options": [
+            "when",
+            "how",
+            "what",
+            "where"
+          ],
+          "correctAnswer": "how",
+          "explanationAr": "how تعني «كيف». مثال: How are you?"
+        },
+        {
+          "id": "a1-supp-01-wh-questions-q5",
+          "type": "multiple_choice",
+          "questionAr": "ما معنى كلمة «where»؟",
+          "options": [
+            "متى",
+            "كيف",
+            "ماذا / ما",
+            "أين"
+          ],
+          "correctAnswer": "أين",
+          "explanationAr": "where تعني «أين». مثال: Where do you live?"
+        }
+      ],
+      "likesCount": 242,
+      "sharesCount": 80,
+      "savedCount": 188
+    },
+    {
+      "id": "a1-supp-02-yes-no",
+      "slug": "supp-yes-no-questions",
+      "title": "Yes/No Questions",
+      "titleAr": "أسئلة نعم/لا",
+      "descriptionAr": "Do you like…? Are you happy? — أسئلة نعم/لا.",
+      "learningNoteAr": "الهدف: تكوين أسئلة نعم/لا والرد عليها. البنية: Do you like apples? (هل تحب التفاح؟). Do/Does/Did + subject + verb. الرد: Yes, I do. / No, I don’t.",
+      "category": "grammar",
+      "level": "A1",
+      "curriculumStage": 1,
+      "sceneType": "classroom",
+      "characterA": {
+        "id": "leo",
+        "name": "Leo",
+        "nameAr": "ليو",
+        "roleAr": "الكلب الذكي",
+        "avatar": "🐶",
+        "voiceGender": "male",
+        "voicePitch": 0.95,
+        "shirtColor": "#f59e0b",
+        "skinTone": "#f4c28f",
+        "hairColor": "#7c4a1e",
+        "hairStyle": "short",
+        "design": "dog-leo"
+      },
+      "characterB": {
+        "id": "gigi",
+        "name": "Gigi",
+        "nameAr": "جيجي",
+        "roleAr": "الزرافة المبدعة",
+        "avatar": "🦒",
+        "voiceGender": "female",
+        "voicePitch": 1.08,
+        "shirtColor": "#ec4899",
+        "skinTone": "#f9d3a8",
+        "hairColor": "#b45309",
+        "hairStyle": "ponytail",
+        "design": "giraffe-gigi"
+      },
+      "dialogue": [
+        {
+          "id": "a1-supp-02-yes-no-s01",
+          "speakerId": "gigi",
+          "textEn": "Let us ask simple yes/no questions.",
+          "textAr": "لنسأل أسئلة بسيطة (نعم/لا).",
+          "durationSec": 2.2,
+          "emotion": "curious"
+        },
+        {
+          "id": "a1-supp-02-yes-no-s02",
+          "speakerId": "leo",
+          "textEn": "Do you like apples?",
+          "textAr": "هل تحب التفاح؟",
+          "durationSec": 2.2,
+          "emotion": "explaining",
+          "highlightWords": [
+            "do"
+          ]
+        },
+        {
+          "id": "a1-supp-02-yes-no-s03",
+          "speakerId": "gigi",
+          "textEn": "Does she play?",
+          "textAr": "هل تعزف هي؟",
+          "durationSec": 2.2,
+          "emotion": "happy",
+          "highlightWords": [
+            "does"
+          ]
+        },
+        {
+          "id": "a1-supp-02-yes-no-s04",
+          "speakerId": "leo",
+          "textEn": "Yes, I do.",
+          "textAr": "نعم، أفعل.",
+          "durationSec": 2.2,
+          "emotion": "curious",
+          "highlightWords": [
+            "yes"
+          ]
+        },
+        {
+          "id": "a1-supp-02-yes-no-s05",
+          "speakerId": "gigi",
+          "textEn": "No, I don’t.",
+          "textAr": "لا، لا أفعل.",
+          "durationSec": 2.2,
+          "emotion": "surprised",
+          "highlightWords": [
+            "no"
+          ]
+        },
+        {
+          "id": "a1-supp-02-yes-no-s06",
+          "speakerId": "leo",
+          "textEn": "Yes or no — you can answer any question now.",
+          "textAr": "نعم أو لا — تستطيع الإجابة على أي سؤال الآن.",
+          "durationSec": 3.6,
+          "emotion": "happy"
+        },
+        {
+          "id": "a1-supp-02-yes-no-s07",
+          "speakerId": "leo",
+          "textEn": "Can you say do?",
+          "textAr": "هل يمكنك قول أداة سؤال؟",
+          "durationSec": 2.2,
+          "emotion": "curious"
+        },
+        {
+          "id": "a1-supp-02-yes-no-s08",
+          "speakerId": "gigi",
+          "textEn": "do! Do you like apples?",
+          "textAr": "أداة سؤال! هل تحب التفاح؟",
+          "durationSec": 2.2,
+          "emotion": "happy",
+          "highlightWords": [
+            "do"
+          ]
+        },
+        {
+          "id": "a1-supp-02-yes-no-s09",
+          "speakerId": "gigi",
+          "textEn": "Can you say does?",
+          "textAr": "هل يمكنك قول أداة سؤال (هو/هي)؟",
+          "durationSec": 2.2,
+          "emotion": "curious"
+        },
+        {
+          "id": "a1-supp-02-yes-no-s10",
+          "speakerId": "leo",
+          "textEn": "does! Does she play?",
+          "textAr": "أداة سؤال (هو/هي)! هل تعزف هي؟",
+          "durationSec": 2.2,
+          "emotion": "happy",
+          "highlightWords": [
+            "does"
+          ]
+        },
+        {
+          "id": "a1-supp-02-yes-no-s11",
+          "speakerId": "leo",
+          "textEn": "Can you say yes?",
+          "textAr": "هل يمكنك قول نعم؟",
+          "durationSec": 2.2,
+          "emotion": "curious"
+        },
+        {
+          "id": "a1-supp-02-yes-no-s12",
+          "speakerId": "gigi",
+          "textEn": "yes! Yes, I do.",
+          "textAr": "نعم! نعم، أفعل.",
+          "durationSec": 2.2,
+          "emotion": "happy",
+          "highlightWords": [
+            "yes"
+          ]
+        },
+        {
+          "id": "a1-supp-02-yes-no-s13",
+          "speakerId": "gigi",
+          "textEn": "Can you say no?",
+          "textAr": "هل يمكنك قول لا؟",
+          "durationSec": 2.2,
+          "emotion": "curious"
+        },
+        {
+          "id": "a1-supp-02-yes-no-s14",
+          "speakerId": "leo",
+          "textEn": "no! No, I don’t.",
+          "textAr": "لا! لا، لا أفعل.",
+          "durationSec": 2.2,
+          "emotion": "happy",
+          "highlightWords": [
+            "no"
+          ]
+        },
+        {
+          "id": "a1-supp-02-yes-no-s15",
+          "speakerId": "leo",
+          "textEn": "Can you say do?",
+          "textAr": "هل يمكنك قول أداة سؤال؟",
+          "durationSec": 2.2,
+          "emotion": "curious"
+        }
+      ],
+      "vocabulary": [
+        {
+          "id": "a1-supp-02-yes-no-v1",
+          "word": "do",
+          "phonetic": "/duː/",
+          "partOfSpeech": "فعل مساعد",
+          "translationAr": "أداة سؤال",
+          "exampleSentence": "Do you like apples?",
+          "exampleSentenceAr": "هل تحب التفاح؟"
+        },
+        {
+          "id": "a1-supp-02-yes-no-v2",
+          "word": "does",
+          "phonetic": "/dʌz/",
+          "partOfSpeech": "فعل مساعد",
+          "translationAr": "أداة سؤال (هو/هي)",
+          "exampleSentence": "Does she play?",
+          "exampleSentenceAr": "هل تعزف هي؟"
+        },
+        {
+          "id": "a1-supp-02-yes-no-v3",
+          "word": "yes",
+          "phonetic": "/jes/",
+          "partOfSpeech": "جواب",
+          "translationAr": "نعم",
+          "exampleSentence": "Yes, I do.",
+          "exampleSentenceAr": "نعم، أفعل."
+        },
+        {
+          "id": "a1-supp-02-yes-no-v4",
+          "word": "no",
+          "phonetic": "/nəʊ/",
+          "partOfSpeech": "جواب",
+          "translationAr": "لا",
+          "exampleSentence": "No, I don’t.",
+          "exampleSentenceAr": "لا، لا أفعل."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "a1-supp-02-yes-no-q1",
+          "type": "multiple_choice",
+          "questionAr": "ما معنى كلمة «do»؟",
+          "options": [
+            "نعم",
+            "لا",
+            "أداة سؤال",
+            "أداة سؤال (هو/هي)"
+          ],
+          "correctAnswer": "أداة سؤال",
+          "explanationAr": "do تعني «أداة سؤال». مثال: Do you like apples?"
+        },
+        {
+          "id": "a1-supp-02-yes-no-q2",
+          "type": "fill_blank",
+          "questionAr": "أكمل الجملة: ___ she play?",
+          "questionEn": "___ she play?",
+          "options": [],
+          "correctAnswer": "does",
+          "explanationAr": "الإجابة الصحيحة: does. هل تعزف هي؟"
+        },
+        {
+          "id": "a1-supp-02-yes-no-q3",
+          "type": "arrange_sentence",
+          "questionAr": "رتّب الكلمات لتكوين جملة صحيحة:",
+          "promptAr": "هل تحب التفاح؟",
+          "options": [
+            "like",
+            "apples",
+            "you",
+            "Do"
+          ],
+          "correctAnswer": "Do you like apples?",
+          "explanationAr": "الترتيب الصحيح: Do you like apples?"
+        },
+        {
+          "id": "a1-supp-02-yes-no-q4",
+          "type": "multiple_choice",
+          "questionAr": "أي كلمة تعني «لا»؟",
+          "options": [
+            "no",
+            "do",
+            "does",
+            "yes"
+          ],
+          "correctAnswer": "no",
+          "explanationAr": "no تعني «لا». مثال: No, I don’t."
+        },
+        {
+          "id": "a1-supp-02-yes-no-q5",
+          "type": "multiple_choice",
+          "questionAr": "ما معنى كلمة «does»؟",
+          "options": [
+            "لا",
+            "أداة سؤال",
+            "أداة سؤال (هو/هي)",
+            "نعم"
+          ],
+          "correctAnswer": "أداة سؤال (هو/هي)",
+          "explanationAr": "does تعني «أداة سؤال (هو/هي)». مثال: Does she play?"
+        }
+      ],
+      "likesCount": 267,
+      "sharesCount": 87,
+      "savedCount": 157
+    },
+    {
+      "id": "a1-supp-03-negatives",
+      "slug": "supp-negatives",
+      "title": "Negatives",
+      "titleAr": "النفي (don’t / doesn’t)",
+      "descriptionAr": "I don’t like، He doesn’t play — نفي بسيط.",
+      "learningNoteAr": "الهدف: نفي جمل بسيطة في المضارع. البنية: I don’t like bread. (لا أحب الخبز.). I/you/we/they + don’t + verb. He/she/it + doesn’t + verb.",
+      "category": "grammar",
+      "level": "A1",
+      "curriculumStage": 1,
+      "sceneType": "cafe",
+      "characterA": {
+        "id": "leo",
+        "name": "Leo",
+        "nameAr": "ليو",
+        "roleAr": "الكلب الذكي",
+        "avatar": "🐶",
+        "voiceGender": "male",
+        "voicePitch": 0.95,
+        "shirtColor": "#f59e0b",
+        "skinTone": "#f4c28f",
+        "hairColor": "#7c4a1e",
+        "hairStyle": "short",
+        "design": "dog-leo"
+      },
+      "characterB": {
+        "id": "gigi",
+        "name": "Gigi",
+        "nameAr": "جيجي",
+        "roleAr": "الزرافة المبدعة",
+        "avatar": "🦒",
+        "voiceGender": "female",
+        "voicePitch": 1.08,
+        "shirtColor": "#ec4899",
+        "skinTone": "#f9d3a8",
+        "hairColor": "#b45309",
+        "hairStyle": "ponytail",
+        "design": "giraffe-gigi"
+      },
+      "dialogue": [
+        {
+          "id": "a1-supp-03-negatives-s01",
+          "speakerId": "gigi",
+          "textEn": "Let us say what we do NOT do.",
+          "textAr": "لنقل ما لا نفعله.",
+          "durationSec": 2.9,
+          "emotion": "curious"
+        },
+        {
+          "id": "a1-supp-03-negatives-s02",
+          "speakerId": "leo",
+          "textEn": "I don’t like bread.",
+          "textAr": "لا أحب الخبز.",
+          "durationSec": 2.2,
+          "emotion": "explaining",
+          "highlightWords": [
+            "don’t"
+          ]
+        },
+        {
+          "id": "a1-supp-03-negatives-s03",
+          "speakerId": "gigi",
+          "textEn": "He doesn’t play.",
+          "textAr": "هو لا يلعب.",
+          "durationSec": 2.2,
+          "emotion": "happy",
+          "highlightWords": [
+            "doesn’t"
+          ]
+        },
+        {
+          "id": "a1-supp-03-negatives-s04",
+          "speakerId": "leo",
+          "textEn": "I don’t like rice.",
+          "textAr": "لا أحب الأرز.",
+          "durationSec": 2.2,
+          "emotion": "curious",
+          "highlightWords": [
+            "like"
+          ]
+        },
+        {
+          "id": "a1-supp-03-negatives-s05",
+          "speakerId": "gigi",
+          "textEn": "She doesn’t play.",
+          "textAr": "هي لا تلعب.",
+          "durationSec": 2.2,
+          "emotion": "surprised",
+          "highlightWords": [
+            "play"
+          ]
+        },
+        {
+          "id": "a1-supp-03-negatives-s06",
+          "speakerId": "leo",
+          "textEn": "Don’t and doesn’t — you can say what you don’t do.",
+          "textAr": "don’t وdoesn’t — تستطيع قول ما لا تفعله.",
+          "durationSec": 4,
+          "emotion": "happy"
+        },
+        {
+          "id": "a1-supp-03-negatives-s07",
+          "speakerId": "leo",
+          "textEn": "Can you say don’t?",
+          "textAr": "هل يمكنك قول لا (أنا/أنت/نحن/هم)؟",
+          "durationSec": 2.2,
+          "emotion": "curious"
+        },
+        {
+          "id": "a1-supp-03-negatives-s08",
+          "speakerId": "gigi",
+          "textEn": "don’t! I don’t like bread.",
+          "textAr": "لا (أنا/أنت/نحن/هم)! لا أحب الخبز.",
+          "durationSec": 2.2,
+          "emotion": "happy",
+          "highlightWords": [
+            "don’t"
+          ]
+        },
+        {
+          "id": "a1-supp-03-negatives-s09",
+          "speakerId": "gigi",
+          "textEn": "Can you say doesn’t?",
+          "textAr": "هل يمكنك قول لا (هو/هي)؟",
+          "durationSec": 2.2,
+          "emotion": "curious"
+        },
+        {
+          "id": "a1-supp-03-negatives-s10",
+          "speakerId": "leo",
+          "textEn": "doesn’t! He doesn’t play.",
+          "textAr": "لا (هو/هي)! هو لا يلعب.",
+          "durationSec": 2.2,
+          "emotion": "happy",
+          "highlightWords": [
+            "doesn’t"
+          ]
+        },
+        {
+          "id": "a1-supp-03-negatives-s11",
+          "speakerId": "leo",
+          "textEn": "Can you say like?",
+          "textAr": "هل يمكنك قول يحب؟",
+          "durationSec": 2.2,
+          "emotion": "curious"
+        },
+        {
+          "id": "a1-supp-03-negatives-s12",
+          "speakerId": "gigi",
+          "textEn": "like! I don’t like rice.",
+          "textAr": "يحب! لا أحب الأرز.",
+          "durationSec": 2.2,
+          "emotion": "happy",
+          "highlightWords": [
+            "like"
+          ]
+        },
+        {
+          "id": "a1-supp-03-negatives-s13",
+          "speakerId": "gigi",
+          "textEn": "Can you say play?",
+          "textAr": "هل يمكنك قول يلعب؟",
+          "durationSec": 2.2,
+          "emotion": "curious"
+        },
+        {
+          "id": "a1-supp-03-negatives-s14",
+          "speakerId": "leo",
+          "textEn": "play! She doesn’t play.",
+          "textAr": "يلعب! هي لا تلعب.",
+          "durationSec": 2.2,
+          "emotion": "happy",
+          "highlightWords": [
+            "play"
+          ]
+        },
+        {
+          "id": "a1-supp-03-negatives-s15",
+          "speakerId": "leo",
+          "textEn": "Can you say don’t?",
+          "textAr": "هل يمكنك قول لا (أنا/أنت/نحن/هم)؟",
+          "durationSec": 2.2,
+          "emotion": "curious"
+        }
+      ],
+      "vocabulary": [
+        {
+          "id": "a1-supp-03-negatives-v1",
+          "word": "don’t",
+          "phonetic": "/dəʊnt/",
+          "partOfSpeech": "فعل مساعد",
+          "translationAr": "لا (أنا/أنت/نحن/هم)",
+          "exampleSentence": "I don’t like bread.",
+          "exampleSentenceAr": "لا أحب الخبز."
+        },
+        {
+          "id": "a1-supp-03-negatives-v2",
+          "word": "doesn’t",
+          "phonetic": "/ˈdʌz.ənt/",
+          "partOfSpeech": "فعل مساعد",
+          "translationAr": "لا (هو/هي)",
+          "exampleSentence": "He doesn’t play.",
+          "exampleSentenceAr": "هو لا يلعب."
+        },
+        {
+          "id": "a1-supp-03-negatives-v3",
+          "word": "like",
+          "phonetic": "/laɪk/",
+          "partOfSpeech": "فعل",
+          "translationAr": "يحب",
+          "exampleSentence": "I don’t like rice.",
+          "exampleSentenceAr": "لا أحب الأرز."
+        },
+        {
+          "id": "a1-supp-03-negatives-v4",
+          "word": "play",
+          "phonetic": "/pleɪ/",
+          "partOfSpeech": "فعل",
+          "translationAr": "يلعب",
+          "exampleSentence": "She doesn’t play.",
+          "exampleSentenceAr": "هي لا تلعب."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "a1-supp-03-negatives-q1",
+          "type": "multiple_choice",
+          "questionAr": "ما معنى كلمة «don’t»؟",
+          "options": [
+            "لا (أنا/أنت/نحن/هم)",
+            "لا (هو/هي)",
+            "يحب",
+            "يلعب"
+          ],
+          "correctAnswer": "لا (أنا/أنت/نحن/هم)",
+          "explanationAr": "don’t تعني «لا (أنا/أنت/نحن/هم)». مثال: I don’t like bread."
+        },
+        {
+          "id": "a1-supp-03-negatives-q2",
+          "type": "fill_blank",
+          "questionAr": "أكمل الجملة: He ___ play.",
+          "questionEn": "He ___ play.",
+          "options": [],
+          "correctAnswer": "doesn’t",
+          "explanationAr": "الإجابة الصحيحة: doesn’t. هو لا يلعب."
+        },
+        {
+          "id": "a1-supp-03-negatives-q3",
+          "type": "arrange_sentence",
+          "questionAr": "رتّب الكلمات لتكوين جملة صحيحة:",
+          "promptAr": "لا أحب الخبز.",
+          "options": [
+            "don’t",
+            "bread",
+            "I",
+            "like"
+          ],
+          "correctAnswer": "I don’t like bread.",
+          "explanationAr": "الترتيب الصحيح: I don’t like bread."
+        },
+        {
+          "id": "a1-supp-03-negatives-q4",
+          "type": "multiple_choice",
+          "questionAr": "أي كلمة تعني «يلعب»؟",
+          "options": [
+            "doesn’t",
+            "like",
+            "play",
+            "don’t"
+          ],
+          "correctAnswer": "play",
+          "explanationAr": "play تعني «يلعب». مثال: She doesn’t play."
+        },
+        {
+          "id": "a1-supp-03-negatives-q5",
+          "type": "multiple_choice",
+          "questionAr": "ما معنى كلمة «doesn’t»؟",
+          "options": [
+            "لا (هو/هي)",
+            "يحب",
+            "يلعب",
+            "لا (أنا/أنت/نحن/هم)"
+          ],
+          "correctAnswer": "لا (هو/هي)",
+          "explanationAr": "doesn’t تعني «لا (هو/هي)». مثال: He doesn’t play."
+        }
+      ],
+      "likesCount": 301,
+      "sharesCount": 93,
+      "savedCount": 199
+    },
+    {
+      "id": "a1-supp-04-possessives",
+      "slug": "supp-possessives",
+      "title": "Possessives",
+      "titleAr": "الملكية (my/your/his/her)",
+      "descriptionAr": "my، your، his، her — ملكية بسيطة.",
+      "learningNoteAr": "الهدف: التعبير عن الملكية (my book، his cat). البنية: This is my book. (هذا كتابي.). my (لي)، your (لك)، his (له)، her (لها) + اسم.",
+      "category": "grammar",
+      "level": "A1",
+      "curriculumStage": 1,
+      "sceneType": "classroom",
+      "characterA": {
+        "id": "leo",
+        "name": "Leo",
+        "nameAr": "ليو",
+        "roleAr": "الكلب الذكي",
+        "avatar": "🐶",
+        "voiceGender": "male",
+        "voicePitch": 0.95,
+        "shirtColor": "#f59e0b",
+        "skinTone": "#f4c28f",
+        "hairColor": "#7c4a1e",
+        "hairStyle": "short",
+        "design": "dog-leo"
+      },
+      "characterB": {
+        "id": "gigi",
+        "name": "Gigi",
+        "nameAr": "جيجي",
+        "roleAr": "الزرافة المبدعة",
+        "avatar": "🦒",
+        "voiceGender": "female",
+        "voicePitch": 1.08,
+        "shirtColor": "#ec4899",
+        "skinTone": "#f9d3a8",
+        "hairColor": "#b45309",
+        "hairStyle": "ponytail",
+        "design": "giraffe-gigi"
+      },
+      "dialogue": [
+        {
+          "id": "a1-supp-04-possessives-s01",
+          "speakerId": "gigi",
+          "textEn": "Let us talk about what we own.",
+          "textAr": "لتحدث عن ما نملك.",
+          "durationSec": 2.5,
+          "emotion": "curious"
+        },
+        {
+          "id": "a1-supp-04-possessives-s02",
+          "speakerId": "leo",
+          "textEn": "This is my book.",
+          "textAr": "هذا كتابي.",
+          "durationSec": 2.2,
+          "emotion": "explaining",
+          "highlightWords": [
+            "my"
+          ]
+        },
+        {
+          "id": "a1-supp-04-possessives-s03",
+          "speakerId": "gigi",
+          "textEn": "What is your name?",
+          "textAr": "ما اسمك؟",
+          "durationSec": 2.2,
+          "emotion": "happy",
+          "highlightWords": [
+            "your"
+          ]
+        },
+        {
+          "id": "a1-supp-04-possessives-s04",
+          "speakerId": "leo",
+          "textEn": "His cat is big.",
+          "textAr": "قطته كبيرة.",
+          "durationSec": 2.2,
+          "emotion": "curious",
+          "highlightWords": [
+            "his"
+          ]
+        },
+        {
+          "id": "a1-supp-04-possessives-s05",
+          "speakerId": "gigi",
+          "textEn": "Her shoes are blue.",
+          "textAr": "حذاؤها أزرق.",
+          "durationSec": 2.2,
+          "emotion": "surprised",
+          "highlightWords": [
+            "her"
+          ]
+        },
+        {
+          "id": "a1-supp-04-possessives-s06",
+          "speakerId": "leo",
+          "textEn": "My, your, his, her — you can say what is yours.",
+          "textAr": "my، your، his، her — تستطيع قول ما يخصك.",
+          "durationSec": 4,
+          "emotion": "happy"
+        },
+        {
+          "id": "a1-supp-04-possessives-s07",
+          "speakerId": "leo",
+          "textEn": "Can you say my?",
+          "textAr": "هل يمكنك قول لي / خاصتي؟",
+          "durationSec": 2.2,
+          "emotion": "curious"
+        },
+        {
+          "id": "a1-supp-04-possessives-s08",
+          "speakerId": "gigi",
+          "textEn": "my! This is my book.",
+          "textAr": "لي / خاصتي! هذا كتابي.",
+          "durationSec": 2.2,
+          "emotion": "happy",
+          "highlightWords": [
+            "my"
+          ]
+        },
+        {
+          "id": "a1-supp-04-possessives-s09",
+          "speakerId": "gigi",
+          "textEn": "Can you say your?",
+          "textAr": "هل يمكنك قول لك / خاصتك؟",
+          "durationSec": 2.2,
+          "emotion": "curious"
+        },
+        {
+          "id": "a1-supp-04-possessives-s10",
+          "speakerId": "leo",
+          "textEn": "your! What is your name?",
+          "textAr": "لك / خاصتك! ما اسمك؟",
+          "durationSec": 2.2,
+          "emotion": "happy",
+          "highlightWords": [
+            "your"
+          ]
+        },
+        {
+          "id": "a1-supp-04-possessives-s11",
+          "speakerId": "leo",
+          "textEn": "Can you say his?",
+          "textAr": "هل يمكنك قول له / خاصته؟",
+          "durationSec": 2.2,
+          "emotion": "curious"
+        },
+        {
+          "id": "a1-supp-04-possessives-s12",
+          "speakerId": "gigi",
+          "textEn": "his! His cat is big.",
+          "textAr": "له / خاصته! قطته كبيرة.",
+          "durationSec": 2.2,
+          "emotion": "happy",
+          "highlightWords": [
+            "his"
+          ]
+        },
+        {
+          "id": "a1-supp-04-possessives-s13",
+          "speakerId": "gigi",
+          "textEn": "Can you say her?",
+          "textAr": "هل يمكنك قول لها / خاصتها؟",
+          "durationSec": 2.2,
+          "emotion": "curious"
+        },
+        {
+          "id": "a1-supp-04-possessives-s14",
+          "speakerId": "leo",
+          "textEn": "her! Her shoes are blue.",
+          "textAr": "لها / خاصتها! حذاؤها أزرق.",
+          "durationSec": 2.2,
+          "emotion": "happy",
+          "highlightWords": [
+            "her"
+          ]
+        },
+        {
+          "id": "a1-supp-04-possessives-s15",
+          "speakerId": "leo",
+          "textEn": "Can you say my?",
+          "textAr": "هل يمكنك قول لي / خاصتي؟",
+          "durationSec": 2.2,
+          "emotion": "curious"
+        }
+      ],
+      "vocabulary": [
+        {
+          "id": "a1-supp-04-possessives-v1",
+          "word": "my",
+          "phonetic": "/maɪ/",
+          "partOfSpeech": "ضمير ملكية",
+          "translationAr": "لي / خاصتي",
+          "exampleSentence": "This is my book.",
+          "exampleSentenceAr": "هذا كتابي."
+        },
+        {
+          "id": "a1-supp-04-possessives-v2",
+          "word": "your",
+          "phonetic": "/jɔːr/",
+          "partOfSpeech": "ضمير ملكية",
+          "translationAr": "لك / خاصتك",
+          "exampleSentence": "What is your name?",
+          "exampleSentenceAr": "ما اسمك؟"
+        },
+        {
+          "id": "a1-supp-04-possessives-v3",
+          "word": "his",
+          "phonetic": "/hɪz/",
+          "partOfSpeech": "ضمير ملكية",
+          "translationAr": "له / خاصته",
+          "exampleSentence": "His cat is big.",
+          "exampleSentenceAr": "قطته كبيرة."
+        },
+        {
+          "id": "a1-supp-04-possessives-v4",
+          "word": "her",
+          "phonetic": "/hɜːr/",
+          "partOfSpeech": "ضمير ملكية",
+          "translationAr": "لها / خاصتها",
+          "exampleSentence": "Her shoes are blue.",
+          "exampleSentenceAr": "حذاؤها أزرق."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "a1-supp-04-possessives-q1",
+          "type": "multiple_choice",
+          "questionAr": "ما معنى كلمة «my»؟",
+          "options": [
+            "له / خاصته",
+            "لها / خاصتها",
+            "لي / خاصتي",
+            "لك / خاصتك"
+          ],
+          "correctAnswer": "لي / خاصتي",
+          "explanationAr": "my تعني «لي / خاصتي». مثال: This is my book."
+        },
+        {
+          "id": "a1-supp-04-possessives-q2",
+          "type": "fill_blank",
+          "questionAr": "أكمل الجملة: What is ___ name?",
+          "questionEn": "What is ___ name?",
+          "options": [],
+          "correctAnswer": "your",
+          "explanationAr": "الإجابة الصحيحة: your. ما اسمك؟"
+        },
+        {
+          "id": "a1-supp-04-possessives-q3",
+          "type": "arrange_sentence",
+          "questionAr": "رتّب الكلمات لتكوين جملة صحيحة:",
+          "promptAr": "هذا كتابي.",
+          "options": [
+            "my",
+            "book",
+            "is",
+            "This"
+          ],
+          "correctAnswer": "This is my book.",
+          "explanationAr": "الترتيب الصحيح: This is my book."
+        },
+        {
+          "id": "a1-supp-04-possessives-q4",
+          "type": "multiple_choice",
+          "questionAr": "أي كلمة تعني «لها / خاصتها»؟",
+          "options": [
+            "her",
+            "my",
+            "your",
+            "his"
+          ],
+          "correctAnswer": "her",
+          "explanationAr": "her تعني «لها / خاصتها». مثال: Her shoes are blue."
+        },
+        {
+          "id": "a1-supp-04-possessives-q5",
+          "type": "multiple_choice",
+          "questionAr": "ما معنى كلمة «your»؟",
+          "options": [
+            "لها / خاصتها",
+            "لي / خاصتي",
+            "لك / خاصتك",
+            "له / خاصته"
+          ],
+          "correctAnswer": "لك / خاصتك",
+          "explanationAr": "your تعني «لك / خاصتك». مثال: What is your name?"
+        }
+      ],
+      "likesCount": 307,
+      "sharesCount": 71,
+      "savedCount": 229
+    },
+    {
+      "id": "a1-supp-05-there-is-are",
+      "slug": "supp-there-is-are",
+      "title": "There is / There are",
+      "titleAr": "There is / There are",
+      "descriptionAr": "هناك (مفرد/جمع) — there is / there are.",
+      "learningNoteAr": "الهدف: التحدث عن وجود الأشياء. البنية: There is a cat. (هناك قطة.). There is + مفرد. There are + جمع.",
+      "category": "grammar",
+      "level": "A1",
+      "curriculumStage": 1,
+      "sceneType": "classroom",
+      "characterA": {
+        "id": "leo",
+        "name": "Leo",
+        "nameAr": "ليو",
+        "roleAr": "الكلب الذكي",
+        "avatar": "🐶",
+        "voiceGender": "male",
+        "voicePitch": 0.95,
+        "shirtColor": "#f59e0b",
+        "skinTone": "#f4c28f",
+        "hairColor": "#7c4a1e",
+        "hairStyle": "short",
+        "design": "dog-leo"
+      },
+      "characterB": {
+        "id": "gigi",
+        "name": "Gigi",
+        "nameAr": "جيجي",
+        "roleAr": "الزرافة المبدعة",
+        "avatar": "🦒",
+        "voiceGender": "female",
+        "voicePitch": 1.08,
+        "shirtColor": "#ec4899",
+        "skinTone": "#f9d3a8",
+        "hairColor": "#b45309",
+        "hairStyle": "ponytail",
+        "design": "giraffe-gigi"
+      },
+      "dialogue": [
+        {
+          "id": "a1-supp-05-there-is-are-s01",
+          "speakerId": "gigi",
+          "textEn": "Let us talk about what is around us.",
+          "textAr": "لتحدث عن ما حولنا.",
+          "durationSec": 2.9,
+          "emotion": "curious"
+        },
+        {
+          "id": "a1-supp-05-there-is-are-s02",
+          "speakerId": "leo",
+          "textEn": "There is a cat.",
+          "textAr": "هناك قطة.",
+          "durationSec": 2.2,
+          "emotion": "explaining",
+          "highlightWords": [
+            "there is"
+          ]
+        },
+        {
+          "id": "a1-supp-05-there-is-are-s03",
+          "speakerId": "gigi",
+          "textEn": "There are two dogs.",
+          "textAr": "هناك كلبان.",
+          "durationSec": 2.2,
+          "emotion": "happy",
+          "highlightWords": [
+            "there are"
+          ]
+        },
+        {
+          "id": "a1-supp-05-there-is-are-s04",
+          "speakerId": "leo",
+          "textEn": "There is a book in the bag.",
+          "textAr": "هناك كتاب في الحقيبة.",
+          "durationSec": 2.5,
+          "emotion": "curious",
+          "highlightWords": [
+            "in"
+          ]
+        },
+        {
+          "id": "a1-supp-05-there-is-are-s05",
+          "speakerId": "gigi",
+          "textEn": "There are pens on the table.",
+          "textAr": "هناك أقلام على الطاولة.",
+          "durationSec": 2.2,
+          "emotion": "surprised",
+          "highlightWords": [
+            "on"
+          ]
+        },
+        {
+          "id": "a1-supp-05-there-is-are-s06",
+          "speakerId": "leo",
+          "textEn": "There is, there are — you can talk about what is around you.",
+          "textAr": "There is، there are — تستطيع التحدث عما حولك.",
+          "durationSec": 4.7,
+          "emotion": "happy"
+        },
+        {
+          "id": "a1-supp-05-there-is-are-s07",
+          "speakerId": "leo",
+          "textEn": "Can you say there is?",
+          "textAr": "هل يمكنك قول هناك (مفرد)؟",
+          "durationSec": 2.2,
+          "emotion": "curious"
+        },
+        {
+          "id": "a1-supp-05-there-is-are-s08",
+          "speakerId": "gigi",
+          "textEn": "there is! There is a cat.",
+          "textAr": "هناك (مفرد)! هناك قطة.",
+          "durationSec": 2.2,
+          "emotion": "happy",
+          "highlightWords": [
+            "there is"
+          ]
+        },
+        {
+          "id": "a1-supp-05-there-is-are-s09",
+          "speakerId": "gigi",
+          "textEn": "Can you say there are?",
+          "textAr": "هل يمكنك قول هناك (جمع)؟",
+          "durationSec": 2.2,
+          "emotion": "curious"
+        },
+        {
+          "id": "a1-supp-05-there-is-are-s10",
+          "speakerId": "leo",
+          "textEn": "there are! There are two dogs.",
+          "textAr": "هناك (جمع)! هناك كلبان.",
+          "durationSec": 2.2,
+          "emotion": "happy",
+          "highlightWords": [
+            "there are"
+          ]
+        },
+        {
+          "id": "a1-supp-05-there-is-are-s11",
+          "speakerId": "leo",
+          "textEn": "Can you say in?",
+          "textAr": "هل يمكنك قول في؟",
+          "durationSec": 2.2,
+          "emotion": "curious"
+        },
+        {
+          "id": "a1-supp-05-there-is-are-s12",
+          "speakerId": "gigi",
+          "textEn": "in! There is a book in the bag.",
+          "textAr": "في! هناك كتاب في الحقيبة.",
+          "durationSec": 2.9,
+          "emotion": "happy",
+          "highlightWords": [
+            "in"
+          ]
+        },
+        {
+          "id": "a1-supp-05-there-is-are-s13",
+          "speakerId": "gigi",
+          "textEn": "Can you say on?",
+          "textAr": "هل يمكنك قول على؟",
+          "durationSec": 2.2,
+          "emotion": "curious"
+        },
+        {
+          "id": "a1-supp-05-there-is-are-s14",
+          "speakerId": "leo",
+          "textEn": "on! There are pens on the table.",
+          "textAr": "على! هناك أقلام على الطاولة.",
+          "durationSec": 2.5,
+          "emotion": "happy",
+          "highlightWords": [
+            "on"
+          ]
+        },
+        {
+          "id": "a1-supp-05-there-is-are-s15",
+          "speakerId": "leo",
+          "textEn": "Can you say there is?",
+          "textAr": "هل يمكنك قول هناك (مفرد)؟",
+          "durationSec": 2.2,
+          "emotion": "curious"
+        }
+      ],
+      "vocabulary": [
+        {
+          "id": "a1-supp-05-there-is-are-v1",
+          "word": "there is",
+          "phonetic": "/ðeər ɪz/",
+          "partOfSpeech": "تعبير",
+          "translationAr": "هناك (مفرد)",
+          "exampleSentence": "There is a cat.",
+          "exampleSentenceAr": "هناك قطة."
+        },
+        {
+          "id": "a1-supp-05-there-is-are-v2",
+          "word": "there are",
+          "phonetic": "/ðeər ɑːr/",
+          "partOfSpeech": "تعبير",
+          "translationAr": "هناك (جمع)",
+          "exampleSentence": "There are two dogs.",
+          "exampleSentenceAr": "هناك كلبان."
+        },
+        {
+          "id": "a1-supp-05-there-is-are-v3",
+          "word": "in",
+          "phonetic": "/ɪn/",
+          "partOfSpeech": "حرف جر",
+          "translationAr": "في",
+          "exampleSentence": "There is a book in the bag.",
+          "exampleSentenceAr": "هناك كتاب في الحقيبة."
+        },
+        {
+          "id": "a1-supp-05-there-is-are-v4",
+          "word": "on",
+          "phonetic": "/ɒn/",
+          "partOfSpeech": "حرف جر",
+          "translationAr": "على",
+          "exampleSentence": "There are pens on the table.",
+          "exampleSentenceAr": "هناك أقلام على الطاولة."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "a1-supp-05-there-is-are-q1",
+          "type": "multiple_choice",
+          "questionAr": "ما معنى كلمة «there is»؟",
+          "options": [
+            "في",
+            "على",
+            "هناك (مفرد)",
+            "هناك (جمع)"
+          ],
+          "correctAnswer": "هناك (مفرد)",
+          "explanationAr": "there is تعني «هناك (مفرد)». مثال: There is a cat."
+        },
+        {
+          "id": "a1-supp-05-there-is-are-q2",
+          "type": "fill_blank",
+          "questionAr": "أكمل الجملة: ___ two dogs.",
+          "questionEn": "___ two dogs.",
+          "options": [],
+          "correctAnswer": "there are",
+          "explanationAr": "الإجابة الصحيحة: there are. هناك كلبان."
+        },
+        {
+          "id": "a1-supp-05-there-is-are-q3",
+          "type": "arrange_sentence",
+          "questionAr": "رتّب الكلمات لتكوين جملة صحيحة:",
+          "promptAr": "هناك قطة.",
+          "options": [
+            "is",
+            "a",
+            "cat",
+            "There"
+          ],
+          "correctAnswer": "There is a cat.",
+          "explanationAr": "الترتيب الصحيح: There is a cat."
+        },
+        {
+          "id": "a1-supp-05-there-is-are-q4",
+          "type": "multiple_choice",
+          "questionAr": "أي كلمة تعني «على»؟",
+          "options": [
+            "on",
+            "there is",
+            "there are",
+            "in"
+          ],
+          "correctAnswer": "on",
+          "explanationAr": "on تعني «على». مثال: There are pens on the table."
+        },
+        {
+          "id": "a1-supp-05-there-is-are-q5",
+          "type": "multiple_choice",
+          "questionAr": "ما معنى كلمة «there are»؟",
+          "options": [
+            "على",
+            "هناك (مفرد)",
+            "هناك (جمع)",
+            "في"
+          ],
+          "correctAnswer": "هناك (جمع)",
+          "explanationAr": "there are تعني «هناك (جمع)». مثال: There are two dogs."
+        }
+      ],
+      "likesCount": 251,
+      "sharesCount": 63,
+      "savedCount": 197
+    },
+    {
+      "id": "a1-supp-06-can-cant",
+      "slug": "supp-can-cant",
+      "title": "Can / Can’t",
+      "titleAr": "Can / Can’t (القدرة)",
+      "descriptionAr": "I can swim. I can’t fly. — القدرة.",
+      "learningNoteAr": "الهدف: التعبير عن القدرة (أستطيع / لا أستطيع). البنية: I can swim. (أستطيع السباحة.). Subject + can + verb. نفي: Subject + can’t + verb.",
+      "category": "grammar",
+      "level": "A1",
+      "curriculumStage": 1,
+      "sceneType": "park",
+      "characterA": {
+        "id": "leo",
+        "name": "Leo",
+        "nameAr": "ليو",
+        "roleAr": "الكلب الذكي",
+        "avatar": "🐶",
+        "voiceGender": "male",
+        "voicePitch": 0.95,
+        "shirtColor": "#f59e0b",
+        "skinTone": "#f4c28f",
+        "hairColor": "#7c4a1e",
+        "hairStyle": "short",
+        "design": "dog-leo"
+      },
+      "characterB": {
+        "id": "gigi",
+        "name": "Gigi",
+        "nameAr": "جيجي",
+        "roleAr": "الزرافة المبدعة",
+        "avatar": "🦒",
+        "voiceGender": "female",
+        "voicePitch": 1.08,
+        "shirtColor": "#ec4899",
+        "skinTone": "#f9d3a8",
+        "hairColor": "#b45309",
+        "hairStyle": "ponytail",
+        "design": "giraffe-gigi"
+      },
+      "dialogue": [
+        {
+          "id": "a1-supp-06-can-cant-s01",
+          "speakerId": "gigi",
+          "textEn": "What can you do?",
+          "textAr": "ماذا تستطيع أن تفعل؟",
+          "durationSec": 2.2,
+          "emotion": "curious"
+        },
+        {
+          "id": "a1-supp-06-can-cant-s02",
+          "speakerId": "leo",
+          "textEn": "I can swim.",
+          "textAr": "أستطيع السباحة.",
+          "durationSec": 2.2,
+          "emotion": "explaining",
+          "highlightWords": [
+            "can"
+          ]
+        },
+        {
+          "id": "a1-supp-06-can-cant-s03",
+          "speakerId": "gigi",
+          "textEn": "I can’t fly.",
+          "textAr": "لا أستطيع الطيران.",
+          "durationSec": 2.2,
+          "emotion": "happy",
+          "highlightWords": [
+            "can’t"
+          ]
+        },
+        {
+          "id": "a1-supp-06-can-cant-s04",
+          "speakerId": "leo",
+          "textEn": "He can swim.",
+          "textAr": "هو يستطيع السباحة.",
+          "durationSec": 2.2,
+          "emotion": "curious",
+          "highlightWords": [
+            "swim"
+          ]
+        },
+        {
+          "id": "a1-supp-06-can-cant-s05",
+          "speakerId": "gigi",
+          "textEn": "She can run.",
+          "textAr": "هي تستطيع الجري.",
+          "durationSec": 2.2,
+          "emotion": "surprised",
+          "highlightWords": [
+            "run"
+          ]
+        },
+        {
+          "id": "a1-supp-06-can-cant-s06",
+          "speakerId": "leo",
+          "textEn": "Can and can’t — you can say what you can do.",
+          "textAr": "can وcan’t — تستطيع قول ما تستطيع فعله.",
+          "durationSec": 4,
+          "emotion": "happy"
+        },
+        {
+          "id": "a1-supp-06-can-cant-s07",
+          "speakerId": "leo",
+          "textEn": "Can you say can?",
+          "textAr": "هل يمكنك قول أستطيع؟",
+          "durationSec": 2.2,
+          "emotion": "curious"
+        },
+        {
+          "id": "a1-supp-06-can-cant-s08",
+          "speakerId": "gigi",
+          "textEn": "can! I can swim.",
+          "textAr": "أستطيع! أستطيع السباحة.",
+          "durationSec": 2.2,
+          "emotion": "happy",
+          "highlightWords": [
+            "can"
+          ]
+        },
+        {
+          "id": "a1-supp-06-can-cant-s09",
+          "speakerId": "gigi",
+          "textEn": "Can you say can’t?",
+          "textAr": "هل يمكنك قول لا أستطيع؟",
+          "durationSec": 2.2,
+          "emotion": "curious"
+        },
+        {
+          "id": "a1-supp-06-can-cant-s10",
+          "speakerId": "leo",
+          "textEn": "can’t! I can’t fly.",
+          "textAr": "لا أستطيع! لا أستطيع الطيران.",
+          "durationSec": 2.2,
+          "emotion": "happy",
+          "highlightWords": [
+            "can’t"
+          ]
+        },
+        {
+          "id": "a1-supp-06-can-cant-s11",
+          "speakerId": "leo",
+          "textEn": "Can you say swim?",
+          "textAr": "هل يمكنك قول يسبح؟",
+          "durationSec": 2.2,
+          "emotion": "curious"
+        },
+        {
+          "id": "a1-supp-06-can-cant-s12",
+          "speakerId": "gigi",
+          "textEn": "swim! He can swim.",
+          "textAr": "يسبح! هو يستطيع السباحة.",
+          "durationSec": 2.2,
+          "emotion": "happy",
+          "highlightWords": [
+            "swim"
+          ]
+        },
+        {
+          "id": "a1-supp-06-can-cant-s13",
+          "speakerId": "gigi",
+          "textEn": "Can you say run?",
+          "textAr": "هل يمكنك قول يجري؟",
+          "durationSec": 2.2,
+          "emotion": "curious"
+        },
+        {
+          "id": "a1-supp-06-can-cant-s14",
+          "speakerId": "leo",
+          "textEn": "run! She can run.",
+          "textAr": "يجري! هي تستطيع الجري.",
+          "durationSec": 2.2,
+          "emotion": "happy",
+          "highlightWords": [
+            "run"
+          ]
+        },
+        {
+          "id": "a1-supp-06-can-cant-s15",
+          "speakerId": "leo",
+          "textEn": "Can you say can?",
+          "textAr": "هل يمكنك قول أستطيع؟",
+          "durationSec": 2.2,
+          "emotion": "curious"
+        }
+      ],
+      "vocabulary": [
+        {
+          "id": "a1-supp-06-can-cant-v1",
+          "word": "can",
+          "phonetic": "/kæn/",
+          "partOfSpeech": "فعل مساعد",
+          "translationAr": "أستطيع",
+          "exampleSentence": "I can swim.",
+          "exampleSentenceAr": "أستطيع السباحة."
+        },
+        {
+          "id": "a1-supp-06-can-cant-v2",
+          "word": "can’t",
+          "phonetic": "/kɑːnt/",
+          "partOfSpeech": "فعل مساعد",
+          "translationAr": "لا أستطيع",
+          "exampleSentence": "I can’t fly.",
+          "exampleSentenceAr": "لا أستطيع الطيران."
+        },
+        {
+          "id": "a1-supp-06-can-cant-v3",
+          "word": "swim",
+          "phonetic": "/swɪm/",
+          "partOfSpeech": "فعل",
+          "translationAr": "يسبح",
+          "exampleSentence": "He can swim.",
+          "exampleSentenceAr": "هو يستطيع السباحة."
+        },
+        {
+          "id": "a1-supp-06-can-cant-v4",
+          "word": "run",
+          "phonetic": "/rʌn/",
+          "partOfSpeech": "فعل",
+          "translationAr": "يجري",
+          "exampleSentence": "She can run.",
+          "exampleSentenceAr": "هي تستطيع الجري."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "a1-supp-06-can-cant-q1",
+          "type": "multiple_choice",
+          "questionAr": "ما معنى كلمة «can»؟",
+          "options": [
+            "أستطيع",
+            "لا أستطيع",
+            "يسبح",
+            "يجري"
+          ],
+          "correctAnswer": "أستطيع",
+          "explanationAr": "can تعني «أستطيع». مثال: I can swim."
+        },
+        {
+          "id": "a1-supp-06-can-cant-q2",
+          "type": "fill_blank",
+          "questionAr": "أكمل الجملة: I ___ fly.",
+          "questionEn": "I ___ fly.",
+          "options": [],
+          "correctAnswer": "can’t",
+          "explanationAr": "الإجابة الصحيحة: can’t. لا أستطيع الطيران."
+        },
+        {
+          "id": "a1-supp-06-can-cant-q3",
+          "type": "arrange_sentence",
+          "questionAr": "رتّب الكلمات لتكوين جملة صحيحة:",
+          "promptAr": "أستطيع السباحة.",
+          "options": [
+            "I",
+            "can",
+            "swim"
+          ],
+          "correctAnswer": "I can swim.",
+          "explanationAr": "الترتيب الصحيح: I can swim."
+        },
+        {
+          "id": "a1-supp-06-can-cant-q4",
+          "type": "multiple_choice",
+          "questionAr": "أي كلمة تعني «يجري»؟",
+          "options": [
+            "can’t",
+            "swim",
+            "run",
+            "can"
+          ],
+          "correctAnswer": "run",
+          "explanationAr": "run تعني «يجري». مثال: She can run."
+        },
+        {
+          "id": "a1-supp-06-can-cant-q5",
+          "type": "multiple_choice",
+          "questionAr": "ما معنى كلمة «can’t»؟",
+          "options": [
+            "لا أستطيع",
+            "يسبح",
+            "يجري",
+            "أستطيع"
+          ],
+          "correctAnswer": "لا أستطيع",
+          "explanationAr": "can’t تعني «لا أستطيع». مثال: I can’t fly."
+        }
+      ],
+      "likesCount": 301,
+      "sharesCount": 77,
+      "savedCount": 183
+    },
+    {
+      "id": "a1-supp-07-preferences",
+      "slug": "supp-preferences",
+      "title": "Preferences",
+      "titleAr": "التفضيلات (like / love)",
+      "descriptionAr": "I like، I love، I prefer — التفضيلات.",
+      "learningNoteAr": "الهدف: التعبير عن التفضيلات. البنية: I love apples. (أحب التفاح كثيرًا.). I like + noun/verb. I love + noun/verb. I prefer + noun/verb.",
+      "category": "food",
+      "level": "A1",
+      "curriculumStage": 1,
+      "sceneType": "cafe",
+      "characterA": {
+        "id": "leo",
+        "name": "Leo",
+        "nameAr": "ليو",
+        "roleAr": "الكلب الذكي",
+        "avatar": "🐶",
+        "voiceGender": "male",
+        "voicePitch": 0.95,
+        "shirtColor": "#f59e0b",
+        "skinTone": "#f4c28f",
+        "hairColor": "#7c4a1e",
+        "hairStyle": "short",
+        "design": "dog-leo"
+      },
+      "characterB": {
+        "id": "gigi",
+        "name": "Gigi",
+        "nameAr": "جيجي",
+        "roleAr": "الزرافة المبدعة",
+        "avatar": "🦒",
+        "voiceGender": "female",
+        "voicePitch": 1.08,
+        "shirtColor": "#ec4899",
+        "skinTone": "#f9d3a8",
+        "hairColor": "#b45309",
+        "hairStyle": "ponytail",
+        "design": "giraffe-gigi"
+      },
+      "dialogue": [
+        {
+          "id": "a1-supp-07-preferences-s01",
+          "speakerId": "gigi",
+          "textEn": "What do you love?",
+          "textAr": "ماذا تحب كثيرًا؟",
+          "durationSec": 2.2,
+          "emotion": "curious"
+        },
+        {
+          "id": "a1-supp-07-preferences-s02",
+          "speakerId": "leo",
+          "textEn": "I like milk.",
+          "textAr": "أحب الحليب.",
+          "durationSec": 2.2,
+          "emotion": "explaining",
+          "highlightWords": [
+            "like"
+          ]
+        },
+        {
+          "id": "a1-supp-07-preferences-s03",
+          "speakerId": "gigi",
+          "textEn": "I love apples.",
+          "textAr": "أحب التفاح كثيرًا.",
+          "durationSec": 2.2,
+          "emotion": "happy",
+          "highlightWords": [
+            "love"
+          ]
+        },
+        {
+          "id": "a1-supp-07-preferences-s04",
+          "speakerId": "leo",
+          "textEn": "I prefer tea.",
+          "textAr": "أفضّل الشاي.",
+          "durationSec": 2.2,
+          "emotion": "curious",
+          "highlightWords": [
+            "prefer"
+          ]
+        },
+        {
+          "id": "a1-supp-07-preferences-s05",
+          "speakerId": "gigi",
+          "textEn": "Apples are the best.",
+          "textAr": "التفاح هو الأفضل.",
+          "durationSec": 2.2,
+          "emotion": "surprised",
+          "highlightWords": [
+            "best"
+          ]
+        },
+        {
+          "id": "a1-supp-07-preferences-s06",
+          "speakerId": "leo",
+          "textEn": "Like, love, prefer — you can say what you enjoy.",
+          "textAr": "like، love، prefer — تستطيع قول ما تستمتع به.",
+          "durationSec": 3.6,
+          "emotion": "happy"
+        },
+        {
+          "id": "a1-supp-07-preferences-s07",
+          "speakerId": "leo",
+          "textEn": "Can you say like?",
+          "textAr": "هل يمكنك قول يحب؟",
+          "durationSec": 2.2,
+          "emotion": "curious"
+        },
+        {
+          "id": "a1-supp-07-preferences-s08",
+          "speakerId": "gigi",
+          "textEn": "like! I like milk.",
+          "textAr": "يحب! أحب الحليب.",
+          "durationSec": 2.2,
+          "emotion": "happy",
+          "highlightWords": [
+            "like"
+          ]
+        },
+        {
+          "id": "a1-supp-07-preferences-s09",
+          "speakerId": "gigi",
+          "textEn": "Can you say love?",
+          "textAr": "هل يمكنك قول يحب كثيرًا؟",
+          "durationSec": 2.2,
+          "emotion": "curious"
+        },
+        {
+          "id": "a1-supp-07-preferences-s10",
+          "speakerId": "leo",
+          "textEn": "love! I love apples.",
+          "textAr": "يحب كثيرًا! أحب التفاح كثيرًا.",
+          "durationSec": 2.2,
+          "emotion": "happy",
+          "highlightWords": [
+            "love"
+          ]
+        },
+        {
+          "id": "a1-supp-07-preferences-s11",
+          "speakerId": "leo",
+          "textEn": "Can you say prefer?",
+          "textAr": "هل يمكنك قول يفضّل؟",
+          "durationSec": 2.2,
+          "emotion": "curious"
+        },
+        {
+          "id": "a1-supp-07-preferences-s12",
+          "speakerId": "gigi",
+          "textEn": "prefer! I prefer tea.",
+          "textAr": "يفضّل! أفضّل الشاي.",
+          "durationSec": 2.2,
+          "emotion": "happy",
+          "highlightWords": [
+            "prefer"
+          ]
+        },
+        {
+          "id": "a1-supp-07-preferences-s13",
+          "speakerId": "gigi",
+          "textEn": "Can you say best?",
+          "textAr": "هل يمكنك قول الأفضل؟",
+          "durationSec": 2.2,
+          "emotion": "curious"
+        },
+        {
+          "id": "a1-supp-07-preferences-s14",
+          "speakerId": "leo",
+          "textEn": "best! Apples are the best.",
+          "textAr": "الأفضل! التفاح هو الأفضل.",
+          "durationSec": 2.2,
+          "emotion": "happy",
+          "highlightWords": [
+            "best"
+          ]
+        },
+        {
+          "id": "a1-supp-07-preferences-s15",
+          "speakerId": "leo",
+          "textEn": "Can you say like?",
+          "textAr": "هل يمكنك قول يحب؟",
+          "durationSec": 2.2,
+          "emotion": "curious"
+        }
+      ],
+      "vocabulary": [
+        {
+          "id": "a1-supp-07-preferences-v1",
+          "word": "like",
+          "phonetic": "/laɪk/",
+          "partOfSpeech": "فعل",
+          "translationAr": "يحب",
+          "exampleSentence": "I like milk.",
+          "exampleSentenceAr": "أحب الحليب."
+        },
+        {
+          "id": "a1-supp-07-preferences-v2",
+          "word": "love",
+          "phonetic": "/lʌv/",
+          "partOfSpeech": "فعل",
+          "translationAr": "يحب كثيرًا",
+          "exampleSentence": "I love apples.",
+          "exampleSentenceAr": "أحب التفاح كثيرًا."
+        },
+        {
+          "id": "a1-supp-07-preferences-v3",
+          "word": "prefer",
+          "phonetic": "/prɪˈfɜːr/",
+          "partOfSpeech": "فعل",
+          "translationAr": "يفضّل",
+          "exampleSentence": "I prefer tea.",
+          "exampleSentenceAr": "أفضّل الشاي."
+        },
+        {
+          "id": "a1-supp-07-preferences-v4",
+          "word": "best",
+          "phonetic": "/best/",
+          "partOfSpeech": "صفة",
+          "translationAr": "الأفضل",
+          "exampleSentence": "Apples are the best.",
+          "exampleSentenceAr": "التفاح هو الأفضل."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "a1-supp-07-preferences-q1",
+          "type": "multiple_choice",
+          "questionAr": "ما معنى كلمة «like»؟",
+          "options": [
+            "يفضّل",
+            "الأفضل",
+            "يحب",
+            "يحب كثيرًا"
+          ],
+          "correctAnswer": "يحب",
+          "explanationAr": "like تعني «يحب». مثال: I like milk."
+        },
+        {
+          "id": "a1-supp-07-preferences-q2",
+          "type": "fill_blank",
+          "questionAr": "أكمل الجملة: I ___ apples.",
+          "questionEn": "I ___ apples.",
+          "options": [],
+          "correctAnswer": "love",
+          "explanationAr": "الإجابة الصحيحة: love. أحب التفاح كثيرًا."
+        },
+        {
+          "id": "a1-supp-07-preferences-q3",
+          "type": "arrange_sentence",
+          "questionAr": "رتّب الكلمات لتكوين جملة صحيحة:",
+          "promptAr": "أحب التفاح كثيرًا.",
+          "options": [
+            "I",
+            "love",
+            "apples"
+          ],
+          "correctAnswer": "I love apples.",
+          "explanationAr": "الترتيب الصحيح: I love apples."
+        },
+        {
+          "id": "a1-supp-07-preferences-q4",
+          "type": "multiple_choice",
+          "questionAr": "أي كلمة تعني «الأفضل»؟",
+          "options": [
+            "best",
+            "like",
+            "love",
+            "prefer"
+          ],
+          "correctAnswer": "best",
+          "explanationAr": "best تعني «الأفضل». مثال: Apples are the best."
+        },
+        {
+          "id": "a1-supp-07-preferences-q5",
+          "type": "multiple_choice",
+          "questionAr": "ما معنى كلمة «love»؟",
+          "options": [
+            "الأفضل",
+            "يحب",
+            "يحب كثيرًا",
+            "يفضّل"
+          ],
+          "correctAnswer": "يحب كثيرًا",
+          "explanationAr": "love تعني «يحب كثيرًا». مثال: I love apples."
+        }
+      ],
+      "likesCount": 251,
+      "sharesCount": 63,
+      "savedCount": 229
+    },
+    {
+      "id": "a1-supp-08-daily-routine",
+      "slug": "supp-daily-routine",
+      "title": "Daily Routine",
+      "titleAr": "الروتين اليومي",
+      "descriptionAr": "wake up، breakfast، school، sleep — روتين يومي.",
+      "learningNoteAr": "الهدف: وصف الروتين اليومي بجمل متسلسلة. البنية: I wake up and eat breakfast. (أستيقظ وأتناول الفطور.). Subject + verb + and + verb + time. every day.",
+      "category": "grammar",
+      "level": "A1",
+      "curriculumStage": 1,
+      "sceneType": "classroom",
+      "characterA": {
+        "id": "leo",
+        "name": "Leo",
+        "nameAr": "ليو",
+        "roleAr": "الكلب الذكي",
+        "avatar": "🐶",
+        "voiceGender": "male",
+        "voicePitch": 0.95,
+        "shirtColor": "#f59e0b",
+        "skinTone": "#f4c28f",
+        "hairColor": "#7c4a1e",
+        "hairStyle": "short",
+        "design": "dog-leo"
+      },
+      "characterB": {
+        "id": "gigi",
+        "name": "Gigi",
+        "nameAr": "جيجي",
+        "roleAr": "الزرافة المبدعة",
+        "avatar": "🦒",
+        "voiceGender": "female",
+        "voicePitch": 1.08,
+        "shirtColor": "#ec4899",
+        "skinTone": "#f9d3a8",
+        "hairColor": "#b45309",
+        "hairStyle": "ponytail",
+        "design": "giraffe-gigi"
+      },
+      "dialogue": [
+        {
+          "id": "a1-supp-08-daily-routine-s01",
+          "speakerId": "gigi",
+          "textEn": "Let us talk about our day.",
+          "textAr": "لتحدث عن يومنا.",
+          "durationSec": 2.2,
+          "emotion": "curious"
+        },
+        {
+          "id": "a1-supp-08-daily-routine-s02",
+          "speakerId": "leo",
+          "textEn": "I wake up at 7.",
+          "textAr": "أستيقظ في 7.",
+          "durationSec": 2.2,
+          "emotion": "explaining",
+          "highlightWords": [
+            "wake up"
+          ]
+        },
+        {
+          "id": "a1-supp-08-daily-routine-s03",
+          "speakerId": "gigi",
+          "textEn": "I eat breakfast.",
+          "textAr": "آكل الفطور.",
+          "durationSec": 2.2,
+          "emotion": "happy",
+          "highlightWords": [
+            "breakfast"
+          ]
+        },
+        {
+          "id": "a1-supp-08-daily-routine-s04",
+          "speakerId": "leo",
+          "textEn": "I go to school.",
+          "textAr": "أذهب إلى المدرسة.",
+          "durationSec": 2.2,
+          "emotion": "curious",
+          "highlightWords": [
+            "school"
+          ]
+        },
+        {
+          "id": "a1-supp-08-daily-routine-s05",
+          "speakerId": "gigi",
+          "textEn": "I sleep at 9.",
+          "textAr": "أنام في 9.",
+          "durationSec": 2.2,
+          "emotion": "surprised",
+          "highlightWords": [
+            "sleep"
+          ]
+        },
+        {
+          "id": "a1-supp-08-daily-routine-s06",
+          "speakerId": "leo",
+          "textEn": "Wake up, breakfast, school, sleep — your day in English.",
+          "textAr": "wake up، breakfast، school، sleep — يومك بالإنجليزية.",
+          "durationSec": 3.6,
+          "emotion": "happy"
+        },
+        {
+          "id": "a1-supp-08-daily-routine-s07",
+          "speakerId": "leo",
+          "textEn": "Can you say wake up?",
+          "textAr": "هل يمكنك قول يستيقظ؟",
+          "durationSec": 2.2,
+          "emotion": "curious"
+        },
+        {
+          "id": "a1-supp-08-daily-routine-s08",
+          "speakerId": "gigi",
+          "textEn": "wake up! I wake up at 7.",
+          "textAr": "يستيقظ! أستيقظ في 7.",
+          "durationSec": 2.5,
+          "emotion": "happy",
+          "highlightWords": [
+            "wake up"
+          ]
+        },
+        {
+          "id": "a1-supp-08-daily-routine-s09",
+          "speakerId": "gigi",
+          "textEn": "Can you say breakfast?",
+          "textAr": "هل يمكنك قول فطور؟",
+          "durationSec": 2.2,
+          "emotion": "curious"
+        },
+        {
+          "id": "a1-supp-08-daily-routine-s10",
+          "speakerId": "leo",
+          "textEn": "breakfast! I eat breakfast.",
+          "textAr": "فطور! آكل الفطور.",
+          "durationSec": 2.2,
+          "emotion": "happy",
+          "highlightWords": [
+            "breakfast"
+          ]
+        },
+        {
+          "id": "a1-supp-08-daily-routine-s11",
+          "speakerId": "leo",
+          "textEn": "Can you say school?",
+          "textAr": "هل يمكنك قول مدرسة؟",
+          "durationSec": 2.2,
+          "emotion": "curious"
+        },
+        {
+          "id": "a1-supp-08-daily-routine-s12",
+          "speakerId": "gigi",
+          "textEn": "school! I go to school.",
+          "textAr": "مدرسة! أذهب إلى المدرسة.",
+          "durationSec": 2.2,
+          "emotion": "happy",
+          "highlightWords": [
+            "school"
+          ]
+        },
+        {
+          "id": "a1-supp-08-daily-routine-s13",
+          "speakerId": "gigi",
+          "textEn": "Can you say sleep?",
+          "textAr": "هل يمكنك قول ينام؟",
+          "durationSec": 2.2,
+          "emotion": "curious"
+        },
+        {
+          "id": "a1-supp-08-daily-routine-s14",
+          "speakerId": "leo",
+          "textEn": "sleep! I sleep at 9.",
+          "textAr": "ينام! أنام في 9.",
+          "durationSec": 2.2,
+          "emotion": "happy",
+          "highlightWords": [
+            "sleep"
+          ]
+        },
+        {
+          "id": "a1-supp-08-daily-routine-s15",
+          "speakerId": "leo",
+          "textEn": "Can you say wake up?",
+          "textAr": "هل يمكنك قول يستيقظ؟",
+          "durationSec": 2.2,
+          "emotion": "curious"
+        }
+      ],
+      "vocabulary": [
+        {
+          "id": "a1-supp-08-daily-routine-v1",
+          "word": "wake up",
+          "phonetic": "/weɪk ʌp/",
+          "partOfSpeech": "فعل",
+          "translationAr": "يستيقظ",
+          "exampleSentence": "I wake up at 7.",
+          "exampleSentenceAr": "أستيقظ في 7."
+        },
+        {
+          "id": "a1-supp-08-daily-routine-v2",
+          "word": "breakfast",
+          "phonetic": "/ˈbrek.fəst/",
+          "partOfSpeech": "اسم",
+          "translationAr": "فطور",
+          "exampleSentence": "I eat breakfast.",
+          "exampleSentenceAr": "آكل الفطور."
+        },
+        {
+          "id": "a1-supp-08-daily-routine-v3",
+          "word": "school",
+          "phonetic": "/skuːl/",
+          "partOfSpeech": "اسم",
+          "translationAr": "مدرسة",
+          "exampleSentence": "I go to school.",
+          "exampleSentenceAr": "أذهب إلى المدرسة."
+        },
+        {
+          "id": "a1-supp-08-daily-routine-v4",
+          "word": "sleep",
+          "phonetic": "/sliːp/",
+          "partOfSpeech": "فعل",
+          "translationAr": "ينام",
+          "exampleSentence": "I sleep at 9.",
+          "exampleSentenceAr": "أنام في 9."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "a1-supp-08-daily-routine-q1",
+          "type": "multiple_choice",
+          "questionAr": "ما معنى كلمة «wake up»؟",
+          "options": [
+            "فطور",
+            "مدرسة",
+            "ينام",
+            "يستيقظ"
+          ],
+          "correctAnswer": "يستيقظ",
+          "explanationAr": "wake up تعني «يستيقظ». مثال: I wake up at 7."
+        },
+        {
+          "id": "a1-supp-08-daily-routine-q2",
+          "type": "fill_blank",
+          "questionAr": "أكمل الجملة: I eat ___.",
+          "questionEn": "I eat ___.",
+          "options": [],
+          "correctAnswer": "breakfast",
+          "explanationAr": "الإجابة الصحيحة: breakfast. آكل الفطور."
+        },
+        {
+          "id": "a1-supp-08-daily-routine-q3",
+          "type": "arrange_sentence",
+          "questionAr": "رتّب الكلمات لتكوين جملة صحيحة:",
+          "promptAr": "أستيقظ وأتناول الفطور.",
+          "options": [
+            "I",
+            "breakfast",
+            "up",
+            "eat",
+            "and",
+            "wake"
+          ],
+          "correctAnswer": "I wake up and eat breakfast.",
+          "explanationAr": "الترتيب الصحيح: I wake up and eat breakfast."
+        },
+        {
+          "id": "a1-supp-08-daily-routine-q4",
+          "type": "multiple_choice",
+          "questionAr": "أي كلمة تعني «ينام»؟",
+          "options": [
+            "wake up",
+            "breakfast",
+            "school",
+            "sleep"
+          ],
+          "correctAnswer": "sleep",
+          "explanationAr": "sleep تعني «ينام». مثال: I sleep at 9."
+        },
+        {
+          "id": "a1-supp-08-daily-routine-q5",
+          "type": "multiple_choice",
+          "questionAr": "ما معنى كلمة «breakfast»؟",
+          "options": [
+            "يستيقظ",
+            "فطور",
+            "مدرسة",
+            "ينام"
+          ],
+          "correctAnswer": "فطور",
+          "explanationAr": "breakfast تعني «فطور». مثال: I eat breakfast."
+        }
+      ],
+      "likesCount": 324,
+      "sharesCount": 78,
+      "savedCount": 214
+    },
+    {
+      "id": "a1-supp-09-review",
+      "slug": "supp-review",
+      "title": "Stage 1 Review",
+      "titleAr": "مراجعة المرحلة 1",
+      "descriptionAr": "مراجعة: تحيات، ألوان، أرقام، عائلة، طعام، طقس، وقت.",
+      "learningNoteAr": "الهدف: مراجعة مفردات وقواعد المرحلة 1 في جمل بسيطة. البنية: I like apples and I am happy. (أحب التفاح وأنا سعيد.). اجمع كلمات من دروس سابقة في جملة واحدة.",
+      "category": "greetings",
+      "level": "A1",
+      "curriculumStage": 1,
+      "sceneType": "classroom",
+      "characterA": {
+        "id": "leo",
+        "name": "Leo",
+        "nameAr": "ليو",
+        "roleAr": "الكلب الذكي",
+        "avatar": "🐶",
+        "voiceGender": "male",
+        "voicePitch": 0.95,
+        "shirtColor": "#f59e0b",
+        "skinTone": "#f4c28f",
+        "hairColor": "#7c4a1e",
+        "hairStyle": "short",
+        "design": "dog-leo"
+      },
+      "characterB": {
+        "id": "gigi",
+        "name": "Gigi",
+        "nameAr": "جيجي",
+        "roleAr": "الزرافة المبدعة",
+        "avatar": "🦒",
+        "voiceGender": "female",
+        "voicePitch": 1.08,
+        "shirtColor": "#ec4899",
+        "skinTone": "#f9d3a8",
+        "hairColor": "#b45309",
+        "hairStyle": "ponytail",
+        "design": "giraffe-gigi"
+      },
+      "dialogue": [
+        {
+          "id": "a1-supp-09-review-s01",
+          "speakerId": "gigi",
+          "textEn": "Let us review everything we learned.",
+          "textAr": "لنجع ما تعلّمناه.",
+          "durationSec": 2.2,
+          "emotion": "curious"
+        },
+        {
+          "id": "a1-supp-09-review-s02",
+          "speakerId": "leo",
+          "textEn": "Hello! How are you?",
+          "textAr": "مرحبًا! كيف حالك؟",
+          "durationSec": 2.2,
+          "emotion": "explaining",
+          "highlightWords": [
+            "hello"
+          ]
+        },
+        {
+          "id": "a1-supp-09-review-s03",
+          "speakerId": "gigi",
+          "textEn": "I like apples.",
+          "textAr": "أحب التفاح.",
+          "durationSec": 2.2,
+          "emotion": "happy",
+          "highlightWords": [
+            "apple"
+          ]
+        },
+        {
+          "id": "a1-supp-09-review-s04",
+          "speakerId": "leo",
+          "textEn": "I am happy.",
+          "textAr": "أنا سعيد.",
+          "durationSec": 2.2,
+          "emotion": "curious",
+          "highlightWords": [
+            "happy"
+          ]
+        },
+        {
+          "id": "a1-supp-09-review-s05",
+          "speakerId": "gigi",
+          "textEn": "What time is it?",
+          "textAr": "ما الوقت؟",
+          "durationSec": 2.2,
+          "emotion": "surprised",
+          "highlightWords": [
+            "time"
+          ]
+        },
+        {
+          "id": "a1-supp-09-review-s06",
+          "speakerId": "leo",
+          "textEn": "You did it! Stage 1 is complete.",
+          "textAr": "نجحت! اكتملت المرحلة 1.",
+          "durationSec": 2.5,
+          "emotion": "happy"
+        },
+        {
+          "id": "a1-supp-09-review-s07",
+          "speakerId": "leo",
+          "textEn": "Can you say hello?",
+          "textAr": "هل يمكنك قول مرحبًا؟",
+          "durationSec": 2.2,
+          "emotion": "curious"
+        },
+        {
+          "id": "a1-supp-09-review-s08",
+          "speakerId": "gigi",
+          "textEn": "hello! Hello! How are you?",
+          "textAr": "مرحبًا! مرحبًا! كيف حالك؟",
+          "durationSec": 2.2,
+          "emotion": "happy",
+          "highlightWords": [
+            "hello"
+          ]
+        },
+        {
+          "id": "a1-supp-09-review-s09",
+          "speakerId": "gigi",
+          "textEn": "Can you say apple?",
+          "textAr": "هل يمكنك قول تفاحة؟",
+          "durationSec": 2.2,
+          "emotion": "curious"
+        },
+        {
+          "id": "a1-supp-09-review-s10",
+          "speakerId": "leo",
+          "textEn": "apple! I like apples.",
+          "textAr": "تفاحة! أحب التفاح.",
+          "durationSec": 2.2,
+          "emotion": "happy",
+          "highlightWords": [
+            "apple"
+          ]
+        },
+        {
+          "id": "a1-supp-09-review-s11",
+          "speakerId": "leo",
+          "textEn": "Can you say happy?",
+          "textAr": "هل يمكنك قول سعيد؟",
+          "durationSec": 2.2,
+          "emotion": "curious"
+        },
+        {
+          "id": "a1-supp-09-review-s12",
+          "speakerId": "gigi",
+          "textEn": "happy! I am happy.",
+          "textAr": "سعيد! أنا سعيد.",
+          "durationSec": 2.2,
+          "emotion": "happy",
+          "highlightWords": [
+            "happy"
+          ]
+        },
+        {
+          "id": "a1-supp-09-review-s13",
+          "speakerId": "gigi",
+          "textEn": "Can you say time?",
+          "textAr": "هل يمكنك قول وقت؟",
+          "durationSec": 2.2,
+          "emotion": "curious"
+        },
+        {
+          "id": "a1-supp-09-review-s14",
+          "speakerId": "leo",
+          "textEn": "time! What time is it?",
+          "textAr": "وقت! ما الوقت؟",
+          "durationSec": 2.2,
+          "emotion": "happy",
+          "highlightWords": [
+            "time"
+          ]
+        },
+        {
+          "id": "a1-supp-09-review-s15",
+          "speakerId": "leo",
+          "textEn": "Can you say hello?",
+          "textAr": "هل يمكنك قول مرحبًا؟",
+          "durationSec": 2.2,
+          "emotion": "curious"
+        }
+      ],
+      "vocabulary": [
+        {
+          "id": "a1-supp-09-review-v1",
+          "word": "hello",
+          "phonetic": "/həˈləʊ/",
+          "partOfSpeech": "تعبير",
+          "translationAr": "مرحبًا",
+          "exampleSentence": "Hello! How are you?",
+          "exampleSentenceAr": "مرحبًا! كيف حالك؟"
+        },
+        {
+          "id": "a1-supp-09-review-v2",
+          "word": "apple",
+          "phonetic": "/ˈæp.əl/",
+          "partOfSpeech": "اسم",
+          "translationAr": "تفاحة",
+          "exampleSentence": "I like apples.",
+          "exampleSentenceAr": "أحب التفاح."
+        },
+        {
+          "id": "a1-supp-09-review-v3",
+          "word": "happy",
+          "phonetic": "/ˈhæp.i/",
+          "partOfSpeech": "صفة",
+          "translationAr": "سعيد",
+          "exampleSentence": "I am happy.",
+          "exampleSentenceAr": "أنا سعيد."
+        },
+        {
+          "id": "a1-supp-09-review-v4",
+          "word": "time",
+          "phonetic": "/taɪm/",
+          "partOfSpeech": "اسم",
+          "translationAr": "وقت",
+          "exampleSentence": "What time is it?",
+          "exampleSentenceAr": "ما الوقت؟"
+        }
+      ],
+      "quiz": [
+        {
+          "id": "a1-supp-09-review-q1",
+          "type": "multiple_choice",
+          "questionAr": "ما معنى كلمة «hello»؟",
+          "options": [
+            "مرحبًا",
+            "تفاحة",
+            "سعيد",
+            "وقت"
+          ],
+          "correctAnswer": "مرحبًا",
+          "explanationAr": "hello تعني «مرحبًا». مثال: Hello! How are you?"
+        },
+        {
+          "id": "a1-supp-09-review-q2",
+          "type": "fill_blank",
+          "questionAr": "أكمل الجملة: I like ___s.",
+          "questionEn": "I like ___s.",
+          "options": [],
+          "correctAnswer": "apple",
+          "explanationAr": "الإجابة الصحيحة: apple. أحب التفاح."
+        },
+        {
+          "id": "a1-supp-09-review-q3",
+          "type": "arrange_sentence",
+          "questionAr": "رتّب الكلمات لتكوين جملة صحيحة:",
+          "promptAr": "أحب التفاح وأنا سعيد.",
+          "options": [
+            "apples",
+            "like",
+            "I",
+            "am",
+            "I",
+            "and",
+            "happy"
+          ],
+          "correctAnswer": "I like apples and I am happy.",
+          "explanationAr": "الترتيب الصحيح: I like apples and I am happy."
+        },
+        {
+          "id": "a1-supp-09-review-q4",
+          "type": "multiple_choice",
+          "questionAr": "أي كلمة تعني «وقت»؟",
+          "options": [
+            "apple",
+            "happy",
+            "time",
+            "hello"
+          ],
+          "correctAnswer": "time",
+          "explanationAr": "time تعني «وقت». مثال: What time is it?"
+        },
+        {
+          "id": "a1-supp-09-review-q5",
+          "type": "multiple_choice",
+          "questionAr": "ما معنى كلمة «apple»؟",
+          "options": [
+            "تفاحة",
+            "سعيد",
+            "وقت",
+            "مرحبًا"
+          ],
+          "correctAnswer": "تفاحة",
+          "explanationAr": "apple تعني «تفاحة». مثال: I like apples."
+        }
+      ],
+      "likesCount": 329,
+      "sharesCount": 65,
+      "savedCount": 155
+    },
+    {
       "id": "a2-l1-routine",
       "slug": "daily-routine-present-simple",
       "title": "Daily Routine & Present Simple",

@@ -3,6 +3,7 @@ import { LEVEL_CHARACTERS } from './curriculumContent';
 import { buildExpansionLesson } from './expansion/buildExpansionLesson';
 import { STAGE_1C_LESSONS } from './expansion/stage1c';
 import { STAGE_1D_LESSONS } from './expansion/stage1d';
+import { STAGE_1E_LESSONS } from './expansion/stage1e';
 
 /**
  * Stage 1 (المرحلة الأولى) — the primary-school foundations track.
@@ -24,5 +25,6 @@ export async function loadStageLessons(): Promise<Lesson[]> {
   return [
     ...STAGE_1C_LESSONS,
     ...STAGE_1D_LESSONS,
+    ...STAGE_1E_LESSONS,
   ].map((spec) => buildExpansionLesson(spec, LEVEL_CHARACTERS[1]));
 }
