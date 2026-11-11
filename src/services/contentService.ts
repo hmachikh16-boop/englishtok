@@ -2,16 +2,16 @@ import { Capacitor } from '@capacitor/core';
 import type { Lesson } from '../types';
 
 const CONTENT_CACHE_KEYS = {
-  en: 'englishtok_learning_path_content_v9',
-  fr: 'englishtok_learning_path_content_fr_v2',
+  en: 'englishtok_learning_path_content_v10',
+  fr: 'englishtok_learning_path_content_fr_v3',
 } as const;
 const CONTENT_VERSION_KEYS = {
-  en: 'englishtok_learning_path_version_en_v2',
-  fr: 'englishtok_learning_path_version_fr_v2',
+  en: 'englishtok_learning_path_version_en_v3',
+  fr: 'englishtok_learning_path_version_fr_v3',
 } as const;
 const CONTENT_LAST_CHECK_KEYS = {
-  en: 'englishtok_learning_path_checked_en_v1',
-  fr: 'englishtok_learning_path_checked_fr_v1',
+  en: 'englishtok_learning_path_checked_en_v2',
+  fr: 'englishtok_learning_path_checked_fr_v2',
 } as const;
 const GITHUB_REPOSITORY = import.meta.env.VITE_GITHUB_REPOSITORY;
 const CONTENT_REMOTE_BASE = (
