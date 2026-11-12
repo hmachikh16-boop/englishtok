@@ -66,7 +66,7 @@ const HANDLE = (process.env.YOUTUBE_CHANNEL_HANDLE || 'lingogold')
 const CHANNEL_ID = (process.env.YOUTUBE_CHANNEL_ID || DEFAULT_CHANNEL_ID).trim();
 const API_KEY = (process.env.YOUTUBE_API_KEY || '').trim();
 const CACHE_TTL_MS = 5 * 60 * 1000;
-const MAX_VIDEOS = 24;
+const MAX_VIDEOS = 500;
 const USER_AGENT =
   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36';
 
@@ -296,8 +296,8 @@ const scrape = async (): Promise<YoutubePayload> => {
   if (!shortsHtml && !videosHtml && !aboutHtml) {
     throw new Error('تعذر الوصول إلى صفحات قناة يوتيوب.');
   }
-  const shorts = parseShorts(extractInitialData(shortsHtml)).slice(0, MAX_VIDEOS);
-  const videos = parseVideos(extractInitialData(videosHtml)).slice(0, MAX_VIDEOS);
+  const shorts = parseShorts(extractInitialData(shortsHtml));
+  const videos = parseVideos(extractInitialData(videosHtml));
   const about = parseAbout(aboutHtml);
   const seen = new Set(shorts.map((item) => item.id));
   const combined = [...shorts, ...videos.filter((item) => !seen.has(item.id))];
@@ -339,39 +339,57 @@ const fetchApi = async (): Promise<YoutubePayload> => {
   };
   const channel = channelPayload.items?.[0];
   const uploads = CHANNEL_ID.startsWith('UC') ? `UU${CHANNEL_ID.slice(2)}` : CHANNEL_ID;
-  const playlistResponse = await fetch(
-    `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet,contentDetails&playlistId=${encodeURIComponent(uploads)}&maxResults=${MAX_VIDEOS}&key=${encodeURIComponent(API_KEY)}`,
-    { cache: 'no-store', signal: AbortSignal.timeout(8000) },
+  // Paginate through the whole uploads playlist so every video is returned.
+  const collected: Array<{ id: string; title: string; published: string }> = [];
+  let pageToken = '';
+  do {
+    const playlistResponse = await fetch(
+      `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet,contentDetails&playlistId=${encodeURIComponent(uploads)}&maxResults=50${pageToken ? `&pageToken=${encodeURIComponent(pageToken)}` : ''}&key=${encodeURIComponent(API_KEY)}`,
+      { cache: 'no-store', signal: AbortSignal.timeout(8000) },
+    );
+    if (!playlistResponse.ok) throw new Error(`YouTube Data API ${playlistResponse.status}`);
+    const playlistPayload = (await playlistResponse.json()) as {
+      items?: Array<{
+        snippet?: { title?: string; publishedAt?: string };
+        contentDetails?: { videoId?: string };
+      }>;
+      nextPageToken?: string;
+    };
+    const pageEntries = (playlistPayload.items ?? [])
+      .map((item) => ({
+        id: item.contentDetails?.videoId ?? '',
+        title: item.snippet?.title ?? '',
+        published: item.snippet?.publishedAt ?? '',
+      }))
+      .filter((item) => /^[\w-]{11}$/.test(item.id));
+    collected.push(...pageEntries);
+    pageToken = playlistPayload.nextPageToken ?? '';
+    if (collected.length >= MAX_VIDEOS) break;
+  } while (pageToken);
+  const entries = collected.slice(0, MAX_VIDEOS);
+  // Fetch details in batches of 50 (API limit per request).
+  const detailChunks: Array<Array<{ id: string; title: string; published: string }>> = [];
+  for (let i = 0; i < entries.length; i += 50) detailChunks.push(entries.slice(i, i + 50));
+  const detailMaps = await Promise.all(
+    detailChunks.map(async (chunk) => {
+      if (chunk.length === 0) return new Map<string, { id?: string; contentDetails?: { duration?: string }; statistics?: { viewCount?: string } }>();
+      const detailsResponse = await fetch(
+        `https://www.googleapis.com/youtube/v3/videos?part=contentDetails,statistics&id=${chunk.map((item) => item.id).join(',')}&key=${encodeURIComponent(API_KEY)}`,
+        { cache: 'no-store', signal: AbortSignal.timeout(8000) },
+      );
+      if (!detailsResponse.ok) throw new Error(`YouTube Data API ${detailsResponse.status}`);
+      const detailsPayload = (await detailsResponse.json()) as {
+        items?: Array<{
+          id?: string;
+          contentDetails?: { duration?: string };
+          statistics?: { viewCount?: string };
+        }>;
+      };
+      return new Map((detailsPayload.items ?? []).map((item) => [item.id ?? '', item] as const));
+    }),
   );
-  if (!playlistResponse.ok) throw new Error(`YouTube Data API ${playlistResponse.status}`);
-  const playlistPayload = (await playlistResponse.json()) as {
-    items?: Array<{
-      snippet?: { title?: string; publishedAt?: string };
-      contentDetails?: { videoId?: string };
-    }>;
-  };
-  const entries = (playlistPayload.items ?? [])
-    .map((item) => ({
-      id: item.contentDetails?.videoId ?? '',
-      title: item.snippet?.title ?? '',
-      published: item.snippet?.publishedAt ?? '',
-    }))
-    .filter((item) => /^[\w-]{11}$/.test(item.id));
-  const detailsResponse = await fetch(
-    `https://www.googleapis.com/youtube/v3/videos?part=contentDetails,statistics&id=${entries.map((item) => item.id).join(',')}&key=${encodeURIComponent(API_KEY)}`,
-    { cache: 'no-store', signal: AbortSignal.timeout(8000) },
-  );
-  if (!detailsResponse.ok) throw new Error(`YouTube Data API ${detailsResponse.status}`);
-  const detailsPayload = (await detailsResponse.json()) as {
-    items?: Array<{
-      id?: string;
-      contentDetails?: { duration?: string };
-      statistics?: { viewCount?: string };
-    }>;
-  };
-  const details = new Map(
-    (detailsPayload.items ?? []).map((item) => [item.id ?? '', item] as const),
-  );
+  const details = new Map<string, { id?: string; contentDetails?: { duration?: string }; statistics?: { viewCount?: string } }>();
+  for (const m of detailMaps) for (const [k, v] of m) details.set(k, v);
   const videos: YoutubeVideo[] = entries.map((entry) => {
     const detail = details.get(entry.id);
     const duration = detail?.contentDetails?.duration ?? '';
