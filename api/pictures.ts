@@ -105,7 +105,7 @@ export default async function handler(request: any, response: any) {
     const base64 = match[2];
     const ext = mime.split('/')[1]?.replace('jpeg', 'jpg') || 'png';
     const buffer = Buffer.from(base64, 'base64');
-    if (buffer.length < 100 || buffer.length > 4_500_000) {
+    if (buffer.length < 10 || buffer.length > 4_500_000) {
       response.status(413).json({ error: 'حجم الصورة يجب أن يكون بين 100 بايت و 4.5 MB.' });
       return;
     }
