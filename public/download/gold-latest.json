@@ -1,11 +1,11 @@
 {
-    "version":  "1.1.71",
+    "version":  "1.1.72",
     "packageId":  "com.englishtok.gold",
-    "apkUrl":  "/lin-go-gold-1.1.71.apk",
-    "sha256":  "C951F8FB75BAB55D5502A957AFF7A210771852C242116927672D037C81A738D2",
-    "size":  91161875,
+    "apkUrl":  "/lin-go-gold-1.1.72.apk",
+    "sha256":  "7A7E52082A1248A14EB7FC82DC4361BE82D98A5194BB1962279F674C3C940E52",
+    "size":  91168021,
     "minimumAndroidSdk":  24,
-    "notes":  "تحديث Gold 1.1.71: تمرين تلوين تفاعلي في وحدة الألوان (اختر اللون ثم اضغط على الجزء ليُلوَّن فورًا بدل السحب) + إصلاح تمرير دروس الصف الأول + بدء كل درس من الأعلى.",
-    "releaseUrl":  "https://github.com/hmachikh16-boop/englishtok/releases/tag/gold-v1.1.71",
-    "publishedAt":  "2026-11-12T13:53:42.000Z"
+    "notes":  "تحديث Gold 1.1.72: نافذة «المجموعة» (صور تعليمية) بزر عائم وتمرير عمودي مثل Reels + رفع صور من لوحة التحكم + إصلاحات الصف الأول والتلوين.",
+    "releaseUrl":  "https://github.com/hmachikh16-boop/englishtok/releases/tag/gold-v1.1.72",
+    "publishedAt":  "2026-11-12T14:29:21.000Z"
 }
