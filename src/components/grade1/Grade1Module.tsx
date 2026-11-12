@@ -29,6 +29,7 @@ import './grade1.css';
  */
 export const Grade1Module: React.FC = () => {
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const scrollRef = useRef<HTMLDivElement | null>(null);
   const selected = useMemo(
     () => GRADE1_LESSONS.find((lesson) => lesson.id === selectedId) ?? null,
     [selectedId],
@@ -39,18 +40,27 @@ export const Grade1Module: React.FC = () => {
     speechService.playPop();
   };
 
+  // Start every lesson (and the lesson list) from the top. The module lives
+  // inside a non-scrolling flex shell, so this element is its own scroller.
+  useEffect(() => {
+    scrollRef.current?.scrollTo({ top: 0, behavior: 'auto' });
+  }, [selectedId]);
+
   if (selected) {
     return (
-      <Grade1LessonView
-        lesson={selected}
-        onBack={() => setSelectedId(null)}
-        onNavigate={(id) => setSelectedId(id)}
-      />
+      <div className="g1-scroll" ref={scrollRef}>
+        <Grade1LessonView
+          lesson={selected}
+          onBack={() => setSelectedId(null)}
+          onNavigate={(id) => setSelectedId(id)}
+        />
+      </div>
     );
   }
 
   return (
-    <div className="g1-shell" dir="rtl">
+    <div className="g1-scroll" ref={scrollRef}>
+      <div className="g1-shell" dir="rtl">
       <header className="g1-hero">
         <div className="g1-hero-sky" aria-hidden="true">
           <span className="g1-sun"><Sun /></span>
@@ -101,6 +111,7 @@ export const Grade1Module: React.FC = () => {
           </section>
         );
       })}
+      </div>
     </div>
   );
 };

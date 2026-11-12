@@ -2,6 +2,20 @@
 /* Grade 1 module — pastel workbook theme                              */
 /* ------------------------------------------------------------------ */
 
+/* The app shell is intentionally non-scrolling (overflow: hidden). This
+   wrapper becomes the module's own vertical scroller, so phones and tablets
+   can pan the lesson list and each lesson smoothly. */
+.g1-scroll {
+  flex: 1 1 0%;
+  min-height: 0;
+  width: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
+}
+
 .g1-shell {
   --g1-pink: #ffd6e7;
   --g1-blue: #d6ecff;
@@ -15,6 +29,7 @@
   padding: 16px 14px 120px;
   color: var(--g1-ink);
   font-family: 'Nunito', 'Segoe UI', 'Tahoma', sans-serif;
+  -webkit-tap-highlight-color: transparent;
 }
 
 /* ---------- Hero ---------- */
@@ -211,7 +226,13 @@
 .g1-lesson-card:nth-child(4n) { background: linear-gradient(135deg, #dcf9e2, #c9f3d3); }
 
 .g1-lesson-card:active { transform: scale(0.96); }
-.g1-lesson-card:hover { transform: translateY(-2px); box-shadow: 0 8px 0 rgb(36 50 74 / 10%); }
+
+@media (hover: hover) {
+  .g1-lesson-card:hover { transform: translateY(-2px); box-shadow: 0 8px 0 rgb(36 50 74 / 10%); }
+}
+
+/* Keep taps snappy and avoid the 300 ms double-tap zoom delay on the web. */
+.g1-shell button { touch-action: manipulation; }
 
 .g1-lesson-emoji {
   display: grid;
