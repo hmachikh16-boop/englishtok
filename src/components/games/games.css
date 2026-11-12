@@ -2005,3 +2005,91 @@
     justify-content: center;
   }
 }
+
+/* ---------- Smart Match game ---------- */
+.gg-smart-timer {
+  position: relative;
+  height: 12px;
+  margin: 4px 0 10px;
+  border-radius: 999px;
+  background: rgb(124 58 237 / 12%);
+  overflow: hidden;
+}
+
+.gg-smart-timer-fill {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #34d399, #22d3ee, #a78bfa);
+  transition: width 900ms linear;
+}
+
+.gg-smart-hud {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 12px;
+  padding: 8px 12px;
+  border-radius: 16px;
+  background: #f5f0ff;
+  color: #5b21b6;
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.gg-smart-hud span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.gg-smart-hud svg {
+  width: 16px;
+  height: 16px;
+}
+
+.gg-smart-hud-lives {
+  letter-spacing: 2px;
+  font-size: 15px;
+}
+
+.gg-smart-success,
+.gg-smart-error {
+  margin: 14px 0 0;
+  padding: 10px 14px;
+  border-radius: 14px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 1000;
+  animation: gg-smart-pop 220ms ease;
+}
+
+.gg-smart-success {
+  background: #ecfdf5;
+  color: #047857;
+  border: 2px solid #34d399;
+}
+
+.gg-smart-error {
+  background: #fff1f2;
+  color: #be123c;
+  border: 2px solid #fb7185;
+}
+
+.gg-option.is-shake {
+  animation: gg-smart-shake 420ms ease;
+}
+
+@keyframes gg-smart-shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-8px); }
+  40% { transform: translateX(8px); }
+  60% { transform: translateX(-6px); }
+  80% { transform: translateX(4px); }
+}
+
+@keyframes gg-smart-pop {
+  0% { transform: scale(0.92); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}

@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Check, HelpCircle, RotateCcw, X } from 'lucide-react';
+import { Check, HelpCircle, RotateCcw, Star, Timer, X } from 'lucide-react';
 import type { Lesson, UserProfile } from '../../types';
 import { buildGamePuzzles } from '../../services/gamePuzzles';
 import { speechService } from '../../services/speechService';
@@ -166,10 +166,33 @@ export const SmartMatchGame: React.FC<SmartMatchGameProps> = ({ lessons, userPro
         accent="violet"
         footerNote="الربط الذكي يدرّب التصنيف والانتباه. 20 ثانية لكل سؤال."
       >
+        {/* Timer + lives + score HUD, fixed at the top of the play area. */}
+        <div
+          className="gg-smart-timer"
+          role="timer"
+          aria-label={`الوقت المتبقي ${timeLeft} ثانية`}
+        >
+          <span
+            className="gg-smart-timer-fill"
+            style={{ width: `${Math.max(0, (timeLeft / TIME_PER_QUESTION) * 100)}%` }}
+          />
+        </div>
+        <div className="gg-smart-hud">
+          <span className="gg-smart-hud-timer">
+            <Timer aria-hidden="true" /> {timeLeft}s
+          </span>
+          <span className="gg-smart-hud-lives" aria-label={`المحاولات ${lives}`}>
+            {'❤️'.repeat(Math.max(0, lives)) || '—'}
+          </span>
+          <span className="gg-smart-hud-score">
+            <Star aria-hidden="true" /> {score}
+          </span>
+        </div>
+
         <section className="gg-panel">
           <div className="gg-question">
-            <span className="gg-question-kicker">الوقت المتبقي: {timeLeft}s</span>
-            <p className="gg-translation">المحاولات: {lives} · النقاط: {score}</p>
+            <span className="gg-question-kicker">اختر الكلمة الدخيلة</span>
+            <p className="gg-translation">ثلاث كلمات من فئة واحدة، وواحدة من فئة مختلفة.</p>
           </div>
           <div className="gg-options" role="group" aria-label="اختر الدخيلة">
             {current.items.map((item, index) => {
