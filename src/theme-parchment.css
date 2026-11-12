@@ -1597,22 +1597,7 @@ html .gold-result-confetti span:nth-child(4n) { background: var(--parchment-oxbl
 html .gold-result-confetti span:nth-child(5n) { background: #e8cfa0 !important; }
 
 /* ---------- Reels overlay ---------- */
-html .reels-overlay {
-  background:
-    radial-gradient(circle at 50% 0%, rgba(184, 134, 43, 0.16), transparent 45%),
-    rgba(44, 33, 20, 0.8) !important;
-}
-html .reels-shell {
-  border-color: var(--parchment-brass) !important;
-  border-radius: 16px 26px 18px 24px !important;
-  color: var(--parchment-ink) !important;
-  background:
-    linear-gradient(160deg, rgba(255, 250, 238, 0.74), rgba(232, 207, 160, 0.46)),
-    var(--parchment-sheet),
-    var(--parchment-paper) !important;
-  background-size: auto, cover, auto !important;
-  box-shadow: 0 5px 0 var(--parchment-brass-deep), 0 24px 60px rgba(43, 33, 24, 0.35) !important;
-}
+/* (Intentionally no override: reels.css owns the full-screen immersive look.) */
 html .reels-close {
   color: var(--parchment-soft) !important;
   background: var(--parchment-light) !important;
