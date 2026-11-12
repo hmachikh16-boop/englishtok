@@ -11,8 +11,9 @@
  *  - trace    → trace the dotted word with a finger
  *  - count    → count the objects and write the number
  *  - complete → fill the missing letter (b_g → bag)
+ *  - color    → pick a colour, then tap a region to fill it (Colours unit)
  */
-export type Grade1Activity = 'match' | 'circle' | 'trace' | 'count' | 'complete';
+export type Grade1Activity = 'match' | 'circle' | 'trace' | 'count' | 'complete' | 'color';
 
 export interface Grade1Word {
   en: string;
@@ -171,7 +172,8 @@ const buildLessons = (): Grade1Lesson[] => {
   for (const unit of UNITS) {
     for (let index = 0; index < 10; index += 1) {
       const target = unit.words[index % unit.words.length];
-      const activity = ACTIVITY_CYCLE[index % ACTIVITY_CYCLE.length];
+      const activity: Grade1Activity =
+        unit.unit === 2 ? 'color' : ACTIVITY_CYCLE[index % ACTIVITY_CYCLE.length];
       const lesson: Grade1Lesson = {
         id: `g1-u${unit.unit}-l${String(index + 1).padStart(2, '0')}`,
         unit: unit.unit,
@@ -219,6 +221,8 @@ export const grade1ActivityLabel = (activity: Grade1Activity): string => {
       return 'العد';
     case 'complete':
       return 'أكمل الحرف';
+    case 'color':
+      return 'التلوين';
     default:
       return activity;
   }

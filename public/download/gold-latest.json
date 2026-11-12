@@ -1,11 +1,11 @@
 {
-    "version":  "1.1.69",
+    "version":  "1.1.71",
     "packageId":  "com.englishtok.gold",
-    "apkUrl":  "/lin-go-gold-1.1.69.apk",
-    "sha256":  "95BD8B2ADBFDB37A6B6A59C8A62D6E56295C5F6F8883B553154D7BB03BD11E69",
-    "size":  91159951,
+    "apkUrl":  "/lin-go-gold-1.1.71.apk",
+    "sha256":  "C951F8FB75BAB55D5502A957AFF7A210771852C242116927672D037C81A738D2",
+    "size":  91161875,
     "minimumAndroidSdk":  24,
-    "notes":  "تحديث Gold 1.1.69: وحدة الصف الأول كاملة (50 درسًا و5 أنشطة) + لعبة الربط الذكي + ركن ألعاب بشبكة عمودين وبطاقات متدرجة. التحديث يحافظ على تقدمك.",
-    "releaseUrl":  "https://github.com/hmachikh16-boop/englishtok/releases/tag/gold-v1.1.69",
-    "publishedAt":  "2026-11-12T13:31:55.000Z"
+    "notes":  "تحديث Gold 1.1.71: تمرين تلوين تفاعلي في وحدة الألوان (اختر اللون ثم اضغط على الجزء ليُلوَّن فورًا بدل السحب) + إصلاح تمرير دروس الصف الأول + بدء كل درس من الأعلى.",
+    "releaseUrl":  "https://github.com/hmachikh16-boop/englishtok/releases/tag/gold-v1.1.71",
+    "publishedAt":  "2026-11-12T13:53:42.000Z"
 }

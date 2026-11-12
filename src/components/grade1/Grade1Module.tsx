@@ -20,6 +20,33 @@ import {
 import { speechService } from '../../services/speechService';
 import './grade1.css';
 
+/** Worksheet colour names mapped to the actual swatch/fill colours. */
+const COLOR_HEX: Record<string, string> = {
+  red: '#ef4444',
+  blue: '#3b82f6',
+  green: '#22c55e',
+  yellow: '#facc15',
+  brown: '#a16207',
+  black: '#1f2937',
+  white: '#f8fafc',
+  pink: '#ec4899',
+  orange: '#f97316',
+  purple: '#a855f7',
+};
+
+const colorHex = (name: string): string => COLOR_HEX[name] ?? '#cbd5e1';
+
+/** Short haptic tick on devices that expose the Vibration API. */
+const vibrate = (pattern: number | number[]) => {
+  try {
+    if (typeof navigator !== 'undefined' && typeof navigator.vibrate === 'function') {
+      navigator.vibrate(pattern);
+    }
+  } catch {
+    // Ignore devices that block vibration.
+  }
+};
+
 /**
  * Grade 1 module — a pastel, child-friendly English workbook.
  *
@@ -231,6 +258,8 @@ const Activity: React.FC<ActivityProps> = ({ lesson, onSpeak }) => {
       return <CountActivity lesson={lesson} onSpeak={onSpeak} />;
     case 'complete':
       return <CompleteActivity lesson={lesson} onSpeak={onSpeak} />;
+    case 'color':
+      return <ColorActivity lesson={lesson} onSpeak={onSpeak} />;
     default:
       return null;
   }
@@ -359,6 +388,209 @@ const CircleActivity: React.FC<ActivityProps> = ({ lesson, onSpeak }) => {
         })}
       </div>
       {picked === target.en && <p className="g1-success">إجابة صحيحة! 🌟</p>}
+    </div>
+  );
+};
+
+/**
+ * Tap-to-colour worksheet.
+ *
+ * A child picks a colour from the palette, then taps any region of the scene.
+ * The region fills instantly — no dragging, no finger painting. The balloon is
+ * the lesson goal, so the target colour is reinforced without blocking free
+ * colouring of the sky, sun, cloud, rainbow, basket or ground.
+ */
+const ColorRegion: React.FC<{
+  label: string;
+  onPaint: () => void;
+  children: React.ReactNode;
+}> = ({ label, onPaint, children }) => (
+  <g
+    className="g1-color-region"
+    role="button"
+    tabIndex={0}
+    aria-label={label}
+    onClick={onPaint}
+    onKeyDown={(event) => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        onPaint();
+      }
+    }}
+  >
+    {children}
+  </g>
+);
+
+const ColorActivity: React.FC<ActivityProps> = ({ lesson, onSpeak }) => {
+  const palette = lesson.words;
+  const target = palette[0];
+  const targetHex = colorHex(target.en);
+  const [selected, setSelected] = useState<string | null>(null);
+  const [fills, setFills] = useState<Record<string, string>>({});
+  const [hint, setHint] = useState('');
+
+  const fill = (region: string, fallback: string) => fills[region] ?? fallback;
+
+  const chooseColor = (word: Grade1Word) => {
+    setSelected(colorHex(word.en));
+    setHint('');
+    onSpeak(word.en);
+  };
+
+  const paint = (region: string) => {
+    if (!selected) {
+      setHint('اختر لونًا أولًا من اللوحة 🎨');
+      return;
+    }
+    setFills((current) => ({ ...current, [region]: selected }));
+    setHint('');
+    speechService.playPop();
+    vibrate(12);
+    if (region === 'balloon' && selected === targetHex) {
+      speechService.playSuccessChime();
+      vibrate(35);
+    }
+  };
+
+  const targetDone = fills.balloon === targetHex;
+  const coloredCount = Object.keys(fills).length;
+
+  return (
+    <div className="g1-color">
+      <p className="g1-instruction">اختر لونًا من اللوحة، ثم اضغط على أي جزء في الصورة ليُلوَّن فورًا.</p>
+
+      <div className="g1-color-goal">
+        <span>🎯 لوّن البالون باللون</span>
+        <strong>{target.ar}</strong>
+        <span dir="ltr">({target.en})</span>
+      </div>
+
+      <div className="g1-color-stage">
+        <svg
+          viewBox="0 0 320 240"
+          className="g1-color-svg"
+          role="img"
+          aria-label="لوحة تلوين: سماء وشمس وسحابة وقوس قزح وبالون"
+        >
+          <ColorRegion label="السماء" onPaint={() => paint('sky')}>
+            <rect x="0" y="0" width="320" height="240" rx="20" fill={fill('sky', '#ffffff')} />
+          </ColorRegion>
+
+          <ColorRegion label="الشمس" onPaint={() => paint('sun')}>
+            <circle
+              cx="54"
+              cy="52"
+              r="24"
+              fill={fill('sun', '#f8fafc')}
+              stroke="#334155"
+              strokeWidth="3"
+            />
+          </ColorRegion>
+
+          <ColorRegion label="السحابة" onPaint={() => paint('cloud')}>
+            <path
+              d="M205 68c-10 0-18-8-18-18s8-18 18-18c3 0 6 1 8 2 4-10 14-17 25-17 14 0 26 11 27 25 10 1 18 9 18 19 0 11-9 20-20 20h-58z"
+              fill={fill('cloud', '#f8fafc')}
+              stroke="#334155"
+              strokeWidth="3"
+              strokeLinejoin="round"
+            />
+          </ColorRegion>
+
+          <ColorRegion label="قوس القزح الأول" onPaint={() => paint('rainbow1')}>
+            <path
+              d="M40 210 A120 120 0 0 1 280 210 L266 210 A106 106 0 0 0 54 210 Z"
+              fill={fill('rainbow1', '#f1f5f9')}
+              stroke="#cbd5e1"
+              strokeWidth="1.5"
+            />
+          </ColorRegion>
+          <ColorRegion label="قوس القزح الثاني" onPaint={() => paint('rainbow2')}>
+            <path
+              d="M54 210 A106 106 0 0 1 266 210 L252 210 A92 92 0 0 0 68 210 Z"
+              fill={fill('rainbow2', '#f1f5f9')}
+              stroke="#cbd5e1"
+              strokeWidth="1.5"
+            />
+          </ColorRegion>
+          <ColorRegion label="قوس القزح الثالث" onPaint={() => paint('rainbow3')}>
+            <path
+              d="M68 210 A92 92 0 0 1 252 210 L238 210 A78 78 0 0 0 82 210 Z"
+              fill={fill('rainbow3', '#f1f5f9')}
+              stroke="#cbd5e1"
+              strokeWidth="1.5"
+            />
+          </ColorRegion>
+          <ColorRegion label="قوس القزح الرابع" onPaint={() => paint('rainbow4')}>
+            <path
+              d="M82 210 A78 78 0 0 1 238 210 L224 210 A64 64 0 0 0 96 210 Z"
+              fill={fill('rainbow4', '#f1f5f9')}
+              stroke="#cbd5e1"
+              strokeWidth="1.5"
+            />
+          </ColorRegion>
+
+          <ColorRegion label="البالون" onPaint={() => paint('balloon')}>
+            <circle
+              cx="160"
+              cy="170"
+              r="22"
+              fill={fill('balloon', '#f8fafc')}
+              stroke="#334155"
+              strokeWidth="3"
+            />
+            <path d="M157 191h6l-3 7z" fill="#334155" />
+          </ColorRegion>
+
+          <ColorRegion label="سلة البالون" onPaint={() => paint('basket')}>
+            <rect
+              x="149"
+              y="197"
+              width="22"
+              height="14"
+              rx="4"
+              fill={fill('basket', '#f8fafc')}
+              stroke="#334155"
+              strokeWidth="3"
+            />
+          </ColorRegion>
+
+          <ColorRegion label="الأرض" onPaint={() => paint('ground')}>
+            <rect x="0" y="210" width="320" height="30" fill={fill('ground', '#f1f5f9')} />
+          </ColorRegion>
+        </svg>
+      </div>
+
+      {hint && <p className="g1-color-hint">{hint}</p>}
+
+      <div className="g1-color-palette" role="group" aria-label="لوحة الألوان">
+        {palette.map((word) => {
+          const hex = colorHex(word.en);
+          const isSelected = selected === hex;
+          return (
+            <button
+              key={word.en}
+              type="button"
+              className={`g1-color-swatch ${isSelected ? 'is-selected' : ''} ${target.en === word.en ? 'is-target' : ''}`}
+              onClick={() => chooseColor(word)}
+              aria-pressed={isSelected}
+            >
+              <span className="g1-color-dot" style={{ background: hex }} aria-hidden="true" />
+              <span className="g1-color-name">
+                <strong dir="ltr">{word.en}</strong>
+                <small>{word.ar}</small>
+              </span>
+              {target.en === word.en && <Star aria-hidden="true" />}
+            </button>
+          );
+        })}
+      </div>
+
+      {targetDone && <p className="g1-success">أحسنت! لونت البالون باللون {target.ar} 🎈</p>}
+      {!targetDone && coloredCount > 0 && (
+        <p className="g1-color-progress">لونت {coloredCount} أجزاء — جرّب البالون باللون {target.ar}.</p>
+      )}
     </div>
   );
 };
