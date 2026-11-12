@@ -639,6 +639,96 @@
   .g1-color-palette { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 }
 
+/* ---------- Progress & locking ---------- */
+.g1-progress-bar {
+  height: 8px;
+  width: 100%;
+  margin-top: 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.55);
+  overflow: hidden;
+}
+
+.g1-progress-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #22c55e, #16a34a);
+  transition: width 300ms ease;
+}
+
+.g1-unit-badge.is-locked { background: #cbd5e1; color: #475569; }
+.g1-unit-badge.is-done { background: #22c55e; color: #fff; }
+
+.g1-lesson-card.is-locked {
+  opacity: 0.55;
+  cursor: not-allowed;
+  filter: grayscale(0.4);
+}
+.g1-lesson-card.is-locked:active { transform: none; }
+.g1-lesson-card.is-done {
+  border-color: #22c55e;
+  background: linear-gradient(180deg, #f0fdf4, #fff);
+}
+.g1-lesson-card.is-current {
+  border-color: #7c3aed;
+  box-shadow: 0 0 0 3px rgb(124 58 237 / 18%);
+  animation: g1-pulse 1.6s ease-in-out infinite;
+}
+@keyframes g1-pulse {
+  0%, 100% { box-shadow: 0 0 0 3px rgb(124 58 237 / 18%); }
+  50% { box-shadow: 0 0 0 6px rgb(124 58 237 / 10%); }
+}
+
+.g1-lesson-status {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #eef2f7;
+  color: #475569;
+  flex: 0 0 auto;
+}
+.g1-lesson-status svg { width: 14px; height: 14px; }
+.g1-lesson-card.is-done .g1-lesson-status { background: #22c55e; color: #fff; }
+.g1-lesson-card.is-current .g1-lesson-status { background: #7c3aed; color: #fff; }
+.g1-lesson-card.is-locked .g1-lesson-status { background: #cbd5e1; color: #475569; }
+
+.g1-complete-row {
+  display: flex;
+  justify-content: center;
+  margin: 14px 0 6px;
+}
+.g1-complete-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 8px 18px;
+  border: none;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 900;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(22, 163, 74, 0.3);
+}
+.g1-complete-btn:active { transform: scale(0.97); }
+.g1-completed-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 14px;
+  background: #f0fdf4;
+  color: #16a34a;
+  font-size: 14px;
+  font-weight: 900;
+  border: 2px solid #22c55e;
+}
+.g1-completed-chip svg { width: 16px; height: 16px; }
+
 /* ---------- Trace ---------- */
 .g1-trace-stage {
   position: relative;

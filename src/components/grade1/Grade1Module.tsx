@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
   ArrowRight,
   Check,
+  Lock,
   RotateCcw,
   Sparkles,
   Star,
@@ -57,12 +58,52 @@ const vibrate = (pattern: number | number[]) => {
 export const Grade1Module: React.FC = () => {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement | null>(null);
+
+  const [completed, setCompleted] = useState<Set<string>>(() => {
+    try {
+      const raw = localStorage.getItem('g1_completed_v1');
+      return new Set(raw ? (JSON.parse(raw) as string[]) : []);
+    } catch {
+      return new Set();
+    }
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('g1_completed_v1', JSON.stringify([...completed]));
+    } catch {
+      // Ignore storage failures (private mode).
+    }
+  }, [completed]);
+
   const selected = useMemo(
     () => GRADE1_LESSONS.find((lesson) => lesson.id === selectedId) ?? null,
     [selectedId],
   );
 
+  const isCompleted = useCallback((id: string) => completed.has(id), [completed]);
+
+  const isUnlocked = useCallback(
+    (lesson: Grade1Lesson) => {
+      const idx = GRADE1_LESSONS.findIndex((item) => item.id === lesson.id);
+      if (idx <= 0) return true;
+      return completed.has(GRADE1_LESSONS[idx - 1].id);
+    },
+    [completed],
+  );
+
+  const markComplete = useCallback((id: string) => {
+    setCompleted((prev) => {
+      if (prev.has(id)) return prev;
+      const next = new Set(prev);
+      next.add(id);
+      speechService.playSuccessChime();
+      return next;
+    });
+  }, []);
+
   const openLesson = (lesson: Grade1Lesson) => {
+    if (!isUnlocked(lesson)) return;
     setSelectedId(lesson.id);
     speechService.playPop();
   };
@@ -73,13 +114,22 @@ export const Grade1Module: React.FC = () => {
     scrollRef.current?.scrollTo({ top: 0, behavior: 'auto' });
   }, [selectedId]);
 
+  const completedCount = completed.size;
+  const progressPct = Math.round((completedCount / GRADE1_LESSONS.length) * 100);
+
   if (selected) {
     return (
       <div className="g1-scroll" ref={scrollRef}>
         <Grade1LessonView
           lesson={selected}
+          completed={isCompleted(selected.id)}
+          unlocked={isUnlocked(selected)}
           onBack={() => setSelectedId(null)}
-          onNavigate={(id) => setSelectedId(id)}
+          onNavigate={(id) => {
+            const target = GRADE1_LESSONS.find((l) => l.id === id);
+            if (target && isUnlocked(target)) setSelectedId(id);
+          }}
+          onComplete={() => markComplete(selected.id)}
         />
       </div>
     );
@@ -101,39 +151,73 @@ export const Grade1Module: React.FC = () => {
           <p>50 درسًا تفاعليًا: اربط، لوّن، اكتب، عُدّ، وأكمل الحروف.</p>
         </div>
         <div className="g1-hero-stats">
-          <span><strong>{GRADE1_LESSONS.length}</strong> درسًا</span>
+          <span><strong>{completedCount}</strong>/{GRADE1_LESSONS.length} مكتمل</span>
           <span><strong>5</strong> وحدات</span>
-          <span><strong>5</strong> أنشطة</span>
+          <span><strong>{progressPct}%</strong> تقدم</span>
+        </div>
+        <div className="g1-progress-bar" aria-label={`التقدم ${progressPct}%`}>
+          <div className="g1-progress-fill" style={{ width: `${progressPct}%` }} />
         </div>
       </header>
 
       {GRADE1_UNITS.map((unit) => {
         const lessons = GRADE1_LESSONS.filter((lesson) => lesson.unit === unit.unit);
+        const unitUnlocked =
+          unit.unit === 1 ||
+          GRADE1_LESSONS.filter((l) => l.unit === unit.unit - 1).every((l) => completed.has(l.id));
+        const unitCompleted = lessons.every((l) => completed.has(l.id));
+        const unitDoneCount = lessons.filter((l) => completed.has(l.id)).length;
         return (
           <section key={unit.unit} className="g1-unit" aria-labelledby={`g1-unit-${unit.unit}`}>
             <div className="g1-unit-head">
-              <span className="g1-unit-badge">{unit.unit}</span>
+              <span className={`g1-unit-badge ${unitCompleted ? 'is-done' : unitUnlocked ? '' : 'is-locked'}`}>
+                {unitCompleted ? <Check aria-hidden="true" /> : unitUnlocked ? unit.unit : <Lock aria-hidden="true" />}
+              </span>
               <div>
                 <h2 id={`g1-unit-${unit.unit}`}>{unit.unitAr}</h2>
-                <p>{lessons.length} دروس · أنشطة متنوعة</p>
+                <p>
+                  {unitUnlocked
+                    ? `${unitDoneCount}/${lessons.length} مكتمل · أنشطة متنوعة`
+                    : 'أكمل الوحدة السابقة لفتح هذه الوحدة'}
+                </p>
               </div>
             </div>
             <div className="g1-lesson-grid">
-              {lessons.map((lesson, index) => (
-                <button
-                  key={lesson.id}
-                  type="button"
-                  className={`g1-lesson-card ${index % 2 === 0 ? 'is-a' : 'is-b'}`}
-                  onClick={() => openLesson(lesson)}
-                >
-                  <span className="g1-lesson-emoji" aria-hidden="true">{lesson.words[0]?.emoji}</span>
-                  <span className="g1-lesson-card-copy">
-                    <strong>{lesson.topicAr}</strong>
-                    <small>{grade1ActivityLabel(lesson.activity)}</small>
-                  </span>
-                  <span className="g1-lesson-arrow" aria-hidden="true"><ArrowRight /></span>
-                </button>
-              ))}
+              {lessons.map((lesson, index) => {
+                const unlocked = unitUnlocked && isUnlocked(lesson);
+                const done = completed.has(lesson.id);
+                const isCurrent =
+                  !done &&
+                  unlocked &&
+                  (index === 0 || completed.has(lessons[index - 1]?.id ?? ''));
+                return (
+                  <button
+                    key={lesson.id}
+                    type="button"
+                    disabled={!unlocked}
+                    className={`g1-lesson-card ${index % 2 === 0 ? 'is-a' : 'is-b'} ${
+                      done ? 'is-done' : isCurrent ? 'is-current' : unlocked ? '' : 'is-locked'
+                    }`}
+                    onClick={() => openLesson(lesson)}
+                    aria-label={
+                      unlocked
+                        ? `${lesson.topicAr} — ${grade1ActivityLabel(lesson.activity)}`
+                        : `${lesson.topicAr} — مقفل`
+                    }
+                  >
+                    <span className="g1-lesson-emoji" aria-hidden="true">
+                      {unlocked ? lesson.words[0]?.emoji : <Lock />}
+                    </span>
+                    <span className="g1-lesson-card-copy">
+                      <strong>{lesson.topicAr}</strong>
+                      <small>{grade1ActivityLabel(lesson.activity)}</small>
+                    </span>
+                    <span className="g1-lesson-status" aria-hidden="true">
+                      {done ? <Check /> : unlocked ? <ArrowRight /> : <Lock />}
+                    </span>
+                  </button>
+                );
+              })}
             </div>
           </section>
         );
@@ -149,11 +233,14 @@ export const Grade1Module: React.FC = () => {
 
 interface LessonViewProps {
   lesson: Grade1Lesson;
+  completed: boolean;
+  unlocked: boolean;
   onBack: () => void;
   onNavigate: (id: string) => void;
+  onComplete: () => void;
 }
 
-const Grade1LessonView: React.FC<LessonViewProps> = ({ lesson, onBack, onNavigate }) => {
+const Grade1LessonView: React.FC<LessonViewProps> = ({ lesson, completed, onBack, onNavigate, onComplete }) => {
   const index = GRADE1_LESSONS.findIndex((item) => item.id === lesson.id);
   const previous = index > 0 ? GRADE1_LESSONS[index - 1] : null;
   const next = index < GRADE1_LESSONS.length - 1 ? GRADE1_LESSONS[index + 1] : null;
@@ -209,8 +296,18 @@ const Grade1LessonView: React.FC<LessonViewProps> = ({ lesson, onBack, onNavigat
             <RotateCcw aria-hidden="true" /> إعادة
           </button>
         </div>
-        <Activity key={`${lesson.id}-${activityKey}`} lesson={lesson} onSpeak={speak} />
+        <Activity key={`${lesson.id}-${activityKey}`} lesson={lesson} onSpeak={speak} onComplete={onComplete} />
       </section>
+
+      <div className="g1-complete-row">
+        {completed ? (
+          <span className="g1-completed-chip"><Check aria-hidden="true" /> تم إكمال هذا الدرس</span>
+        ) : (
+          <button type="button" className="g1-complete-btn" onClick={onComplete}>
+            <Check aria-hidden="true" /> أكملت الدرس
+          </button>
+        )}
+      </div>
 
       <nav className="g1-lesson-nav" aria-label="التنقل بين الدروس">
         <button
@@ -227,8 +324,9 @@ const Grade1LessonView: React.FC<LessonViewProps> = ({ lesson, onBack, onNavigat
         <button
           type="button"
           className="g1-nav-btn"
-          disabled={!next}
-          onClick={() => next && onNavigate(next.id)}
+          disabled={!next || !completed}
+          onClick={() => next && completed && onNavigate(next.id)}
+          title={!completed ? 'أكمل الدرس أولًا للانتقال للتالي' : ''}
         >
           التالي <ArrowRight aria-hidden="true" className="g1-flip" />
         </button>
@@ -244,29 +342,30 @@ const Grade1LessonView: React.FC<LessonViewProps> = ({ lesson, onBack, onNavigat
 interface ActivityProps {
   lesson: Grade1Lesson;
   onSpeak: (word: string) => void;
+  onComplete: () => void;
 }
 
-const Activity: React.FC<ActivityProps> = ({ lesson, onSpeak }) => {
+const Activity: React.FC<ActivityProps> = ({ lesson, onSpeak, onComplete }) => {
   switch (lesson.activity) {
     case 'match':
-      return <MatchActivity lesson={lesson} onSpeak={onSpeak} />;
+      return <MatchActivity lesson={lesson} onSpeak={onSpeak} onComplete={onComplete} />;
     case 'circle':
-      return <CircleActivity lesson={lesson} onSpeak={onSpeak} />;
+      return <CircleActivity lesson={lesson} onSpeak={onSpeak} onComplete={onComplete} />;
     case 'trace':
-      return <TraceActivity lesson={lesson} onSpeak={onSpeak} />;
+      return <TraceActivity lesson={lesson} onSpeak={onSpeak} onComplete={onComplete} />;
     case 'count':
-      return <CountActivity lesson={lesson} onSpeak={onSpeak} />;
+      return <CountActivity lesson={lesson} onSpeak={onSpeak} onComplete={onComplete} />;
     case 'complete':
-      return <CompleteActivity lesson={lesson} onSpeak={onSpeak} />;
+      return <CompleteActivity lesson={lesson} onSpeak={onSpeak} onComplete={onComplete} />;
     case 'color':
-      return <ColorActivity lesson={lesson} onSpeak={onSpeak} />;
+      return <ColorActivity lesson={lesson} onSpeak={onSpeak} onComplete={onComplete} />;
     default:
       return null;
   }
 };
 
 /** Click a picture, then click its word (or the reverse). */
-const MatchActivity: React.FC<ActivityProps> = ({ lesson, onSpeak }) => {
+const MatchActivity: React.FC<ActivityProps> = ({ lesson, onSpeak, onComplete }) => {
   const pairs = useMemo(
     () => lesson.words.slice(0, 4).map((word) => ({ ...word, id: word.en })),
     [lesson],
@@ -275,6 +374,10 @@ const MatchActivity: React.FC<ActivityProps> = ({ lesson, onSpeak }) => {
   const [selectedPicture, setSelectedPicture] = useState<string | null>(null);
   const [matched, setMatched] = useState<Set<string>>(new Set());
   const [wrong, setWrong] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (pairs.length > 0 && matched.size === pairs.length) onComplete();
+  }, [matched, pairs, onComplete]);
 
   const settle = (word: string, picture: string) => {
     if (word === picture) {
@@ -351,10 +454,14 @@ const MatchActivity: React.FC<ActivityProps> = ({ lesson, onSpeak }) => {
 };
 
 /** Circle the word that names the picture. */
-const CircleActivity: React.FC<ActivityProps> = ({ lesson, onSpeak }) => {
+const CircleActivity: React.FC<ActivityProps> = ({ lesson, onSpeak, onComplete }) => {
   const target = lesson.words[0];
   const options = useMemo(() => lesson.words.slice(0, 3), [lesson]);
   const [picked, setPicked] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (picked === target.en) onComplete();
+  }, [picked, target.en, onComplete]);
 
   const choose = (word: Grade1Word) => {
     setPicked(word.en);
@@ -422,7 +529,7 @@ const ColorRegion: React.FC<{
   </g>
 );
 
-const ColorActivity: React.FC<ActivityProps> = ({ lesson, onSpeak }) => {
+const ColorActivity: React.FC<ActivityProps> = ({ lesson, onSpeak, onComplete }) => {
   const palette = lesson.words;
   const target = palette[0];
   const targetHex = colorHex(target.en);
@@ -455,6 +562,10 @@ const ColorActivity: React.FC<ActivityProps> = ({ lesson, onSpeak }) => {
 
   const targetDone = fills.balloon === targetHex;
   const coloredCount = Object.keys(fills).length;
+
+  useEffect(() => {
+    if (targetDone) onComplete();
+  }, [targetDone, onComplete]);
 
   return (
     <div className="g1-color">
@@ -596,7 +707,7 @@ const ColorActivity: React.FC<ActivityProps> = ({ lesson, onSpeak }) => {
 };
 
 /** Finger tracing over a dotted word. */
-const TraceActivity: React.FC<ActivityProps> = ({ lesson, onSpeak }) => {
+const TraceActivity: React.FC<ActivityProps> = ({ lesson, onSpeak, onComplete }) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const drawing = useRef(false);
   const [hasInk, setHasInk] = useState(false);
@@ -702,7 +813,7 @@ const TraceActivity: React.FC<ActivityProps> = ({ lesson, onSpeak }) => {
 };
 
 /** Count the objects and choose the number. */
-const CountActivity: React.FC<ActivityProps> = ({ lesson, onSpeak }) => {
+const CountActivity: React.FC<ActivityProps> = ({ lesson, onSpeak, onComplete }) => {
   const count = lesson.count ?? 3;
   const emoji = lesson.countEmoji ?? lesson.words[0]?.emoji ?? '⭐';
   const choices = useMemo(() => {
@@ -715,6 +826,10 @@ const CountActivity: React.FC<ActivityProps> = ({ lesson, onSpeak }) => {
     return [...base].sort((a, b) => a - b);
   }, [count]);
   const [picked, setPicked] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (picked !== null && picked === count) onComplete();
+  }, [picked, count, onComplete]);
 
   const choose = (value: number) => {
     setPicked(value);
@@ -748,7 +863,7 @@ const CountActivity: React.FC<ActivityProps> = ({ lesson, onSpeak }) => {
 };
 
 /** Fill the missing letter. */
-const CompleteActivity: React.FC<ActivityProps> = ({ lesson, onSpeak }) => {
+const CompleteActivity: React.FC<ActivityProps> = ({ lesson, onSpeak, onComplete }) => {
   const word = lesson.completeWord ?? lesson.words[0]?.en ?? '';
   const missingIndex = lesson.completeIndex ?? Math.floor(word.length / 2);
   const correct = word[missingIndex] ?? '';
@@ -760,6 +875,10 @@ const CompleteActivity: React.FC<ActivityProps> = ({ lesson, onSpeak }) => {
   }, [correct]);
   const [picked, setPicked] = useState<string | null>(null);
   const display = `${word.slice(0, missingIndex)}_${word.slice(missingIndex + 1)}`;
+
+  useEffect(() => {
+    if (picked === correct) onComplete();
+  }, [picked, correct, onComplete]);
 
   const choose = (letter: string) => {
     setPicked(letter);
