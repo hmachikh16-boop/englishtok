@@ -7,7 +7,7 @@ import React, { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useStat
 import { App as CapacitorApp } from '@capacitor/app';
 import { Capacitor } from '@capacitor/core';
 import { ActiveTab, Lesson, TargetLanguage, UserProfile } from './types';
-import { MessageCircle, Users } from 'lucide-react';
+import { Image as ImageIcon, MessageCircle, Users } from 'lucide-react';
 // Bundled English curriculum is loaded lazily (see useEffect below) so it no
 // longer blocks the first paint of the app shell.
 import { applyGoldCurriculum } from './data/goldCurriculum';
@@ -61,6 +61,10 @@ const GamesTab = lazy(() =>
 );
 const Grade1Module = lazy(() =>
   import('./components/grade1/Grade1Module').then((module) => ({ default: module.Grade1Module })),
+);
+
+const PicturesViewer = lazy(() =>
+  import('./components/pictures/PicturesViewer').then((module) => ({ default: module.PicturesViewer })),
 );
 const ProgressTab = lazy(() =>
   import('./components/progress/ProgressTab').then((module) => ({ default: module.ProgressTab })),
@@ -124,6 +128,7 @@ export default function App() {
   const [activeTab, setActiveTab] = useState<ActiveTab>('categories');
 const [supportChatOpen, setSupportChatOpen] = useState(false);
   const [friendsChatOpen, setFriendsChatOpen] = useState(false);
+  const [picturesOpen, setPicturesOpen] = useState(false);
   const [friendsUnread, setFriendsUnread] = useState(0);
 
   useEffect(() => {
@@ -895,6 +900,32 @@ const [supportChatOpen, setSupportChatOpen] = useState(false);
               </span>
             )}
           </button>
+        )}
+
+        {/* Educational Pictures FAB (Gold only) */}
+        {IS_GOLD_EDITION && activeTab !== 'lesson' && activeTab !== 'chat' && (
+          <button
+            type="button"
+            className="reels-fab"
+            style={{ bottom: 148 }}
+            onClick={() => setPicturesOpen(true)}
+            aria-label="المجموعة — صور تعليمية"
+          >
+            <span className="reels-fab-medallion" aria-hidden="true">
+              <ImageIcon />
+            </span>
+            <span className="reels-fab-copy">
+              <strong>المجموعة</strong>
+              <small>صور تعليمية</small>
+            </span>
+          </button>
+        )}
+
+        {/* Educational Pictures FAB modal host */}
+        {picturesOpen && (
+          <Suspense fallback={null}>
+            <PicturesViewer onClose={() => setPicturesOpen(false)} />
+          </Suspense>
         )}
 
         {/* Support Chat Modal */}

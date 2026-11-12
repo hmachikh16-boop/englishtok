@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Lin Go — نشر الصور التعليمية</title>
+  <style>
+    :root { --bg:#f4e7cb; --card:#fffaf0; --ink:#2b1d0e; --accent:#b45309; --muted:#6b5a45; --border:#d9c9a8; }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family: 'Cairo', 'Segoe UI', Tahoma, sans-serif; background:var(--bg); color:var(--ink); }
+    .wrap { max-width: 900px; margin: 0 auto; padding: 24px 16px 60px; }
+    h1 { font-size: 22px; margin: 0 0 4px; }
+    .sub { color: var(--muted); font-size: 13px; margin-bottom: 20px; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 16px; margin-bottom: 16px; box-shadow: 0 4px 14px rgba(0,0,0,.06); }
+    label { display:block; font-size: 13px; font-weight: 700; margin: 10px 0 4px; }
+    input[type="password"], input[type="text"], textarea { width:100%; padding:10px 12px; border:1px solid var(--border); border-radius:10px; font-size:14px; font-family:inherit; background:#fff; }
+    textarea { resize: vertical; min-height: 60px; }
+    button { padding:10px 16px; border:none; border-radius:10px; font-weight:700; cursor:pointer; font-family:inherit; }
+    .btn { background: var(--accent); color:#fff; }
+    .btn:disabled { opacity:.6; cursor:not-allowed; }
+    .btn-ghost { background:#fff; color:var(--ink); border:1px solid var(--border); }
+    .btn-danger { background:#dc2626; color:#fff; }
+    .row { display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+    .preview { max-width: 100%; max-height: 220px; border-radius:10px; border:1px solid var(--border); margin-top:8px; display:none; }
+    .msg { font-size: 13px; margin-top: 8px; }
+    .msg.ok { color:#16a34a; }
+    .msg.err { color:#dc2626; }
+    .grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap:12px; margin-top:12px; }
+    .item { background:#fff; border:1px solid var(--border); border-radius:12px; overflow:hidden; position:relative; }
+    .item img { width:100%; height:160px; object-fit:cover; display:block; }
+    .item .cap { padding:8px 10px; font-size:12px; color:var(--muted); }
+    .item .del { position:absolute; top:6px; left:6px; padding:4px 8px; font-size:11px; border-radius:8px; }
+    .empty { text-align:center; color:var(--muted); padding:24px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>نشر الصور التعليمية</h1>
+    <p class="sub">ارفع صورًا تعليمية؛ ستظهر مباشرة في نافذة «المجموعة» داخل تطبيق Gold (Gold فقط).</p>
+
+    <div class="card">
+      <label for="adminKey">مفتاح الإدارة</label>
+      <input id="adminKey" type="password" placeholder="••••••••" />
+      <label for="fileInput">اختيار صورة</label>
+      <input id="fileInput" type="file" accept="image/*" />
+      <img id="preview" class="preview" alt="معاينة" />
+      <label for="caption">وصف (اختياري)</label>
+      <textarea id="caption" placeholder="وصف قصير للصورة…"></textarea>
+      <div class="row" style="margin-top:12px;">
+        <button id="uploadBtn" class="btn" type="button">نشر الصورة</button>
+        <button id="refreshBtn" class="btn-ghost" type="button">تحديث القائمة</button>
+      </div>
+      <p id="status" class="msg"></p>
+    </div>
+
+    <div class="card">
+      <h2 style="font-size:16px;margin:0 0 8px;">الصور المنشورة</h2>
+      <div id="list" class="grid"></div>
+      <p id="empty" class="empty" hidden>لا توجد صور منشورة بعد.</p>
+    </div>
+  </div>
+
+  <script>
+    const KEY_STORAGE = 'lingo_pictures_admin_key';
+    const keyInput = document.getElementById('adminKey');
+    const fileInput = document.getElementById('fileInput');
+    const preview = document.getElementById('preview');
+    const captionInput = document.getElementById('caption');
+    const uploadBtn = document.getElementById('uploadBtn');
+    const refreshBtn = document.getElementById('refreshBtn');
+    const statusEl = document.getElementById('status');
+    const listEl = document.getElementById('list');
+    const emptyEl = document.getElementById('empty');
+
+    keyInput.value = sessionStorage.getItem(KEY_STORAGE) || '';
+    keyInput.addEventListener('change', () => sessionStorage.setItem(KEY_STORAGE, keyInput.value.trim()));
+
+    let selectedDataUrl = null;
+    fileInput.addEventListener('change', () => {
+      const file = fileInput.files && fileInput.files[0];
+      if (!file) { selectedDataUrl = null; preview.style.display = 'none'; return; }
+      const reader = new FileReader();
+      reader.onload = (e) => { selectedDataUrl = e.target.result; preview.src = selectedDataUrl; preview.style.display = 'block'; };
+      reader.readAsDataURL(file);
+    });
+
+    const setStatus = (text, type) => { statusEl.textContent = text; statusEl.className = 'msg ' + (type || ''); };
+
+    const loadList = async () => {
+      try {
+        const res = await fetch('/api/pictures', { cache: 'no-store' });
+        const data = await res.json();
+        const items = Array.isArray(data.items) ? data.items : [];
+        listEl.innerHTML = '';
+        if (items.length === 0) { emptyEl.hidden = false; return; }
+        emptyEl.hidden = true;
+        items.forEach((item) => {
+          const div = document.createElement('div');
+          div.className = 'item';
+          const img = document.createElement('img');
+          img.src = item.url;
+          img.alt = item.caption || '';
+          const cap = document.createElement('div');
+          cap.className = 'cap';
+          cap.textContent = item.caption || (item.createdAt ? new Date(item.createdAt).toLocaleString('ar') : '');
+          const del = document.createElement('button');
+          del.className = 'btn btn-danger del';
+          del.textContent = 'حذف';
+          del.addEventListener('click', async () => {
+            if (!confirm('حذف هذه الصورة؟')) return;
+            const key = keyInput.value.trim();
+            if (!key) { setStatus('أدخل مفتاح الإدارة.', 'err'); return; }
+            try {
+              const r = await fetch('/api/pictures?id=' + encodeURIComponent(item.id) + '&key=' + encodeURIComponent(key), { method: 'DELETE' });
+              if (!r.ok) throw new Error((await r.json()).error || 'فشل الحذف');
+              setStatus('تم الحذف.', 'ok');
+              loadList();
+            } catch (e) { setStatus(e.message || 'فشل الحذف.', 'err'); }
+          });
+          div.appendChild(img);
+          div.appendChild(cap);
+          div.appendChild(del);
+          listEl.appendChild(div);
+        });
+      } catch (e) {
+        setStatus('تعذر تحميل القائمة.', 'err');
+      }
+    };
+
+    uploadBtn.addEventListener('click', async () => {
+      const key = keyInput.value.trim();
+      if (!key) { setStatus('أدخل مفتاح الإدارة.', 'err'); return; }
+      if (!selectedDataUrl) { setStatus('اختر صورة.', 'err'); return; }
+      sessionStorage.setItem(KEY_STORAGE, key);
+      uploadBtn.disabled = true;
+      setStatus('جارٍ النشر…', '');
+      try {
+        const res = await fetch('/api/pictures?key=' + encodeURIComponent(key), {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ image: selectedDataUrl, caption: captionInput.value.trim() }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'فشل النشر');
+        setStatus('تم نشر الصورة.', 'ok');
+        selectedDataUrl = null;
+        fileInput.value = '';
+        preview.style.display = 'none';
+        captionInput.value = '';
+        loadList();
+      } catch (e) {
+        setStatus(e.message || 'فشل النشر.', 'err');
+      } finally {
+        uploadBtn.disabled = false;
+      }
+    });
+
+    refreshBtn.addEventListener('click', loadList);
+    loadList();
+  </script>
+</body>
+</html>
