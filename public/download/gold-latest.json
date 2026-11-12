@@ -1,11 +1,11 @@
 {
-    "version":  "1.1.72",
+    "version":  "1.1.73",
     "packageId":  "com.englishtok.gold",
-    "apkUrl":  "/lin-go-gold-1.1.72.apk",
-    "sha256":  "7A7E52082A1248A14EB7FC82DC4361BE82D98A5194BB1962279F674C3C940E52",
-    "size":  91168021,
+    "apkUrl":  "/lin-go-gold-1.1.73.apk",
+    "sha256":  "4F2DCFA3686AC1188F353090170EDEFC81B3A0A206F7304EB1154BE1D97352EA",
+    "size":  91169417,
     "minimumAndroidSdk":  24,
-    "notes":  "تحديث Gold 1.1.72: نافذة «المجموعة» (صور تعليمية) بزر عائم وتمرير عمودي مثل Reels + رفع صور من لوحة التحكم + إصلاحات الصف الأول والتلوين.",
-    "releaseUrl":  "https://github.com/hmachikh16-boop/englishtok/releases/tag/gold-v1.1.72",
-    "publishedAt":  "2026-11-12T14:29:21.000Z"
+    "notes":  "تحديث Gold 1.1.73: مسار تعلّم محترف للصف الأول (قفل تقدمي + شريط تقدم + إكمال تلقائي) + نافذة «المجموعة» (صور تعليمية) + تلوين تفاعلي + إصلاحات.",
+    "releaseUrl":  "https://github.com/hmachikh16-boop/englishtok/releases/tag/gold-v1.1.73",
+    "publishedAt":  "2026-11-12T14:59:04.000Z"
 }
