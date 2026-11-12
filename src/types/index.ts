@@ -223,4 +223,4 @@ export interface LevelExamResult {
   passedAt?: string;
 }
 
-export type ActiveTab = 'categories' | 'lessons' | 'lesson' | 'games' | 'vocab' | 'progress' | 'settings' | 'chat';
+export type ActiveTab = 'categories' | 'lessons' | 'lesson' | 'games' | 'grade1' | 'vocab' | 'progress' | 'settings' | 'chat';

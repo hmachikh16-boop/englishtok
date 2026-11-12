@@ -39,6 +39,7 @@ import { OddOneOutGame } from './OddOneOutGame';
 import { PhoneticMatchGame } from './PhoneticMatchGame';
 import { PictureQuizGame } from './PictureQuizGame';
 import { SentenceBuilderGame } from './SentenceBuilderGame';
+import { SmartMatchGame } from './SmartMatchGame';
 import { SpeedQuizGame } from './SpeedQuizGame';
 import { SpellingGame } from './SpellingGame';
 import { VocabularyLadderGame } from './VocabularyLadderGame';
@@ -74,7 +75,8 @@ type GameKey =
   | 'chain'
   | 'ladder'
   | 'translation'
-  | 'conversation';
+  | 'conversation'
+  | 'smartmatch';
 
 interface GameCard {
   id: GameKey;
@@ -267,6 +269,16 @@ const GAME_CATALOG: GameCard[] = [
     duration: '3–4 دقائق',
     badge: 'جديد',
   },
+  {
+    id: 'smartmatch',
+    icon: HelpCircle,
+    tone: 'violet',
+    title: 'الربط الذكي',
+    description: 'جد الكلمة الدخيلة بين 4 كلمات (3 من فئة، 1 دخيلة) خلال 20 ثانية.',
+    skill: 'تفكير',
+    duration: '3–4 دقائق',
+    badge: 'جديد',
+  },
 ];
 
 // Smart metadata for each game: an illustrated thumbnail (from the existing
@@ -292,6 +304,7 @@ const GAME_EXTRAS: Record<string, { thumb: string; difficulty: 'سهل' | 'مت�
   memory: { thumb: 'elephant.svg', difficulty: 'متوسط', xp: 10 },
   translation: { thumb: 'owl.svg', difficulty: 'متوسط', xp: 8 },
   conversation: { thumb: 'parrot.svg', difficulty: 'متقدم', xp: 10 },
+  smartmatch: { thumb: 'sheep.svg', difficulty: 'متوسط', xp: 10 },
 };
 
 // Pick the "game of the day" deterministically so it stays stable within a day.
@@ -318,6 +331,10 @@ export const GamesTab: React.FC<GamesTabProps> = ({ lessons, userProfile, onUpda
 
   const progress = useMemo(() => loadGameProgress(), [activeGame, progressVersion]);
   const puzzleCount = useMemo(() => buildGamePuzzles(lessons).length, [lessons]);
+  const overallProgress = Math.min(
+    100,
+    Math.round((progress.totalSolved / Math.max(1, puzzleCount)) * 100),
+  );
 
   const handleResetProgress = () => {
     if (!window.confirm('سيتم حذف عدد كلمات التهجئة وسلسلة اللعب فقط، دون المساس بتقدم الدروس. هل تريد المتابعة؟')) {
@@ -426,6 +443,8 @@ export const GamesTab: React.FC<GamesTabProps> = ({ lessons, userProfile, onUpda
         return <TranslationGame lessons={lessons} userProfile={userProfile} onUpdateProfile={handleProfileUpdate} onBack={backToLibrary} />;
       case 'conversation':
         return <ConversationGame lessons={lessons} userProfile={userProfile} onUpdateProfile={handleProfileUpdate} onBack={backToLibrary} />;
+      case 'smartmatch':
+        return <SmartMatchGame lessons={lessons} userProfile={userProfile} onUpdateProfile={handleProfileUpdate} onBack={backToLibrary} />;
       default:
         return null;
     }
@@ -445,7 +464,7 @@ export const GamesTab: React.FC<GamesTabProps> = ({ lessons, userProfile, onUpda
               </span>
               <h1 id="games-hub-title">تعلّم باللعب، وثبّت كل كلمة.</h1>
               <p>
-                تسعة عشر لعبة، كل منها تدرّب مهارة مختلفة: التهجئة، المفردات،
+                عشرون لعبة، كل منها تدرّب مهارة مختلفة: التهجئة، المفردات،
                 الاستماع، السياق، الذاكرة، والسرعة، والترجمة، والمحادثة. كل إجابة صحيحة تمنح XP وتجعل
                 الدرس أكثر ثباتًا.
               </p>
@@ -604,6 +623,9 @@ export const GamesTab: React.FC<GamesTabProps> = ({ lessons, userProfile, onUpda
                                 <span className="gg-game-xp">+{extra.xp} XP</span>
                               </>
                             )}
+                          </span>
+                          <span className="gg-game-progress" aria-hidden="true">
+                            <span style={{ width: `${overallProgress}%` }} />
                           </span>
                         </span>
                         <span className="gg-game-arrow" aria-hidden="true">

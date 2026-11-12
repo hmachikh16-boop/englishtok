@@ -59,6 +59,9 @@ const VocabTab = lazy(() =>
 const GamesTab = lazy(() =>
   import('./components/games/GamesTab').then((module) => ({ default: module.GamesTab })),
 );
+const Grade1Module = lazy(() =>
+  import('./components/grade1/Grade1Module').then((module) => ({ default: module.Grade1Module })),
+);
 const ProgressTab = lazy(() =>
   import('./components/progress/ProgressTab').then((module) => ({ default: module.ProgressTab })),
 );
@@ -803,6 +806,8 @@ const [supportChatOpen, setSupportChatOpen] = useState(false);
               onUpdateProfile={handleUpdateProfile}
             />
           )}
+
+          {activeTab === 'grade1' && <Grade1Module />}
 
           {activeTab === 'progress' && (
             <ProgressTab

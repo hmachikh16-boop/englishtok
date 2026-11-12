@@ -7,6 +7,7 @@ import {
   GraduationCap,
   House,
   Settings2,
+  Sprout,
   type LucideIcon,
 } from 'lucide-react';
 import { ActiveTab } from '../../types';
@@ -60,6 +61,12 @@ export const BottomTabBar: React.FC<BottomTabBarProps> = ({
       center: true,
     },
     {
+      id: 'grade1',
+      labelAr: 'أولى',
+      icon: Sprout,
+      badge: null,
+    },
+    {
       id: 'progress',
       labelAr: 'التقدم',
       icon: ChartNoAxesColumnIncreasing,
@@ -83,7 +90,7 @@ export const BottomTabBar: React.FC<BottomTabBarProps> = ({
       className="journey-nav relative z-40 w-full shrink-0 border-t safe-area-pb"
       aria-label="التنقل الرئيسي"
     >
-      <div className="mx-auto grid h-[68px] w-full max-w-2xl grid-cols-6 items-center px-1.5 sm:px-4">
+      <div className="mx-auto grid h-[68px] w-full max-w-2xl grid-cols-7 items-center px-1.5 sm:px-4">
         {tabs.map((tab) => {
           const isActive = activeTab === tab.id;
           const Icon = tab.icon;
