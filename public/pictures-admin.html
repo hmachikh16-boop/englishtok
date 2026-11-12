@@ -45,12 +45,11 @@
       <input id="adminKey" type="password" placeholder="••••••••" />
       <p style="font-size:12px;color:var(--muted);margin:4px 0 0;">مفتاح الإدارة هو نفسه المستخدم لدخول لوحة التحكم.</p>
       <label for="fileInput">اختيار صورة</label>
-      <input id="fileInput" type="file" accept="image/*" />
+      <input id="fileInput" type="file" accept="image/*" multiple />
       <img id="preview" class="preview" alt="معاينة" />
-      <label for="caption">وصف (اختياري)</label>
-      <textarea id="caption" placeholder="وصف قصير للصورة…"></textarea>
+      <p id="fileCount" style="font-size:12px;color:var(--muted);margin:6px 0 0;"></p>
       <div class="row" style="margin-top:12px;">
-        <button id="uploadBtn" class="btn" type="button">نشر الصورة</button>
+        <button id="uploadBtn" class="btn" type="button">نشر الصور (حتى 20)</button>
         <button id="refreshBtn" class="btn-ghost" type="button">تحديث القائمة</button>
       </div>
       <p id="status" class="msg"></p>
@@ -68,7 +67,7 @@
     const keyInput = document.getElementById('adminKey');
     const fileInput = document.getElementById('fileInput');
     const preview = document.getElementById('preview');
-    const captionInput = document.getElementById('caption');
+    const fileCountEl = document.getElementById('fileCount');
     const uploadBtn = document.getElementById('uploadBtn');
     const refreshBtn = document.getElementById('refreshBtn');
     const statusEl = document.getElementById('status');
@@ -78,13 +77,14 @@
     keyInput.value = sessionStorage.getItem(KEY_STORAGE) || '';
     keyInput.addEventListener('change', () => sessionStorage.setItem(KEY_STORAGE, keyInput.value.trim()));
 
-    let selectedDataUrl = null;
+    let selectedFiles = [];
     fileInput.addEventListener('change', () => {
-      const file = fileInput.files && fileInput.files[0];
-      if (!file) { selectedDataUrl = null; preview.style.display = 'none'; return; }
+      selectedFiles = Array.from(fileInput.files || []).slice(0, 20);
+      if (selectedFiles.length === 0) { preview.style.display = 'none'; fileCountEl.textContent = ''; return; }
+      fileCountEl.textContent = 'تم اختيار ' + selectedFiles.length + ' صورة (الحد الأقصى 20).';
       const reader = new FileReader();
-      reader.onload = (e) => { selectedDataUrl = e.target.result; preview.src = selectedDataUrl; preview.style.display = 'block'; };
-      reader.readAsDataURL(file);
+      reader.onload = (e) => { preview.src = e.target.result; preview.style.display = 'block'; };
+      reader.readAsDataURL(selectedFiles[0]);
     });
 
     const setStatus = (text, type) => { statusEl.textContent = text; statusEl.className = 'msg ' + (type || ''); };
@@ -105,7 +105,7 @@
           img.alt = item.caption || '';
           const cap = document.createElement('div');
           cap.className = 'cap';
-          cap.textContent = item.caption || (item.createdAt ? new Date(item.createdAt).toLocaleString('ar') : '');
+          cap.textContent = item.createdAt ? new Date(item.createdAt).toLocaleString('ar') : '';
           const del = document.createElement('button');
           del.className = 'btn btn-danger del';
           del.textContent = 'حذف';
@@ -133,23 +133,39 @@
     uploadBtn.addEventListener('click', async () => {
       const key = keyInput.value.trim();
       if (!key) { setStatus('أدخل مفتاح الإدارة.', 'err'); return; }
-      if (!selectedDataUrl) { setStatus('اختر صورة.', 'err'); return; }
+      if (selectedFiles.length === 0) { setStatus('اختر صورة واحدة على الأقل.', 'err'); return; }
       sessionStorage.setItem(KEY_STORAGE, key);
       uploadBtn.disabled = true;
-      setStatus('جارٍ النشر…', '');
+      let success = 0;
+      let failed = 0;
       try {
-        const res = await fetch('/api/pictures?key=' + encodeURIComponent(key), {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ image: selectedDataUrl, caption: captionInput.value.trim() }),
-        });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error || 'فشل النشر');
-        setStatus('تم نشر الصورة.', 'ok');
-        selectedDataUrl = null;
+        for (let i = 0; i < selectedFiles.length; i++) {
+          setStatus('جارٍ النشر ' + (i + 1) + '/' + selectedFiles.length + '…', '');
+          const dataUrl = await new Promise((resolve, reject) => {
+            const r = new FileReader();
+            r.onload = (e) => resolve(e.target.result);
+            r.onerror = () => reject(new Error('تعذر قراءة الملف.'));
+            r.readAsDataURL(selectedFiles[i]);
+          });
+          try {
+            const res = await fetch('/api/pictures?key=' + encodeURIComponent(key), {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ image: dataUrl }),
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || 'فشل النشر');
+            success++;
+          } catch (e) {
+            failed++;
+          }
+        }
+        if (failed === 0) setStatus('تم نشر ' + success + ' صورة.', 'ok');
+        else setStatus('تم نشر ' + success + ' صورة، فشل ' + failed + '.', failed === selectedFiles.length ? 'err' : '');
+        selectedFiles = [];
         fileInput.value = '';
         preview.style.display = 'none';
-        captionInput.value = '';
+        fileCountEl.textContent = '';
         loadList();
       } catch (e) {
         setStatus(e.message || 'فشل النشر.', 'err');
