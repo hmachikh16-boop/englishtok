@@ -109,22 +109,57 @@
           const cap = document.createElement('div');
           cap.className = 'cap';
           cap.textContent = item.createdAt ? new Date(item.createdAt).toLocaleString('ar') : '';
-          const del = document.createElement('button');
-          del.className = 'btn btn-danger del';
-          del.textContent = 'حذف';
-          del.addEventListener('click', async () => {
-            if (!confirm('حذف هذه الصورة؟')) return;
+          const pin = document.createElement('button');
+          pin.className = 'btn btn-ghost';
+          pin.style.cssText = 'position:absolute;top:6px;right:6px;padding:4px 8px;font-size:11px;border-radius:8px;z-index:2;';
+          pin.textContent = item.pinned ? '📌 مثبت' : 'تثبيت';
+          if (item.pinned) pin.style.background = '#f4b603';
+          pin.addEventListener('click', async () => {
             const key = keyInput.value.trim();
             if (!key) { setStatus('أدخل مفتاح الإدارة.', 'err'); return; }
             try {
+              const r = await fetch(API_BASE + '/api/pictures?key=' + encodeURIComponent(key), {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ pin: item.id }),
+              });
+              let data = {};
+              try { data = await r.json(); } catch (e) { data = {}; }
+              if (!r.ok) throw new Error((data && data.error) || ('فشل التثبيت (HTTP ' + r.status + ')'));
+              setStatus('تم التثبيت. ستظهر هذه الصورة أولاً.', 'ok');
+              loadList();
+            } catch (e) { setStatus(e.message || 'فشل التثبيت.', 'err'); }
+          });
+
+          const del = document.createElement('button');
+          del.className = 'btn btn-danger del';
+          del.textContent = 'حذف';
+          let pendingDelete = false;
+          del.addEventListener('click', async () => {
+            const key = keyInput.value.trim();
+            if (!key) { setStatus('أدخل مفتاح الإدارة.', 'err'); return; }
+            if (!pendingDelete) {
+              pendingDelete = true;
+              del.textContent = 'تأكيد؟';
+              del.style.background = '#b91c1c';
+              setTimeout(() => { pendingDelete = false; del.textContent = 'حذف'; del.style.background = ''; }, 3000);
+              return;
+            }
+            pendingDelete = false;
+            del.textContent = 'حذف';
+            del.style.background = '';
+            try {
               const r = await fetch(API_BASE + '/api/pictures?id=' + encodeURIComponent(item.id) + '&key=' + encodeURIComponent(key), { method: 'DELETE' });
-              if (!r.ok) throw new Error((await r.json()).error || 'فشل الحذف');
+              let data = {};
+              try { data = await r.json(); } catch (e) { data = {}; }
+              if (!r.ok) throw new Error((data && data.error) || ('فشل الحذف (HTTP ' + r.status + ')'));
               setStatus('تم الحذف.', 'ok');
               loadList();
             } catch (e) { setStatus(e.message || 'فشل الحذف.', 'err'); }
           });
           div.appendChild(img);
           div.appendChild(cap);
+          div.appendChild(pin);
           div.appendChild(del);
           listEl.appendChild(div);
         });

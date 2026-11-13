@@ -35,6 +35,7 @@ interface PictureRecord {
   url: string;
   caption: string;
   createdAt: string;
+  pinned?: boolean;
 }
 
 const loadPictures = async (): Promise<PictureRecord[]> => {
@@ -43,7 +44,11 @@ const loadPictures = async (): Promise<PictureRecord[]> => {
     const raw = await redisCommand('get', PICTURES_KEY);
     if (typeof raw !== 'string' || !raw.trim()) return [];
     const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? (parsed as PictureRecord[]) : [];
+    const items = Array.isArray(parsed) ? (parsed as PictureRecord[]) : [];
+    // pinned item always first
+    const pinned = items.filter((p) => p.pinned);
+    const rest = items.filter((p) => !p.pinned);
+    return [...pinned, ...rest];
   } catch {
     return [];
   }
@@ -94,6 +99,20 @@ export default async function handler(request: any, response: any) {
       return;
     }
     const body = typeof request.body === 'string' ? JSON.parse(request.body) : request.body || {};
+    // Pin action: set one image as pinned (first in list), unpin others.
+    if (typeof body.pin === 'string' && body.pin.trim()) {
+      const pinId = body.pin.trim();
+      const items = await loadPictures();
+      const exists = items.some((p) => p.id === pinId);
+      if (!exists) {
+        response.status(404).json({ error: 'الصورة غير موجودة.' });
+        return;
+      }
+      const updated = items.map((p) => ({ ...p, pinned: p.id === pinId }));
+      await savePictures(updated);
+      response.status(200).json({ ok: true, pinned: pinId });
+      return;
+    }
     const image = typeof body.image === 'string' ? body.image : '';
     const caption = typeof body.caption === 'string' ? body.caption.trim().slice(0, 200) : '';
     const match = /^data:(image\/[a-zA-Z0-9.+-]+);base64,(.+)$/.exec(image);

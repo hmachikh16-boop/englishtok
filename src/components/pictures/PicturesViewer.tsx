@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Image as ImageIcon, RefreshCw, X } from 'lucide-react';
+import { Download, Image as ImageIcon, RefreshCw, X } from 'lucide-react';
 import { apiUrl } from '../../services/apiBase';
 import './pictures.css';
 
@@ -15,6 +15,7 @@ export const PicturesViewer: React.FC<{ onClose: () => void }> = ({ onClose }) =
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [activeIndex, setActiveIndex] = useState(0);
+  const [downloading, setDownloading] = useState(false);
   const feedRef = useRef<HTMLDivElement>(null);
   const mountedRef = useRef(true);
 
@@ -83,10 +84,43 @@ export const PicturesViewer: React.FC<{ onClose: () => void }> = ({ onClose }) =
     return () => window.removeEventListener('keydown', handleKey);
   }, [activeIndex, items.length, onClose]);
 
+  const downloadCurrent = useCallback(async () => {
+    const item = items[activeIndex];
+    if (!item || downloading) return;
+    setDownloading(true);
+    try {
+      const response = await fetch(item.url, { mode: 'cors' });
+      const blob = await response.blob();
+      const objectUrl = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = objectUrl;
+      link.download = `edu-picture-${activeIndex + 1}.jpg`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(objectUrl);
+    } catch {
+      // Fallback: open in new tab
+      window.open(item.url, '_blank', 'noopener,noreferrer');
+    } finally {
+      setDownloading(false);
+    }
+  }, [items, activeIndex, downloading]);
+
   return (
     <div className="pictures-viewer" role="dialog" aria-modal="true" aria-label="المجموعة — صور تعليمية">
       <button type="button" className="pictures-close" onClick={onClose} aria-label="إغلاق">
         <X size={22} />
+      </button>
+      <button
+        type="button"
+        className="pictures-download"
+        onClick={() => void downloadCurrent()}
+        aria-label="تحميل الصورة"
+        title="تحميل"
+        disabled={downloading}
+      >
+        <Download size={20} />
       </button>
 
       {loading ? (
