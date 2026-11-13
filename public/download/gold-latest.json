@@ -1,11 +1,11 @@
 {
-    "version":  "1.1.76",
+    "version":  "1.1.77",
     "packageId":  "com.englishtok.gold",
-    "apkUrl":  "/lin-go-gold-1.1.76.apk",
-    "sha256":  "1FCFFE94FB413DD38BF9E76E6243E024A0FD882B637A1C0F4FC59829536E67A2",
-    "size":  92158049,
+    "apkUrl":  "/lin-go-gold-1.1.77.apk",
+    "sha256":  "0A58834CAF67870AE4D87503438CF080DE350042B49F158F7E703C6DFF6F5A8F",
+    "size":  92158569,
     "minimumAndroidSdk":  24,
-    "notes":  "تحديث Gold 1.1.76: Reels بملء الشاشة (بدون قص) + إصلاح control panel (رفع/حذف الصور) + 168 صورة دروس.",
-    "releaseUrl":  "https://github.com/hmachikh16-boop/englishtok/releases/tag/gold-v1.1.76",
+    "notes":  "تحديث Gold 1.1.77: زر تحميل في نافذة الصور + تثبيت صورة (تظهر أولاً) + إصلاحات.",
+    "releaseUrl":  "https://github.com/hmachikh16-boop/englishtok/releases/tag/gold-v1.1.77",
     "publishedAt":  "2026-11-13T16:00:00.000Z"
 }
