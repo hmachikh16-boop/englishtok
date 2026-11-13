@@ -49,7 +49,7 @@
       <img id="preview" class="preview" alt="معاينة" />
       <p id="fileCount" style="font-size:12px;color:var(--muted);margin:6px 0 0;"></p>
       <div class="row" style="margin-top:12px;">
-        <button id="uploadBtn" class="btn" type="button">نشر الصور (حتى 20)</button>
+        <button id="uploadBtn" class="btn" type="button" disabled onclick="if(typeof handleUpload==='function')handleUpload(); else alert('الصفحة ما زالت تُحمَّل، حاول مرة أخرى.');">نشر الصور (حتى 20)</button>
         <button id="refreshBtn" class="btn-ghost" type="button">تحديث القائمة</button>
       </div>
       <p id="status" class="msg"></p>
@@ -74,8 +74,8 @@
     const listEl = document.getElementById('list');
     const emptyEl = document.getElementById('empty');
 
-    keyInput.value = sessionStorage.getItem(KEY_STORAGE) || '';
-    keyInput.addEventListener('change', () => sessionStorage.setItem(KEY_STORAGE, keyInput.value.trim()));
+    try { keyInput.value = sessionStorage.getItem(KEY_STORAGE) || ''; } catch (e) { /* sessionStorage may be blocked */ }
+    keyInput.addEventListener('change', () => { try { sessionStorage.setItem(KEY_STORAGE, keyInput.value.trim()); } catch (e) {} });
 
     let selectedFiles = [];
     fileInput.addEventListener('change', () => {
@@ -89,9 +89,12 @@
 
     const setStatus = (text, type) => { statusEl.textContent = text; statusEl.className = 'msg ' + (type || ''); };
 
+    const API_BASE = (location.protocol === 'http:' || location.protocol === 'https:')
+      ? location.origin
+      : 'https://englishtok-eight.vercel.app';
     const loadList = async () => {
       try {
-        const res = await fetch('/api/pictures', { cache: 'no-store' });
+        const res = await fetch(API_BASE + '/api/pictures', { cache: 'no-store' });
         const data = await res.json();
         const items = Array.isArray(data.items) ? data.items : [];
         listEl.innerHTML = '';
@@ -114,7 +117,7 @@
             const key = keyInput.value.trim();
             if (!key) { setStatus('أدخل مفتاح الإدارة.', 'err'); return; }
             try {
-              const r = await fetch('/api/pictures?id=' + encodeURIComponent(item.id) + '&key=' + encodeURIComponent(key), { method: 'DELETE' });
+              const r = await fetch(API_BASE + '/api/pictures?id=' + encodeURIComponent(item.id) + '&key=' + encodeURIComponent(key), { method: 'DELETE' });
               if (!r.ok) throw new Error((await r.json()).error || 'فشل الحذف');
               setStatus('تم الحذف.', 'ok');
               loadList();
@@ -130,11 +133,16 @@
       }
     };
 
-    uploadBtn.addEventListener('click', async () => {
+    async function handleUpload() {
+      window.handleUpload = handleUpload;
       const key = keyInput.value.trim();
       if (!key) { setStatus('أدخل مفتاح الإدارة.', 'err'); return; }
+      if (selectedFiles.length === 0 && fileInput.files && fileInput.files.length > 0) {
+        selectedFiles = Array.from(fileInput.files).slice(0, 20);
+      }
       if (selectedFiles.length === 0) { setStatus('اختر صورة واحدة على الأقل.', 'err'); return; }
-      sessionStorage.setItem(KEY_STORAGE, key);
+      try { sessionStorage.setItem(KEY_STORAGE, key); } catch (e) {}
+      setStatus('جاري رفع ' + selectedFiles.length + ' صورة...', '');
       uploadBtn.disabled = true;
       let success = 0;
       let failed = 0;
@@ -148,13 +156,14 @@
             r.readAsDataURL(selectedFiles[i]);
           });
           try {
-            const res = await fetch('/api/pictures?key=' + encodeURIComponent(key), {
+            const res = await fetch(API_BASE + '/api/pictures?key=' + encodeURIComponent(key), {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ image: dataUrl }),
             });
-            const data = await res.json();
-            if (!res.ok) throw new Error(data.error || 'فشل النشر');
+            let data = {};
+            try { data = await res.json(); } catch (e) { data = {}; }
+            if (!res.ok) throw new Error((data && data.error) || ('فشل النشر (HTTP ' + res.status + ')'));
             success++;
           } catch (e) {
             failed++;
@@ -172,7 +181,10 @@
       } finally {
         uploadBtn.disabled = false;
       }
-    });
+    }
+    window.handleUpload = handleUpload;
+    uploadBtn.disabled = false;
+    uploadBtn.addEventListener('click', handleUpload);
 
     refreshBtn.addEventListener('click', loadList);
     loadList();
