@@ -1,11 +1,11 @@
 {
-    "version":  "1.1.77",
+    "version":  "1.1.78",
     "packageId":  "com.englishtok.gold",
-    "apkUrl":  "/lin-go-gold-1.1.77.apk",
-    "sha256":  "0A58834CAF67870AE4D87503438CF080DE350042B49F158F7E703C6DFF6F5A8F",
-    "size":  92158569,
+    "apkUrl":  "/lin-go-gold-1.1.78.apk",
+    "sha256":  "13909494EDA62763DBA0B91AB1A525E89C1AA7EF4F4F0B06519733033ED5E32B",
+    "size":  92159089,
     "minimumAndroidSdk":  24,
-    "notes":  "تحديث Gold 1.1.77: زر تحميل في نافذة الصور + تثبيت صورة (تظهر أولاً) + إصلاحات.",
-    "releaseUrl":  "https://github.com/hmachikh16-boop/englishtok/releases/tag/gold-v1.1.77",
+    "notes":  "تحديث Gold 1.1.78: زر لوحة التحكم (Admin) في الإعدادات + ميزات 1.1.77.",
+    "releaseUrl":  "https://github.com/hmachikh16-boop/englishtok/releases/tag/gold-v1.1.78",
     "publishedAt":  "2026-11-13T16:00:00.000Z"
 }
