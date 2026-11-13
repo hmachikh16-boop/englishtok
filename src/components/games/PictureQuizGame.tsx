@@ -6,6 +6,7 @@ import { speechService } from '../../services/speechService';
 import { GameEmpty, GameFrame, GameResult } from './GameBits';
 import { buildRound, shuffle, targetLanguageLabel } from './gameUtils';
 import type { GamePicture } from '../../data/gamePictureClues';
+import { wordPictureUrl } from '../../data/wordPictures';
 
 interface PictureQuizGameProps {
   lessons: Lesson[];
@@ -34,8 +35,11 @@ export const PictureQuizGame: React.FC<PictureQuizGameProps> = ({ lessons, userP
   const pictureKey = (picture: GamePicture) => JSON.stringify(picture);
   const renderPicture = (picture: GamePicture) => {
     switch (picture.kind) {
-      case 'emoji':
+      case 'emoji': {
+        const url = picture.word ? wordPictureUrl(picture.word) : null;
+        if (url) return <img className="gg-picture-emoji gg-picture-emoji-img" src={url} alt="" draggable={false} />;
         return <span className="gg-picture-emoji">{picture.emoji}</span>;
+      }
       case 'color':
         return <span className="gg-picture-swatch" style={{ background: picture.color }} aria-label={picture.label} />;
       case 'shape':

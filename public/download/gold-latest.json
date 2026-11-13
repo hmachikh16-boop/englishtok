@@ -1,11 +1,11 @@
 {
-    "version":  "1.1.73",
+    "version":  "1.1.74",
     "packageId":  "com.englishtok.gold",
-    "apkUrl":  "/lin-go-gold-1.1.73.apk",
-    "sha256":  "4F2DCFA3686AC1188F353090170EDEFC81B3A0A206F7304EB1154BE1D97352EA",
-    "size":  91169417,
+    "apkUrl":  "/lin-go-gold-1.1.74.apk",
+    "sha256":  "4891DFEB49DE35E311871DBB1CCABA594E1D24ED39D6DC8190B5780A31772F08",
+    "size":  92158600,
     "minimumAndroidSdk":  24,
-    "notes":  "تحديث Gold 1.1.73: مسار تعلّم محترف للصف الأول (قفل تقدمي + شريط تقدم + إكمال تلقائي) + نافذة «المجموعة» (صور تعليمية) + تلوين تفاعلي + إصلاحات.",
-    "releaseUrl":  "https://github.com/hmachikh16-boop/englishtok/releases/tag/gold-v1.1.73",
-    "publishedAt":  "2026-11-12T14:59:04.000Z"
+    "notes":  "تحديث Gold 1.1.74: إضافة 168 صورة واقعية لجميع كلمات الدروس (بدل الرموز التعبيرية) في Grade 1 والألعاب، مع إصلاحات UI.",
+    "releaseUrl":  "https://github.com/hmachikh16-boop/englishtok/releases/tag/gold-v1.1.74",
+    "publishedAt":  "2026-11-13T16:00:00.000Z"
 }

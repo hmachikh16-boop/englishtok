@@ -511,6 +511,7 @@ export const SpellingGame: React.FC<SpellingGameProps> = ({
                 picture={currentPuzzle.picture}
                 translationAr={currentPuzzle.translationAr}
                 category={currentPuzzle.category}
+                word={currentPuzzle.word}
               />
             )}
 

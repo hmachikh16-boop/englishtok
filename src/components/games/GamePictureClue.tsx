@@ -3,11 +3,13 @@ import { Sparkles } from 'lucide-react';
 import type { GamePicture } from '../../data/gamePictureClues';
 import type { CategoryKey } from '../../types';
 import { twemojiUrl } from '../../utils/twemoji';
+import { wordPictureUrl } from '../../data/wordPictures';
 
 interface GamePictureClueProps {
   picture: GamePicture;
   translationAr: string;
   category: CategoryKey;
+  word?: string;
 }
 
 const SHAPE_LABELS: Record<
@@ -33,12 +35,25 @@ const THEME_LABELS: Partial<Record<CategoryKey, string>> = {
   grammar: 'أساسيات',
 };
 
-const EmojiPicture: React.FC<{ emoji: string }> = ({ emoji }) => {
+const EmojiPicture: React.FC<{ emoji: string; word?: string }> = ({ emoji, word }) => {
+  const pictureUrl = word ? wordPictureUrl(word) : null;
   const [failed, setFailed] = useState(false);
 
   useEffect(() => {
     setFailed(false);
-  }, [emoji]);
+  }, [emoji, word]);
+
+  if (pictureUrl && !failed) {
+    return (
+      <img
+        className="games-picture-emoji games-picture-emoji-img"
+        src={pictureUrl}
+        alt=""
+        draggable={false}
+        onError={() => setFailed(true)}
+      />
+    );
+  }
 
   if (failed) {
     return (
@@ -59,9 +74,9 @@ const EmojiPicture: React.FC<{ emoji: string }> = ({ emoji }) => {
   );
 };
 
-const PictureContent: React.FC<{ picture: GamePicture }> = ({ picture }) => {
+const PictureContent: React.FC<{ picture: GamePicture; word?: string }> = ({ picture, word }) => {
   if (picture.kind === 'emoji') {
-    return <EmojiPicture key={picture.emoji} emoji={picture.emoji} />;
+    return <EmojiPicture key={picture.emoji} emoji={picture.emoji} word={word} />;
   }
 
   if (picture.kind === 'number') {
@@ -101,6 +116,7 @@ export const GamePictureClue: React.FC<GamePictureClueProps> = ({
   picture,
   translationAr,
   category,
+  word,
 }) => (
   <div
     className="games-picture"
@@ -122,7 +138,7 @@ export const GamePictureClue: React.FC<GamePictureClueProps> = ({
     </span>
 
     <div className="games-picture-stage">
-      <PictureContent picture={picture} />
+      <PictureContent picture={picture} word={word} />
     </div>
 
     <span className="games-picture-mascot" aria-hidden="true">

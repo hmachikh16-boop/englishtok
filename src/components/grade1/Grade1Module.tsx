@@ -19,6 +19,7 @@ import {
   type Grade1Word,
 } from '../../data/grade1Curriculum';
 import { speechService } from '../../services/speechService';
+import { WordPicture } from '../learning/WordPicture';
 import './grade1.css';
 
 /** Worksheet colour names mapped to the actual swatch/fill colours. */
@@ -205,9 +206,11 @@ export const Grade1Module: React.FC = () => {
                         : `${lesson.topicAr} — مقفل`
                     }
                   >
-                    <span className="g1-lesson-emoji" aria-hidden="true">
-                      {unlocked ? lesson.words[0]?.emoji : <Lock />}
-                    </span>
+                    {unlocked ? (
+                      <WordPicture word={lesson.words[0]?.en ?? ''} emoji={lesson.words[0]?.emoji} className="g1-lesson-emoji-img" />
+                    ) : (
+                      <Lock />
+                    )}
                     <span className="g1-lesson-card-copy">
                       <strong>{lesson.topicAr}</strong>
                       <small>{grade1ActivityLabel(lesson.activity)}</small>
@@ -276,7 +279,7 @@ const Grade1LessonView: React.FC<LessonViewProps> = ({ lesson, completed, onBack
               onClick={() => speak(word.en)}
               aria-label={`اسمع ${word.en}`}
             >
-              <span aria-hidden="true">{word.emoji}</span>
+              <WordPicture word={word.en} emoji={word.emoji} />
               <strong dir="ltr">{word.en}</strong>
               <small>{word.ar}</small>
               <Volume2 aria-hidden="true" />
@@ -476,7 +479,9 @@ const CircleActivity: React.FC<ActivityProps> = ({ lesson, onSpeak, onComplete }
   return (
     <div className="g1-circle">
       <p className="g1-instruction">اختر الكلمة الصحيحة للصورة:</p>
-      <div className="g1-circle-picture" aria-hidden="true">{target.emoji}</div>
+      <div className="g1-circle-picture" aria-hidden="true">
+        <WordPicture word={target.en} emoji={target.emoji} />
+      </div>
       <div className="g1-circle-options">
         {options.map((word) => {
           const isPicked = picked === word.en;
@@ -842,7 +847,7 @@ const CountActivity: React.FC<ActivityProps> = ({ lesson, onSpeak, onComplete })
       <p className="g1-instruction">عُدّ العناصر واختر الرقم الصحيح:</p>
       <div className="g1-count-stage" aria-label={`${count} عناصر`}>
         {Array.from({ length: count }, (_, index) => (
-          <span key={index} aria-hidden="true">{emoji}</span>
+          <WordPicture key={index} word={lesson.words[0]?.en ?? ''} emoji={emoji} className="g1-count-item" />
         ))}
       </div>
       <div className="g1-count-options">
@@ -894,7 +899,9 @@ const CompleteActivity: React.FC<ActivityProps> = ({ lesson, onSpeak, onComplete
     <div className="g1-complete">
       <p className="g1-instruction">أكمل الحرف الناقص:</p>
       <div className="g1-complete-stage">
-        <span className="g1-complete-emoji" aria-hidden="true">{lesson.words[0]?.emoji}</span>
+        <span className="g1-complete-emoji" aria-hidden="true">
+          <WordPicture word={lesson.words[0]?.en ?? ''} emoji={lesson.words[0]?.emoji} />
+        </span>
         <span className="g1-complete-word" dir="ltr">{display}</span>
         <small dir="ltr">{word}</small>
       </div>
