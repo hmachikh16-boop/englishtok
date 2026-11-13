@@ -1,11 +1,11 @@
 {
-    "version":  "1.1.75",
+    "version":  "1.1.76",
     "packageId":  "com.englishtok.gold",
-    "apkUrl":  "/lin-go-gold-1.1.75.apk",
-    "sha256":  "593FA50FA6E860DC77DD731D31E498F8BD6BFBE430A437C4FA1779C280061A09",
-    "size":  92158057,
+    "apkUrl":  "/lin-go-gold-1.1.76.apk",
+    "sha256":  "1FCFFE94FB413DD38BF9E76E6243E024A0FD882B637A1C0F4FC59829536E67A2",
+    "size":  92158049,
     "minimumAndroidSdk":  24,
-    "notes":  "تحديث Gold 1.1.74: إضافة 168 صورة واقعية لجميع كلمات الدروس (بدل الرموز التعبيرية) في Grade 1 والألعاب، مع إصلاحات UI.",
-    "releaseUrl":  "https://github.com/hmachikh16-boop/englishtok/releases/tag/gold-v1.1.75",
+    "notes":  "تحديث Gold 1.1.76: Reels بملء الشاشة (بدون قص) + إصلاح control panel (رفع/حذف الصور) + 168 صورة دروس.",
+    "releaseUrl":  "https://github.com/hmachikh16-boop/englishtok/releases/tag/gold-v1.1.76",
     "publishedAt":  "2026-11-13T16:00:00.000Z"
 }
