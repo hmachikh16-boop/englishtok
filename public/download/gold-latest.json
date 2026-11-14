@@ -1,11 +1,11 @@
 {
-    "version":  "1.1.79",
+    "version":  "1.1.80",
     "packageId":  "com.englishtok.gold",
-    "apkUrl":  "/lin-go-gold-1.1.79.apk",
-    "sha256":  "F7D400826E8794821BF5F8B82E43215E0B12054DC7D94768EBA9A01CBD85E264",
-    "size":  93011324,
+    "apkUrl":  "/lin-go-gold-1.1.80.apk",
+    "sha256":  "71D897EC50C350732CCD8686E441A8CD9D1F9BFB43DFD33BFC0620AEBCB48E16",
+    "size":  93012352,
     "minimumAndroidSdk":  24,
-    "notes":  "تحديث Gold 1.1.79: صور تعليمية جديدة عالية الجودة لكل الدروس (187 صورة)، إصلاح زر رفع الصور في لوحة التحكم، وزر لوحة التحكم في الإعدادات.",
-    "releaseUrl":  "https://github.com/hmachikh16-boop/englishtok/releases/tag/gold-v1.1.79",
-    "publishedAt":  "2026-11-14T13:30:00.000Z"
+    "notes":  "تحديث Gold 1.1.80: 20 درسًا جديدًا في الصف الأول (البيت والطعام)، نافذة دروس احترافية (بحث، متابعة من حيث توقفت، تلميع)، صور تعليمية عالية الجودة، إصلاح زر رفع الصور.",
+    "releaseUrl":  "https://github.com/hmachikh16-boop/englishtok/releases/tag/gold-v1.1.80",
+    "publishedAt":  "2026-11-14T14:30:00.000Z"
 }
