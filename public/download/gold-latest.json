@@ -1,11 +1,11 @@
 {
-    "version":  "1.1.81",
+    "version":  "1.1.82",
     "packageId":  "com.englishtok.gold",
-    "apkUrl":  "/lin-go-gold-1.1.81.apk",
-    "sha256":  "84FE7224602E20D09AD6A01860BA6DF8C2C576F5598B6D4B3CA8DE5A6FD884A0",
-    "size":  93012352,
+    "apkUrl":  "/lin-go-gold-1.1.82.apk",
+    "sha256":  "51DC923B16EF03FAC247D904D21BEE33F7D0F5DEBD7E4FE122BDC32BA26904C8",
+    "size":  93160886,
     "minimumAndroidSdk":  24,
-    "notes":  "تحديث Gold 1.1.81: إصلاح واجهة الريلز (الفيديو كامل بدون إخفاء، وصف منفصل بدون تداخل)، 20 درسًا جديدًا، صور تعليمية، إصلاح رفع الصور.",
-    "releaseUrl":  "https://github.com/hmachikh16-boop/englishtok/releases/tag/gold-v1.1.81",
-    "publishedAt":  "2026-11-14T15:00:00.000Z"
+    "notes":  "تحديث Gold 1.1.82: إشعارات (رسائل الأصدقاء + تحديثات) مع صوت، تعمل في الخلفية، تثبيت التحديث من داخل التطبيق (بدون مدير ملفات/متصفح)، 20 درسًا جديدًا، إصلاح Рيلز، صور تعليمية، إصلاح رفع الصور.",
+    "releaseUrl":  "https://github.com/hmachikh16-boop/englishtok/releases/tag/gold-v1.1.82",
+    "publishedAt":  "2026-11-14T16:00:00.000Z"
 }
