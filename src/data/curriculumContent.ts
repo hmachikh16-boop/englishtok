@@ -76,14 +76,14 @@ export const LEO: Character = {
   name: 'Leo',
   nameAr: 'ليو',
   roleAr: 'الكلب الذكي',
-  avatar: '🐶',
+  avatar: '/images/characters/character-a.jpg',
   voiceGender: 'male',
   voicePitch: 0.95,
   shirtColor: '#f59e0b',
   skinTone: '#f4c28f',
   hairColor: '#7c4a1e',
   hairStyle: 'short',
-  design: 'dog-leo',
+  design: undefined,
 };
 
 export const GIGI: Character = {
@@ -91,14 +91,14 @@ export const GIGI: Character = {
   name: 'Gigi',
   nameAr: 'جيجي',
   roleAr: 'الزرافة المبدعة',
-  avatar: '🦒',
+  avatar: '/images/characters/character-b.jpg',
   voiceGender: 'female',
   voicePitch: 1.08,
   shirtColor: '#ec4899',
   skinTone: '#f9d3a8',
   hairColor: '#b45309',
   hairStyle: 'ponytail',
-  design: 'giraffe-gigi',
+  design: undefined,
 };
 
 export const ALEX: Character = {
@@ -106,14 +106,14 @@ export const ALEX: Character = {
   name: 'Alex',
   nameAr: 'أليكس',
   roleAr: 'الصديق المغامر',
-  avatar: '🧑',
+  avatar: '/images/characters/character-a.jpg',
   voiceGender: 'male',
   voicePitch: 0.92,
   shirtColor: '#2563eb',
   skinTone: '#f3c99f',
   hairColor: '#33251d',
   hairStyle: 'spiky',
-  design: 'boy-monster',
+  design: undefined,
 };
 
 export const MAYA: Character = {
@@ -121,14 +121,14 @@ export const MAYA: Character = {
   name: 'Maya',
   nameAr: 'مايا',
   roleAr: 'الصديقة الفضولية',
-  avatar: '👩',
+  avatar: '/images/characters/character-b.jpg',
   voiceGender: 'female',
   voicePitch: 1.04,
   shirtColor: '#0d9488',
   skinTone: '#e8b98d',
   hairColor: '#3b2314',
   hairStyle: 'ponytail',
-  design: 'girl-teal',
+  design: undefined,
 };
 
 export const SARAH: Character = {
@@ -136,14 +136,14 @@ export const SARAH: Character = {
   name: 'Sarah',
   nameAr: 'سارة',
   roleAr: 'الطالبة الجامعية',
-  avatar: '👩‍🎓',
+  avatar: '/images/characters/character-b.jpg',
   voiceGender: 'female',
   voicePitch: 1.02,
   shirtColor: '#db2777',
   skinTone: '#f0c39b',
   hairColor: '#2f1b12',
   hairStyle: 'curly',
-  design: 'girl-pink',
+  design: undefined,
 };
 
 export const DAVID: Character = {
@@ -151,14 +151,14 @@ export const DAVID: Character = {
   name: 'David',
   nameAr: 'ديفيد',
   roleAr: 'الطالب الطموح',
-  avatar: '🧑‍🎓',
+  avatar: '/images/characters/character-a.jpg',
   voiceGender: 'male',
   voicePitch: 0.9,
   shirtColor: '#4338ca',
   skinTone: '#c98d63',
   hairColor: '#1f1712',
   hairStyle: 'short',
-  design: 'boy-monster',
+  design: undefined,
 };
 
 export const ARTHUR: Character = {
@@ -166,14 +166,14 @@ export const ARTHUR: Character = {
   name: 'Dr. Arthur',
   nameAr: 'د. آرثر',
   roleAr: 'الخبير والمستشار الأكاديمي',
-  avatar: '🧑‍🏫',
+  avatar: '/images/characters/character-a.jpg',
   voiceGender: 'male',
   voicePitch: 0.86,
   shirtColor: '#0f766e',
   skinTone: '#e9c3a0',
   hairColor: '#4a4a4a',
   hairStyle: 'glasses',
-  design: 'squirrel-glasses',
+  design: undefined,
 };
 
 export const ELENA: Character = {
@@ -181,14 +181,14 @@ export const ELENA: Character = {
   name: 'Elena',
   nameAr: 'إيلينا',
   roleAr: 'المستشارة والخبيرة في التواصل',
-  avatar: '👩‍💼',
+  avatar: '/images/characters/character-b.jpg',
   voiceGender: 'female',
   voicePitch: 1.0,
   shirtColor: '#7c3aed',
   skinTone: '#f1c9a5',
   hairColor: '#5c2c1a',
   hairStyle: 'ponytail',
-  design: 'girl-green-hat',
+  design: undefined,
 };
 
 export const LEVEL_CHARACTERS: Record<number, [Character, Character]> = {

@@ -1583,7 +1583,19 @@ button.journey-frame-toggle svg { color: var(--duo-blue); }
 .tone-1 .duo-choice-art { background: #fff1d6; }
 .tone-2 .duo-choice-art { background: #eafcd7; }
 .tone-3 .duo-choice-art { background: #f5e9ff; }
-.word-picture { display: inline-grid; place-items: center; }
+.duo-character-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+.duo-speaker-avatar {
+  width: 28px;
+  height: 28px;
+  object-fit: cover;
+  border-radius: 50%;
+  vertical-align: middle;
+}
 .word-picture img { width: 100%; height: 100%; object-fit: contain; border-radius: 10px; }
 .duo-choice-art.word-picture { padding: 5px; }
 .duo-choice-art.word-picture img { border-radius: 14px; }

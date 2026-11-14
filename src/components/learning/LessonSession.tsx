@@ -156,6 +156,16 @@ const CharacterFigure: React.FC<{
   speaking?: boolean;
   className?: string;
 }> = ({ character, speaking = false, className = '' }) => {
+  if (character.avatar && (character.avatar.startsWith('/') || character.avatar.startsWith('http'))) {
+    return (
+      <img
+        src={character.avatar}
+        alt={character.nameAr}
+        className={`duo-character-photo ${className}`.trim()}
+        draggable={false}
+      />
+    );
+  }
   if (!character.design) {
     return <span className={`duo-character-emoji ${className}`} role="img" aria-label={character.nameAr}>{character.avatar}</span>;
   }
@@ -871,7 +881,7 @@ export const LessonSession: React.FC<LessonSessionProps> = ({
                 ))}
               </div>
               <div className="duo-speaker-tag">
-                <span>{lineSpeaker.avatar}</span>
+                <span>{lineSpeaker.avatar && (lineSpeaker.avatar.startsWith('/') || lineSpeaker.avatar.startsWith('http')) ? <img src={lineSpeaker.avatar} alt={lineSpeaker.nameAr} className="duo-speaker-avatar" /> : lineSpeaker.avatar}</span>
                 <strong>{lineSpeaker.nameAr}</strong>
                 <small>{lineSpeaker.roleAr}</small>
               </div>
