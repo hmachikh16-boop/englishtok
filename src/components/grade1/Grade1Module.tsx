@@ -59,6 +59,7 @@ const vibrate = (pattern: number | number[]) => {
 export const Grade1Module: React.FC = () => {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const [completed, setCompleted] = useState<Set<string>>(() => {
     try {
@@ -92,6 +93,25 @@ export const Grade1Module: React.FC = () => {
     },
     [completed],
   );
+
+  const filteredUnits = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    if (!q) return GRADE1_UNITS;
+    return GRADE1_UNITS.filter((unit) => {
+      const lessons = GRADE1_LESSONS.filter((l) => l.unit === unit.unit);
+      return lessons.some(
+        (l) =>
+          l.topicAr.toLowerCase().includes(q) ||
+          l.topic.toLowerCase().includes(q) ||
+          l.words.some((w) => w.en.toLowerCase().includes(q) || w.ar.toLowerCase().includes(q)),
+      );
+    });
+  }, [searchQuery]);
+
+  const nextLesson = useMemo(() => {
+    const idx = GRADE1_LESSONS.findIndex((l) => !completed.has(l.id) && isUnlocked(l));
+    return idx >= 0 ? GRADE1_LESSONS[idx] : null;
+  }, [completed, isUnlocked]);
 
   const markComplete = useCallback((id: string) => {
     setCompleted((prev) => {
@@ -149,11 +169,11 @@ export const Grade1Module: React.FC = () => {
         <div className="g1-hero-copy">
           <span className="g1-kicker"><Star aria-hidden="true" /> الصف الأول الابتدائي</span>
           <h1>هيا نتعلّم الإنجليزية!</h1>
-          <p>50 درسًا تفاعليًا: اربط، لوّن، اكتب، عُدّ، وأكمل الحروف.</p>
+          <p>70 درسًا تفاعليًا: اربط، لوّن، اكتب، عُدّ، وأكمل الحروف.</p>
         </div>
         <div className="g1-hero-stats">
           <span><strong>{completedCount}</strong>/{GRADE1_LESSONS.length} مكتمل</span>
-          <span><strong>5</strong> وحدات</span>
+          <span><strong>7</strong> وحدات</span>
           <span><strong>{progressPct}%</strong> تقدم</span>
         </div>
         <div className="g1-progress-bar" aria-label={`التقدم ${progressPct}%`}>
@@ -161,8 +181,49 @@ export const Grade1Module: React.FC = () => {
         </div>
       </header>
 
-      {GRADE1_UNITS.map((unit) => {
-        const lessons = GRADE1_LESSONS.filter((lesson) => lesson.unit === unit.unit);
+      {nextLesson && (
+        <button
+          type="button"
+          className="g1-continue"
+          onClick={() => openLesson(nextLesson)}
+          aria-label={`متابعة: ${nextLesson.topicAr}`}
+        >
+          <span className="g1-continue-icon"><ArrowRight aria-hidden="true" /></span>
+          <span className="g1-continue-copy">
+            <strong>تابع من حيث توقفت</strong>
+            <small>{nextLesson.topicAr} · {grade1ActivityLabel(nextLesson.activity)}</small>
+          </span>
+          <span className="g1-continue-go">ابدأ</span>
+        </button>
+      )}
+
+      <div className="g1-search">
+        <input
+          type="search"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder="ابحث عن درس أو كلمة…"
+          aria-label="بحث في الدروس"
+        />
+        {searchQuery && (
+          <button type="button" className="g1-search-clear" onClick={() => setSearchQuery('')} aria-label="مسح البحث">
+            <X aria-hidden="true" />
+          </button>
+        )}
+      </div>
+
+      {filteredUnits.map((unit) => {
+        const q = searchQuery.trim().toLowerCase();
+        const allLessons = GRADE1_LESSONS.filter((lesson) => lesson.unit === unit.unit);
+        const lessons = q
+          ? allLessons.filter(
+              (l) =>
+                l.topicAr.toLowerCase().includes(q) ||
+                l.topic.toLowerCase().includes(q) ||
+                l.words.some((w) => w.en.toLowerCase().includes(q) || w.ar.toLowerCase().includes(q)),
+            )
+          : allLessons;
+        if (lessons.length === 0) return null;
         const unitUnlocked =
           unit.unit === 1 ||
           GRADE1_LESSONS.filter((l) => l.unit === unit.unit - 1).every((l) => completed.has(l.id));

@@ -1,7 +1,7 @@
 /**
  * Grade 1 (الصف الأول الابتدائي) curriculum.
  *
- * 50 lessons across 5 units. Each lesson carries four target words (emoji is
+ * 70 lessons across 7 units. Each lesson carries four target words (emoji is
  * used as the picture so the module has zero external image dependencies and
  * stays crisp on every screen) and one primary activity.
  *
@@ -108,6 +108,32 @@ const NUMBERS: Grade1Word[] = [
   { en: 'star', ar: 'نجمة', emoji: '⭐' },
 ];
 
+const HOME: Grade1Word[] = [
+  { en: 'house', ar: 'منزل', emoji: '🏠' },
+  { en: 'door', ar: 'باب', emoji: '🚪' },
+  { en: 'window', ar: 'نافذة', emoji: '🪟' },
+  { en: 'bed', ar: 'سرير', emoji: '🛏️' },
+  { en: 'table', ar: 'طاولة', emoji: '🪑' },
+  { en: 'chair', ar: 'كرسي', emoji: '🪑' },
+  { en: 'kitchen', ar: 'مطبخ', emoji: '🍳' },
+  { en: 'bathroom', ar: 'حمام', emoji: '🛁' },
+  { en: 'bedroom', ar: 'غرفة نوم', emoji: '🛏️' },
+  { en: 'living-room', ar: 'غرفة جلوس', emoji: '🛋️' },
+];
+
+const FOOD: Grade1Word[] = [
+  { en: 'bread', ar: 'خبز', emoji: '🍞' },
+  { en: 'rice', ar: 'أرز', emoji: '🍚' },
+  { en: 'milk', ar: 'حليب', emoji: '🥛' },
+  { en: 'egg', ar: 'بيضة', emoji: '🥚' },
+  { en: 'apple', ar: 'تفاحة', emoji: '🍎' },
+  { en: 'banana', ar: 'موزة', emoji: '🍌' },
+  { en: 'cheese', ar: 'جبن', emoji: '🧀' },
+  { en: 'soup', ar: 'شوربة', emoji: '🥣' },
+  { en: 'cake', ar: 'كعكة', emoji: '🎂' },
+  { en: 'salad', ar: 'سلطة', emoji: '🥗' },
+];
+
 interface UnitSpec {
   unit: number;
   unitAr: string;
@@ -151,6 +177,20 @@ const UNITS: UnitSpec[] = [
     words: NUMBERS,
     topicEn: (i, word) => (i === 9 ? 'Numbers & Shapes Review' : `Numbers & Shapes: ${word.en}`),
     topicAr: (i, word) => (i === 9 ? 'مراجعة الأرقام والأشكال' : `الأرقام والأشكال: ${word.ar}`),
+  },
+  {
+    unit: 6,
+    unitAr: 'البيت',
+    words: HOME,
+    topicEn: (i, word) => (i === 9 ? 'Home Review' : `Home: ${word.en}`),
+    topicAr: (i, word) => (i === 9 ? 'مراجعة أجزاء المنزل' : `البيت: ${word.ar}`),
+  },
+  {
+    unit: 7,
+    unitAr: 'الطعام',
+    words: FOOD,
+    topicEn: (i, word) => (i === 9 ? 'Food Review' : `Food: ${word.en}`),
+    topicAr: (i, word) => (i === 9 ? 'مراجعة الأطعمة' : `الطعام: ${word.ar}`),
   },
 ];
 
