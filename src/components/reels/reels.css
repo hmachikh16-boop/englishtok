@@ -273,12 +273,14 @@
 
 .reels-slide {
   flex: 0 0 100%;
-  height: 100dvh;
+  height: 100%;
   scroll-snap-align: start;
   scroll-snap-stop: always;
   overflow: hidden;
   border: 0;
   border-radius: 0;
+  display: flex;
+  flex-direction: column;
   background: #000;
   box-shadow: none;
 }
@@ -291,7 +293,8 @@
 .reels-frame {
   position: relative;
   width: 100%;
-  height: 100%;
+  flex: 1 1 auto;
+  min-height: 0;
   overflow: hidden;
   background: #000;
 }
@@ -379,16 +382,15 @@
 }
 
 .reels-slide-meta {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  position: relative;
   z-index: 6;
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 14px 14px 18px;
-  background: linear-gradient(180deg, transparent, rgba(5, 7, 10, 0.85));
+  padding: 10px 14px 12px;
+  background: #0a0c10;
+  border-top: 1px solid rgba(255, 250, 238, 0.08);
+  flex: 0 0 auto;
 }
 
 .reels-slide-copy {
@@ -619,11 +621,11 @@
 
   .reels-slide,
   .reels-frame {
-    height: 100dvh;
-    max-height: 100dvh;
+    height: 100%;
+    max-height: 100%;
   }
 
   .reels-slide.is-short .reels-frame {
-    max-height: 100dvh;
+    max-height: 100%;
   }
 }
