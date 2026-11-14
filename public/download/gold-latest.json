@@ -1,11 +1,11 @@
 {
-    "version":  "1.1.82",
+    "version":  "1.1.83",
     "packageId":  "com.englishtok.gold",
-    "apkUrl":  "/lin-go-gold-1.1.82.apk",
-    "sha256":  "51DC923B16EF03FAC247D904D21BEE33F7D0F5DEBD7E4FE122BDC32BA26904C8",
-    "size":  93160886,
+    "apkUrl":  "/lin-go-gold-1.1.83.apk",
+    "sha256":  "038C6495A1D3D628E3F8347ACA8ACF1522B88F184C4C6A17EF15AA50259AB240",
+    "size":  93162422,
     "minimumAndroidSdk":  24,
-    "notes":  "تحديث Gold 1.1.82: إشعارات (رسائل الأصدقاء + تحديثات) مع صوت، تعمل في الخلفية، تثبيت التحديث من داخل التطبيق (بدون مدير ملفات/متصفح)، 20 درسًا جديدًا، إصلاح Рيلز، صور تعليمية، إصلاح رفع الصور.",
-    "releaseUrl":  "https://github.com/hmachikh16-boop/englishtok/releases/tag/gold-v1.1.82",
-    "publishedAt":  "2026-11-14T16:00:00.000Z"
+    "notes":  "تحديث Gold 1.1.83: مسار تعلم Grade 1 (12 محطة/120 درسًا) برسوم مميزة، 50 درسًا جديدًا، إشعارات+تثبيت من داخل التطبيق، إصلاح Рيلز، صور تعليمية، إصلاح رفع الصور.",
+    "releaseUrl":  "https://github.com/hmachikh16-boop/englishtok/releases/tag/gold-v1.1.83",
+    "publishedAt":  "2026-11-14T17:00:00.000Z"
 }
