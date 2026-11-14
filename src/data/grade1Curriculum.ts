@@ -134,6 +134,71 @@ const FOOD: Grade1Word[] = [
   { en: 'salad', ar: 'سلطة', emoji: '🥗' },
 ];
 
+const CLOTHES: Grade1Word[] = [
+  { en: 'shirt', ar: 'قميص', emoji: '👕' },
+  { en: 'pants', ar: 'بنطال', emoji: '👖' },
+  { en: 'dress', ar: 'فستان', emoji: '👗' },
+  { en: 'shoes', ar: 'حذاء', emoji: '👟' },
+  { en: 'socks', ar: 'جوارب', emoji: '🧦' },
+  { en: 'hat', ar: 'قبعة', emoji: '🎩' },
+  { en: 'jacket', ar: 'سترة', emoji: '🧥' },
+  { en: 'skirt', ar: 'تنورة', emoji: '👗' },
+  { en: 'gloves', ar: 'قفازات', emoji: '🧤' },
+  { en: 'scarf', ar: 'وشاح', emoji: '🧣' },
+];
+
+const FRUITS: Grade1Word[] = [
+  { en: 'apple', ar: 'تفاحة', emoji: '🍎' },
+  { en: 'banana', ar: 'موزة', emoji: '🍌' },
+  { en: 'orange', ar: 'برتقال', emoji: '🍊' },
+  { en: 'grape', ar: 'عنب', emoji: '🍇' },
+  { en: 'strawberry', ar: 'فراولة', emoji: '🍓' },
+  { en: 'mango', ar: 'مانجو', emoji: '🥭' },
+  { en: 'lemon', ar: 'ليمون', emoji: '🍋' },
+  { en: 'pear', ar: 'إجاص', emoji: '🍐' },
+  { en: 'watermelon', ar: 'بطيخ', emoji: '🍉' },
+  { en: 'peach', ar: 'خوخ', emoji: '🍑' },
+];
+
+const ANIMALS2: Grade1Word[] = [
+  { en: 'lion', ar: 'أسد', emoji: '🦁' },
+  { en: 'elephant', ar: 'فيل', emoji: '🐘' },
+  { en: 'monkey', ar: 'قرد', emoji: '🐵' },
+  { en: 'rabbit', ar: 'أرنب', emoji: '🐰' },
+  { en: 'cow', ar: 'بقرة', emoji: '🐮' },
+  { en: 'duck', ar: 'بطة', emoji: '🦆' },
+  { en: 'tiger', ar: 'نمر', emoji: '🐯' },
+  { en: 'bear', ar: 'دب', emoji: '🐻' },
+  { en: 'horse', ar: 'حصان', emoji: '🐴' },
+  { en: 'sheep', ar: 'خروف', emoji: '🐑' },
+];
+
+const FEELINGS: Grade1Word[] = [
+  { en: 'happy', ar: 'سعيد', emoji: '😊' },
+  { en: 'sad', ar: 'حزين', emoji: '😢' },
+  { en: 'angry', ar: 'غاضب', emoji: '😠' },
+  { en: 'scared', ar: 'خائف', emoji: '😨' },
+  { en: 'shy', ar: 'خجول', emoji: '😳' },
+  { en: 'excited', ar: 'متحمس', emoji: '🤩' },
+  { en: 'tired', ar: 'متعب', emoji: '😴' },
+  { en: 'hungry', ar: 'جوعان', emoji: '😋' },
+  { en: 'thirsty', ar: 'عطشان', emoji: '🥤' },
+  { en: 'brave', ar: 'شجاع', emoji: '🦸' },
+];
+
+const TRANSPORT: Grade1Word[] = [
+  { en: 'car', ar: 'سيارة', emoji: '🚗' },
+  { en: 'bus', ar: 'حافلة', emoji: '🚌' },
+  { en: 'train', ar: 'قطار', emoji: '🚂' },
+  { en: 'bicycle', ar: 'دراجة', emoji: '🚲' },
+  { en: 'motorcycle', ar: 'دراجة نارية', emoji: '🏍️' },
+  { en: 'taxi', ar: 'تاكسي', emoji: '🚕' },
+  { en: 'truck', ar: 'شاحنة', emoji: '🚚' },
+  { en: 'ambulance', ar: 'إسعاف', emoji: '🚑' },
+  { en: 'police-car', ar: 'شرطة', emoji: '🚓' },
+  { en: 'fire-truck', ar: 'إطفاء', emoji: '🚒' },
+];
+
 interface UnitSpec {
   unit: number;
   unitAr: string;
@@ -191,6 +256,41 @@ const UNITS: UnitSpec[] = [
     words: FOOD,
     topicEn: (i, word) => (i === 9 ? 'Food Review' : `Food: ${word.en}`),
     topicAr: (i, word) => (i === 9 ? 'مراجعة الأطعمة' : `الطعام: ${word.ar}`),
+  },
+  {
+    unit: 8,
+    unitAr: 'الملابس',
+    words: CLOTHES,
+    topicEn: (i, word) => (i === 9 ? 'Clothes Review' : `Clothes: ${word.en}`),
+    topicAr: (i, word) => (i === 9 ? 'مراجعة الملابس' : `الملابس: ${word.ar}`),
+  },
+  {
+    unit: 9,
+    unitAr: 'الفاكهة',
+    words: FRUITS,
+    topicEn: (i, word) => (i === 9 ? 'Fruits Review' : `Fruits: ${word.en}`),
+    topicAr: (i, word) => (i === 9 ? 'مراجعة الفواكه' : `الفاكهة: ${word.ar}`),
+  },
+  {
+    unit: 10,
+    unitAr: 'الحيوانات ٢',
+    words: ANIMALS2,
+    topicEn: (i, word) => (i === 9 ? 'Animals 2 Review' : `Animals 2: ${word.en}`),
+    topicAr: (i, word) => (i === 9 ? 'مراجعة حيوانات ٢' : `الحيوانات ٢: ${word.ar}`),
+  },
+  {
+    unit: 11,
+    unitAr: 'المشاعر',
+    words: FEELINGS,
+    topicEn: (i, word) => (i === 9 ? 'Feelings Review' : `Feelings: ${word.en}`),
+    topicAr: (i, word) => (i === 9 ? 'مراجعة المشاعر' : `المشاعر: ${word.ar}`),
+  },
+  {
+    unit: 12,
+    unitAr: 'المواصلات',
+    words: TRANSPORT,
+    topicEn: (i, word) => (i === 9 ? 'Transport Review' : `Transport: ${word.en}`),
+    topicAr: (i, word) => (i === 9 ? 'مراجعة المواصلات' : `المواصلات: ${word.ar}`),
   },
 ];
 

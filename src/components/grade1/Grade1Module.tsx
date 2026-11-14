@@ -135,6 +135,26 @@ export const Grade1Module: React.FC = () => {
     scrollRef.current?.scrollTo({ top: 0, behavior: 'auto' });
   }, [selectedId]);
 
+  const [expandedUnit, setExpandedUnit] = useState<number | null>(1);
+
+  const unitIllustration = (unit: number): { word: string; emoji: string } => {
+    const map: Record<number, { word: string; emoji: string }> = {
+      1: { word: 'book', emoji: '📕' },
+      2: { word: 'red', emoji: '🔴' },
+      3: { word: 'mother', emoji: '👩' },
+      4: { word: 'cat', emoji: '🐱' },
+      5: { word: 'star', emoji: '⭐' },
+      6: { word: 'house', emoji: '🏠' },
+      7: { word: 'apple', emoji: '🍎' },
+      8: { word: 'shirt', emoji: '👕' },
+      9: { word: 'grape', emoji: '🍇' },
+      10: { word: 'lion', emoji: '🦁' },
+      11: { word: 'happy', emoji: '😊' },
+      12: { word: 'car', emoji: '🚗' },
+    };
+    return map[unit] ?? { word: 'book', emoji: '⭐' };
+  };
+
   const completedCount = completed.size;
   const progressPct = Math.round((completedCount / GRADE1_LESSONS.length) * 100);
 
@@ -169,11 +189,11 @@ export const Grade1Module: React.FC = () => {
         <div className="g1-hero-copy">
           <span className="g1-kicker"><Star aria-hidden="true" /> الصف الأول الابتدائي</span>
           <h1>هيا نتعلّم الإنجليزية!</h1>
-          <p>70 درسًا تفاعليًا: اربط، لوّن، اكتب، عُدّ، وأكمل الحروف.</p>
+          <p>120 درسًا تفاعليًا في 12 محطة: اربط، لوّن، اكتب، عُدّ، وأكمل.</p>
         </div>
         <div className="g1-hero-stats">
           <span><strong>{completedCount}</strong>/{GRADE1_LESSONS.length} مكتمل</span>
-          <span><strong>7</strong> وحدات</span>
+          <span><strong>12</strong> محطة</span>
           <span><strong>{progressPct}%</strong> تقدم</span>
         </div>
         <div className="g1-progress-bar" aria-label={`التقدم ${progressPct}%`}>
@@ -212,80 +232,105 @@ export const Grade1Module: React.FC = () => {
         )}
       </div>
 
-      {filteredUnits.map((unit) => {
-        const q = searchQuery.trim().toLowerCase();
-        const allLessons = GRADE1_LESSONS.filter((lesson) => lesson.unit === unit.unit);
-        const lessons = q
-          ? allLessons.filter(
-              (l) =>
-                l.topicAr.toLowerCase().includes(q) ||
-                l.topic.toLowerCase().includes(q) ||
-                l.words.some((w) => w.en.toLowerCase().includes(q) || w.ar.toLowerCase().includes(q)),
-            )
-          : allLessons;
-        if (lessons.length === 0) return null;
-        const unitUnlocked =
-          unit.unit === 1 ||
-          GRADE1_LESSONS.filter((l) => l.unit === unit.unit - 1).every((l) => completed.has(l.id));
-        const unitCompleted = lessons.every((l) => completed.has(l.id));
-        const unitDoneCount = lessons.filter((l) => completed.has(l.id)).length;
-        return (
-          <section key={unit.unit} className="g1-unit" aria-labelledby={`g1-unit-${unit.unit}`}>
-            <div className="g1-unit-head">
-              <span className={`g1-unit-badge ${unitCompleted ? 'is-done' : unitUnlocked ? '' : 'is-locked'}`}>
-                {unitCompleted ? <Check aria-hidden="true" /> : unitUnlocked ? unit.unit : <Lock aria-hidden="true" />}
-              </span>
-              <div>
-                <h2 id={`g1-unit-${unit.unit}`}>{unit.unitAr}</h2>
-                <p>
+      <div className="g1-map" aria-label="مسار التعلم">
+        <span className="g1-map-track" aria-hidden="true" />
+        {filteredUnits.map((unit, unitIndex) => {
+          const q = searchQuery.trim().toLowerCase();
+          const allLessons = GRADE1_LESSONS.filter((lesson) => lesson.unit === unit.unit);
+          const lessons = q
+            ? allLessons.filter(
+                (l) =>
+                  l.topicAr.toLowerCase().includes(q) ||
+                  l.topic.toLowerCase().includes(q) ||
+                  l.words.some((w) => w.en.toLowerCase().includes(q) || w.ar.toLowerCase().includes(q)),
+              )
+            : allLessons;
+          if (lessons.length === 0) return null;
+          const unitUnlocked =
+            unit.unit === 1 ||
+            GRADE1_LESSONS.filter((l) => l.unit === unit.unit - 1).every((l) => completed.has(l.id));
+          const unitCompleted = allLessons.every((l) => completed.has(l.id));
+          const unitDoneCount = allLessons.filter((l) => completed.has(l.id)).length;
+          const isExpanded = expandedUnit === unit.unit;
+          const ill = unitIllustration(unit.unit);
+          const side = unitIndex % 2 === 0 ? 'left' : 'right';
+          return (
+            <div
+              key={unit.unit}
+              className={`g1-map-node ${side} ${unitCompleted ? 'is-done' : unitUnlocked ? '' : 'is-locked'} ${isExpanded ? 'is-expanded' : ''}`}
+            >
+              <button
+                type="button"
+                className="g1-map-bubble"
+                disabled={!unitUnlocked}
+                onClick={() => {
+                  if (!unitUnlocked) return;
+                  setExpandedUnit(isExpanded ? null : unit.unit);
+                  speechService.playPop();
+                }}
+                aria-expanded={isExpanded}
+                aria-label={`${unit.unitAr} — ${unitDoneCount}/${allLessons.length} مكتمل`}
+              >
+                <span className="g1-map-illustration" aria-hidden="true">
+                  <WordPicture word={ill.word} emoji={ill.emoji} className="g1-map-pic" />
+                </span>
+                <span className="g1-map-badge">{unitCompleted ? <Check aria-hidden="true" /> : unitUnlocked ? unit.unit : <Lock aria-hidden="true" />}</span>
+              </button>
+              <div className="g1-map-info">
+                <strong>{unit.unitAr}</strong>
+                <small>
                   {unitUnlocked
-                    ? `${unitDoneCount}/${lessons.length} مكتمل · أنشطة متنوعة`
-                    : 'أكمل الوحدة السابقة لفتح هذه الوحدة'}
-                </p>
+                    ? `${unitDoneCount}/${allLessons.length} مكتمل`
+                    : 'أكمل الوحدة السابقة'}
+                </small>
               </div>
+              {isExpanded && (
+                <div className="g1-map-panel">
+                  <div className="g1-lesson-grid">
+                    {lessons.map((lesson, index) => {
+                      const unlocked = unitUnlocked && isUnlocked(lesson);
+                      const done = completed.has(lesson.id);
+                      const isCurrent =
+                        !done &&
+                        unlocked &&
+                        (index === 0 || completed.has(lessons[index - 1]?.id ?? ''));
+                      return (
+                        <button
+                          key={lesson.id}
+                          type="button"
+                          disabled={!unlocked}
+                          className={`g1-lesson-card ${index % 2 === 0 ? 'is-a' : 'is-b'} ${
+                            done ? 'is-done' : isCurrent ? 'is-current' : unlocked ? '' : 'is-locked'
+                          }`}
+                          onClick={() => openLesson(lesson)}
+                          aria-label={
+                            unlocked
+                              ? `${lesson.topicAr} — ${grade1ActivityLabel(lesson.activity)}`
+                              : `${lesson.topicAr} — مقفل`
+                          }
+                        >
+                          {unlocked ? (
+                            <WordPicture word={lesson.words[0]?.en ?? ''} emoji={lesson.words[0]?.emoji} className="g1-lesson-emoji-img" />
+                          ) : (
+                            <Lock />
+                          )}
+                          <span className="g1-lesson-card-copy">
+                            <strong>{lesson.topicAr}</strong>
+                            <small>{grade1ActivityLabel(lesson.activity)}</small>
+                          </span>
+                          <span className="g1-lesson-status" aria-hidden="true">
+                            {done ? <Check /> : unlocked ? <ArrowRight /> : <Lock />}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
             </div>
-            <div className="g1-lesson-grid">
-              {lessons.map((lesson, index) => {
-                const unlocked = unitUnlocked && isUnlocked(lesson);
-                const done = completed.has(lesson.id);
-                const isCurrent =
-                  !done &&
-                  unlocked &&
-                  (index === 0 || completed.has(lessons[index - 1]?.id ?? ''));
-                return (
-                  <button
-                    key={lesson.id}
-                    type="button"
-                    disabled={!unlocked}
-                    className={`g1-lesson-card ${index % 2 === 0 ? 'is-a' : 'is-b'} ${
-                      done ? 'is-done' : isCurrent ? 'is-current' : unlocked ? '' : 'is-locked'
-                    }`}
-                    onClick={() => openLesson(lesson)}
-                    aria-label={
-                      unlocked
-                        ? `${lesson.topicAr} — ${grade1ActivityLabel(lesson.activity)}`
-                        : `${lesson.topicAr} — مقفل`
-                    }
-                  >
-                    {unlocked ? (
-                      <WordPicture word={lesson.words[0]?.en ?? ''} emoji={lesson.words[0]?.emoji} className="g1-lesson-emoji-img" />
-                    ) : (
-                      <Lock />
-                    )}
-                    <span className="g1-lesson-card-copy">
-                      <strong>{lesson.topicAr}</strong>
-                      <small>{grade1ActivityLabel(lesson.activity)}</small>
-                    </span>
-                    <span className="g1-lesson-status" aria-hidden="true">
-                      {done ? <Check /> : unlocked ? <ArrowRight /> : <Lock />}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-          </section>
-        );
-      })}
+          );
+        })}
+      </div>
       </div>
     </div>
   );
