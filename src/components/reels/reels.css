@@ -330,7 +330,7 @@
 .reels-poster img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   display: block;
   filter: saturate(0.94) brightness(0.94);
   transition: transform 0.35s ease, filter 0.2s ease;
@@ -617,7 +617,13 @@
     border-right: 0;
   }
 
+  .reels-slide,
+  .reels-frame {
+    height: 100dvh;
+    max-height: 100dvh;
+  }
+
   .reels-slide.is-short .reels-frame {
-    max-height: 60vh;
+    max-height: 100dvh;
   }
 }

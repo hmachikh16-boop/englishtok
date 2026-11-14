@@ -1583,6 +1583,33 @@ button.journey-frame-toggle svg { color: var(--duo-blue); }
 .tone-1 .duo-choice-art { background: #fff1d6; }
 .tone-2 .duo-choice-art { background: #eafcd7; }
 .tone-3 .duo-choice-art { background: #f5e9ff; }
+.word-picture { display: inline-grid; place-items: center; }
+.word-picture img { width: 100%; height: 100%; object-fit: contain; border-radius: 10px; }
+.duo-choice-art.word-picture { padding: 5px; }
+.duo-choice-art.word-picture img { border-radius: 14px; }
+.duo-choice-art.is-picture { width: 84px; height: 84px; padding: 6px; }
+.duo-choice-art.is-picture img { border-radius: 16px; }
+.duo-word-strip {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin: 16px 0 4px;
+}
+.duo-word-chip {
+  display: flex;
+  min-width: 78px;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 8px 8px 6px;
+  border: 1px solid #e3eaf1;
+  border-radius: 14px;
+  background: #f7fafc;
+}
+.duo-word-chip .duo-word-pic { width: 54px; height: 54px; }
+.duo-word-chip bdi { font-size: 12px; font-weight: 800; color: #3c3c3c; }
+.duo-word-chip > span { font-size: 10px; line-height: 1.3; color: #7a7a7a; }
 .duo-choice-label {
   color: #3c3c3c;
   font-size: 13px;

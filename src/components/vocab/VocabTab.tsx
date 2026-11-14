@@ -13,6 +13,8 @@ import {
 } from 'lucide-react';
 import { Lesson, VocabularyWord, UserProfile } from '../../types';
 import { speechService } from '../../services/speechService';
+import { wordPictureUrl } from '../../data/wordPictures';
+import { WordPicture } from '../learning/WordPicture';
 
 const VOCAB_PAGE_SIZE = 10;
 
@@ -253,6 +255,12 @@ export const VocabTab: React.FC<VocabTabProps> = ({
             {!isFlipped ? (
               // Front: Word & Audio
               <div className="my-auto flex flex-col items-center gap-3">
+                {wordPictureUrl(currentCard.word) && (
+                  <WordPicture
+                    word={currentCard.word}
+                    className="vocab-flash-pic w-24 h-24 rounded-2xl border border-slate-800 bg-slate-950/80 p-2"
+                  />
+                )}
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
@@ -365,6 +373,12 @@ export const VocabTab: React.FC<VocabTabProps> = ({
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2.5">
+                          {wordPictureUrl(vocab.word) && (
+                            <WordPicture
+                              word={vocab.word}
+                              className="w-11 h-11 shrink-0 rounded-xl border border-slate-800 bg-slate-950/70 p-1"
+                            />
+                          )}
                           <button
                             onClick={() => handlePronounce(vocab.word)}
                             className="w-9 h-9 rounded-full bg-sky-500/10 text-sky-400 border border-sky-500/30 flex items-center justify-center hover:bg-sky-500/20 active:scale-90 transition-transform"

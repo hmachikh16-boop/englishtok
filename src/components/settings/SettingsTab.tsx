@@ -93,6 +93,7 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
   const [backupFile, setBackupFile] = useState<File | null>(null);
   const [backupMessage, setBackupMessage] = useState<string | null>(null);
   const [isUpdatingAll, setIsUpdatingAll] = useState(false);
+  const [adminMessage, setAdminMessage] = useState<string | null>(null);
   const [updateAllMessage, setUpdateAllMessage] = useState<string | null>(null);
   const [appVersion, setAppVersion] = useState<string | null>(null);
   const isFrenchCourse = userProfile.targetLanguage === 'fr';
@@ -148,6 +149,27 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
   const handleSaveCreatedBackupFile = async () => {
     if (!createdBackup) return;
     setBackupMessage(await saveBackupFile(createdBackup));
+  };
+
+  const handleOpenAdminPanel = async () => {
+    const entered = window.prompt('أدخل كلمة مرور لوحة التحكم:');
+    if (entered === null) return;
+    if (entered.trim() !== '199500') {
+      setAdminMessage('كلمة مرور غير صحيحة.');
+      return;
+    }
+    setAdminMessage(null);
+    const url = 'https://englishtok-eight.vercel.app/control.html';
+    try {
+      if (Capacitor.getPlatform() !== 'web') {
+        const { Browser } = await import('@capacitor/browser');
+        await Browser.open({ url });
+      } else {
+        window.open(url, '_blank', 'noopener,noreferrer');
+      }
+    } catch {
+      window.location.href = url;
+    }
   };
 
   const handleCopyProgressCode = async () => {
@@ -682,6 +704,25 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
           </div>
 
           <ProgressBackupPanel userProfile={userProfile} onRestoreProgress={onRestoreProgress} />
+
+          <section className="rounded-2xl border border-amber-500/30 bg-gradient-to-br from-slate-900 to-amber-950/10 p-4 shadow-lg">
+            <h3 className="flex items-center gap-2 text-sm font-black text-white">
+              <KeyRound className="h-4 w-4 text-amber-300" />
+              لوحة التحكم (Admin)
+            </h3>
+            <p className="mt-2 text-xs leading-relaxed text-slate-300">
+              إدارة الصور التعليمية، المستخدمين، والتحديثات من هذا الجهاز (يتطلب كلمة المرور).
+            </p>
+            <button
+              type="button"
+              onClick={() => void handleOpenAdminPanel()}
+              className="mt-3 inline-flex min-h-10 items-center justify-center gap-2 rounded-xl bg-amber-500 px-4 py-2 text-xs font-black text-slate-950 transition hover:bg-amber-400 active:scale-[.98]"
+            >
+              <ExternalLink className="h-4 w-4" />
+              فتح لوحة التحكم
+            </button>
+            {adminMessage && <p className="mt-2 text-[11px] text-rose-300">{adminMessage}</p>}
+          </section>
 
           <details className="rounded-2xl border border-slate-700/80 bg-slate-900/50 p-3">
             <summary className="cursor-pointer select-none text-xs font-bold text-slate-300">

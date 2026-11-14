@@ -49,7 +49,7 @@
       <img id="preview" class="preview" alt="معاينة" />
       <p id="fileCount" style="font-size:12px;color:var(--muted);margin:6px 0 0;"></p>
       <div class="row" style="margin-top:12px;">
-        <button id="uploadBtn" class="btn" type="button" disabled onclick="if(typeof handleUpload==='function')handleUpload(); else alert('الصفحة ما زالت تُحمَّل، حاول مرة أخرى.');">نشر الصور (حتى 20)</button>
+        <button id="uploadBtn" class="btn" type="button" disabled>نشر الصور (حتى 20)</button>
         <button id="refreshBtn" class="btn-ghost" type="button">تحديث القائمة</button>
       </div>
       <p id="status" class="msg"></p>
@@ -88,6 +88,44 @@
     });
 
     const setStatus = (text, type) => { statusEl.textContent = text; statusEl.className = 'msg ' + (type || ''); };
+
+    let isUploading = false;
+    const fileToDataUrl = (file) => new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (e) => resolve(e.target.result);
+      reader.onerror = () => reject(new Error('تعذر قراءة الملف.'));
+      reader.readAsDataURL(file);
+    });
+
+    // Phone photos can be much larger than the 4.5 MB API limit, so shrink and
+    // re-encode them in the browser before uploading. Small files are kept as-is.
+    const fileToUploadDataUrl = async (file) => {
+      const raw = await fileToDataUrl(file);
+      if (!/^image\//.test(file.type || '') || file.type === 'image/gif') return raw;
+      try {
+        const img = await new Promise((resolve, reject) => {
+          const el = new Image();
+          el.onload = () => resolve(el);
+          el.onerror = () => reject(new Error('تعذر فتح الصورة.'));
+          el.src = raw;
+        });
+        const maxSide = 1600;
+        const scale = Math.min(1, maxSide / Math.max(img.width || 1, img.height || 1));
+        const width = Math.max(1, Math.round((img.width || 1) * scale));
+        const height = Math.max(1, Math.round((img.height || 1) * scale));
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return raw;
+        ctx.drawImage(img, 0, 0, width, height);
+        const compressed = canvas.toDataURL('image/jpeg', 0.88);
+        if (!compressed || compressed.length >= raw.length) return raw;
+        return compressed;
+      } catch (e) {
+        return raw;
+      }
+    };
 
     const API_BASE = (location.protocol === 'http:' || location.protocol === 'https:')
       ? location.origin
@@ -169,7 +207,7 @@
     };
 
     async function handleUpload() {
-      window.handleUpload = handleUpload;
+      if (isUploading) return;
       const key = keyInput.value.trim();
       if (!key) { setStatus('أدخل مفتاح الإدارة.', 'err'); return; }
       if (selectedFiles.length === 0 && fileInput.files && fileInput.files.length > 0) {
@@ -178,19 +216,16 @@
       if (selectedFiles.length === 0) { setStatus('اختر صورة واحدة على الأقل.', 'err'); return; }
       try { sessionStorage.setItem(KEY_STORAGE, key); } catch (e) {}
       setStatus('جاري رفع ' + selectedFiles.length + ' صورة...', '');
+      isUploading = true;
       uploadBtn.disabled = true;
       let success = 0;
       let failed = 0;
+      let firstError = '';
       try {
         for (let i = 0; i < selectedFiles.length; i++) {
           setStatus('جارٍ النشر ' + (i + 1) + '/' + selectedFiles.length + '…', '');
-          const dataUrl = await new Promise((resolve, reject) => {
-            const r = new FileReader();
-            r.onload = (e) => resolve(e.target.result);
-            r.onerror = () => reject(new Error('تعذر قراءة الملف.'));
-            r.readAsDataURL(selectedFiles[i]);
-          });
           try {
+            const dataUrl = await fileToUploadDataUrl(selectedFiles[i]);
             const res = await fetch(API_BASE + '/api/pictures?key=' + encodeURIComponent(key), {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
@@ -202,24 +237,31 @@
             success++;
           } catch (e) {
             failed++;
+            if (!firstError) firstError = e && e.message ? e.message : 'تعذر النشر.';
           }
         }
         if (failed === 0) setStatus('تم نشر ' + success + ' صورة.', 'ok');
-        else setStatus('تم نشر ' + success + ' صورة، فشل ' + failed + '.', failed === selectedFiles.length ? 'err' : '');
-        selectedFiles = [];
-        fileInput.value = '';
-        preview.style.display = 'none';
-        fileCountEl.textContent = '';
+        else setStatus('تم نشر ' + success + ' صورة، وفشل ' + failed + (firstError ? ' — ' + firstError : '') + '.', failed === selectedFiles.length ? 'err' : '');
+        if (success > 0) {
+          selectedFiles = [];
+          fileInput.value = '';
+          preview.style.display = 'none';
+          fileCountEl.textContent = '';
+        }
         loadList();
       } catch (e) {
-        setStatus(e.message || 'فشل النشر.', 'err');
+        setStatus((e && e.message) || 'فشل النشر.', 'err');
       } finally {
+        isUploading = false;
         uploadBtn.disabled = false;
       }
     }
     window.handleUpload = handleUpload;
     uploadBtn.disabled = false;
-    uploadBtn.addEventListener('click', handleUpload);
+    uploadBtn.addEventListener('click', function (event) {
+      event.preventDefault();
+      handleUpload();
+    });
 
     refreshBtn.addEventListener('click', loadList);
     loadList();

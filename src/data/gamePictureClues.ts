@@ -1,5 +1,5 @@
 export type GamePicture =
-  | { kind: 'emoji'; emoji: string }
+  | { kind: 'emoji'; emoji: string; word?: string }
   | { kind: 'color'; color: string; label: string }
   | { kind: 'shape'; shape: 'circle' | 'square' | 'triangle' | 'rectangle' | 'star' | 'heart' }
   | { kind: 'number'; value: string };
@@ -660,5 +660,8 @@ export const GAME_PICTURES: Record<string, GamePicture> = {
   protagonist: emoji('🦸'),
 };
 
-export const getGamePicture = (word: string): GamePicture | null =>
-  GAME_PICTURES[word.toLowerCase()] ?? null;
+export const getGamePicture = (word: string): GamePicture | null => {
+  const picture = GAME_PICTURES[word.toLowerCase()] ?? null;
+  if (picture && picture.kind === 'emoji') return { ...picture, word: word.toLowerCase() };
+  return picture;
+};

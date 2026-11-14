@@ -17,6 +17,11 @@ public/english-tok.apk
 *.log
 android-nova
 design-previews
+dbg*.cjs
+fix*.cjs
+tmp-*.mjs
+tmp-*.cjs
+genwp.cjs
 uptodown
 lin-go-gold-*.apk
 lin-go-gold-*.apk.idsig

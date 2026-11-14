@@ -30,6 +30,8 @@ import {
 } from '../../services/speechRecognition';
 import { PrimaryCharacter } from '../video/PrimaryCharacterArt';
 import { getOptionEmoji, isSentenceOption } from './lessonVisuals';
+import { wordPictureUrl } from '../../data/wordPictures';
+import { WordPicture } from './WordPicture';
 
 type SessionPhase = 'welcome' | 'story' | 'speak' | 'picture' | 'quiz' | 'result' | 'failed';
 type SpeakState = 'idle' | 'listening' | 'correct' | 'wrong' | 'unsupported' | 'error' | 'skipped';
@@ -219,6 +221,10 @@ export const LessonSession: React.FC<LessonSessionProps> = ({
   const goldPicture = useMemo(
     () => (goldEdition ? buildGoldPictureChallenge(lesson) : null),
     [goldEdition, lesson],
+  );
+  const picturedWords = useMemo(
+    () => lesson.vocabulary.filter((word) => wordPictureUrl(word.word)).slice(0, 5),
+    [lesson],
   );
   const speakTargets = useMemo(() => {
     const entries = lesson.vocabulary
@@ -810,6 +816,17 @@ export const LessonSession: React.FC<LessonSessionProps> = ({
               <h1 className="duo-title">{lesson.titleAr}</h1>
               <p className="duo-title-en" dir="ltr">{lesson.title}</p>
               <p className="duo-description">{lesson.descriptionAr}</p>
+              {picturedWords.length > 0 && (
+                <div className="duo-word-strip" aria-label="كلمات الدرس المصوّرة">
+                  {picturedWords.map((word) => (
+                    <div key={word.id} className="duo-word-chip">
+                      <WordPicture word={word.word} emoji={getOptionEmoji(word.word)} className="duo-word-pic" />
+                      <bdi dir="ltr">{word.word}</bdi>
+                      <span>{word.translationAr}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
               {lesson.learningNoteAr && (
                 <div className="duo-note">
                   <Lightbulb className="h-4 w-4 shrink-0" />
@@ -947,7 +964,7 @@ export const LessonSession: React.FC<LessonSessionProps> = ({
                       onClick={() => setGoldPictureSelection(option.label)}
                       className={`duo-choice tone-${index % 4} ${selected ? 'is-selected' : ''} ${correctOption ? 'is-correct' : ''} ${wrongOption ? 'is-wrong' : ''}`}
                     >
-                      <span className="duo-choice-art" aria-hidden="true">{option.emoji}</span>
+                      <WordPicture word={option.word} emoji={option.emoji} className="duo-choice-art is-picture" />
                       <span className="duo-choice-label" dir="rtl">{option.label}</span>
                       {correctOption && <span className="duo-choice-badge"><Check className="h-4 w-4" /></span>}
                       {wrongOption && <span className="duo-choice-badge is-wrong"><X className="h-4 w-4" /></span>}
@@ -1061,7 +1078,7 @@ export const LessonSession: React.FC<LessonSessionProps> = ({
                         onClick={() => setSelectedOption(option)}
                         className={`duo-choice tone-${index % 4} ${selected ? 'is-selected' : ''} ${correctOption ? 'is-correct' : ''} ${wrongOption ? 'is-wrong' : ''}`}
                       >
-                        <span className="duo-choice-art" aria-hidden="true">{getOptionEmoji(option)}</span>
+                        <WordPicture word={option} emoji={getOptionEmoji(option)} className="duo-choice-art" />
                         <span className="duo-choice-label" dir={isArabic(option) ? 'rtl' : 'ltr'}>{option}</span>
                         {correctOption && <span className="duo-choice-badge"><Check className="h-4 w-4" /></span>}
                         {wrongOption && <span className="duo-choice-badge is-wrong"><X className="h-4 w-4" /></span>}
