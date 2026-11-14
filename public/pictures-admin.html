@@ -187,7 +187,8 @@
             del.textContent = 'حذف';
             del.style.background = '';
             try {
-              const r = await fetch(API_BASE + '/api/pictures?id=' + encodeURIComponent(item.id) + '&key=' + encodeURIComponent(key), { method: 'DELETE' });
+              const force = item.pinned ? '&force=1' : '';
+              const r = await fetch(API_BASE + '/api/pictures?id=' + encodeURIComponent(item.id) + '&key=' + encodeURIComponent(key) + force, { method: 'DELETE' });
               let data = {};
               try { data = await r.json(); } catch (e) { data = {}; }
               if (!r.ok) throw new Error((data && data.error) || ('فشل الحذف (HTTP ' + r.status + ')'));

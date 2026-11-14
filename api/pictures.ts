@@ -160,6 +160,13 @@ export default async function handler(request: any, response: any) {
       response.status(404).json({ error: 'الصورة غير موجودة.' });
       return;
     }
+    const force = request.query?.force === '1' || request.query?.force === 'true';
+    if (items[index].pinned && !force) {
+      // A pinned picture is the one shown first to every learner, so removing
+      // it needs an explicit confirmation from the admin page.
+      response.status(409).json({ error: 'هذه الصورة مثبتة. أزل التثبيت أولاً ثم احذفها.' });
+      return;
+    }
     const [removed] = items.splice(index, 1);
     try {
       await del(removed.url);
