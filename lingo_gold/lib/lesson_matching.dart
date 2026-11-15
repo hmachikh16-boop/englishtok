@@ -148,9 +148,11 @@ class _MatchingStepState extends State<MatchingStep> {
             ),
           ),
           const SizedBox(height: 16),
-          Stack(
-            key: _stackKey,
-            children: [
+          Directionality(
+            textDirection: TextDirection.ltr,
+            child: Stack(
+              key: _stackKey,
+              children: [
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -192,6 +194,7 @@ class _MatchingStepState extends State<MatchingStep> {
               ),
             ],
           ),
+          ),
           const SizedBox(height: 4),
           Text(
             done
@@ -207,7 +210,7 @@ class _MatchingStepState extends State<MatchingStep> {
           const SizedBox(height: 12),
           FilledButton(
             onPressed: done ? () => widget.onComplete(!_hadWrong) : null,
-            child: const Text('Continue'),
+            child: const Text('متابعة'),
           ),
         ],
       ),

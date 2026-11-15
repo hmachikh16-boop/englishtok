@@ -117,7 +117,6 @@ class _SpeakingStepState extends State<SpeakingStep> {
         listenFor: const Duration(seconds: 15),
         pauseFor: const Duration(seconds: 4),
         partialResults: false,
-        cancelOnError: false,
         listenMode: ListenMode.confirmation,
       );
     } catch (_) {
