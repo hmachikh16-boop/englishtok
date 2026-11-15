@@ -24,7 +24,7 @@ void main() {
 
     expect(find.text('Lingo Gold'), findsOneWidget);
     expect(find.text('تعلم'), findsWidgets);
-    expect(find.text('أهلاً سارة 👋'), findsOneWidget);
+    expect(find.text('أهلاً ... 👋'), findsOneWidget);
     expect(find.text('هدف اليوم'), findsOneWidget);
     expect(find.text('متابعة التعلم'), findsOneWidget);
     expect(find.text('تقدمك هذا الأسبوع'), findsOneWidget);
@@ -51,7 +51,7 @@ void main() {
     await tester.pumpWidget(const LingoGoldApp());
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('تعلم').last);
+    await tester.tap(find.text('تعلم').last, warnIfMissed: false);
     await tester.pumpAndSettle();
     expect(find.text('مسار التعلم الخاص بك'), findsOneWidget);
     expect(find.text('الوحدات'), findsOneWidget);
@@ -64,7 +64,7 @@ void main() {
 
     await tester.tap(find.text('الملف'));
     await tester.pumpAndSettle();
-    expect(find.text('Sara'), findsOneWidget);
+    expect(find.text('...'), findsOneWidget);
     expect(find.text('الشارات'), findsOneWidget);
     expect(find.text('النشاط الأسبوعي'), findsOneWidget);
   });

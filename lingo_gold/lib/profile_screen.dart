@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'theme.dart';
+import 'user_profile.dart';
 import 'update_service.dart';
 import 'widgets.dart';
 
@@ -85,32 +86,40 @@ class ProfileScreen extends StatelessWidget {
                     children: [
                       Row(
                         children: [
-                          Container(
-                            width: 76,
-                            height: 76,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              gradient: const LinearGradient(
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                                colors: [Color(0xFF16A6A6), kPrimary],
-                              ),
-                              border: Border.all(
-                                color: Colors.white,
-                                width: 3,
-                              ),
-                              boxShadow: const [
-                                BoxShadow(
-                                  color: Color(0x2216A6A6),
-                                  blurRadius: 16,
-                                  offset: Offset(0, 6),
-                                ),
-                              ],
-                            ),
-                            child: const Icon(
-                              Icons.face_rounded,
-                              color: Colors.white,
-                              size: 40,
+                          GestureDetector(
+                            onTap: () => _showEditProfile(context),
+                            child: ValueListenableBuilder<String>(
+                              valueListenable: UserProfile.instance.avatar,
+                              builder: (context, avatar, _) {
+                                return Container(
+                                  width: 76,
+                                  height: 76,
+                                  alignment: Alignment.center,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    gradient: const LinearGradient(
+                                      begin: Alignment.topLeft,
+                                      end: Alignment.bottomRight,
+                                      colors: [Color(0xFF16A6A6), kPrimary],
+                                    ),
+                                    border: Border.all(
+                                      color: Colors.white,
+                                      width: 3,
+                                    ),
+                                    boxShadow: const [
+                                      BoxShadow(
+                                        color: Color(0x2216A6A6),
+                                        blurRadius: 16,
+                                        offset: Offset(0, 6),
+                                      ),
+                                    ],
+                                  ),
+                                  child: Text(
+                                    avatar,
+                                    style: const TextStyle(fontSize: 38),
+                                  ),
+                                );
+                              },
                             ),
                           ),
                           const SizedBox(width: 14),
@@ -118,22 +127,43 @@ class ProfileScreen extends StatelessWidget {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text(
-                                  'Sara',
-                                  style: TextStyle(
-                                    fontSize: 22,
-                                    fontWeight: FontWeight.w800,
-                                    color: kInk,
-                                  ),
+                                Row(
+                                  children: [
+                                    ValueListenableBuilder<String>(
+                                      valueListenable: UserProfile.instance.name,
+                                      builder: (context, name, _) {
+                                        final display = name.trim().isEmpty ? '...' : name.trim();
+                                        return Text(
+                                          display,
+                                          style: const TextStyle(
+                                            fontSize: 22,
+                                            fontWeight: FontWeight.w800,
+                                            color: kInk,
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                    IconButton(
+                                      onPressed: () => _showEditProfile(context),
+                                      icon: const Icon(Icons.edit, size: 18, color: kPrimary),
+                                      padding: EdgeInsets.zero,
+                                      constraints: const BoxConstraints(),
+                                    ),
+                                  ],
                                 ),
                                 const SizedBox(height: 3),
-                                const Text(
-                                  'مبتدئ • المستوى 1',
-                                  style: TextStyle(
-                                    fontSize: 12.5,
-                                    color: kMuted,
-                                    fontWeight: FontWeight.w600,
-                                  ),
+                                ValueListenableBuilder<String>(
+                                  valueListenable: UserProfile.instance.level,
+                                  builder: (context, level, _) {
+                                    return Text(
+                                      '$level • المستوى 1',
+                                      style: const TextStyle(
+                                        fontSize: 12.5,
+                                        color: kMuted,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    );
+                                  },
                                 ),
                                 const SizedBox(height: 7),
                                 Wrap(
@@ -279,6 +309,14 @@ class ProfileScreen extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  void _showEditProfile(BuildContext context) {
+    showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) => const EditProfileDialog(),
     );
   }
 
@@ -577,6 +615,154 @@ class _SettingsSheetState extends State<_SettingsSheet> {
           ),
         ),
       ),
+    );
+  }
+}
+
+
+class EditProfileDialog extends StatefulWidget {
+  const EditProfileDialog();
+
+  @override
+  State<EditProfileDialog> createState() => EditProfileDialogState();
+}
+
+class EditProfileDialogState extends State<EditProfileDialog> {
+  final TextEditingController _nameController = TextEditingController();
+  String _selectedAvatar = '👦';
+  String _selectedLevel = 'مبتدئ';
+  String? _error;
+
+  static const _avatars = ['👦', '👧', '🦁', '🐯', '🐱', '🐶', '🦊', '🐼'];
+  static const _levels = ['مبتدئ', 'متوسط', 'متقدم'];
+
+  @override
+  void initState() {
+    super.initState();
+    _nameController.text = UserProfile.instance.name.value;
+    _selectedAvatar = UserProfile.instance.avatar.value;
+    _selectedLevel = UserProfile.instance.level.value;
+    if (_nameController.text.trim().isEmpty) {
+      _nameController.text = '';
+    }
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _save() async {
+    final name = _nameController.text.trim();
+    if (name.isEmpty) {
+      setState(() => _error = 'من فضلك اكتب الاسم');
+      return;
+    }
+    await UserProfile.instance.save(
+      newName: name,
+      newAvatar: _selectedAvatar,
+      newLevel: _selectedLevel,
+    );
+    if (mounted) Navigator.pop(context);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isFirstLaunch = !UserProfile.instance.hasName;
+    return AlertDialog(
+      scrollable: true,
+      title: Text(
+        isFirstLaunch ? 'أهلاً بك في Lingo Gold! 👋' : 'تعديل الملف الشخصي',
+        textAlign: TextAlign.center,
+        style: const TextStyle(fontWeight: FontWeight.w800),
+      ),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            if (isFirstLaunch)
+              const Padding(
+                padding: EdgeInsets.only(bottom: 12),
+                child: Text(
+                  'ما هو اسمك؟',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                ),
+              ),
+            TextField(
+              controller: _nameController,
+              maxLength: 20,
+              textDirection: TextDirection.rtl,
+              textAlign: TextAlign.right,
+              decoration: InputDecoration(
+                labelText: 'اسم الطفل',
+                hintText: 'اكتب اسمك هنا',
+                errorText: _error,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              onChanged: (_) {
+                if (_error != null) setState(() => _error = null);
+              },
+            ),
+            const SizedBox(height: 12),
+            const Text(
+              'اختر صورتك',
+              style: TextStyle(fontWeight: FontWeight.w700),
+            ),
+            const SizedBox(height: 8),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: _avatars.map((a) {
+                final selected = a == _selectedAvatar;
+                return GestureDetector(
+                  onTap: () => setState(() => _selectedAvatar = a),
+                  child: Container(
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: selected ? kSoftGreen : Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: selected ? kPrimary : kLine,
+                        width: selected ? 2.5 : 1,
+                      ),
+                    ),
+                    child: Text(a, style: const TextStyle(fontSize: 28)),
+                  ),
+                );
+              }).toList(),
+            ),
+            const SizedBox(height: 12),
+            DropdownButtonFormField<String>(
+              value: _selectedLevel,
+              decoration: InputDecoration(
+                labelText: 'مستواك',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              items: _levels
+                  .map((l) => DropdownMenuItem(value: l, child: Text(l)))
+                  .toList(),
+              onChanged: (v) {
+                if (v != null) setState(() => _selectedLevel = v);
+              },
+            ),
+          ],
+        ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('إلغاء'),
+        ),
+        FilledButton(
+          onPressed: _save,
+          child: Text(isFirstLaunch ? 'ابدأ التعلم' : 'حفظ'),
+        ),
+      ],
     );
   }
 }

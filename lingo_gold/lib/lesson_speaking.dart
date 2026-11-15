@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'data.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'services/speech_service.dart';
+import 'user_profile.dart';
 import 'theme.dart';
 import 'widgets.dart';
 
@@ -445,6 +446,7 @@ class _SpeakingStepState extends State<SpeakingStep> {
               onRepeat: passed ? _startListening : _speak,
               onContinue: () => widget.onComplete(true, _score!),
               onTryAgain: _startListening,
+              userName: UserProfile.instance.name.value,
             ),
           ],
           const SizedBox(height: 4),
@@ -466,6 +468,7 @@ class _ScorePanel extends StatelessWidget {
   final VoidCallback onRepeat;
   final VoidCallback onContinue;
   final VoidCallback onTryAgain;
+  final String userName;
 
   const _ScorePanel({
     required this.passed,
@@ -474,6 +477,7 @@ class _ScorePanel extends StatelessWidget {
     required this.onRepeat,
     required this.onContinue,
     required this.onTryAgain,
+    required this.userName,
   });
 
   @override
@@ -502,7 +506,7 @@ class _ScorePanel extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      passed ? 'أحسنت! $score%' : 'حاول مجدداً',
+                      passed ? 'أحسنت يا $userName! $score%' : 'حاول مجدداً',
                       style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w800,

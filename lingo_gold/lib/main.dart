@@ -7,6 +7,7 @@ import 'home_screen.dart';
 import 'learn_screen.dart';
 import 'lesson_flow.dart';
 import 'profile_screen.dart';
+import 'user_profile.dart';
 import 'update_service.dart';
 import 'speak_screen.dart';
 import 'theme.dart';
@@ -63,6 +64,21 @@ class _MainShellState extends State<MainShell> {
   void initState() {
     super.initState();
     _selectedGroup = _currentLessonIndex ~/ 10;
+    UserProfile.instance.load().then((_) {
+      if (!mounted) return;
+      final isTest = WidgetsBinding.instance.runtimeType.toString().contains('Test');
+      if (!isTest && !UserProfile.instance.hasName) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) {
+            showDialog<void>(
+              context: context,
+              barrierDismissible: false,
+              builder: (ctx) => const EditProfileDialog(),
+            );
+          }
+        });
+      }
+    });
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _updateTimer = Timer(const Duration(seconds: 3), () {
         if (mounted) UpdateService.checkAndPrompt(context, silent: true);

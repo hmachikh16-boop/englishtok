@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'data.dart';
 import 'theme.dart';
+import 'user_profile.dart';
 import 'widgets.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -48,15 +49,21 @@ class HomeScreen extends StatelessWidget {
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Expanded(
-                      child: Text(
-                        'أهلاً سارة 👋',
-                        style: TextStyle(
-                          fontSize: 30,
-                          height: 1.1,
-                          fontWeight: FontWeight.w800,
-                          color: kInk,
-                        ),
+                    Expanded(
+                      child: ValueListenableBuilder<String>(
+                        valueListenable: UserProfile.instance.name,
+                        builder: (context, name, _) {
+                          final display = name.trim().isEmpty ? '...' : name.trim();
+                          return Text(
+                            'أهلاً $display 👋',
+                            style: const TextStyle(
+                              fontSize: 30,
+                              height: 1.1,
+                              fontWeight: FontWeight.w800,
+                              color: kInk,
+                            ),
+                          );
+                        },
                       ),
                     ),
                     const SizedBox(width: 8),
