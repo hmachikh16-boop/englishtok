@@ -109,10 +109,12 @@ class _WritingStepState extends State<WritingStep> {
             ],
           ),
           const SizedBox(height: 16),
-          Wrap(
-            alignment: WrapAlignment.center,
-            spacing: 6,
-            runSpacing: 7,
+          Directionality(
+            textDirection: TextDirection.ltr,
+            child: Wrap(
+              alignment: WrapAlignment.center,
+              spacing: 6,
+              runSpacing: 7,
             children: List.generate(_targetLetters.length, (i) {
               final expected = _targetLetters[i].toLowerCase();
               final actual = i < _typedLetters.length
@@ -143,6 +145,7 @@ class _WritingStepState extends State<WritingStep> {
               );
             }),
           ),
+          ),
           const SizedBox(height: 8),
           SizedBox(
             height: 18,
@@ -169,7 +172,10 @@ class _WritingStepState extends State<WritingStep> {
             ),
           ),
           const SizedBox(height: 4),
-          _Keyboard(onKey: _key, onBackspace: _backspace),
+          Directionality(
+            textDirection: TextDirection.ltr,
+            child: _Keyboard(onKey: _key, onBackspace: _backspace),
+          ),
           const SizedBox(height: 12),
           SizedBox(
             width: double.infinity,
