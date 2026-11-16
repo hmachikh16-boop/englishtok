@@ -8,8 +8,8 @@ import 'package:path_provider/path_provider.dart';
 class UpdateService {
   static const String baseUrl = 'http://192.168.1.11:8080';
   static const String versionUrl = '$baseUrl/version.json';
-  static const String apkUrl = '$baseUrl/app-release.apk?v=13';
-  static const int currentVersionCode = 13;
+  static const String apkUrl = '$baseUrl/app-release.apk?v=14';
+  static const int currentVersionCode = 14;
 
   /// Checks for an update. Returns the new version code if available, else null.
   static Future<int?> checkForUpdate() async {

@@ -44,8 +44,6 @@ void main() {
     await tester.tap(find.text('حياتي').last, warnIfMissed: false);
     await tester.pumpAndSettle();
     expect(find.text('مسار التعلم الخاص بك'), findsOneWidget);
-    expect(find.text('الوحدات'), findsOneWidget);
-    expect(find.text('فعل الكينونة'), findsOneWidget);
 
     await tester.tap(find.text('التمارين'));
     await tester.pumpAndSettle();

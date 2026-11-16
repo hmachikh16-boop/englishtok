@@ -178,60 +178,8 @@ class _LearnScreenState extends State<LearnScreen> {
                           height: 7,
                         ),
                       ),
-                      const SizedBox(height: 12),
-                      _LearningPath(
-                        groupIndex: groupIndex,
-                        completed: widget.completed,
-                        firstIncomplete: firstIncomplete,
-                        onOpenLesson: widget.onOpenLesson,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
-                        child: SizedBox(
-                          width: double.infinity,
-                          child: FilledButton(
-                            onPressed: () {
-                              final target = firstIncomplete ??
-                                  groupIndex * 10;
-                              widget.onOpenLesson(target);
-                            },
-                            child: Text(
-                              firstIncomplete == null
-                                  ? 'مراجعة الوحدة'
-                                  : 'متابعة الدرس',
-                            ),
-                          ),
-                        ),
-                      ),
                     ],
                   ),
-                ),
-                const SizedBox(height: 24),
-                const SectionTitle(title: 'الوحدات'),
-                const SizedBox(height: 10),
-                ...List.generate(groups.length, (index) {
-                  final unitGroup = groups[index];
-                  final unitCompleted = List.generate(
-                    10,
-                    (i) => index * 10 + i,
-                  ).where(widget.completed.contains).length;
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 10),
-                    child: _UnitCard(
-                      groupIndex: index,
-                      group: unitGroup,
-                      completed: unitCompleted,
-                      locked: !widget.unlockedGroups.contains(index),
-                      selected: index == groupIndex,
-                      current: index == widget.currentIndex ~/ 10,
-                      onTap: () => _selectGroup(index),
-                    ),
-                  );
-                }),
-                const SizedBox(height: 6),
-                const Text(
-                  'أكمل الوحدة السابقة لفتح الوحدة التالية. يتقدم مسارك تلقائياً.',
-                  style: TextStyle(fontSize: 12, color: kMuted, height: 1.4),
                 ),
               ],
             ),

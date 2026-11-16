@@ -121,6 +121,19 @@ class _MainShellState extends State<MainShell> {
     }
   }
 
+  void _openPathNode(int p) {
+    final g = pathOrder[p];
+    var target = g * 10;
+    for (var i = 0; i < 10; i++) {
+      final idx = g * 10 + i;
+      if (!_completed.contains(idx)) {
+        target = idx;
+        break;
+      }
+    }
+    _openLesson(target);
+  }
+
   void _showCourseComplete() {
     showDialog<void>(
       context: context,
@@ -195,7 +208,7 @@ class _MainShellState extends State<MainShell> {
                 onOpenLearn: () => setState(() => _tab = 1),
                 onOpenProfile: () => setState(() => _tab = 3),
                 onSpeakChallenge: () => setState(() => _tab = 2),
-                onOpenPathNode: (p) => _selectGroup(pathOrder[p]),
+                onOpenPathNode: _openPathNode,
               ),
               LearnScreen(
                 selectedGroup: _selectedGroup,
