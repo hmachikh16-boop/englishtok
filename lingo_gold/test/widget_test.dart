@@ -27,12 +27,10 @@ void main() {
     expect(find.text('أكمل الدرس الأول لفتح الدرس التالي!'), findsOneWidget);
     expect(find.text('Greeting - التحية'), findsOneWidget);
     expect(find.text('الرئيسية'), findsOneWidget);
-    expect(find.text('حياتي'), findsOneWidget);
-    expect(find.text('التمارين'), findsOneWidget);
     expect(find.text('ملفي'), findsOneWidget);
   });
 
-  testWidgets('bottom navigation opens Learn, Speak and Profile', (tester) async {
+  testWidgets('bottom navigation opens Profile', (tester) async {
     tester.view.physicalSize = const Size(390, 844);
     tester.view.devicePixelRatio = 1.0;
     addTearDown(tester.view.resetPhysicalSize);
@@ -41,18 +39,8 @@ void main() {
     await tester.pumpWidget(const LingoGoldApp());
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('حياتي').last, warnIfMissed: false);
-    await tester.pumpAndSettle();
-    expect(find.text('مسار التعلم الخاص بك'), findsOneWidget);
-
-    await tester.tap(find.text('التمارين'));
-    await tester.pumpAndSettle();
-    expect(find.text('تحدث بثقة'), findsOneWidget);
-    expect(find.text('دروس التحدث'), findsOneWidget);
-
     await tester.tap(find.text('ملفي'));
     await tester.pumpAndSettle();
-    expect(find.text('...'), findsOneWidget);
     expect(find.text('الشارات'), findsOneWidget);
     expect(find.text('النشاط الأسبوعي'), findsOneWidget);
   });

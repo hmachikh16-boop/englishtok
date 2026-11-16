@@ -407,56 +407,60 @@ class BottomNavBar extends StatelessWidget {
 
   static const _items = [
     (Icons.home_rounded, 'الرئيسية'),
-    (Icons.menu_book_rounded, 'حياتي'),
-    (Icons.mic_rounded, 'التمارين'),
     (Icons.person_rounded, 'ملفي'),
   ];
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        border: Border(top: BorderSide(color: kLine)),
-        boxShadow: [
-          BoxShadow(
-            color: Color(0x0F000000),
-            blurRadius: 20,
-            offset: Offset(0, -4),
-          ),
-        ],
-      ),
-      child: SafeArea(
-        top: false,
-        child: SizedBox(
-          height: 66,
-          child: Row(
-            children: List.generate(_items.length, (i) {
-              final active = i == index;
-              final color = active ? kPrimary : kMuted;
-              return Expanded(
-                child: InkWell(
-                  onTap: () => onTap(i),
+    final bottomInset = MediaQuery.of(context).padding.bottom;
+    return Padding(
+      padding: EdgeInsets.fromLTRB(16, 0, 16, 16 + bottomInset),
+      child: Container(
+        height: 72,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(28),
+          boxShadow: const [
+            BoxShadow(
+              color: Color(0x1F000000),
+              blurRadius: 24,
+              offset: Offset(0, 8),
+            ),
+          ],
+        ),
+        child: Row(
+          children: List.generate(_items.length, (i) {
+            final active = (i == 0 && index == 0) || (i == 1 && index == 3);
+            final color = active ? kPrimary : const Color(0xFF9E9E9E);
+            return Expanded(
+              child: InkWell(
+                borderRadius: BorderRadius.circular(28),
+                onTap: () => onTap(i == 0 ? 0 : 3),
+                child: Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: active ? const Color(0xFFE8F5E9) : Colors.transparent,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(_items[i].$1, color: color, size: 25),
-                      const SizedBox(height: 3),
+                      Icon(_items[i].$1, color: color, size: 28),
+                      const SizedBox(height: 2),
                       Text(
                         _items[i].$2,
                         style: TextStyle(
                           color: color,
-                          fontSize: 11,
-                          fontWeight:
-                              active ? FontWeight.w800 : FontWeight.w600,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w800,
                         ),
                       ),
                     ],
                   ),
                 ),
-              );
-            }),
-          ),
+              ),
+            );
+          }),
         ),
       ),
     );
