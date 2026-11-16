@@ -1,11 +1,8 @@
-import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
 
 import 'data.dart';
 import 'theme.dart';
 import 'user_profile.dart';
-import 'widgets.dart';
 
 class HomeScreen extends StatelessWidget {
   final int currentIndex;
@@ -51,110 +48,157 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final done = _completedPath;
     final completedCount = done.length;
-    final progress = pathOrder.isEmpty
-        ? 0.0
-        : completedCount / pathOrder.length;
-    final levelLabel = 'مستوى ${UserProfile.instance.level.value}';
+    final total = pathOrder.length;
+    final progress = total == 0 ? 0.0 : completedCount / total;
+    final todayDone = completedCount.clamp(0, 10);
+    final todayTotal = 10;
 
-    return SafeArea(
-      bottom: false,
-      child: Column(
-        children: [
-          _Header(
-            level: levelLabel,
-            progressPercent: (progress * 100).round(),
-            hearts: 5,
-            gems: 120,
-            progress: progress,
-          ),
-          Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
-              child: _PathView(
-                completed: done,
-                isUnlocked: (p) => _isUnlocked(p, done),
-                onOpen: onOpenPathNode,
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: SafeArea(
+        bottom: false,
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              _HeaderCard(
+                progress: progress,
+                todayDone: todayDone,
+                todayTotal: todayTotal,
               ),
-            ),
+              const SizedBox(height: 24),
+              ...List.generate(pathOrder.length, (i) {
+                final unlocked = _isUnlocked(i, done);
+                final completedNode = done.contains(i);
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 32),
+                  child: Column(
+                    children: [
+                      _LessonCircle(
+                        unlocked: unlocked,
+                        completed: completedNode,
+                        onTap: () {
+                          if (!unlocked) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text(
+                                    'أكمل الدرس السابق لفتح هذا الدرس!'),
+                                behavior: SnackBarBehavior.floating,
+                              ),
+                            );
+                            return;
+                          }
+                          onOpenPathNode(i);
+                        },
+                      ),
+                      const SizedBox(height: 12),
+                      _LabelPill(text: _labelFor(i)),
+                    ],
+                  ),
+                );
+              }),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
+
+  String _labelFor(int i) {
+    const ordinals = [
+      'الأول',
+      'الثاني',
+      'الثالث',
+      'الرابع',
+      'الخامس',
+      'السادس',
+      'السابع',
+      'الثامن',
+      'التاسع',
+      'العاشر',
+      'الحادي عشر',
+      'الثاني عشر',
+      'الثالث عشر',
+      'الرابع عشر',
+    ];
+    return 'الدرس ${ordinals[i]}: ${pathLabelsAr[i]}';
+  }
 }
 
-class _Header extends StatelessWidget {
-  final String level;
-  final int progressPercent;
-  final int hearts;
-  final int gems;
+class _HeaderCard extends StatelessWidget {
   final double progress;
-  const _Header({
-    required this.level,
-    required this.progressPercent,
-    required this.hearts,
-    required this.gems,
+  final int todayDone;
+  final int todayTotal;
+  const _HeaderCard({
     required this.progress,
+    required this.todayDone,
+    required this.todayTotal,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 14),
-      decoration: const BoxDecoration(
-        color: kPrimary,
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(20),
-          bottomRight: Radius.circular(20),
-        ),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFFE5E7EB)),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x14000000),
+            blurRadius: 8,
+            offset: Offset(0, 2),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Expanded(
-                child: Text(
-                  level,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
+                child: const Text(
+                  'تعلم العربية',
+                  style: TextStyle(
+                    fontSize: 22,
                     fontWeight: FontWeight.w800,
+                    color: Color(0xFF1DB954),
                   ),
                 ),
               ),
-              _Stat(icon: Icons.favorite_rounded, value: '$hearts', color: Colors.redAccent),
-              const SizedBox(width: 12),
-              _Stat(icon: Icons.diamond_rounded, value: '$gems', color: Colors.amber),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  const Text(
+                    'تقدمك اليوم',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Color(0xFF6B7280),
+                    ),
+                  ),
+                  Text(
+                    '$todayDone / $todayTotal',
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w800,
+                      color: Color(0xFF374151),
+                    ),
+                  ),
+                ],
+              ),
             ],
           ),
-          const SizedBox(height: 6),
-          Text(
-            'تقدمك $progressPercent%',
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 13,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          const SizedBox(height: 6),
+          const SizedBox(height: 12),
           ClipRRect(
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(3),
             child: LinearProgressIndicator(
               value: progress.clamp(0.0, 1.0),
-              minHeight: 8,
-              backgroundColor: Colors.white24,
-              valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
-            ),
-          ),
-          const SizedBox(height: 8),
-          const Text(
-            'أكمل الدرس الأول لفتح الدرس التالي!',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 12,
-              fontWeight: FontWeight.w500,
+              minHeight: 6,
+              backgroundColor: const Color(0xFFE5E7EB),
+              valueColor:
+                  const AlwaysStoppedAnimation<Color>(Color(0xFF1DB954)),
             ),
           ),
         ],
@@ -163,96 +207,11 @@ class _Header extends StatelessWidget {
   }
 }
 
-class _Stat extends StatelessWidget {
-  final IconData icon;
-  final String value;
-  final Color color;
-  const _Stat({required this.icon, required this.value, required this.color});
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Icon(icon, color: color, size: 18),
-        const SizedBox(width: 4),
-        Text(
-          value,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 13,
-            fontWeight: FontWeight.w800,
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _PathView extends StatelessWidget {
-  final Set<int> completed;
-  final bool Function(int) isUnlocked;
-  final ValueChanged<int> onOpen;
-  const _PathView({
-    required this.completed,
-    required this.isUnlocked,
-    required this.onOpen,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final children = <Widget>[];
-    for (var i = 0; i < pathOrder.length; i++) {
-      final unlocked = isUnlocked(i);
-      final done = completed.contains(i);
-      final align = i == 0
-          ? Alignment.center
-          : (i.isOdd ? Alignment.centerRight : Alignment.centerLeft);
-      children.add(
-        Align(
-          alignment: align,
-          child: Padding(
-            padding: EdgeInsets.only(
-              left: i.isOdd ? 0 : 8,
-              right: i.isOdd ? 8 : 0,
-            ),
-            child: _Node(
-              index: i,
-              unlocked: unlocked,
-              completed: done,
-              onTap: () {
-                if (!unlocked) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('أكمل الدرس السابق لفتح هذا الدرس!'),
-                      behavior: SnackBarBehavior.floating,
-                    ),
-                  );
-                  return;
-                }
-                onOpen(i);
-              },
-            ),
-          ),
-        ),
-      );
-      if (i < pathOrder.length - 1) {
-        children.add(const _Connector());
-      }
-    }
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: children,
-    );
-  }
-}
-
-class _Node extends StatelessWidget {
-  final int index;
+class _LessonCircle extends StatelessWidget {
   final bool unlocked;
   final bool completed;
   final VoidCallback onTap;
-  const _Node({
-    required this.index,
+  const _LessonCircle({
     required this.unlocked,
     required this.completed,
     required this.onTap,
@@ -260,128 +219,62 @@ class _Node extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final size = completed ? 96.0 : (unlocked ? 120.0 : 80.0);
-    final color = completed
-        ? kPrimary
-        : (unlocked ? kPrimary : Colors.grey.shade400);
-    final label = '${pathLabelsEn[index]} - ${pathLabelsAr[index]}';
+    final isUnlocked = unlocked;
     return GestureDetector(
       onTap: onTap,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: size,
-            height: size,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: color,
-              boxShadow: unlocked
-                  ? [
-                      BoxShadow(
-                        color: color.withOpacity(0.45),
-                        blurRadius: 18,
-                        spreadRadius: 2,
-                      ),
-                    ]
-                  : null,
-            ),
-            child: Center(
-              child: completed
-                  ? const Icon(Icons.check_rounded,
-                      color: Colors.white, size: 44)
-                  : (unlocked
-                      ? const Icon(Icons.waving_hand_rounded,
-                          color: Colors.white, size: 46)
-                      : const Icon(Icons.lock_rounded,
-                          color: Colors.white, size: 30)),
-            ),
-          ),
-          const SizedBox(height: 6),
-          Container(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-            decoration: BoxDecoration(
-              color: unlocked ? kSoftGreen : Colors.grey.shade200,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Text(
-              label,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 11,
-                fontWeight: FontWeight.w700,
-                color: unlocked ? kPrimaryDark : kMuted,
-              ),
-            ),
-          ),
-          if (unlocked) ...[
-            const SizedBox(height: 2),
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: const [
-                Icon(Icons.star_rounded, color: kGold, size: 14),
-                SizedBox(width: 2),
-                Text(
-                  '10 XP',
-                  style: TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w700,
-                    color: kGold,
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ],
+      child: Container(
+        width: 160,
+        height: 160,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: (completed || isUnlocked)
+              ? const Color(0xFF1DB954)
+              : const Color(0xFFE5E7EB),
+        ),
+        child: Center(
+          child: completed
+              ? const Icon(Icons.check_rounded,
+                  color: Colors.white, size: 72)
+              : (isUnlocked
+                  ? const Icon(Icons.waving_hand_rounded,
+                      color: Colors.white, size: 72)
+                  : const Icon(Icons.lock_rounded,
+                      color: Color(0xFF9CA3AF), size: 64)),
+        ),
       ),
     );
   }
 }
 
-class _Connector extends StatelessWidget {
-  const _Connector();
+class _LabelPill extends StatelessWidget {
+  final String text;
+  const _LabelPill({required this.text});
+
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 46,
-      child: CustomPaint(
-        painter: _DottedCurvePainter(),
-        size: const Size(double.infinity, 46),
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(999),
+        border: Border.all(color: const Color(0xFFD1D5DB)),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x14000000),
+            blurRadius: 8,
+            offset: Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Text(
+        text,
+        textAlign: TextAlign.center,
+        style: const TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.w500,
+          color: Color(0xFF4B5563),
+        ),
       ),
     );
   }
-}
-
-class _DottedCurvePainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = Colors.grey.shade400
-      ..strokeWidth = 2
-      ..style = PaintingStyle.stroke;
-    final path = Path();
-    final startX = size.width / 2;
-    path.moveTo(startX, 0);
-    path.quadraticBezierTo(
-      size.width * 0.85,
-      size.height / 2,
-      size.width / 2,
-      size.height,
-    );
-    // Draw dotted.
-    const dashWidth = 4.0;
-    const dashSpace = 5.0;
-    final metrics = path.computeMetrics().first;
-    double distance = 0;
-    while (distance < metrics.length) {
-      final next = math.min(distance + dashWidth, metrics.length);
-      final extract = metrics.extractPath(distance, next);
-      canvas.drawPath(extract, paint);
-      distance += dashWidth + dashSpace;
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }

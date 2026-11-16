@@ -416,10 +416,11 @@ class BottomNavBar extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.fromLTRB(16, 0, 16, 16 + bottomInset),
       child: Container(
-        height: 72,
+        height: 64,
+        padding: const EdgeInsets.all(6),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(28),
+          borderRadius: BorderRadius.circular(999),
           boxShadow: const [
             BoxShadow(
               color: Color(0x1F000000),
@@ -431,28 +432,29 @@ class BottomNavBar extends StatelessWidget {
         child: Row(
           children: List.generate(_items.length, (i) {
             final active = (i == 0 && index == 0) || (i == 1 && index == 3);
-            final color = active ? kPrimary : const Color(0xFF9E9E9E);
             return Expanded(
-              child: InkWell(
-                borderRadius: BorderRadius.circular(28),
+              child: GestureDetector(
                 onTap: () => onTap(i == 0 ? 0 : 3),
                 child: Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                   decoration: BoxDecoration(
-                    color: active ? const Color(0xFFE8F5E9) : Colors.transparent,
-                    borderRadius: BorderRadius.circular(20),
+                    color: active ? const Color(0xFF1DB954) : const Color(0xFFE5E7EB),
+                    borderRadius: BorderRadius.circular(999),
                   ),
-                  child: Column(
+                  child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(_items[i].$1, color: color, size: 28),
-                      const SizedBox(height: 2),
+                      Icon(
+                        _items[i].$1,
+                        color: active ? Colors.white : const Color(0xFF6B7280),
+                        size: 24,
+                      ),
+                      const SizedBox(width: 8),
                       Text(
                         _items[i].$2,
                         style: TextStyle(
-                          color: color,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w800,
+                          color: active ? Colors.white : const Color(0xFF6B7280),
+                          fontSize: 15,
+                          fontWeight: active ? FontWeight.w800 : FontWeight.w500,
                         ),
                       ),
                     ],

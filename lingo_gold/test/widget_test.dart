@@ -22,10 +22,8 @@ void main() {
     await tester.pumpWidget(const LingoGoldApp());
     await tester.pumpAndSettle();
 
-    expect(find.text('مستوى مبتدئ'), findsOneWidget);
-    expect(find.text('تقدمك 0%'), findsOneWidget);
-    expect(find.text('أكمل الدرس الأول لفتح الدرس التالي!'), findsOneWidget);
-    expect(find.text('Greeting - التحية'), findsOneWidget);
+    expect(find.text('تعلم العربية'), findsOneWidget);
+    expect(find.text('الدرس الأول: التحية'), findsOneWidget);
     expect(find.text('الرئيسية'), findsOneWidget);
     expect(find.text('ملفي'), findsOneWidget);
   });
