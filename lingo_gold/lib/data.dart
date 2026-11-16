@@ -63,6 +63,46 @@ const List<LessonGroup> groups = [
   LessonGroup('الألوان', kPink, Icons.palette_outlined),
 ];
 
+// ================= PATH ORDER (zigzag home path) =================
+// Each entry is a group index. The home path shows these 14 nodes in order.
+const List<int> pathOrder = [
+  8, 0, 1, 2, 3, 4, 7, 5, 6, 9, 11, 13, 10, 12,
+];
+
+const List<String> pathLabelsAr = [
+  'التحية',
+  'تقديم نفسك',
+  'العائلة',
+  'روتيني اليومي',
+  'الأكل',
+  'المشاعر',
+  'في المدرسة',
+  'في السوق',
+  'الاتجاهات',
+  'أحلامي',
+  'الأرقام',
+  'الألوان',
+  'المهن',
+  'الحيوانات',
+];
+
+const List<String> pathLabelsEn = [
+  'Greeting',
+  'My name is...',
+  'My Family',
+  'Daily Routine',
+  'Food',
+  'Feelings',
+  'At School',
+  'At Market',
+  'Directions',
+  'Dreams',
+  'Numbers',
+  'Colors',
+  'Jobs',
+  'Animals',
+];
+
 // ================= 90 LESSONS =================
 const List<Lesson> lessons = [
   // ===== 1. الدروس 10 القديمة - Verb To Be - تبقى كما هي =====

@@ -104,15 +104,18 @@ class _MainShellState extends State<MainShell> {
       ),
     );
     if (!mounted || result == null) return;
+    final passed = result.score >= 4 || result.speakingScore >= 80;
     setState(() {
-      _completed.add(index);
+      if (passed) _completed.add(index);
       _currentLessonIndex = (index + 1).clamp(0, lessons.length - 1);
       _selectedGroup = _currentLessonIndex ~/ 10;
       if (result.speakingScore > 0) {
         _speakingScore = result.speakingScore;
       }
     });
-    UserProfile.instance.saveProgress(_completed, _currentLessonIndex);
+    if (passed) {
+      UserProfile.instance.saveProgress(_completed, _currentLessonIndex);
+    }
     if (index + 1 >= lessons.length) {
       _showCourseComplete();
     }
@@ -137,26 +140,12 @@ class _MainShellState extends State<MainShell> {
   }
 
   Set<int> _computeUnlockedGroups() {
-    final level = UserProfile.instance.level.value;
-    final base = level == 'متقدم'
-        ? groups.length
-        : (level == 'متوسط' ? 3 : 1);
-    final unlocked = <int>{};
-    for (var i = 0; i < base && i < groups.length; i++) {
-      unlocked.add(i);
-    }
-    for (var g = 0; g < groups.length - 1; g++) {
-      final allDone =
-          List.generate(10, (i) => g * 10 + i).every(_completed.contains);
-      if (allDone) unlocked.add(g + 1);
-    }
-    return unlocked;
+    return Set<int>.from(List.generate(groups.length, (i) => i));
   }
 
   void _selectGroup(int groupIndex) {
-    if (!_computeUnlockedGroups().contains(groupIndex)) return;
     setState(() {
-      _selectedGroup = groupIndex;
+      _selectedGroup = groupIndex.clamp(0, groups.length - 1).toInt();
       _tab = 1;
     });
   }
@@ -201,11 +190,12 @@ class _MainShellState extends State<MainShell> {
                 currentIndex: _currentLessonIndex,
                 streak: _streak,
                 dailyGoal: _dailyGoal,
+                completed: _completed,
                 onContinue: () => _openLesson(_currentLessonIndex),
                 onOpenLearn: () => setState(() => _tab = 1),
                 onOpenProfile: () => setState(() => _tab = 3),
                 onSpeakChallenge: () => setState(() => _tab = 2),
-                onCategoryTap: _openCategory,
+                onOpenPathNode: (p) => _selectGroup(pathOrder[p]),
               ),
               LearnScreen(
                 selectedGroup: _selectedGroup,

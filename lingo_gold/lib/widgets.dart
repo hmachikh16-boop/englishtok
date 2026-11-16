@@ -407,9 +407,9 @@ class BottomNavBar extends StatelessWidget {
 
   static const _items = [
     (Icons.home_rounded, 'الرئيسية'),
-    (Icons.menu_book_rounded, 'تعلم'),
-    (Icons.mic_rounded, 'تحدث'),
-    (Icons.person_rounded, 'الملف'),
+    (Icons.menu_book_rounded, 'حياتي'),
+    (Icons.mic_rounded, 'التمارين'),
+    (Icons.person_rounded, 'ملفي'),
   ];
 
   @override

@@ -495,7 +495,7 @@ class _ResultStep extends StatelessWidget {
                 child: FilledButton.icon(
                   onPressed: onContinue,
                   icon: const Icon(Icons.arrow_forward_rounded, size: 20),
-                  label: const Text('متابعة'),
+                  label: const Text('الدرس التالي ->'),
                 ),
               ),
             ],
