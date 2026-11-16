@@ -31,7 +31,6 @@ class _SpeakingStepState extends State<SpeakingStep> {
   bool _hasSpoken = false;
   String _recognized = '';
   int? _score;
-  double _confidence = 0;
   bool _scored = false;
   Timer? _timer;
 
@@ -93,7 +92,6 @@ class _SpeakingStepState extends State<SpeakingStep> {
       _hasSpoken = false;
       _recognized = '';
       _score = null;
-      _confidence = 0;
       _scored = false;
     });
     _timer?.cancel();
