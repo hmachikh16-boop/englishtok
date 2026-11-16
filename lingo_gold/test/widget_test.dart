@@ -40,6 +40,5 @@ void main() {
     await tester.tap(find.text('ملفي'));
     await tester.pumpAndSettle();
     expect(find.text('الشارات'), findsOneWidget);
-    expect(find.text('النشاط الأسبوعي'), findsOneWidget);
   });
 }

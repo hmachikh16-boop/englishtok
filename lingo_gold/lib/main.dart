@@ -65,18 +65,7 @@ class _MainShellState extends State<MainShell> {
     _selectedGroup = _currentLessonIndex ~/ 10;
     UserProfile.instance.load().then((_) {
       if (!mounted) return;
-      final isTest = WidgetsBinding.instance.runtimeType.toString().contains('Test');
-      if (!isTest && !UserProfile.instance.hasName) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (mounted) {
-            showDialog<void>(
-              context: context,
-              barrierDismissible: false,
-              builder: (ctx) => const EditProfileDialog(),
-            );
-          }
-        });
-      }
+      setState(() {});
     });
     UserProfile.instance.loadProgress(
       onLoaded: (completed, current) {
@@ -114,6 +103,61 @@ class _MainShellState extends State<MainShell> {
       }
     });
     if (passed) {
+      // Update profile stats.
+      final up = UserProfile.instance;
+      final newXp = up.totalXP.value + 20;
+      final newLessons = up.lessonsCompleted.value + 1;
+      // Streak logic.
+      final now = DateTime.now();
+      final today = '${now.year}-${now.month}-${now.day}';
+      final last = up.lastStudyDate.value;
+      int newStreak = up.streak.value;
+      if (last.isEmpty) {
+        newStreak = 1;
+      } else {
+        final lastDate = DateTime.tryParse(last.replaceAll('-', '/'));
+        // Simple day comparison.
+        final yesterday = now.subtract(const Duration(days: 1));
+        final lastStr =
+            '${lastDate?.year}-${lastDate?.month}-${lastDate?.day}';
+        final todayStr = today;
+        final yestStr =
+            '${yesterday.year}-${yesterday.month}-${yesterday.day}';
+        if (lastStr == todayStr) {
+          // same day, no change
+        } else if (lastStr == yestStr) {
+          newStreak += 1;
+        } else {
+          newStreak = 1;
+        }
+      }
+      // Pronunciation running average.
+      final oldPron = up.pronunciationScore.value;
+      final n = up.lessonsCompleted.value;
+      final newPron = n == 0
+          ? result.speakingScore.clamp(0, 100)
+          : ((oldPron * n + result.speakingScore.clamp(0, 100)) /
+                  (n + 1))
+              .round();
+      final leveledUp = up.totalXP.value < 200 && newXp >= 200;
+      await up.saveStats(
+        xp: newXp,
+        lessons: newLessons,
+        streakVal: newStreak,
+        lastStudy: today,
+        pronunciation: newPron,
+      );
+      if (leveledUp) {
+        await up.save(newLevel: 'متوسط');
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('مبروك! طلعت مستوى 2 🎉'),
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+        }
+      }
       UserProfile.instance.saveProgress(_completed, _currentLessonIndex);
     }
     if (index + 1 >= lessons.length) {

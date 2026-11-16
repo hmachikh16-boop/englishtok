@@ -8,10 +8,20 @@ class UserProfile {
   static const _kName = 'profile_name';
   static const _kAvatar = 'profile_avatar';
   static const _kLevel = 'profile_level';
+  static const _kXP = 'profile_xp';
+  static const _kLessons = 'profile_lessons';
+  static const _kStreak = 'profile_streak';
+  static const _kLastStudy = 'profile_last_study';
+  static const _kPronunciation = 'profile_pronunciation';
 
   final ValueNotifier<String> name = ValueNotifier<String>('');
   final ValueNotifier<String> avatar = ValueNotifier<String>('👦');
   final ValueNotifier<String> level = ValueNotifier<String>('مبتدئ');
+  final ValueNotifier<int> totalXP = ValueNotifier<int>(0);
+  final ValueNotifier<int> lessonsCompleted = ValueNotifier<int>(0);
+  final ValueNotifier<int> streak = ValueNotifier<int>(0);
+  final ValueNotifier<String> lastStudyDate = ValueNotifier<String>('');
+  final ValueNotifier<int> pronunciationScore = ValueNotifier<int>(88);
 
   bool _loaded = false;
 
@@ -23,6 +33,11 @@ class UserProfile {
       name.value = prefs.getString(_kName) ?? '';
       avatar.value = prefs.getString(_kAvatar) ?? '👦';
       level.value = prefs.getString(_kLevel) ?? 'مبتدئ';
+      totalXP.value = prefs.getInt(_kXP) ?? 0;
+      lessonsCompleted.value = prefs.getInt(_kLessons) ?? 0;
+      streak.value = prefs.getInt(_kStreak) ?? 0;
+      lastStudyDate.value = prefs.getString(_kLastStudy) ?? '';
+      pronunciationScore.value = prefs.getInt(_kPronunciation) ?? 88;
     } catch (_) {}
   }
 
@@ -71,6 +86,38 @@ class UserProfile {
         completed.map((e) => e.toString()).toList(),
       );
       await prefs.setInt(_kCurrent, current);
+    } catch (_) {}
+  }
+
+  Future<void> saveStats({
+    int? xp,
+    int? lessons,
+    int? streakVal,
+    String? lastStudy,
+    int? pronunciation,
+  }) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      if (xp != null) {
+        await prefs.setInt(_kXP, xp);
+        totalXP.value = xp;
+      }
+      if (lessons != null) {
+        await prefs.setInt(_kLessons, lessons);
+        lessonsCompleted.value = lessons;
+      }
+      if (streakVal != null) {
+        await prefs.setInt(_kStreak, streakVal);
+        streak.value = streakVal;
+      }
+      if (lastStudy != null) {
+        await prefs.setString(_kLastStudy, lastStudy);
+        lastStudyDate.value = lastStudy;
+      }
+      if (pronunciation != null) {
+        await prefs.setInt(_kPronunciation, pronunciation);
+        pronunciationScore.value = pronunciation;
+      }
     } catch (_) {}
   }
 
