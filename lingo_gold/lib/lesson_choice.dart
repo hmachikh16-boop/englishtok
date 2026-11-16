@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'data.dart';
 import 'services/speech_service.dart';
@@ -11,6 +12,7 @@ class ImageChoiceGrid extends StatelessWidget {
   final List<Lesson> choices;
   final int? selectedIndex;
   final int correctIndex;
+  final bool showResult;
   final ValueChanged<int> onTap;
 
   const ImageChoiceGrid({
@@ -18,6 +20,7 @@ class ImageChoiceGrid extends StatelessWidget {
     required this.choices,
     required this.selectedIndex,
     required this.correctIndex,
+    this.showResult = false,
     required this.onTap,
   });
 
@@ -31,16 +34,21 @@ class ImageChoiceGrid extends StatelessWidget {
         crossAxisCount: 2,
         mainAxisSpacing: 10,
         crossAxisSpacing: 10,
-        childAspectRatio: 1.0,
+        childAspectRatio: 16 / 9,
       ),
       itemBuilder: (context, index) {
         final isSelected = selectedIndex == index;
         final isCorrect = index == correctIndex;
         final selectedCorrect = isSelected && isCorrect;
         final selectedWrong = isSelected && !isCorrect;
-        final borderColor = selectedCorrect
-            ? kPrimary
-            : (selectedWrong ? kDanger : kLine);
+        final revealCorrect = showResult && isCorrect && !isSelected;
+        final borderColor = !showResult
+            ? (isSelected ? kSecondary : kLine)
+            : (selectedCorrect || revealCorrect
+                ? kPrimary
+                : (selectedWrong ? kDanger : kLine));
+        final borderWidth =
+            isSelected || revealCorrect || selectedWrong ? 3.0 : 1.5;
         return Material(
           color: Colors.transparent,
           child: InkWell(
@@ -49,10 +57,7 @@ class ImageChoiceGrid extends StatelessWidget {
             child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(
-                  color: borderColor,
-                  width: isSelected ? 3 : 1.5,
-                ),
+                border: Border.all(color: borderColor, width: borderWidth),
                 boxShadow: const [
                   BoxShadow(
                     color: Color(0x0A000000),
@@ -67,25 +72,22 @@ class ImageChoiceGrid extends StatelessWidget {
                   fit: StackFit.expand,
                   children: [
                     LessonImage(lesson: choices[index]),
-                    if (isSelected)
-                      Positioned(
+                    if (showResult && (selectedCorrect || revealCorrect))
+                      const Positioned(
                         top: 8,
                         right: 8,
-                        child: Container(
-                          width: 28,
-                          height: 28,
-                          decoration: BoxDecoration(
-                            color: selectedCorrect ? kPrimary : kDanger,
-                            shape: BoxShape.circle,
-                            border: Border.all(color: Colors.white, width: 2),
-                          ),
-                          child: Icon(
-                            selectedCorrect
-                                ? Icons.check_rounded
-                                : Icons.close_rounded,
-                            color: Colors.white,
-                            size: 17,
-                          ),
+                        child: _ResultBadge(
+                          color: kPrimary,
+                          icon: Icons.check_rounded,
+                        ),
+                      )
+                    else if (showResult && selectedWrong)
+                      const Positioned(
+                        top: 8,
+                        right: 8,
+                        child: _ResultBadge(
+                          color: kDanger,
+                          icon: Icons.close_rounded,
                         ),
                       ),
                   ],
@@ -95,6 +97,26 @@ class ImageChoiceGrid extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+}
+
+class _ResultBadge extends StatelessWidget {
+  final Color color;
+  final IconData icon;
+  const _ResultBadge({required this.color, required this.icon});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 28,
+      height: 28,
+      decoration: BoxDecoration(
+        color: color,
+        shape: BoxShape.circle,
+        border: Border.all(color: Colors.white, width: 2),
+      ),
+      child: Icon(icon, color: Colors.white, size: 17),
     );
   }
 }
@@ -119,7 +141,11 @@ class _ChooseStepState extends State<ChooseStep> {
   late final List<Lesson> _choices;
   late final int _correctIndex;
   int? _selected;
+  bool _checked = false;
   bool _hadWrong = false;
+
+  String get _sentence =>
+      widget.lesson.sentence.replaceAll('___', widget.lesson.word);
 
   @override
   void initState() {
@@ -134,16 +160,38 @@ class _ChooseStepState extends State<ChooseStep> {
   }
 
   void _select(int index) {
+    if (_checked && _selected == _correctIndex) return;
     setState(() {
       _selected = index;
-      if (index != _correctIndex) _hadWrong = true;
+      _checked = false;
+    });
+  }
+
+  void _check() {
+    if (_selected == null) return;
+    final correct = _selected == _correctIndex;
+    setState(() {
+      _checked = true;
+      if (!correct) _hadWrong = true;
+    });
+    if (correct) {
+      SystemSound.play(SystemSoundType.click);
+    } else {
+      HapticFeedback.vibrate();
+    }
+  }
+
+  void _reset() {
+    setState(() {
+      _selected = null;
+      _checked = false;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final isCorrect = _selected == _correctIndex;
-    final isWrong = _selected != null && !isCorrect;
+    final isCorrect = _checked && _selected == _correctIndex;
+    final isWrong = _checked && _selected != null && !isCorrect;
     return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
       child: Column(
@@ -159,7 +207,7 @@ class _ChooseStepState extends State<ChooseStep> {
               ),
               const Spacer(),
               Pill(
-                text: '${_choices.length} choices',
+                text: '${_choices.length} خيارات',
                 background: kSoftBlue,
                 foreground: kSecondary,
               ),
@@ -167,7 +215,7 @@ class _ChooseStepState extends State<ChooseStep> {
           ),
           const SizedBox(height: 12),
           Text(
-            'أي صورة تُظهر "${widget.lesson.word}"?',
+            'أي صورة تُظهر "$_sentence"?',
             style: const TextStyle(
               fontSize: 23,
               height: 1.2,
@@ -177,11 +225,28 @@ class _ChooseStepState extends State<ChooseStep> {
           ),
           const SizedBox(height: 4),
           const Text(
-            'اضغط على الصورة التي تطابق الكلمة.',
+            'اضغط على الصورة التي تطابق الجملة.',
             style: TextStyle(
               fontSize: 12.5,
               color: kMuted,
               fontWeight: FontWeight.w500,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+            decoration: BoxDecoration(
+              color: Colors.green.shade50,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Text(
+              widget.lesson.translation,
+              textDirection: TextDirection.rtl,
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.green.shade800,
+              ),
             ),
           ),
           const SizedBox(height: 14),
@@ -189,6 +254,7 @@ class _ChooseStepState extends State<ChooseStep> {
             choices: _choices,
             selectedIndex: _selected,
             correctIndex: _correctIndex,
+            showResult: _checked,
             onTap: _select,
           ),
           const SizedBox(height: 10),
@@ -198,7 +264,9 @@ class _ChooseStepState extends State<ChooseStep> {
               child: Text(
                 _selected == null
                     ? 'اختر إجابة للمتابعة'
-                    : (isCorrect ? 'أحسنت!' : 'حاول مجدداً.'),
+                    : (!_checked
+                        ? 'اضغط تحقق للتأكد من إجابتك.'
+                        : (isCorrect ? 'أحسنت!' : 'حاول مجدداً.')),
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w700,
@@ -215,14 +283,19 @@ class _ChooseStepState extends State<ChooseStep> {
             )
           else if (isWrong)
             FilledButton(
-              onPressed: () => setState(() => _selected = null),
+              onPressed: _reset,
               style: FilledButton.styleFrom(backgroundColor: kDanger),
               child: const Text('حاول مجدداً'),
             )
-          else
+          else if (_selected == null)
             FilledButton(
               onPressed: null,
               child: const Text('اختر إجابة'),
+            )
+          else
+            FilledButton(
+              onPressed: _check,
+              child: const Text('تحقق'),
             ),
         ],
       ),
@@ -250,6 +323,7 @@ class _ListeningStepState extends State<ListeningStep> {
   late final List<Lesson> _choices;
   late final int _correctIndex;
   int? _selected;
+  bool _checked = false;
   bool _hadWrong = false;
   bool _speaking = false;
 
@@ -278,16 +352,38 @@ class _ListeningStepState extends State<ListeningStep> {
   }
 
   void _select(int index) {
+    if (_checked && _selected == _correctIndex) return;
     setState(() {
       _selected = index;
-      if (index != _correctIndex) _hadWrong = true;
+      _checked = false;
+    });
+  }
+
+  void _check() {
+    if (_selected == null) return;
+    final correct = _selected == _correctIndex;
+    setState(() {
+      _checked = true;
+      if (!correct) _hadWrong = true;
+    });
+    if (correct) {
+      SystemSound.play(SystemSoundType.click);
+    } else {
+      HapticFeedback.vibrate();
+    }
+  }
+
+  void _reset() {
+    setState(() {
+      _selected = null;
+      _checked = false;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final isCorrect = _selected == _correctIndex;
-    final isWrong = _selected != null && !isCorrect;
+    final isCorrect = _checked && _selected == _correctIndex;
+    final isWrong = _checked && _selected != null && !isCorrect;
     return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
       child: Column(
@@ -375,11 +471,29 @@ class _ListeningStepState extends State<ListeningStep> {
               fontWeight: FontWeight.w500,
             ),
           ),
+          const SizedBox(height: 8),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+            decoration: BoxDecoration(
+              color: Colors.green.shade50,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Text(
+              widget.lesson.translation,
+              textDirection: TextDirection.rtl,
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.green.shade800,
+              ),
+            ),
+          ),
           const SizedBox(height: 14),
           ImageChoiceGrid(
             choices: _choices,
             selectedIndex: _selected,
             correctIndex: _correctIndex,
+            showResult: _checked,
             onTap: _select,
           ),
           const SizedBox(height: 10),
@@ -389,7 +503,9 @@ class _ListeningStepState extends State<ListeningStep> {
               child: Text(
                 _selected == null
                     ? 'اختر الصورة التي تطابق الصوت'
-                    : (isCorrect ? 'استماع ممتاز!' : 'حاول مجدداً.'),
+                    : (!_checked
+                        ? 'اضغط تحقق للتأكد من إجابتك.'
+                        : (isCorrect ? 'استماع ممتاز!' : 'حاول مجدداً.')),
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w700,
@@ -406,14 +522,19 @@ class _ListeningStepState extends State<ListeningStep> {
             )
           else if (isWrong)
             FilledButton(
-              onPressed: () => setState(() => _selected = null),
+              onPressed: _reset,
               style: FilledButton.styleFrom(backgroundColor: kDanger),
               child: const Text('حاول مجدداً'),
             )
-          else
+          else if (_selected == null)
             FilledButton(
               onPressed: null,
               child: const Text('اختر صورة'),
+            )
+          else
+            FilledButton(
+              onPressed: _check,
+              child: const Text('تحقق'),
             ),
         ],
       ),

@@ -57,7 +57,7 @@ class _WritingStepState extends State<WritingStep> {
               ClipRRect(
                 borderRadius: BorderRadius.circular(20),
                 child: SizedBox(
-                  height: 160,
+                  height: 200,
                   width: double.infinity,
                   child: LessonImage(lesson: widget.lesson),
                 ),

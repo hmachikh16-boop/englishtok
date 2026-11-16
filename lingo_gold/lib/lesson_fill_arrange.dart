@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'data.dart';
 import 'theme.dart';
@@ -42,10 +43,23 @@ class _FillBlankStepState extends State<FillBlankStep> {
   @override
   void initState() {
     super.initState();
-    _choices = [
-      widget.lesson.word,
-      ...widget.distractors.map((lesson) => lesson.word),
-    ]..shuffle(Random(widget.lesson.word.hashCode + 41));
+    final words = <String>[widget.lesson.word];
+    void addWord(String raw) {
+      final word = raw.trim();
+      if (word.isEmpty) return;
+      if (words.any((w) => w.toLowerCase() == word.toLowerCase())) return;
+      words.add(word);
+    }
+
+    for (final distractor in widget.distractors) {
+      addWord(distractor.word);
+    }
+    for (final option in widget.lesson.options) {
+      if (words.length >= 4) break;
+      addWord(option);
+    }
+    _choices = words.take(4).toList()
+      ..shuffle(Random(widget.lesson.word.hashCode + 41));
   }
 
   void _select(String word) {
@@ -65,6 +79,11 @@ class _FillBlankStepState extends State<FillBlankStep> {
       _correct = correct;
       if (!correct) _hadWrong = true;
     });
+    if (correct) {
+      SystemSound.play(SystemSoundType.click);
+    } else {
+      HapticFeedback.vibrate();
+    }
   }
 
   @override
@@ -85,7 +104,7 @@ class _FillBlankStepState extends State<FillBlankStep> {
               ClipRRect(
                 borderRadius: BorderRadius.circular(20),
                 child: SizedBox(
-                  height: 190,
+                  height: 200,
                   width: double.infinity,
                   child: LessonImage(lesson: widget.lesson),
                 ),
@@ -235,14 +254,32 @@ class _FillBlankStepState extends State<FillBlankStep> {
           ),
           const SizedBox(height: 10),
           SizedBox(
-            height: 20,
+            height: 34,
             child: Center(
-              child: Text(
-                _checked
-                    ? (_correct
-                        ? 'أحسنت!'
-                        : 'حاول مجدداً. اختر كلمة أخرى.')
-                    : 'اختر الكلمة الصحيحة لإكمال الجملة.',
+              child: Text.rich(
+                TextSpan(
+                  children: _checked
+                      ? (_correct
+                          ? const [TextSpan(text: 'أحسنت!')]
+                          : [
+                              const TextSpan(
+                                text: 'حاول مجدداً. الإجابة الصحيحة: ',
+                              ),
+                              TextSpan(
+                                text: widget.lesson.word,
+                                style: const TextStyle(
+                                  color: kPrimary,
+                                  fontWeight: FontWeight.w900,
+                                ),
+                              ),
+                            ])
+                      : const [
+                          TextSpan(
+                            text: 'اختر الكلمة الصحيحة لإكمال الجملة.',
+                          ),
+                        ],
+                ),
+                textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w700,
@@ -271,7 +308,7 @@ class _FillBlankStepState extends State<FillBlankStep> {
           else
             FilledButton(
               onPressed: _selected == null ? null : _check,
-              child: const Text('تحقق من الإجابة'),
+              child: const Text('تحقق'),
             ),
         ],
       ),
@@ -398,7 +435,7 @@ class _ArrangeWordsStepState extends State<ArrangeWordsStep> {
               ClipRRect(
                 borderRadius: BorderRadius.circular(20),
                 child: SizedBox(
-                  height: 160,
+                  height: 200,
                   width: double.infinity,
                   child: LessonImage(lesson: widget.lesson),
                 ),

@@ -7,8 +7,8 @@ import 'package:lingo_gold/data.dart';
 import 'package:lingo_gold/main.dart';
 
 void main() {
-  test('lessons list contains exactly 130 lessons', () {
-    expect(lessons.length, 130);
+  test('lessons list contains exactly 140 lessons', () {
+    expect(lessons.length, 140);
     expect(lessons.take(10).every((lesson) => !lesson.isPack), isTrue);
     expect(lessons.skip(10).take(80).every((lesson) => lesson.isPack), isTrue);
   });

@@ -60,6 +60,7 @@ const List<LessonGroup> groups = [
   LessonGroup('الأفعال', kGreen, Icons.directions_run),
   LessonGroup('الأرقام', kYellow, Icons.pin_outlined),
   LessonGroup('اكتشف', kPeach, Icons.explore_outlined),
+  LessonGroup('الألوان', kPink, Icons.palette_outlined),
 ];
 
 // ================= 90 LESSONS =================
@@ -199,15 +200,15 @@ const List<Lesson> lessons = [
 
   // ===== 12. Numbers - 111 to 120 =====
   Lesson(word: 'One', sentence: '___ apple.', options: ['One', 'Two', 'Three'], imageFile: 'num_01', indexInPack: 0, isPack: false, translation: 'تفاحة واحدة.', category: 'Numbers'),
-  Lesson(word: 'Two', sentence: '___ balloons.', options: ['Two', 'One', 'Three'], imageFile: 'num_02', indexInPack: 0, isPack: false, translation: 'بالونان.', category: 'Numbers'),
-  Lesson(word: 'Three', sentence: '___ bananas.', options: ['Three', 'Two', 'Four'], imageFile: 'num_03', indexInPack: 0, isPack: false, translation: 'ثلاث موزات.', category: 'Numbers'),
-  Lesson(word: 'Four', sentence: '___ pencils.', options: ['Four', 'Three', 'Five'], imageFile: 'num_04', indexInPack: 0, isPack: false, translation: 'أربعة أقلام.', category: 'Numbers'),
-  Lesson(word: 'Five', sentence: '___ strawberries.', options: ['Five', 'Four', 'Six'], imageFile: 'num_05', indexInPack: 0, isPack: false, translation: 'خمس فراولات.', category: 'Numbers'),
-  Lesson(word: 'Six', sentence: '___ eggs.', options: ['Six', 'Five', 'Seven'], imageFile: 'num_06', indexInPack: 0, isPack: false, translation: 'ست بيضات.', category: 'Numbers'),
-  Lesson(word: 'Seven', sentence: '___ strawberries.', options: ['Seven', 'Six', 'Eight'], imageFile: 'num_07', indexInPack: 0, isPack: false, translation: 'سبع فراولات.', category: 'Numbers'),
-  Lesson(word: 'Eight', sentence: '___ crayons.', options: ['Eight', 'Seven', 'Nine'], imageFile: 'num_08', indexInPack: 0, isPack: false, translation: 'ثمانية أقلام تلوين.', category: 'Numbers'),
-  Lesson(word: 'Nine', sentence: '___ grapes.', options: ['Nine', 'Eight', 'Ten'], imageFile: 'num_09', indexInPack: 0, isPack: false, translation: 'تسع حبات عنب.', category: 'Numbers'),
-  Lesson(word: 'Ten', sentence: '___ fingers.', options: ['Ten', 'Nine', 'Eight'], imageFile: 'num_10', indexInPack: 0, isPack: false, translation: 'عشرة أصابع.', category: 'Numbers'),
+  Lesson(word: 'Two', sentence: '___ apples.', options: ['Two', 'One', 'Three'], imageFile: 'num_02', indexInPack: 0, isPack: false, translation: 'تفاحتان.', category: 'Numbers'),
+  Lesson(word: 'Three', sentence: '___ apples.', options: ['Three', 'Two', 'Four'], imageFile: 'num_03', indexInPack: 0, isPack: false, translation: 'ثلاث تفاحات.', category: 'Numbers'),
+  Lesson(word: 'Four', sentence: '___ apples.', options: ['Four', 'Three', 'Five'], imageFile: 'num_04', indexInPack: 0, isPack: false, translation: 'أربع تفاحات.', category: 'Numbers'),
+  Lesson(word: 'Five', sentence: '___ apples.', options: ['Five', 'Four', 'Six'], imageFile: 'num_05', indexInPack: 0, isPack: false, translation: 'خمس تفاحات.', category: 'Numbers'),
+  Lesson(word: 'Six', sentence: '___ apples.', options: ['Six', 'Five', 'Seven'], imageFile: 'num_06', indexInPack: 0, isPack: false, translation: 'ست تفاحات.', category: 'Numbers'),
+  Lesson(word: 'Seven', sentence: '___ apples.', options: ['Seven', 'Six', 'Eight'], imageFile: 'num_07', indexInPack: 0, isPack: false, translation: 'سبع تفاحات.', category: 'Numbers'),
+  Lesson(word: 'Eight', sentence: '___ apples.', options: ['Eight', 'Seven', 'Nine'], imageFile: 'num_08', indexInPack: 0, isPack: false, translation: 'ثماني تفاحات.', category: 'Numbers'),
+  Lesson(word: 'Nine', sentence: '___ apples.', options: ['Nine', 'Eight', 'Ten'], imageFile: 'num_09', indexInPack: 0, isPack: false, translation: 'تسع تفاحات.', category: 'Numbers'),
+  Lesson(word: 'Ten', sentence: '___ apples.', options: ['Ten', 'Nine', 'Eight'], imageFile: 'num_10', indexInPack: 0, isPack: false, translation: 'عشر تفاحات.', category: 'Numbers'),
 
   // ===== 13. Discover - 121 to 130 =====
   Lesson(word: 'Tomato', sentence: 'The ___ is red.', options: ['Tomato', 'Apple', 'Orange'], imageFile: 'food_tomato', indexInPack: 0, isPack: false, translation: 'الطماطم حمراء.', category: 'Discover'),
@@ -220,4 +221,16 @@ const List<Lesson> lessons = [
   Lesson(word: 'Grapes', sentence: 'I like ___.', options: ['Grapes', 'Apples', 'Bananas'], imageFile: 'food_grapes', indexInPack: 0, isPack: false, translation: 'أنا أحب العنب.', category: 'Discover'),
   Lesson(word: 'Orange', sentence: 'The ___ is orange.', options: ['Orange', 'Apple', 'Banana'], imageFile: 'food_orange', indexInPack: 0, isPack: false, translation: 'البرتقالة برتقالية.', category: 'Discover'),
   Lesson(word: 'Car', sentence: 'The ___ is red.', options: ['Car', 'Ball', 'Book'], imageFile: 'toy_car', indexInPack: 0, isPack: false, translation: 'السيارة حمراء.', category: 'Discover'),
+
+  // ===== 14. Colors - 131 to 140 =====
+  Lesson(word: 'Red', sentence: 'The ball is ___.', options: ['Red', 'Blue', 'Green'], imageFile: 'color_red', indexInPack: 0, isPack: false, translation: 'الكرة حمراء.', category: 'Colors'),
+  Lesson(word: 'Blue', sentence: 'The ball is ___.', options: ['Blue', 'Red', 'Yellow'], imageFile: 'color_blue', indexInPack: 0, isPack: false, translation: 'الكرة زرقاء.', category: 'Colors'),
+  Lesson(word: 'Green', sentence: 'The ball is ___.', options: ['Green', 'Red', 'Blue'], imageFile: 'color_green', indexInPack: 0, isPack: false, translation: 'الكرة خضراء.', category: 'Colors'),
+  Lesson(word: 'Yellow', sentence: 'The ball is ___.', options: ['Yellow', 'Green', 'Orange'], imageFile: 'color_yellow', indexInPack: 0, isPack: false, translation: 'الكرة صفراء.', category: 'Colors'),
+  Lesson(word: 'Orange', sentence: 'The ball is ___.', options: ['Orange', 'Red', 'Brown'], imageFile: 'color_orange', indexInPack: 0, isPack: false, translation: 'الكرة برتقالية.', category: 'Colors'),
+  Lesson(word: 'Purple', sentence: 'The ball is ___.', options: ['Purple', 'Pink', 'Blue'], imageFile: 'color_purple', indexInPack: 0, isPack: false, translation: 'الكرة بنفسجية.', category: 'Colors'),
+  Lesson(word: 'Pink', sentence: 'The ball is ___.', options: ['Pink', 'Purple', 'Red'], imageFile: 'color_pink', indexInPack: 0, isPack: false, translation: 'الكرة وردية.', category: 'Colors'),
+  Lesson(word: 'Brown', sentence: 'The ball is ___.', options: ['Brown', 'Orange', 'Black'], imageFile: 'color_brown', indexInPack: 0, isPack: false, translation: 'الكرة بنية.', category: 'Colors'),
+  Lesson(word: 'Black', sentence: 'The ball is ___.', options: ['Black', 'Brown', 'White'], imageFile: 'color_black', indexInPack: 0, isPack: false, translation: 'الكرة سوداء.', category: 'Colors'),
+  Lesson(word: 'White', sentence: 'The ball is ___.', options: ['White', 'Black', 'Yellow'], imageFile: 'color_white', indexInPack: 0, isPack: false, translation: 'الكرة بيضاء.', category: 'Colors'),
 ];

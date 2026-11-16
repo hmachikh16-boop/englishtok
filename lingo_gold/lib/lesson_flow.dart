@@ -17,30 +17,32 @@ class LessonResult {
 
 List<Lesson> pickDistractors(int lessonIndex, int count) {
   final lesson = lessons[lessonIndex];
+  final groupIndex = lessonIndex ~/ 10;
+  final groupStart = groupIndex * 10;
+  final groupEnd = groupStart + 10;
+  final isGrammar = groupIndex == 0;
   final result = <Lesson>[];
-  for (var offset = 1; offset < lessons.length * 2 && result.length < count; offset++) {
-    final candidate = lessons[(lessonIndex + offset * 7 + 3) % lessons.length];
-    if (candidate.word.toLowerCase() == lesson.word.toLowerCase()) continue;
-    if (result.any(
-      (l) =>
-          l.word.toLowerCase() == candidate.word.toLowerCase() ||
-          l.imageFile == candidate.imageFile,
-    )) {
-      continue;
+
+  bool acceptable(Lesson candidate) {
+    if (candidate.imageFile == lesson.imageFile) return false;
+    if (!isGrammar &&
+        candidate.word.toLowerCase() == lesson.word.toLowerCase()) {
+      return false;
     }
-    result.add(candidate);
+    if (result.any((l) => l.imageFile == candidate.imageFile)) return false;
+    return true;
   }
+
+  // Same group only: Numbers stay with Numbers, Jobs with Jobs, etc.
+  for (var i = groupStart; i < groupEnd && result.length < count; i++) {
+    final candidate = lessons[i];
+    if (acceptable(candidate)) result.add(candidate);
+  }
+
+  // Safety fallback only if the group is too small (never expected: 10/group).
   for (var i = 0; i < lessons.length && result.length < count; i++) {
     final candidate = lessons[i];
-    if (candidate.word.toLowerCase() == lesson.word.toLowerCase()) continue;
-    if (result.any(
-      (l) =>
-          l.word.toLowerCase() == candidate.word.toLowerCase() ||
-          l.imageFile == candidate.imageFile,
-    )) {
-      continue;
-    }
-    result.add(candidate);
+    if (acceptable(candidate)) result.add(candidate);
   }
   return result;
 }
@@ -115,7 +117,6 @@ class _LessonFlowScreenState extends State<LessonFlowScreen> {
           children: [
             _LessonTopBar(
               title: _title,
-              score: _score,
               step: _step,
               lessonNumber: widget.lessonIndex + 1,
               groupName: group.name,
@@ -144,7 +145,9 @@ class _LessonFlowScreenState extends State<LessonFlowScreen> {
       case 1:
         return WritingStep(lesson: lesson, onComplete: _onSimpleComplete);
       case 2:
-        if (widget.lessonIndex.isEven) {
+        // Grammar (Verb To Be) is text-based: am / is / are.
+        // Vocabulary groups use image choices.
+        if (widget.lessonIndex ~/ 10 != 0 && widget.lessonIndex.isEven) {
           return ChooseStep(
             lesson: lesson,
             distractors: _distractors,
@@ -163,7 +166,7 @@ class _LessonFlowScreenState extends State<LessonFlowScreen> {
           onComplete: _onSimpleComplete,
         );
       case 4:
-        if (widget.lessonIndex.isEven) {
+        if (widget.lessonIndex ~/ 10 != 0 && widget.lessonIndex.isEven) {
           return MatchingStep(
             lesson: lesson,
             distractors: _distractors.take(2).toList(),
@@ -190,7 +193,6 @@ class _LessonFlowScreenState extends State<LessonFlowScreen> {
 
 class _LessonTopBar extends StatelessWidget {
   final String title;
-  final int score;
   final int step;
   final int lessonNumber;
   final String groupName;
@@ -198,7 +200,6 @@ class _LessonTopBar extends StatelessWidget {
 
   const _LessonTopBar({
     required this.title,
-    required this.score,
     required this.step,
     required this.lessonNumber,
     required this.groupName,
@@ -256,7 +257,7 @@ class _LessonTopBar extends StatelessWidget {
               ),
               const SizedBox(width: 8),
               Pill(
-                text: 'النتيجة: $score/5',
+                text: 'السؤال $stepLabel من 5',
                 background: kSoftGreen,
                 foreground: kPrimaryDark,
               ),
@@ -278,14 +279,6 @@ class _LessonTopBar extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 8),
-              Text(
-                'الخطوة $stepLabel من 5',
-                style: const TextStyle(
-                  fontSize: 11,
-                  color: kMuted,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
             ],
           ),
           const SizedBox(height: 6),

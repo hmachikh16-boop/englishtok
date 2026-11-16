@@ -250,7 +250,7 @@ class _SpeakingStepState extends State<SpeakingStep> {
               ClipRRect(
                 borderRadius: BorderRadius.circular(20),
                 child: SizedBox(
-                  height: 220,
+                  height: 200,
                   width: double.infinity,
                   child: LessonImage(lesson: widget.lesson),
                 ),

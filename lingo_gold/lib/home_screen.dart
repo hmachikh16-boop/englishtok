@@ -401,6 +401,7 @@ const _categories = [
   _Category('العائلة', 1, 17, Color(0xFF2E9E5B)),
   _Category('المهن', 9, 90, Color(0xFF8B5CF6)),
   _Category('الأرقام', 11, 110, Color(0xFF1E6FDB)),
+  _Category('الألوان', 13, 130, Color(0xFFEC4899)),
 ];
 
 class _CategoriesGrid extends StatelessWidget {
