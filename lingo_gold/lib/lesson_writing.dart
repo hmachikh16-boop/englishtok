@@ -66,7 +66,7 @@ class _WritingStepState extends State<WritingStep> {
                 top: 12,
                 left: 12,
                 child: Pill(
-                  text: 'WRITING',
+                  text: 'الكتابة',
                   background: Color(0xEFFFFFFF),
                   foreground: kPrimaryDark,
                 ),
@@ -102,7 +102,7 @@ class _WritingStepState extends State<WritingStep> {
                 ),
               ),
               Pill(
-                text: '${_targetLetters.length} letters',
+                text: '${_targetLetters.length} حروف',
                 background: kSoftBlue,
                 foreground: kSecondary,
               ),
@@ -181,7 +181,7 @@ class _WritingStepState extends State<WritingStep> {
             width: double.infinity,
             child: FilledButton(
               onPressed: _correct ? () => widget.onComplete(true) : null,
-              child: Text(_correct ? 'Continue' : 'اكتب الكلمة'),
+              child: Text(_correct ? 'متابعة' : 'اكتب الكلمة'),
             ),
           ),
         ],

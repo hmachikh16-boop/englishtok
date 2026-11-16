@@ -44,6 +44,36 @@ class UserProfile {
     } catch (_) {}
   }
 
+  static const _kCompleted = 'progress_completed';
+  static const _kCurrent = 'progress_current';
+
+  Future<void> loadProgress({
+    required void Function(Set<int> completed, int current) onLoaded,
+  }) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final list = prefs.getStringList(_kCompleted);
+      final completed = list == null
+          ? <int>{}
+          : list.map(int.tryParse).whereType<int>().toSet();
+      final current = prefs.getInt(_kCurrent) ?? 0;
+      onLoaded(completed, current);
+    } catch (_) {
+      onLoaded(<int>{}, 0);
+    }
+  }
+
+  Future<void> saveProgress(Set<int> completed, int current) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setStringList(
+        _kCompleted,
+        completed.map((e) => e.toString()).toList(),
+      );
+      await prefs.setInt(_kCurrent, current);
+    } catch (_) {}
+  }
+
   bool get hasName => name.value.trim().isNotEmpty;
 
   String get displayName => hasName ? name.value.trim() : '...';

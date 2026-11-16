@@ -115,7 +115,7 @@ class _MatchingStepState extends State<MatchingStep> {
           Row(
             children: [
               const Pill(
-                text: 'MATCHING',
+                text: 'المطابقة',
                 icon: Icons.link_rounded,
                 background: kSoftBlue,
                 foreground: kSecondary,

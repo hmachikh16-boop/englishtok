@@ -133,7 +133,7 @@ class SpeakScreen extends StatelessWidget {
                 const SizedBox(height: 22),
                 SectionTitle(
                   title: 'دروس التحدث',
-                  action: '${speakingLessons.length} lessons',
+                  action: '${speakingLessons.length} دروس',
                 ),
                 const SizedBox(height: 10),
                 ...speakingLessons.map((index) {
@@ -209,7 +209,7 @@ class _SpeakingRow extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Lesson $number',
+                      'الدرس $number',
                       style: const TextStyle(
                         fontSize: 11,
                         fontWeight: FontWeight.w700,

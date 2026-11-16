@@ -259,7 +259,7 @@ class _SpeakingStepState extends State<SpeakingStep> {
                 top: 12,
                 left: 12,
                 child: Pill(
-                  text: 'SPEAKING',
+                  text: 'التحدث',
                   background: Color(0xEFFFFFFF),
                   foreground: kSecondary,
                 ),
@@ -432,7 +432,7 @@ class _SpeakingStepState extends State<SpeakingStep> {
           if (!_speechAvailable && !_initializing) ...[
             const SizedBox(height: 8),
             const Text(
-              'Speech recognition is unavailable on this device. You can still listen and skip.',
+              'التعرف على الكلام غير متاح على هذا الجهاز. يمكنك الاستماع والتخطي.',
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: 11, color: kMuted, height: 1.35),
             ),

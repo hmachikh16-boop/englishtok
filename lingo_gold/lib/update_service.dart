@@ -8,8 +8,8 @@ import 'package:path_provider/path_provider.dart';
 class UpdateService {
   static const String baseUrl = 'http://192.168.1.11:8080';
   static const String versionUrl = '$baseUrl/version.json';
-  static const String apkUrl = '$baseUrl/app-release.apk?v=10';
-  static const int currentVersionCode = 10;
+  static const String apkUrl = '$baseUrl/app-release.apk?v=11';
+  static const int currentVersionCode = 11;
 
   /// Checks for an update. Returns the new version code if available, else null.
   static Future<int?> checkForUpdate() async {
@@ -41,7 +41,7 @@ class UpdateService {
         return null;
       }
       final dir = await getExternalStorageDirectory() ?? await getApplicationDocumentsDirectory();
-      final file = File('${dir.path}/app-release-v10.apk');
+      final file = File('${dir.path}/app-release-v11.apk');
       final sink = file.openWrite();
       final total = streamed.contentLength ?? 0;
       var received = 0;
@@ -76,7 +76,7 @@ class UpdateService {
     if (newCode == null) {
       if (!silent && context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('You are on the latest version.')),
+          const SnackBar(content: Text('أنت على أحدث إصدار.')),
         );
       }
       return;
@@ -85,11 +85,11 @@ class UpdateService {
     final proceed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Update available'),
-        content: Text('A new version ($newCode) is available. Download and install now?'),
+        title: const Text('تحديث متاح'),
+        content: Text('يتوفر إصدار جديد ($newCode). هل تريد التنزيل والتثبيت الآن؟'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Later')),
-          FilledButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Update')),
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('لاحقاً')),
+          FilledButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('تحديث')),
         ],
       ),
     );
@@ -105,7 +105,7 @@ class UpdateService {
           children: [
             CircularProgressIndicator(),
             SizedBox(height: 16),
-            Text('Downloading update...'),
+            Text('جارٍ تنزيل التحديث...'),
           ],
         ),
       ),
@@ -117,7 +117,7 @@ class UpdateService {
     if (path == null) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Download failed. Try again.')),
+          const SnackBar(content: Text('فشل التنزيل. حاول مرة أخرى.')),
         );
       }
       return;
@@ -126,7 +126,7 @@ class UpdateService {
     if (!ok && context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Install failed. Open manually: $path'),
+          content: Text('فشل التثبيت. افتح يدوياً: $path'),
           duration: const Duration(seconds: 6),
         ),
       );

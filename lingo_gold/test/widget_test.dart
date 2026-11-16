@@ -7,10 +7,10 @@ import 'package:lingo_gold/data.dart';
 import 'package:lingo_gold/main.dart';
 
 void main() {
-  test('lessons list contains exactly 90 lessons', () {
-    expect(lessons.length, 90);
+  test('lessons list contains exactly 130 lessons', () {
+    expect(lessons.length, 130);
     expect(lessons.take(10).every((lesson) => !lesson.isPack), isTrue);
-    expect(lessons.skip(10).every((lesson) => lesson.isPack), isTrue);
+    expect(lessons.skip(10).take(80).every((lesson) => lesson.isPack), isTrue);
   });
 
   testWidgets('home screen renders the new dashboard', (tester) async {
@@ -33,9 +33,9 @@ void main() {
     expect(find.text('التحية'), findsOneWidget);
     expect(find.text('الحيوانات'), findsOneWidget);
     expect(find.text('الطعام'), findsOneWidget);
-    expect(find.text('الألوان'), findsOneWidget);
     expect(find.text('الأرقام'), findsOneWidget);
     expect(find.text('العائلة'), findsOneWidget);
+    expect(find.text('المهن'), findsOneWidget);
     expect(find.text('الرئيسية'), findsOneWidget);
     expect(find.text('تعلم'), findsWidgets);
     expect(find.text('تحدث'), findsOneWidget);
@@ -55,7 +55,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('مسار التعلم الخاص بك'), findsOneWidget);
     expect(find.text('الوحدات'), findsOneWidget);
-    expect(find.text('Verb To Be'), findsOneWidget);
+    expect(find.text('فعل الكينونة'), findsOneWidget);
 
     await tester.tap(find.text('تحدث'));
     await tester.pumpAndSettle();

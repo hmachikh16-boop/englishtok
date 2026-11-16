@@ -49,9 +49,8 @@ class MainShell extends StatefulWidget {
 
 class _MainShellState extends State<MainShell> {
   int _tab = 0;
-  int _currentLessonIndex = 2;
-  final Set<int> _completed = {0, 1};
-  final Set<int> _unlockedGroups = {0, 1};
+  int _currentLessonIndex = 0;
+  final Set<int> _completed = {};
   int _selectedGroup = 0;
   Timer? _updateTimer;
   int _speakingScore = 88;
@@ -79,6 +78,18 @@ class _MainShellState extends State<MainShell> {
         });
       }
     });
+    UserProfile.instance.loadProgress(
+      onLoaded: (completed, current) {
+        if (!mounted) return;
+        setState(() {
+          _completed
+            ..clear()
+            ..addAll(completed);
+          _currentLessonIndex = current.clamp(0, lessons.length - 1);
+          _selectedGroup = _currentLessonIndex ~/ 10;
+        });
+      },
+    );
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _updateTimer = Timer(const Duration(seconds: 3), () {
         if (mounted) UpdateService.checkAndPrompt(context, silent: true);
@@ -95,50 +106,68 @@ class _MainShellState extends State<MainShell> {
     if (!mounted || result == null) return;
     setState(() {
       _completed.add(index);
-      _currentLessonIndex = (index + 1) % lessons.length;
+      _currentLessonIndex = (index + 1).clamp(0, lessons.length - 1);
       _selectedGroup = _currentLessonIndex ~/ 10;
-      _unlockedGroups.add(_selectedGroup);
       if (result.speakingScore > 0) {
         _speakingScore = result.speakingScore;
       }
     });
+    UserProfile.instance.saveProgress(_completed, _currentLessonIndex);
     if (index + 1 >= lessons.length) {
       _showCourseComplete();
-      return;
     }
-    _openLesson(index + 1);
   }
 
   void _showCourseComplete() {
     showDialog<void>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Course complete!'),
-        content: const Text(
-          'You have finished all 90 lessons. Keep practicing to stay sharp!',
+        title: const Text('أكملت الدورة!'),
+        content: Text(
+          'لقد أكملت جميع الدروس (${lessons.length}). واصل التدريب لتبقى متميزاً!',
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Close'),
+            child: const Text('إغلاق'),
           ),
         ],
       ),
     );
   }
 
+  Set<int> _computeUnlockedGroups() {
+    final level = UserProfile.instance.level.value;
+    final base = level == 'متقدم'
+        ? groups.length
+        : (level == 'متوسط' ? 3 : 1);
+    final unlocked = <int>{};
+    for (var i = 0; i < base && i < groups.length; i++) {
+      unlocked.add(i);
+    }
+    for (var g = 0; g < groups.length - 1; g++) {
+      final allDone =
+          List.generate(10, (i) => g * 10 + i).every(_completed.contains);
+      if (allDone) unlocked.add(g + 1);
+    }
+    return unlocked;
+  }
+
   void _selectGroup(int groupIndex) {
+    if (!_computeUnlockedGroups().contains(groupIndex)) return;
     setState(() {
       _selectedGroup = groupIndex;
-      _unlockedGroups.add(groupIndex);
       _tab = 1;
     });
   }
 
   void _openCategory(int groupIndex) {
+    if (!_computeUnlockedGroups().contains(groupIndex)) {
+      setState(() => _tab = 1);
+      return;
+    }
     setState(() {
       _selectedGroup = groupIndex;
-      _unlockedGroups.add(groupIndex);
       _tab = 1;
     });
   }
@@ -153,37 +182,43 @@ class _MainShellState extends State<MainShell> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: IndexedStack(
-        index: _tab,
-        children: [
-          HomeScreen(
-            currentIndex: _currentLessonIndex,
-            streak: _streak,
-            dailyGoal: _dailyGoal,
-            onContinue: () => _openLesson(_currentLessonIndex),
-            onOpenLearn: () => setState(() => _tab = 1),
-            onOpenProfile: () => setState(() => _tab = 3),
-            onSpeakChallenge: () => setState(() => _tab = 2),
-            onCategoryTap: _openCategory,
-          ),
-          LearnScreen(
-            selectedGroup: _selectedGroup,
-            currentIndex: _currentLessonIndex,
-            completed: _completed,
-            unlockedGroups: _unlockedGroups,
-            onSelectGroup: _selectGroup,
-            onOpenLesson: _openLesson,
-          ),
-          SpeakScreen(onOpenLesson: _openLesson),
-          ProfileScreen(
-            completedCount: _completed.length,
-            streak: _streak,
-            wordsLearned: _wordsLearned,
-            speakingScore: _speakingScore,
-            xp: _xp,
-            onContinue: () => _openLesson(_currentLessonIndex),
-          ),
-        ],
+      body: ValueListenableBuilder<String>(
+        valueListenable: UserProfile.instance.level,
+        builder: (context, level, _) {
+          final unlocked = _computeUnlockedGroups();
+          return IndexedStack(
+            index: _tab,
+            children: [
+              HomeScreen(
+                currentIndex: _currentLessonIndex,
+                streak: _streak,
+                dailyGoal: _dailyGoal,
+                onContinue: () => _openLesson(_currentLessonIndex),
+                onOpenLearn: () => setState(() => _tab = 1),
+                onOpenProfile: () => setState(() => _tab = 3),
+                onSpeakChallenge: () => setState(() => _tab = 2),
+                onCategoryTap: _openCategory,
+              ),
+              LearnScreen(
+                selectedGroup: _selectedGroup,
+                currentIndex: _currentLessonIndex,
+                completed: _completed,
+                unlockedGroups: unlocked,
+                onSelectGroup: _selectGroup,
+                onOpenLesson: _openLesson,
+              ),
+              SpeakScreen(onOpenLesson: _openLesson),
+              ProfileScreen(
+                completedCount: _completed.length,
+                streak: _streak,
+                wordsLearned: _wordsLearned,
+                speakingScore: _speakingScore,
+                xp: _xp,
+                onContinue: () => _openLesson(_currentLessonIndex),
+              ),
+            ],
+          );
+        },
       ),
       bottomNavigationBar: BottomNavBar(
         index: _tab,

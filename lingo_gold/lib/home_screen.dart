@@ -68,7 +68,7 @@ class HomeScreen extends StatelessWidget {
                     ),
                     const SizedBox(width: 8),
                     Pill(
-                      text: 'Streak: $streak days',
+                      text: 'أيام متتالية: $streak',
                       icon: Icons.local_fire_department_rounded,
                       background: kSoftOrange,
                       foreground: const Color(0xFFD97706),
@@ -77,7 +77,7 @@ class HomeScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 const Text(
-                  'Ready to continue your learning today?',
+                  'جاهز لمتابعة التعلم اليوم؟',
                   style: TextStyle(
                     fontSize: 14,
                     color: kMuted,
@@ -101,7 +101,7 @@ class HomeScreen extends StatelessWidget {
                 const SizedBox(height: 22),
                 SectionTitle(
                   title: 'التصنيفات',
-                  action: 'See all',
+                  action: 'عرض الكل',
                   onAction: onOpenLearn,
                 ),
                 const SizedBox(height: 10),
@@ -140,7 +140,7 @@ class _HomeTopBar extends StatelessWidget {
             IconButton(
               onPressed: () {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('No new notifications')),
+                  const SnackBar(content: Text('لا توجد إشعارات جديدة')),
                 );
               },
               icon: const Icon(
@@ -277,7 +277,7 @@ class _ContinueCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'English • $groupName',
+                  'الإنجليزية • $groupName',
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
@@ -290,7 +290,7 @@ class _ContinueCard extends StatelessWidget {
                 FittedBox(
                   fit: BoxFit.scaleDown,
                   alignment: Alignment.centerLeft,
-                  child: Pill(text: 'Unit $unit • Lesson $lessonNumber'),
+                  child: Pill(text: 'الوحدة $unit • الدرس $lessonNumber'),
                 ),
                 const SizedBox(height: 10),
                 SizedBox(
@@ -322,7 +322,7 @@ class _WeekProgress extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    const days = ['ن', 'ث', 'ر', 'خ', 'ج', 'س', 'ح'];
     final today = DateTime.now().weekday;
     return Row(
       children: List.generate(7, (i) {
@@ -364,7 +364,7 @@ class _WeekProgress extends StatelessWidget {
                 height: 14,
                 child: isToday
                     ? const Text(
-                        'Today',
+                        'اليوم',
                         style: TextStyle(
                           fontSize: 10,
                           color: kPrimary,
@@ -398,9 +398,9 @@ const _categories = [
   _Category('التحية', 8, 80, Color(0xFF16A6A6)),
   _Category('الحيوانات', 5, 50, Color(0xFFF5A623)),
   _Category('الطعام', 3, 30, Color(0xFFEF5B6B)),
-  _Category('الألوان', 6, 61, Color(0xFF8B5CF6)),
-  _Category('الأرقام', 7, 62, Color(0xFF1E6FDB)),
   _Category('العائلة', 1, 17, Color(0xFF2E9E5B)),
+  _Category('المهن', 9, 90, Color(0xFF8B5CF6)),
+  _Category('الأرقام', 11, 110, Color(0xFF1E6FDB)),
 ];
 
 class _CategoriesGrid extends StatelessWidget {
@@ -574,7 +574,7 @@ class _ChallengeBanner extends StatelessWidget {
                     ),
                     const SizedBox(height: 3),
                     const Text(
-                      'Speak 5 sentences',
+                      'تحدث 5 جمل',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 13,
@@ -583,7 +583,7 @@ class _ChallengeBanner extends StatelessWidget {
                     ),
                     const SizedBox(height: 8),
                     Pill(
-                      text: 'Reward 50 stars',
+                      text: 'مكافأة 50 نجمة',
                       icon: Icons.star_rounded,
                       background: const Color(0x33FFFFFF),
                       foreground: Colors.white,

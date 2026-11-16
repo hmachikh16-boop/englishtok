@@ -256,7 +256,7 @@ class _LessonTopBar extends StatelessWidget {
               ),
               const SizedBox(width: 8),
               Pill(
-                text: 'Score: $score/5',
+                text: 'النتيجة: $score/5',
                 background: kSoftGreen,
                 foreground: kPrimaryDark,
               ),
@@ -267,7 +267,7 @@ class _LessonTopBar extends StatelessWidget {
             children: [
               Expanded(
                 child: Text(
-                  'Lesson $lessonNumber • $groupName',
+                  'الدرس $lessonNumber • $groupName',
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
@@ -279,7 +279,7 @@ class _LessonTopBar extends StatelessWidget {
               ),
               const SizedBox(width: 8),
               Text(
-                'Step $stepLabel of 5',
+                'الخطوة $stepLabel من 5',
                 style: const TextStyle(
                   fontSize: 11,
                   color: kMuted,
@@ -363,7 +363,7 @@ class _ResultStep extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'You earned $stars ${stars == 1 ? 'نجمة' : 'نجوم'}',
+                  'حصلت على $stars ${stars == 1 ? 'نجمة' : 'نجوم'}',
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 13,

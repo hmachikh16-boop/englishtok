@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import 'data.dart';
 import 'theme.dart';
+import 'user_profile.dart';
 import 'widgets.dart';
 
 class LearnScreen extends StatefulWidget {
@@ -43,7 +44,7 @@ class _LearnScreenState extends State<LearnScreen> {
     if (wasLocked) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Unit ${groupIndex + 1} unlocked'),
+          content: Text('أكمل الوحدة السابقة لفتح هذه الوحدة'),
           behavior: SnackBarBehavior.floating,
         ),
       );
@@ -114,8 +115,8 @@ class _LearnScreenState extends State<LearnScreen> {
                         ],
                       ),
                     ),
-                    const Pill(
-                      text: 'الإنجليزية • مبتدئ',
+                    Pill(
+                      text: 'الإنجليزية • ${UserProfile.instance.level.value}',
                       icon: Icons.language_rounded,
                       background: kSoftBlue,
                       foreground: kSecondary,
@@ -152,7 +153,7 @@ class _LearnScreenState extends State<LearnScreen> {
                                   ),
                                   const SizedBox(height: 2),
                                   Text(
-                                    'Unit ${groupIndex + 1} • ${group.name}',
+                                    'الوحدة ${groupIndex + 1} • ${group.name}',
                                     style: const TextStyle(
                                       fontSize: 12,
                                       color: kMuted,
@@ -163,7 +164,7 @@ class _LearnScreenState extends State<LearnScreen> {
                               ),
                             ),
                             Pill(
-                              text: '$percent% complete',
+                              text: '$percent٪ مكتمل',
                               background: kSoftGreen,
                               foreground: kPrimaryDark,
                             ),
@@ -229,7 +230,7 @@ class _LearnScreenState extends State<LearnScreen> {
                 }),
                 const SizedBox(height: 6),
                 const Text(
-                  'أكمل الدروس لفتح المزيد من الوحدات. اضغط على وحدة مقفلة لفتحها.',
+                  'أكمل الوحدة السابقة لفتح الوحدة التالية. يتقدم مسارك تلقائياً.',
                   style: TextStyle(fontSize: 12, color: kMuted, height: 1.4),
                 ),
               ],
@@ -299,7 +300,7 @@ class _LearningPath extends StatelessWidget {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             content: Text(
-                              'Complete Lesson ${i} to unlock this lesson',
+                              'أكمل الدرس السابق لفتح هذا الدرس',
                             ),
                             behavior: SnackBarBehavior.floating,
                           ),
@@ -391,14 +392,6 @@ class _LessonNode extends StatelessWidget {
     final borderColor = completed
         ? kPrimary
         : (current ? kPrimary : kLine);
-    final icon = completed
-        ? Icons.check_rounded
-        : (current ? Icons.play_arrow_rounded : Icons.lock_rounded);
-    final iconColor = completed
-        ? Colors.white
-        : (current ? kPrimary : kMuted);
-    final imagePath =
-        'assets/lessons/lesson_${number.toString().padLeft(2, '0')}.jpg';
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -426,15 +419,7 @@ class _LessonNode extends StatelessWidget {
               child: Stack(
                 fit: StackFit.expand,
                 children: [
-                  Image.asset(
-                    imagePath,
-                    fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) => Container(
-                      color: circleColor,
-                      alignment: Alignment.center,
-                      child: Icon(icon, color: iconColor, size: 27),
-                    ),
-                  ),
+                  LessonImage(lesson: lesson),
                   if (locked)
                     Container(
                       color: Colors.black.withValues(alpha: 0.45),
@@ -472,7 +457,7 @@ class _LessonNode extends StatelessWidget {
         ),
         const SizedBox(height: 5),
         Text(
-          'Lesson $number',
+          'الدرس $number',
           textAlign: TextAlign.center,
           style: TextStyle(
             fontSize: 12,
@@ -499,7 +484,7 @@ class _LessonNode extends StatelessWidget {
         ] else if (current) ...[
           const SizedBox(height: 2),
           const Text(
-            'START',
+            'ابدأ',
             style: TextStyle(
               fontSize: 9,
               fontWeight: FontWeight.w800,
@@ -583,7 +568,7 @@ class _UnitCard extends StatelessWidget {
                     Row(
                       children: [
                         Text(
-                          'Unit ${groupIndex + 1}',
+                          'الوحدة ${groupIndex + 1}',
                           style: const TextStyle(
                             fontSize: 11,
                             fontWeight: FontWeight.w700,
@@ -618,8 +603,8 @@ class _UnitCard extends StatelessWidget {
                     const SizedBox(height: 3),
                     Text(
                       locked
-                          ? 'مقفل • اضغط للفتح'
-                          : '$completed/10 lessons • ${(progress * 100).round()}%',
+                          ? 'مقفل • أكمل الوحدة السابقة'
+                          : '$completed/10 دروس • ${(progress * 100).round()}%',
                       style: const TextStyle(
                         fontSize: 11,
                         color: kMuted,

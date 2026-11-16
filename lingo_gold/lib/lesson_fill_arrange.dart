@@ -94,7 +94,7 @@ class _FillBlankStepState extends State<FillBlankStep> {
                 top: 12,
                 left: 12,
                 child: Pill(
-                  text: 'FILL IN THE BLANK',
+                  text: 'املأ الفراغ',
                   background: Color(0xEFFFFFFF),
                   foreground: kSecondary,
                 ),
@@ -257,7 +257,7 @@ class _FillBlankStepState extends State<FillBlankStep> {
           if (_checked && _correct)
             FilledButton(
               onPressed: () => widget.onComplete(!_hadWrong),
-              child: const Text('Continue'),
+              child: const Text('متابعة'),
             )
           else if (_checked && !_correct)
             FilledButton(
@@ -407,7 +407,7 @@ class _ArrangeWordsStepState extends State<ArrangeWordsStep> {
                 top: 12,
                 left: 12,
                 child: Pill(
-                  text: 'ARRANGE THE WORDS',
+                  text: 'رتّب الكلمات',
                   background: Color(0xEFFFFFFF),
                   foreground: kPrimaryDark,
                 ),
@@ -435,7 +435,7 @@ class _ArrangeWordsStepState extends State<ArrangeWordsStep> {
           ),
           const SizedBox(height: 10),
           Pill(
-            text: 'Hint: This is about ${widget.lesson.category}',
+            text: 'تلميح: انظر إلى الصورة بعناية.',
             icon: Icons.lightbulb_outline_rounded,
             background: kSoftBlue,
             foreground: kSecondary,
@@ -558,7 +558,7 @@ class _ArrangeWordsStepState extends State<ArrangeWordsStep> {
           if (_checked && _correct)
             FilledButton(
               onPressed: () => widget.onComplete(!_hadWrong),
-              child: const Text('Continue'),
+              child: const Text('متابعة'),
             )
           else if (_checked && !_correct)
             FilledButton(

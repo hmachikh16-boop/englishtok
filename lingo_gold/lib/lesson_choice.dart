@@ -211,7 +211,7 @@ class _ChooseStepState extends State<ChooseStep> {
           if (isCorrect)
             FilledButton(
               onPressed: () => widget.onComplete(!_hadWrong),
-              child: const Text('Continue'),
+              child: const Text('متابعة'),
             )
           else if (isWrong)
             FilledButton(
@@ -402,7 +402,7 @@ class _ListeningStepState extends State<ListeningStep> {
           if (isCorrect)
             FilledButton(
               onPressed: () => widget.onComplete(!_hadWrong),
-              child: const Text('Continue'),
+              child: const Text('متابعة'),
             )
           else if (isWrong)
             FilledButton(

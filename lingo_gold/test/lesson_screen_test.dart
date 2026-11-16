@@ -20,8 +20,8 @@ void main() {
 
     expect(find.text('LINGO GOLD'), findsOneWidget);
     expect(find.text('درس التحدث'), findsOneWidget);
-    expect(find.text('Step 1 of 5'), findsOneWidget);
-    expect(find.text('Score: 0/5'), findsOneWidget);
+    expect(find.text('الخطوة 1 من 5'), findsOneWidget);
+    expect(find.text('النتيجة: 0/5'), findsOneWidget);
     expect(find.text('قل هذه الجملة'), findsOneWidget);
     expect(find.text('اضغط على الميكروفون وقلها'), findsWidgets);
 
@@ -34,10 +34,10 @@ void main() {
 
     expect(find.text('درس الكتابة'), findsOneWidget);
     expect(find.text('اكتب الكلمة'), findsWidgets);
-    expect(find.text('Step 2 of 5'), findsOneWidget);
+    expect(find.text('الخطوة 2 من 5'), findsOneWidget);
 
     // Verify the writing step renders (target word for lesson 2 is "is").
     expect(find.text('اكتب الكلمة'), findsWidgets);
-    expect(find.text('Step 2 of 5'), findsOneWidget);
+    expect(find.text('الخطوة 2 من 5'), findsOneWidget);
   });
 }

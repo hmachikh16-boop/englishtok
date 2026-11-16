@@ -47,15 +47,19 @@ class LessonGroup {
 }
 
 const List<LessonGroup> groups = [
-  LessonGroup('Verb To Be', kOrange, Icons.description_outlined),
-  LessonGroup('Family', kBlue, Icons.family_restroom),
-  LessonGroup('People & Actions', kGreen, Icons.directions_run),
-  LessonGroup('Food', kYellow, Icons.restaurant),
-  LessonGroup('Food & More', kPink, Icons.cake_outlined),
-  LessonGroup('Animals', kPurple, Icons.pets),
-  LessonGroup('Home & Nature', kTeal, Icons.park_outlined),
-  LessonGroup('Fun & School', kPeach, Icons.sports_basketball),
-  LessonGroup('Greetings', kMint, Icons.waving_hand),
+  LessonGroup('فعل الكينونة', kOrange, Icons.description_outlined),
+  LessonGroup('العائلة', kBlue, Icons.family_restroom),
+  LessonGroup('الأشخاص والأفعال', kGreen, Icons.directions_run),
+  LessonGroup('الطعام', kYellow, Icons.restaurant),
+  LessonGroup('الطعام والمزيد', kPink, Icons.cake_outlined),
+  LessonGroup('الحيوانات', kPurple, Icons.pets),
+  LessonGroup('المنزل والطبيعة', kTeal, Icons.park_outlined),
+  LessonGroup('المرح والمدرسة', kPeach, Icons.sports_basketball),
+  LessonGroup('التحية', kMint, Icons.waving_hand),
+  LessonGroup('المهن', kBlue, Icons.work_outline),
+  LessonGroup('الأفعال', kGreen, Icons.directions_run),
+  LessonGroup('الأرقام', kYellow, Icons.pin_outlined),
+  LessonGroup('اكتشف', kPeach, Icons.explore_outlined),
 ];
 
 // ================= 90 LESSONS =================
@@ -168,4 +172,52 @@ const List<Lesson> lessons = [
   Lesson(word: 'Welcome', sentence: 'They say ___.', options: ['Welcome', 'Goodbye', 'Sorry'], imageFile: 'n78', indexInPack: 0, isPack: true, translation: 'هم يقولون أهلاً.', category: 'Greetings'),
   Lesson(word: 'Wake up', sentence: 'I ___ in the morning.', options: ['Wake up', 'Sleep', 'Eat'], imageFile: 'n79', indexInPack: 0, isPack: true, translation: 'أنا أستيقظ في الصباح.', category: 'Greetings'),
   Lesson(word: 'Shake hands', sentence: 'They ___.', options: ['Shake hands', 'Run', 'Sleep'], imageFile: 'n80', indexInPack: 0, isPack: true, translation: 'هم يتصافحون.', category: 'Greetings'),
+
+  // ===== 10. Jobs - 91 to 100 =====
+  Lesson(word: 'Doctor', sentence: 'He is a ___.', options: ['Doctor', 'Nurse', 'Pilot'], imageFile: 'job_doctor', indexInPack: 0, isPack: false, translation: 'هو طبيب.', category: 'Jobs'),
+  Lesson(word: 'Nurse', sentence: 'She is a ___.', options: ['Nurse', 'Doctor', 'Teacher'], imageFile: 'job_nurse', indexInPack: 0, isPack: false, translation: 'هي ممرضة.', category: 'Jobs'),
+  Lesson(word: 'Pilot', sentence: 'He is a ___.', options: ['Pilot', 'Doctor', 'Farmer'], imageFile: 'job_pilot', indexInPack: 0, isPack: false, translation: 'هو طيار.', category: 'Jobs'),
+  Lesson(word: 'Firefighter', sentence: 'He is a ___.', options: ['Firefighter', 'Pilot', 'Chef'], imageFile: 'job_firefighter', indexInPack: 0, isPack: false, translation: 'هو رجل إطفاء.', category: 'Jobs'),
+  Lesson(word: 'Chef', sentence: 'He is a ___.', options: ['Chef', 'Baker', 'Farmer'], imageFile: 'job_chef', indexInPack: 0, isPack: false, translation: 'هو طاهٍ.', category: 'Jobs'),
+  Lesson(word: 'Teacher', sentence: 'She is a ___.', options: ['Teacher', 'Nurse', 'Doctor'], imageFile: 'job_teacher', indexInPack: 0, isPack: false, translation: 'هي معلمة.', category: 'Jobs'),
+  Lesson(word: 'Police Officer', sentence: 'He is a ___.', options: ['Police Officer', 'Pilot', 'Chef'], imageFile: 'job_police', indexInPack: 0, isPack: false, translation: 'هو شرطي.', category: 'Jobs'),
+  Lesson(word: 'Farmer', sentence: 'He is a ___.', options: ['Farmer', 'Baker', 'Chef'], imageFile: 'job_farmer', indexInPack: 0, isPack: false, translation: 'هو مزارع.', category: 'Jobs'),
+  Lesson(word: 'Baker', sentence: 'He is a ___.', options: ['Baker', 'Chef', 'Farmer'], imageFile: 'job_baker', indexInPack: 0, isPack: false, translation: 'هو خباز.', category: 'Jobs'),
+  Lesson(word: 'Student', sentence: 'He is a ___.', options: ['Student', 'Teacher', 'Doctor'], imageFile: 'job_student', indexInPack: 0, isPack: false, translation: 'هو طالب.', category: 'Jobs'),
+
+  // ===== 11. Actions - 101 to 110 =====
+  Lesson(word: 'Brush', sentence: 'I ___ my teeth.', options: ['Brush', 'Read', 'Cook'], imageFile: 'act_brush', indexInPack: 0, isPack: false, translation: 'أنا أنظف أسناني.', category: 'Actions'),
+  Lesson(word: 'Read', sentence: 'I ___ a book.', options: ['Read', 'Drink', 'Cook'], imageFile: 'act_read', indexInPack: 0, isPack: false, translation: 'أنا أقرأ كتاباً.', category: 'Actions'),
+  Lesson(word: 'Drink', sentence: 'I ___ juice.', options: ['Drink', 'Read', 'Brush'], imageFile: 'act_drink', indexInPack: 0, isPack: false, translation: 'أنا أشرب عصيراً.', category: 'Actions'),
+  Lesson(word: 'Wave', sentence: 'I ___ my hand.', options: ['Wave', 'Read', 'Cook'], imageFile: 'act_wave', indexInPack: 0, isPack: false, translation: 'أنا ألوّح بيدي.', category: 'Actions'),
+  Lesson(word: 'Play', sentence: 'I ___ soccer.', options: ['Play', 'Read', 'Sleep'], imageFile: 'act_play', indexInPack: 0, isPack: false, translation: 'أنا ألعب كرة القدم.', category: 'Actions'),
+  Lesson(word: 'Shake', sentence: 'I ___ hands.', options: ['Shake', 'Wave', 'Play'], imageFile: 'act_shake', indexInPack: 0, isPack: false, translation: 'أنا أتصافح.', category: 'Actions'),
+  Lesson(word: 'Raise', sentence: 'I ___ my hand.', options: ['Raise', 'Wave', 'Play'], imageFile: 'act_raise', indexInPack: 0, isPack: false, translation: 'أنا أرفع يدي.', category: 'Actions'),
+  Lesson(word: 'Cook', sentence: 'I ___ food.', options: ['Cook', 'Read', 'Brush'], imageFile: 'act_cook', indexInPack: 0, isPack: false, translation: 'أنا أطبخ الطعام.', category: 'Actions'),
+  Lesson(word: 'Buy', sentence: 'I ___ food.', options: ['Buy', 'Cook', 'Read'], imageFile: 'act_buy', indexInPack: 0, isPack: false, translation: 'أنا أشتري طعاماً.', category: 'Actions'),
+  Lesson(word: 'Sit', sentence: 'I ___ on the bench.', options: ['Sit', 'Run', 'Play'], imageFile: 'act_sit', indexInPack: 0, isPack: false, translation: 'أنا أجلس على المقعد.', category: 'Actions'),
+
+  // ===== 12. Numbers - 111 to 120 =====
+  Lesson(word: 'One', sentence: '___ apple.', options: ['One', 'Two', 'Three'], imageFile: 'num_01', indexInPack: 0, isPack: false, translation: 'تفاحة واحدة.', category: 'Numbers'),
+  Lesson(word: 'Two', sentence: '___ balloons.', options: ['Two', 'One', 'Three'], imageFile: 'num_02', indexInPack: 0, isPack: false, translation: 'بالونان.', category: 'Numbers'),
+  Lesson(word: 'Three', sentence: '___ bananas.', options: ['Three', 'Two', 'Four'], imageFile: 'num_03', indexInPack: 0, isPack: false, translation: 'ثلاث موزات.', category: 'Numbers'),
+  Lesson(word: 'Four', sentence: '___ pencils.', options: ['Four', 'Three', 'Five'], imageFile: 'num_04', indexInPack: 0, isPack: false, translation: 'أربعة أقلام.', category: 'Numbers'),
+  Lesson(word: 'Five', sentence: '___ strawberries.', options: ['Five', 'Four', 'Six'], imageFile: 'num_05', indexInPack: 0, isPack: false, translation: 'خمس فراولات.', category: 'Numbers'),
+  Lesson(word: 'Six', sentence: '___ eggs.', options: ['Six', 'Five', 'Seven'], imageFile: 'num_06', indexInPack: 0, isPack: false, translation: 'ست بيضات.', category: 'Numbers'),
+  Lesson(word: 'Seven', sentence: '___ strawberries.', options: ['Seven', 'Six', 'Eight'], imageFile: 'num_07', indexInPack: 0, isPack: false, translation: 'سبع فراولات.', category: 'Numbers'),
+  Lesson(word: 'Eight', sentence: '___ crayons.', options: ['Eight', 'Seven', 'Nine'], imageFile: 'num_08', indexInPack: 0, isPack: false, translation: 'ثمانية أقلام تلوين.', category: 'Numbers'),
+  Lesson(word: 'Nine', sentence: '___ grapes.', options: ['Nine', 'Eight', 'Ten'], imageFile: 'num_09', indexInPack: 0, isPack: false, translation: 'تسع حبات عنب.', category: 'Numbers'),
+  Lesson(word: 'Ten', sentence: '___ fingers.', options: ['Ten', 'Nine', 'Eight'], imageFile: 'num_10', indexInPack: 0, isPack: false, translation: 'عشرة أصابع.', category: 'Numbers'),
+
+  // ===== 13. Discover - 121 to 130 =====
+  Lesson(word: 'Tomato', sentence: 'The ___ is red.', options: ['Tomato', 'Apple', 'Orange'], imageFile: 'food_tomato', indexInPack: 0, isPack: false, translation: 'الطماطم حمراء.', category: 'Discover'),
+  Lesson(word: 'Chocolate', sentence: 'I like ___.', options: ['Chocolate', 'Bread', 'Cheese'], imageFile: 'food_chocolate', indexInPack: 0, isPack: false, translation: 'أنا أحب الشوكولاتة.', category: 'Discover'),
+  Lesson(word: 'Leaf', sentence: 'This is a ___.', options: ['Leaf', 'Tree', 'Flower'], imageFile: 'nat_leaf', indexInPack: 0, isPack: false, translation: 'هذه ورقة شجر.', category: 'Discover'),
+  Lesson(word: 'Snow', sentence: 'The ___ is white.', options: ['Snow', 'Sun', 'Rain'], imageFile: 'nat_snow', indexInPack: 0, isPack: false, translation: 'الثلج أبيض.', category: 'Discover'),
+  Lesson(word: 'Wave', sentence: 'The ___ is big.', options: ['Wave', 'Sun', 'Moon'], imageFile: 'nat_wave', indexInPack: 0, isPack: false, translation: 'الموجة كبيرة.', category: 'Discover'),
+  Lesson(word: 'Flower', sentence: 'The ___ is pink.', options: ['Flower', 'Tree', 'Leaf'], imageFile: 'nat_flower', indexInPack: 0, isPack: false, translation: 'الزهرة وردية.', category: 'Discover'),
+  Lesson(word: 'Sunflower', sentence: 'The ___ is yellow.', options: ['Sunflower', 'Rose', 'Tree'], imageFile: 'nat_sunflower', indexInPack: 0, isPack: false, translation: 'دوار الشمس أصفر.', category: 'Discover'),
+  Lesson(word: 'Grapes', sentence: 'I like ___.', options: ['Grapes', 'Apples', 'Bananas'], imageFile: 'food_grapes', indexInPack: 0, isPack: false, translation: 'أنا أحب العنب.', category: 'Discover'),
+  Lesson(word: 'Orange', sentence: 'The ___ is orange.', options: ['Orange', 'Apple', 'Banana'], imageFile: 'food_orange', indexInPack: 0, isPack: false, translation: 'البرتقالة برتقالية.', category: 'Discover'),
+  Lesson(word: 'Car', sentence: 'The ___ is red.', options: ['Car', 'Ball', 'Book'], imageFile: 'toy_car', indexInPack: 0, isPack: false, translation: 'السيارة حمراء.', category: 'Discover'),
 ];
