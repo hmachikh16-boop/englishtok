@@ -58,7 +58,7 @@ class HomeScreen extends StatelessWidget {
       body: SafeArea(
         bottom: false,
         child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
+          padding: const EdgeInsets.fromLTRB(20, 16, 20, 110),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -180,6 +180,7 @@ class _HeaderCard extends StatelessWidget {
                   ),
                   Text(
                     '$todayDone / $todayTotal',
+                    textDirection: TextDirection.ltr,
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w800,

@@ -414,18 +414,18 @@ class BottomNavBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final bottomInset = MediaQuery.of(context).padding.bottom;
     return Padding(
-      padding: EdgeInsets.fromLTRB(16, 0, 16, 16 + bottomInset),
+      padding: EdgeInsets.fromLTRB(16, 0, 16, 24 + bottomInset),
       child: Container(
-        height: 64,
-        padding: const EdgeInsets.all(6),
+        height: 76,
+        padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(999),
+          borderRadius: BorderRadius.circular(38),
           boxShadow: const [
             BoxShadow(
-              color: Color(0x1F000000),
-              blurRadius: 24,
-              offset: Offset(0, 8),
+              color: Color(0x26000000),
+              blurRadius: 16,
+              offset: Offset(0, 4),
             ),
           ],
         ),
@@ -436,9 +436,11 @@ class BottomNavBar extends StatelessWidget {
               child: GestureDetector(
                 onTap: () => onTap(i == 0 ? 0 : 3),
                 child: Container(
+                  height: 60,
+                  margin: const EdgeInsets.symmetric(horizontal: 4),
                   decoration: BoxDecoration(
                     color: active ? const Color(0xFF1DB954) : const Color(0xFFE5E7EB),
-                    borderRadius: BorderRadius.circular(999),
+                    borderRadius: BorderRadius.circular(30),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -446,14 +448,16 @@ class BottomNavBar extends StatelessWidget {
                       Icon(
                         _items[i].$1,
                         color: active ? Colors.white : const Color(0xFF6B7280),
-                        size: 24,
+                        size: 28,
                       ),
-                      const SizedBox(width: 8),
+                      const SizedBox(width: 6),
                       Text(
                         _items[i].$2,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                         style: TextStyle(
                           color: active ? Colors.white : const Color(0xFF6B7280),
-                          fontSize: 15,
+                          fontSize: 16,
                           fontWeight: active ? FontWeight.w800 : FontWeight.w500,
                         ),
                       ),
