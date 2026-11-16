@@ -405,11 +405,6 @@ class BottomNavBar extends StatelessWidget {
   final ValueChanged<int> onTap;
   const BottomNavBar({super.key, required this.index, required this.onTap});
 
-  static const _items = [
-    (Icons.home_rounded, 'الرئيسية'),
-    (Icons.person_rounded, 'ملفي'),
-  ];
-
   @override
   Widget build(BuildContext context) {
     final bottomInset = MediaQuery.of(context).padding.bottom;
@@ -430,43 +425,62 @@ class BottomNavBar extends StatelessWidget {
           ],
         ),
         child: Row(
-          children: List.generate(_items.length, (i) {
-            final active = (i == 0 && index == 0) || (i == 1 && index == 3);
-            return Expanded(
+          children: [
+            Expanded(
               child: GestureDetector(
-                onTap: () => onTap(i == 0 ? 0 : 3),
+                onTap: () => onTap(0),
                 child: Container(
-                  height: 60,
-                  margin: const EdgeInsets.symmetric(horizontal: 4),
+                  alignment: Alignment.center,
                   decoration: BoxDecoration(
-                    color: active ? const Color(0xFF1DB954) : const Color(0xFFE5E7EB),
+                    color: index == 0 ? const Color(0xFF2563EB) : const Color(0xFFE5E7EB),
                     borderRadius: BorderRadius.circular(30),
                   ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        _items[i].$1,
-                        color: active ? Colors.white : const Color(0xFF6B7280),
-                        size: 28,
-                      ),
-                      const SizedBox(width: 6),
-                      Text(
-                        _items[i].$2,
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      child: Text(
+                        'الرئيسية',
                         maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                          color: active ? Colors.white : const Color(0xFF6B7280),
-                          fontSize: 16,
-                          fontWeight: active ? FontWeight.w800 : FontWeight.w500,
+                          color: index == 0 ? Colors.white : const Color(0xFF6B7280),
+                          fontSize: 14,
+                          fontWeight: FontWeight.w800,
                         ),
                       ),
-                    ],
+                    ),
                   ),
                 ),
               ),
-            );
-          }),
+            ),
+            Expanded(
+              child: GestureDetector(
+                onTap: () => onTap(3),
+                child: Container(
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: index == 3 ? const Color(0xFF2563EB) : const Color(0xFFE5E7EB),
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      child: Text(
+                        'ملفي',
+                        maxLines: 1,
+                        style: TextStyle(
+                          color: index == 3 ? Colors.white : const Color(0xFF6B7280),
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

@@ -49,7 +49,7 @@ class MainShell extends StatefulWidget {
 
 class _MainShellState extends State<MainShell> {
   int _tab = 0;
-  int _currentLessonIndex = 0;
+  int _currentLessonIndex = pathOrder[0] * 10;
   final Set<int> _completed = {};
   int _selectedGroup = 0;
   Timer? _updateTimer;
