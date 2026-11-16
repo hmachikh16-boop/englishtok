@@ -164,6 +164,14 @@ class _MainShellState extends State<MainShell> {
   void _openCategory(int groupIndex) {
     if (!_computeUnlockedGroups().contains(groupIndex)) {
       setState(() => _tab = 1);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'هذه الوحدة مقفلة. أكمل الوحدات السابقة أو غيّر مستواك من الملف الشخصي.',
+          ),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
       return;
     }
     setState(() {
