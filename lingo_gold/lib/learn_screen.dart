@@ -397,6 +397,8 @@ class _LessonNode extends StatelessWidget {
     final iconColor = completed
         ? Colors.white
         : (current ? kPrimary : kMuted);
+    final imagePath =
+        'assets/lessons/lesson_${number.toString().padLeft(2, '0')}.jpg';
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -420,7 +422,52 @@ class _LessonNode extends StatelessWidget {
                     ]
                   : null,
             ),
-            child: Icon(icon, color: iconColor, size: 27),
+            child: ClipOval(
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  Image.asset(
+                    imagePath,
+                    fit: BoxFit.cover,
+                    errorBuilder: (_, __, ___) => Container(
+                      color: circleColor,
+                      alignment: Alignment.center,
+                      child: Icon(icon, color: iconColor, size: 27),
+                    ),
+                  ),
+                  if (locked)
+                    Container(
+                      color: Colors.black.withValues(alpha: 0.45),
+                      alignment: Alignment.center,
+                      child: const Icon(
+                        Icons.lock_rounded,
+                        color: Colors.white,
+                        size: 20,
+                      ),
+                    )
+                  else if (completed)
+                    Container(
+                      color: kPrimary.withValues(alpha: 0.5),
+                      alignment: Alignment.center,
+                      child: const Icon(
+                        Icons.check_rounded,
+                        color: Colors.white,
+                        size: 24,
+                      ),
+                    )
+                  else if (current)
+                    Container(
+                      color: Colors.black.withValues(alpha: 0.12),
+                      alignment: Alignment.center,
+                      child: const Icon(
+                        Icons.play_arrow_rounded,
+                        color: Colors.white,
+                        size: 27,
+                      ),
+                    ),
+                ],
+              ),
+            ),
           ),
         ),
         const SizedBox(height: 5),

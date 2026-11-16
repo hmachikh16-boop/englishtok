@@ -8,8 +8,8 @@ import 'package:path_provider/path_provider.dart';
 class UpdateService {
   static const String baseUrl = 'http://192.168.1.11:8080';
   static const String versionUrl = '$baseUrl/version.json';
-  static const String apkUrl = '$baseUrl/app-release.apk?v=9';
-  static const int currentVersionCode = 9;
+  static const String apkUrl = '$baseUrl/app-release.apk?v=10';
+  static const int currentVersionCode = 10;
 
   /// Checks for an update. Returns the new version code if available, else null.
   static Future<int?> checkForUpdate() async {
@@ -41,7 +41,7 @@ class UpdateService {
         return null;
       }
       final dir = await getExternalStorageDirectory() ?? await getApplicationDocumentsDirectory();
-      final file = File('${dir.path}/app-release-v9.apk');
+      final file = File('${dir.path}/app-release-v10.apk');
       final sink = file.openWrite();
       final total = streamed.contentLength ?? 0;
       var received = 0;
