@@ -150,7 +150,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                               alignment: Alignment.center,
                                               decoration: const BoxDecoration(
                                                 shape: BoxShape.circle,
-                                                color: Color(0xFF2563EB),
+                                                color: Color(0xFF111111),
                                               ),
                                               child: Text(
                                                 avatar,
@@ -286,7 +286,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                             style: const TextStyle(
                                               fontSize: 16,
                                               fontWeight: FontWeight.w800,
-                                              color: Color(0xFF2563EB),
+                                              color: Color(0xFF111111),
                                             ),
                                           ),
                                         ),
@@ -311,7 +311,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                             const Color(0xFFBFDBFE),
                                         valueColor:
                                             const AlwaysStoppedAnimation<
-                                                Color>(Color(0xFF2563EB)),
+                                                Color>(Color(0xFF111111)),
                                       ),
                                     ),
                                     const SizedBox(height: 8),
@@ -354,7 +354,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                                   FontWeight
                                                                       .w700,
                                                               color: Color(
-                                                                  0xFF2563EB),
+                                                                  0xFF111111),
                                                             ),
                                                           ),
                                                           const SizedBox(
@@ -364,7 +364,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                                 .styleFrom(
                                                               backgroundColor:
                                                                   const Color(
-                                                                      0xFF2563EB),
+                                                                      0xFF111111),
                                                             ),
                                                             onPressed:
                                                                 widget
@@ -402,7 +402,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                                   FontWeight
                                                                       .w700,
                                                               color: Color(
-                                                                  0xFF2563EB),
+                                                                  0xFF111111),
                                                             ),
                                                           ),
                                                           const SizedBox(
@@ -424,7 +424,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                                   const AlwaysStoppedAnimation<
                                                                           Color>(
                                                                       Color(
-                                                                          0xFF2563EB)),
+                                                                          0xFF111111)),
                                                             ),
                                                           ),
                                                         ],
@@ -475,7 +475,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                                                   0,
                                                                                   7)
                                                                       ? const Color(
-                                                                          0xFF2563EB)
+                                                                          0xFF111111)
                                                                       : const Color(
                                                                           0xFFE5E7EB),
                                                                 ),
@@ -651,19 +651,19 @@ class _Pill extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(999),
-        border: Border.all(color: const Color(0xFF2563EB), width: 1.5),
+        border: Border.all(color: const Color(0xFF111111), width: 1.5),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 16, color: const Color(0xFF2563EB)),
+          Icon(icon, size: 16, color: const Color(0xFF111111)),
           const SizedBox(width: 4),
           Text(
             text,
             style: const TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w600,
-              color: Color(0xFF2563EB),
+              color: Color(0xFF111111),
             ),
           ),
         ],
@@ -701,14 +701,14 @@ class _StatCard extends StatelessWidget {
         ),
         child: Column(
           children: [
-            Icon(icon, color: const Color(0xFF2563EB), size: 24),
+            Icon(icon, color: const Color(0xFF111111), size: 24),
             const SizedBox(height: 4),
             Text(
               value,
               style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w800,
-                color: Color(0xFF2563EB),
+                color: Color(0xFF111111),
               ),
             ),
             Text(
@@ -748,7 +748,7 @@ class _BadgeCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final color = unlocked
-        ? const Color(0xFF2563EB)
+        ? const Color(0xFF111111)
         : const Color(0xFF9CA3AF);
     return GestureDetector(
       onTap: onTap,

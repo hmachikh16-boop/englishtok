@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'data.dart' as legacy;
 
-const Color kHomeBlue = Color(0xFF2563EB);
+const Color kHomeBlue = Color(0xFF111111);
 const Color kHomeInk = Color(0xFF111827);
 const Color kHomeMuted = Color(0xFF9CA3AF);
 

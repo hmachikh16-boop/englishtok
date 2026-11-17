@@ -442,7 +442,7 @@ class BottomNavBar extends StatelessWidget {
         child: Container(
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: selected ? const Color(0xFF2563EB) : const Color(0xFFE5E7EB),
+            color: selected ? const Color(0xFF111111) : const Color(0xFFE5E7EB),
             borderRadius: BorderRadius.circular(30),
           ),
           child: FittedBox(
