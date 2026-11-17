@@ -60,6 +60,7 @@ void main() {
 
     test('grammar lessons have 3 matching distractors and a non-IS writing word', () {
       for (var i = 0; i < 10; i++) {
+        if (i == 0 || i == 1 || i == 2 || i == 9) continue; // special lessons
         final d = pickDistractors(i, 3);
         expect(d.length, 3, reason: 'lesson ${i + 1} distractor count');
         for (final l in d) {
@@ -69,6 +70,19 @@ void main() {
         final w = writingWordFor(lessons[i], i).toUpperCase();
         expect(['IS', 'ARE', 'AM', 'THE', 'A'], isNot(contains(w)),
             reason: 'lesson ${i + 1} writing word $w');
+      }
+    });
+
+    test('special lessons 1,2,3,10 use category-appropriate distractors', () {
+      for (final i in [0, 1, 2, 9]) {
+        final d = pickDistractors(i, 3);
+        expect(d.length, 3, reason: 'lesson ${i + 1} distractor count');
+        // No dog/flowers/cat in person lessons; no dog/cat in sun lesson.
+        for (final l in d) {
+          expect(l.imageFile, isNot('q2'), reason: 'lesson ${i + 1} has dog image');
+          expect(l.imageFile, isNot('q3'), reason: 'lesson ${i + 1} has flowers image');
+          expect(l.imageFile, isNot('q6'), reason: 'lesson ${i + 1} has cat image');
+        }
       }
     });
 

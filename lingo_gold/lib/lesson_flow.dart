@@ -23,6 +23,11 @@ List<Lesson> pickDistractors(int lessonIndex, int count) {
   final pool = _categoryPool(lessonIndex);
   final result = <Lesson>[];
 
+  // Special lessons (1, 2, 3, 10): use category-appropriate images only.
+  if (_isSpecialLesson(lessonIndex)) {
+    return _specialDistractors(lessonIndex, count);
+  }
+
   bool acceptable(Lesson candidate) {
     if (candidate.imageFile == lesson.imageFile &&
         candidate.word.toLowerCase() == lesson.word.toLowerCase()) {
@@ -116,6 +121,96 @@ String writingWordFor(Lesson lesson, int lessonIndex) {
     return lesson.word;
   }
   return lesson.word;
+}
+
+bool _isSpecialLesson(int lessonIndex) =>
+    lessonIndex == 0 || lessonIndex == 1 || lessonIndex == 2 || lessonIndex == 9;
+
+Lesson _syntheticLesson(String imageFile, bool isPack, int indexInPack, String word) {
+  return Lesson(
+    word: word,
+    sentence: '',
+    options: [word],
+    imageFile: imageFile,
+    indexInPack: indexInPack,
+    isPack: isPack,
+    translation: '',
+    category: 'Special',
+  );
+}
+
+List<Lesson> _specialDistractors(int lessonIndex, int count) {
+  switch (lessonIndex) {
+    case 0: // Lesson 1: I am (person images)
+    case 1: // Lesson 2: He is
+    case 2: // Lesson 3: They are
+      return [
+        _syntheticLesson('q1', false, 0, 'are'),
+        _syntheticLesson('q8', false, 0, 'is'),
+        _syntheticLesson('n01', true, 0, 'boy'),
+      ].take(count).toList();
+    case 9: // Lesson 10: Sun
+      return [
+        _syntheticLesson('n66', true, 0, 'MOON'),
+        _syntheticLesson('n67', true, 0, 'STARS'),
+        _syntheticLesson('n69', true, 0, 'SUNFLOWER'),
+      ].take(count).toList();
+  }
+  return [];
+}
+
+List<Lesson> _specialMatchingPairs(int lessonIndex) {
+  switch (lessonIndex) {
+    case 0:
+    case 1:
+    case 2:
+      return [
+        _syntheticLesson('q0', false, 0, 'I am'),
+        _syntheticLesson('q8', false, 0, 'He is'),
+        _syntheticLesson('q1', false, 0, 'They are'),
+      ];
+    case 9:
+      return [
+        _syntheticLesson('q9', false, 0, 'SUN'),
+        _syntheticLesson('n66', true, 0, 'MOON'),
+        _syntheticLesson('n67', true, 0, 'STARS'),
+      ];
+  }
+  return [];
+}
+
+List<Lesson> _specialSmartChooseOptions(int lessonIndex) {
+  switch (lessonIndex) {
+    case 0:
+    case 1:
+    case 2:
+      return [
+        _syntheticLesson('q0', false, 0, 'I am'),
+        _syntheticLesson('q1', false, 0, 'They are'),
+        _syntheticLesson('q8', false, 0, 'He is'),
+        _syntheticLesson('n01', true, 0, 'boy'),
+      ];
+    case 9:
+      return [
+        _syntheticLesson('q9', false, 0, 'SUN'),
+        _syntheticLesson('n66', true, 0, 'MOON'),
+        _syntheticLesson('n67', true, 0, 'STARS'),
+        _syntheticLesson('n69', true, 0, 'SUNFLOWER'),
+      ];
+  }
+  return [];
+}
+
+String _specialSmartChooseQuestion(int lessonIndex) {
+  switch (lessonIndex) {
+    case 0:
+    case 1:
+    case 2:
+      return 'Which picture is NOT I am?';
+    case 9:
+      return 'Which picture is NOT sun?';
+  }
+  return '';
 }
 
 class LessonFlowScreen extends StatefulWidget {
@@ -292,6 +387,16 @@ class _LessonFlowScreenState extends State<LessonFlowScreen> {
       onComplete: _onSimpleComplete,
     );
       case 3:
+        if (_isSpecialLesson(_lessonIndex)) {
+          final opts = _specialSmartChooseOptions(_lessonIndex);
+          return SmartChooseStep(
+            lesson: opts.first,
+            lessonIndex: _lessonIndex,
+            distractors: opts.sublist(1),
+            question: _specialSmartChooseQuestion(_lessonIndex),
+            onComplete: _onSimpleComplete,
+          );
+        }
         return SmartChooseStep(
           lesson: lesson,
           lessonIndex: _lessonIndex,
@@ -299,6 +404,14 @@ class _LessonFlowScreenState extends State<LessonFlowScreen> {
           onComplete: _onSimpleComplete,
         );
       case 4:
+        if (_isSpecialLesson(_lessonIndex)) {
+          final pairs = _specialMatchingPairs(_lessonIndex);
+          return MatchingStep(
+            lesson: pairs.first,
+            distractors: pairs.sublist(1),
+            onComplete: _onSimpleComplete,
+          );
+        }
         return MatchingStep(
           lesson: lesson,
           distractors: _distractors.take(2).toList(),

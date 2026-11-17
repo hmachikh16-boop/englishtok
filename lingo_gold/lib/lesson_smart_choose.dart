@@ -14,6 +14,7 @@ class SmartChooseStep extends StatefulWidget {
   final Lesson lesson;
   final int lessonIndex;
   final List<Lesson> distractors;
+  final String? question;
   final ValueChanged<bool> onComplete;
 
   const SmartChooseStep({
@@ -21,6 +22,7 @@ class SmartChooseStep extends StatefulWidget {
     required this.lesson,
     required this.lessonIndex,
     required this.distractors,
+    this.question,
     required this.onComplete,
   });
 
@@ -72,7 +74,7 @@ class _SmartChooseStepState extends State<SmartChooseStep> {
     }
   }
 
-  String get _question => 'Which $_category is NOT ${widget.lesson.word}?';
+  String get _question => widget.question ?? 'Which $_category is NOT ${widget.lesson.word}?';
 
   void _select(int index) {
     if (_checked && _isCorrect) return;
