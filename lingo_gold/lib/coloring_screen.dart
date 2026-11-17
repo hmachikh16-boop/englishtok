@@ -1,13 +1,20 @@
 import 'package:flutter/material.dart';
 
+import 'theme.dart';
+import 'widgets.dart';
+
 class ColoringCanvas extends StatefulWidget {
   final String imageAsset;
   final String prompt;
+  final String? promptAr;
+  final String? pageLabel;
   final VoidCallback onDone;
   const ColoringCanvas({
     super.key,
     required this.imageAsset,
     required this.prompt,
+    this.promptAr,
+    this.pageLabel,
     required this.onDone,
   });
 
@@ -66,24 +73,51 @@ class _ColoringCanvasState extends State<ColoringCanvas> {
           margin: const EdgeInsets.fromLTRB(16, 8, 16, 8),
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           decoration: BoxDecoration(
-            color: const Color(0xFFEFF6FF),
+            color: kSoftGreen,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: const Color(0xFFBFDBFE)),
+            border: Border.all(color: kPrimary.withValues(alpha: 0.25)),
           ),
-          child: Row(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const Icon(Icons.brush_rounded, color: Color(0xFF2563EB)),
-              const SizedBox(width: 8),
-              Expanded(
+              Row(
+                children: [
+                  const Icon(Icons.brush_rounded, color: kPrimary),
+                  const SizedBox(width: 8),
+                  if (widget.pageLabel != null)
+                    Pill(
+                      text: widget.pageLabel!,
+                      background: Colors.white,
+                      foreground: kPrimaryDark,
+                    ),
+                  const Spacer(),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Directionality(
+                textDirection: TextDirection.ltr,
                 child: Text(
                   widget.prompt,
+                  textAlign: TextAlign.left,
                   style: const TextStyle(
                     fontSize: 17,
                     fontWeight: FontWeight.w800,
-                    color: Color(0xFF1E3A8A),
+                    color: kInk,
                   ),
                 ),
               ),
+              if (widget.promptAr != null) ...[
+                const SizedBox(height: 4),
+                Text(
+                  widget.promptAr!,
+                  textAlign: TextAlign.right,
+                  style: const TextStyle(
+                    fontSize: 12.5,
+                    fontWeight: FontWeight.w600,
+                    color: kMuted,
+                  ),
+                ),
+              ],
             ],
           ),
         ),
@@ -94,7 +128,7 @@ class _ColoringCanvasState extends State<ColoringCanvas> {
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: const Color(0xFFE5E7EB), width: 2),
+              border: Border.all(color: kLine, width: 2),
             ),
             clipBehavior: Clip.antiAlias,
             child: LayoutBuilder(
@@ -129,9 +163,9 @@ class _ColoringCanvasState extends State<ColoringCanvas> {
           margin: const EdgeInsets.fromLTRB(16, 8, 16, 12),
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: const Color(0xFFF8FAFC),
+            color: kCard,
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: const Color(0xFFE5E7EB)),
+            border: Border.all(color: kLine),
           ),
           child: Column(
             children: [
@@ -152,7 +186,7 @@ class _ColoringCanvasState extends State<ColoringCanvas> {
                             shape: BoxShape.circle,
                             border: Border.all(
                               color: _color == c
-                                  ? const Color(0xFF2563EB)
+                                  ? kPrimary
                                   : Colors.white,
                               width: _color == c ? 4 : 2,
                             ),
@@ -177,8 +211,8 @@ class _ColoringCanvasState extends State<ColoringCanvas> {
                       icon: const Icon(Icons.delete_outline_rounded),
                       label: const Text('مسح'),
                       style: OutlinedButton.styleFrom(
-                        foregroundColor: const Color(0xFF2563EB),
-                        side: const BorderSide(color: Color(0xFFBFDBFE)),
+                        foregroundColor: kPrimary,
+                        side: const BorderSide(color: kLine),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(14),
                         ),
@@ -193,7 +227,7 @@ class _ColoringCanvasState extends State<ColoringCanvas> {
                       icon: const Icon(Icons.check_rounded),
                       label: const Text('تم'),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF2563EB),
+                        backgroundColor: kPrimary,
                         foregroundColor: Colors.white,
                         minimumSize: const Size(0, 52),
                         shape: RoundedRectangleBorder(

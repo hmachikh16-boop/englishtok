@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'course.dart';
+import 'data.dart' as legacy;
 
 const Color kHomeBlue = Color(0xFF2563EB);
 const Color kHomeInk = Color(0xFF111827);
@@ -24,8 +24,10 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final lesson = lessonById(currentLessonId.clamp(1, totalLessons));
-    final section = sectionOf(lesson);
+    final lesson =
+        legacy.lessons[(currentLessonId - 1).clamp(0, totalLessons - 1)];
+    final group =
+        legacy.groups[((currentLessonId - 1) ~/ 10).clamp(0, 9)];
     final progress =
         totalLessons == 0 ? 0.0 : (completedLessons / totalLessons).clamp(0.0, 1.0);
     final allDone = completedLessons >= totalLessons;
@@ -125,7 +127,7 @@ class HomeScreen extends StatelessWidget {
                         const Spacer(),
                         Flexible(
                           child: Text(
-                            section.nameAr,
+                            group.name,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: const TextStyle(
@@ -233,7 +235,7 @@ class HomeScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 18),
                   const Text(
-                    '6 نوافذ • 3 مستويات • تلوين',
+                    '6 نوافذ • تلوين',
                     style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
