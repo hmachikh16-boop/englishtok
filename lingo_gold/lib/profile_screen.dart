@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'dart:io';
+
+import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'theme.dart';
 import 'update_service.dart';
@@ -29,21 +33,106 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   final _nameController = TextEditingController();
   bool _editingName = false;
-  int? _expandedStat; // 0=pronunciation,1=lessons,2=streak
+  int? _expandedStat;
   int? _expandedBadge;
   bool _editingAvatar = false;
+  String? _profileImagePath;
+  final _picker = ImagePicker();
 
   @override
   void initState() {
     super.initState();
     _nameController.text = UserProfile.instance.displayName;
     UserProfile.instance.load();
+    _loadProfileImage();
   }
 
-  @override
-  void dispose() {
-    _nameController.dispose();
-    super.dispose();
+  Future<void> _loadProfileImage() async {
+    final prefs = await SharedPreferences.getInstance();
+    final path = prefs.getString('profile_image_path');
+    if (path != null && File(path).existsSync()) {
+      if (mounted) setState(() => _profileImagePath = path);
+    }
+  }
+
+  Future<void> _pickImage(ImageSource source) async {
+    try {
+      final picked = await _picker.pickImage(source: source, imageQuality: 80);
+      if (picked == null) return;
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('profile_image_path', picked.path);
+      if (mounted) setState(() => _profileImagePath = picked.path);
+    } catch (_) {}
+  }
+
+  void _showImagePicker() {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (ctx) => SafeArea(
+        child: Wrap(
+          children: [
+            ListTile(
+              leading: const Icon(Icons.photo_library_rounded),
+              title: const Text('اختر من المعرض'),
+              onTap: () {
+                Navigator.pop(ctx);
+                _pickImage(ImageSource.gallery);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.camera_alt_rounded),
+              title: const Text('التقط صورة بالكاميرا'),
+              onTap: () {
+                Navigator.pop(ctx);
+                _pickImage(ImageSource.camera);
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showNameDialog() {
+    final controller = TextEditingController(text: UserProfile.instance.displayName);
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('اكتب اسمك'),
+        content: TextField(
+          controller: controller,
+          textAlign: TextAlign.center,
+          autofocus: true,
+          decoration: const InputDecoration(
+            border: UnderlineInputBorder(),
+            isDense: true,
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('إلغاء', style: TextStyle(color: Color(0xFF6B7280))),
+          ),
+          FilledButton(
+            style: FilledButton.styleFrom(backgroundColor: const Color(0xFF000000)),
+            onPressed: () {
+              final v = controller.text.trim();
+              if (v.isNotEmpty) {
+                UserProfile.instance.save(newName: v);
+                final prefs = SharedPreferences.getInstance();
+                prefs.then((p) => p.setString('profile_name', v));
+              }
+              Navigator.pop(ctx);
+              setState(() {});
+            },
+            child: const Text('حفظ', style: TextStyle(color: Colors.white)),
+          ),
+        ],
+      ),
+    );
   }
 
   String get _levelLabel {
@@ -83,18 +172,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return '';
   }
 
-  Future<void> _saveName() async {
-    final v = _nameController.text.trim();
-    if (v.isEmpty) {
-      _nameController.text = UserProfile.instance.displayName;
-      setState(() => _editingName = false);
-      return;
-    }
-    await UserProfile.instance.save(newName: v);
-    setState(() => _editingName = false);
+  @override
+  void dispose() {
+    _nameController.dispose();
+    super.dispose();
   }
 
-  @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder<String>(
       valueListenable: UserProfile.instance.name,
@@ -136,30 +219,72 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     ),
                                     const SizedBox(height: 16),
                                     Center(
-                                      child: ValueListenableBuilder<String>(
-                                        valueListenable:
-                                            UserProfile.instance.avatar,
-                                        builder: (context, avatar, _) {
-                                          return GestureDetector(
-                                            onTap: () => setState(() =>
-                                                _editingAvatar =
-                                                    !_editingAvatar),
-                                            child: Container(
-                                              width: 120,
-                                              height: 120,
-                                              alignment: Alignment.center,
-                                              decoration: const BoxDecoration(
-                                                shape: BoxShape.circle,
-                                                color: Color(0xFF111111),
-                                              ),
-                                              child: Text(
-                                                avatar,
-                                                style: const TextStyle(
-                                                    fontSize: 56),
+                                      child: Stack(
+                                        alignment: Alignment.bottomRight,
+                                        children: [
+                                          ValueListenableBuilder<String>(
+                                            valueListenable:
+                                                UserProfile.instance.avatar,
+                                            builder: (context, avatar, _) {
+                                              return GestureDetector(
+                                                onTap: _showImagePicker,
+                                                child: Container(
+                                                  width: 120,
+                                                  height: 120,
+                                                  alignment: Alignment.center,
+                                                  decoration: BoxDecoration(
+                                                    shape: BoxShape.circle,
+                                                    color: _profileImagePath !=
+                                                            null
+                                                        ? Colors.transparent
+                                                        : const Color(
+                                                            0xFF000000),
+                                                    image: _profileImagePath !=
+                                                            null
+                                                        ? DecorationImage(
+                                                            image: FileImage(
+                                                                File(
+                                                                    _profileImagePath!)),
+                                                            fit: BoxFit.cover,
+                                                          )
+                                                        : null,
+                                                  ),
+                                                  child: _profileImagePath ==
+                                                          null
+                                                      ? Text(
+                                                          avatar,
+                                                          style:
+                                                              const TextStyle(
+                                                                  fontSize: 56),
+                                                        )
+                                                      : null,
+                                                ),
+                                              );
+                                            },
+                                          ),
+                                          Positioned(
+                                            bottom: 4,
+                                            right: 4,
+                                            child: GestureDetector(
+                                              onTap: _showImagePicker,
+                                              child: Container(
+                                                width: 32,
+                                                height: 32,
+                                                decoration: const BoxDecoration(
+                                                  shape: BoxShape.circle,
+                                                  color: Color(0xFF000000),
+                                                ),
+                                                child: const Center(
+                                                  child: Text(
+                                                    '✏️',
+                                                    style: TextStyle(
+                                                        fontSize: 14),
+                                                  ),
+                                                ),
                                               ),
                                             ),
-                                          );
-                                        },
+                                          ),
+                                        ],
                                       ),
                                     ),
                                     if (_editingAvatar) ...[
@@ -216,44 +341,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     ],
                                     const SizedBox(height: 12),
                                     Center(
-                                      child: _editingName
-                                          ? SizedBox(
-                                              width: 200,
-                                              child: TextField(
-                                                controller: _nameController,
-                                                textAlign: TextAlign.center,
-                                                style: const TextStyle(
-                                                  fontSize: 28,
-                                                  fontWeight: FontWeight.w800,
-                                                  color: Colors.black,
-                                                ),
-                                                autofocus: true,
-                                                onSubmitted: (_) => _saveName(),
-                                                decoration:
-                                                    const InputDecoration(
-                                                  border: UnderlineInputBorder(),
-                                                  isDense: true,
-                                                ),
-                                              ),
-                                            )
-                                          : GestureDetector(
-                                              onTap: () {
-                                                _nameController.text =
-                                                    UserProfile
-                                                        .instance.displayName;
-                                                setState(() =>
-                                                    _editingName = true);
-                                              },
-                                              child: Text(
-                                                UserProfile
-                                                    .instance.displayName,
-                                                style: const TextStyle(
-                                                  fontSize: 28,
-                                                  fontWeight: FontWeight.w800,
-                                                  color: Colors.black,
-                                                ),
-                                              ),
-                                            ),
+                                      child: GestureDetector(
+                                        onTap: _showNameDialog,
+                                        child: Text(
+                                          UserProfile.instance.displayName,
+                                          style: const TextStyle(
+                                            fontSize: 28,
+                                            fontWeight: FontWeight.w800,
+                                            color: Colors.black,
+                                          ),
+                                        ),
+                                      ),
                                     ),
                                     const SizedBox(height: 12),
                                     Center(
@@ -286,7 +384,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                             style: const TextStyle(
                                               fontSize: 16,
                                               fontWeight: FontWeight.w800,
-                                              color: Color(0xFF111111),
+                                              color: Color(0xFF000000),
                                             ),
                                           ),
                                         ),
@@ -311,7 +409,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                             const Color(0xFFBFDBFE),
                                         valueColor:
                                             const AlwaysStoppedAnimation<
-                                                Color>(Color(0xFF111111)),
+                                                Color>(Color(0xFF000000)),
                                       ),
                                     ),
                                     const SizedBox(height: 8),
@@ -354,7 +452,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                                   FontWeight
                                                                       .w700,
                                                               color: Color(
-                                                                  0xFF111111),
+                                                                  0xFF000000),
                                                             ),
                                                           ),
                                                           const SizedBox(
@@ -364,7 +462,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                                 .styleFrom(
                                                               backgroundColor:
                                                                   const Color(
-                                                                      0xFF111111),
+                                                                      0xFF000000),
                                                             ),
                                                             onPressed:
                                                                 widget
@@ -402,7 +500,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                                   FontWeight
                                                                       .w700,
                                                               color: Color(
-                                                                  0xFF111111),
+                                                                  0xFF000000),
                                                             ),
                                                           ),
                                                           const SizedBox(
@@ -424,7 +522,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                                   const AlwaysStoppedAnimation<
                                                                           Color>(
                                                                       Color(
-                                                                          0xFF111111)),
+                                                                          0xFF000000)),
                                                             ),
                                                           ),
                                                         ],
@@ -475,7 +573,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                                                   0,
                                                                                   7)
                                                                       ? const Color(
-                                                                          0xFF111111)
+                                                                          0xFF000000)
                                                                       : const Color(
                                                                           0xFFE5E7EB),
                                                                 ),
@@ -651,19 +749,19 @@ class _Pill extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(999),
-        border: Border.all(color: const Color(0xFF111111), width: 1.5),
+        border: Border.all(color: const Color(0xFF000000), width: 1.5),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 16, color: const Color(0xFF111111)),
+          Icon(icon, size: 16, color: const Color(0xFF000000)),
           const SizedBox(width: 4),
           Text(
             text,
             style: const TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w600,
-              color: Color(0xFF111111),
+              color: Color(0xFF000000),
             ),
           ),
         ],
@@ -701,14 +799,14 @@ class _StatCard extends StatelessWidget {
         ),
         child: Column(
           children: [
-            Icon(icon, color: const Color(0xFF111111), size: 24),
+            Icon(icon, color: const Color(0xFF000000), size: 24),
             const SizedBox(height: 4),
             Text(
               value,
               style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w800,
-                color: Color(0xFF111111),
+                color: Color(0xFF000000),
               ),
             ),
             Text(
@@ -748,7 +846,7 @@ class _BadgeCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final color = unlocked
-        ? const Color(0xFF111111)
+        ? const Color(0xFF000000)
         : const Color(0xFF9CA3AF);
     return GestureDetector(
       onTap: onTap,

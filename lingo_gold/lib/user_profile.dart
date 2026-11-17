@@ -148,5 +148,5 @@ class UserProfile {
 
   bool get hasName => name.value.trim().isNotEmpty;
 
-  String get displayName => hasName ? name.value.trim() : '...';
+  String get displayName => hasName ? name.value.trim() : 'متعلم';
 }

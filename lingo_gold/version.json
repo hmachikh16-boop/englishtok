@@ -1,1 +1,1 @@
-{"version":"1.0.0","versionCode":37,"notes":"v37: Changed blue #2563EB to dark black #111111 throughout the app. No design/position/text/image/lesson changes."}
+{"version":"1.0.0","versionCode":38,"notes":"v38: Profile page - dark black #000000, profile picture (image_picker) + name editing with SharedPreferences."}
