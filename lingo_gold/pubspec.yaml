@@ -1,7 +1,7 @@
 name: lingo_gold
 description: Lingo Gold - Learn English like Rosetta Stone
 publish_to: 'none'
-version: 1.0.0+19
+version: 1.0.0+20
 environment:
   sdk: '>=3.2.0 <4.0.0'
 dependencies:
@@ -25,3 +25,4 @@ flutter:
     - assets/images/
     - assets/lessons/
     - assets/audio/
+    - assets/coloring/

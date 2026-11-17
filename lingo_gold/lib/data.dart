@@ -63,46 +63,6 @@ const List<LessonGroup> groups = [
   LessonGroup('الألوان', kPink, Icons.palette_outlined),
 ];
 
-// ================= PATH ORDER (zigzag home path) =================
-// Each entry is a group index. The home path shows these 14 nodes in order.
-const List<int> pathOrder = [
-  8, 0, 1, 2, 3, 4, 7, 5, 6, 9, 11, 13, 10, 12,
-];
-
-const List<String> pathLabelsAr = [
-  'التحية',
-  'تقديم نفسك',
-  'العائلة',
-  'روتيني اليومي',
-  'الأكل',
-  'المشاعر',
-  'في المدرسة',
-  'في السوق',
-  'الاتجاهات',
-  'أحلامي',
-  'الأرقام',
-  'الألوان',
-  'المهن',
-  'الحيوانات',
-];
-
-const List<String> pathLabelsEn = [
-  'Greeting',
-  'My name is...',
-  'My Family',
-  'Daily Routine',
-  'Food',
-  'Feelings',
-  'At School',
-  'At Market',
-  'Directions',
-  'Dreams',
-  'Numbers',
-  'Colors',
-  'Jobs',
-  'Animals',
-];
-
 // ================= 90 LESSONS =================
 const List<Lesson> lessons = [
   // ===== 1. الدروس 10 القديمة - Verb To Be - تبقى كما هي =====
@@ -240,15 +200,15 @@ const List<Lesson> lessons = [
 
   // ===== 12. Numbers - 111 to 120 =====
   Lesson(word: 'One', sentence: '___ apple.', options: ['One', 'Two', 'Three'], imageFile: 'num_01', indexInPack: 0, isPack: false, translation: 'تفاحة واحدة.', category: 'Numbers'),
-  Lesson(word: 'Two', sentence: '___ apples.', options: ['Two', 'One', 'Three'], imageFile: 'num_02', indexInPack: 0, isPack: false, translation: 'تفاحتان.', category: 'Numbers'),
-  Lesson(word: 'Three', sentence: '___ apples.', options: ['Three', 'Two', 'Four'], imageFile: 'num_03', indexInPack: 0, isPack: false, translation: 'ثلاث تفاحات.', category: 'Numbers'),
-  Lesson(word: 'Four', sentence: '___ apples.', options: ['Four', 'Three', 'Five'], imageFile: 'num_04', indexInPack: 0, isPack: false, translation: 'أربع تفاحات.', category: 'Numbers'),
-  Lesson(word: 'Five', sentence: '___ apples.', options: ['Five', 'Four', 'Six'], imageFile: 'num_05', indexInPack: 0, isPack: false, translation: 'خمس تفاحات.', category: 'Numbers'),
-  Lesson(word: 'Six', sentence: '___ apples.', options: ['Six', 'Five', 'Seven'], imageFile: 'num_06', indexInPack: 0, isPack: false, translation: 'ست تفاحات.', category: 'Numbers'),
-  Lesson(word: 'Seven', sentence: '___ apples.', options: ['Seven', 'Six', 'Eight'], imageFile: 'num_07', indexInPack: 0, isPack: false, translation: 'سبع تفاحات.', category: 'Numbers'),
-  Lesson(word: 'Eight', sentence: '___ apples.', options: ['Eight', 'Seven', 'Nine'], imageFile: 'num_08', indexInPack: 0, isPack: false, translation: 'ثماني تفاحات.', category: 'Numbers'),
-  Lesson(word: 'Nine', sentence: '___ apples.', options: ['Nine', 'Eight', 'Ten'], imageFile: 'num_09', indexInPack: 0, isPack: false, translation: 'تسع تفاحات.', category: 'Numbers'),
-  Lesson(word: 'Ten', sentence: '___ apples.', options: ['Ten', 'Nine', 'Eight'], imageFile: 'num_10', indexInPack: 0, isPack: false, translation: 'عشر تفاحات.', category: 'Numbers'),
+  Lesson(word: 'Two', sentence: '___ balloons.', options: ['Two', 'One', 'Three'], imageFile: 'num_02', indexInPack: 0, isPack: false, translation: 'بالونان.', category: 'Numbers'),
+  Lesson(word: 'Three', sentence: '___ bananas.', options: ['Three', 'Two', 'Four'], imageFile: 'num_03', indexInPack: 0, isPack: false, translation: 'ثلاث موزات.', category: 'Numbers'),
+  Lesson(word: 'Four', sentence: '___ pencils.', options: ['Four', 'Three', 'Five'], imageFile: 'num_04', indexInPack: 0, isPack: false, translation: 'أربعة أقلام.', category: 'Numbers'),
+  Lesson(word: 'Five', sentence: '___ strawberries.', options: ['Five', 'Four', 'Six'], imageFile: 'num_05', indexInPack: 0, isPack: false, translation: 'خمس فراولات.', category: 'Numbers'),
+  Lesson(word: 'Six', sentence: '___ eggs.', options: ['Six', 'Five', 'Seven'], imageFile: 'num_06', indexInPack: 0, isPack: false, translation: 'ست بيضات.', category: 'Numbers'),
+  Lesson(word: 'Seven', sentence: '___ strawberries.', options: ['Seven', 'Six', 'Eight'], imageFile: 'num_07', indexInPack: 0, isPack: false, translation: 'سبع فراولات.', category: 'Numbers'),
+  Lesson(word: 'Eight', sentence: '___ crayons.', options: ['Eight', 'Seven', 'Nine'], imageFile: 'num_08', indexInPack: 0, isPack: false, translation: 'ثمانية أقلام تلوين.', category: 'Numbers'),
+  Lesson(word: 'Nine', sentence: '___ grapes.', options: ['Nine', 'Eight', 'Ten'], imageFile: 'num_09', indexInPack: 0, isPack: false, translation: 'تسع حبات عنب.', category: 'Numbers'),
+  Lesson(word: 'Ten', sentence: '___ fingers.', options: ['Ten', 'Nine', 'Eight'], imageFile: 'num_10', indexInPack: 0, isPack: false, translation: 'عشرة أصابع.', category: 'Numbers'),
 
   // ===== 13. Discover - 121 to 130 =====
   Lesson(word: 'Tomato', sentence: 'The ___ is red.', options: ['Tomato', 'Apple', 'Orange'], imageFile: 'food_tomato', indexInPack: 0, isPack: false, translation: 'الطماطم حمراء.', category: 'Discover'),
@@ -273,4 +233,43 @@ const List<Lesson> lessons = [
   Lesson(word: 'Brown', sentence: 'The ball is ___.', options: ['Brown', 'Orange', 'Black'], imageFile: 'color_brown', indexInPack: 0, isPack: false, translation: 'الكرة بنية.', category: 'Colors'),
   Lesson(word: 'Black', sentence: 'The ball is ___.', options: ['Black', 'Brown', 'White'], imageFile: 'color_black', indexInPack: 0, isPack: false, translation: 'الكرة سوداء.', category: 'Colors'),
   Lesson(word: 'White', sentence: 'The ball is ___.', options: ['White', 'Black', 'Yellow'], imageFile: 'color_white', indexInPack: 0, isPack: false, translation: 'الكرة بيضاء.', category: 'Colors'),
+];
+
+// ================= PATH ORDER (zigzag home path) =================
+const List<int> pathOrder = [
+  8, 0, 1, 2, 3, 4, 7, 5, 6, 9, 11, 13, 10, 12,
+];
+
+const List<String> pathLabelsAr = [
+  'التحية',
+  'تقديم نفسك',
+  'العائلة',
+  'روتيني اليومي',
+  'الأكل',
+  'المشاعر',
+  'في المدرسة',
+  'في السوق',
+  'الاتجاهات',
+  'أحلامي',
+  'الأرقام',
+  'الألوان',
+  'المهن',
+  'الحيوانات',
+];
+
+const List<String> pathLabelsEn = [
+  'Greeting',
+  'My name is...',
+  'My Family',
+  'Daily Routine',
+  'Food',
+  'Feelings',
+  'At School',
+  'At Market',
+  'Directions',
+  'Dreams',
+  'Numbers',
+  'Colors',
+  'Jobs',
+  'Animals',
 ];

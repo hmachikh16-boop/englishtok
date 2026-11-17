@@ -1,73 +1,54 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lingo_gold/data.dart';
-import 'package:lingo_gold/lesson_flow.dart';
+import 'package:lingo_gold/course.dart';
 
 void main() {
-  group('global quiz rules', () {
-    test('every lesson gets 3 same-group distractors, no duplicates', () {
-      for (var i = 0; i < lessons.length; i++) {
-        final lesson = lessons[i];
-        final groupIndex = i ~/ 10;
-        final distractors = pickDistractors(i, 3);
-
-        expect(distractors.length, 3, reason: 'lesson $i (${lesson.word})');
-        final images = <String>{lesson.imageFile};
-        final words = <String>{lesson.word.toLowerCase()};
-
-        for (final d in distractors) {
-          expect(
-            lessons.indexOf(d) ~/ 10,
-            groupIndex,
-            reason: 'cross-group distractor for lesson $i',
-          );
-          expect(
-            images.add(d.imageFile),
-            isTrue,
-            reason: 'duplicate image in lesson $i',
-          );
-          if (groupIndex != 0) {
-            expect(
-              words.add(d.word.toLowerCase()),
-              isTrue,
-              reason: 'duplicate word in lesson $i',
-            );
+  group('100-lesson activity rules', () {
+    test('every activity has exactly one correct option', () {
+      for (final lesson in courseLessons) {
+        for (final type in ActivityType.values) {
+          for (final d in Difficulty.values) {
+            final a = buildActivity(lesson, type, d);
+            if (type == ActivityType.matching) {
+              expect(a.pairs, isNotNull);
+              expect(a.pairs!.length, 3,
+                  reason: 'lesson ${lesson.id} $type $d');
+              expect(
+                a.pairs!.map((p) => p.left).toSet().length,
+                a.pairs!.length,
+                reason: 'duplicate match prompt in lesson ${lesson.id} $d',
+              );
+            } else {
+              expect(a.options.length, 4,
+                  reason: 'lesson ${lesson.id} $type $d');
+              expect(
+                a.options.where((o) => o.isCorrect).length,
+                1,
+                reason: 'lesson ${lesson.id} $type $d',
+              );
+            }
           }
         }
       }
     });
 
-    test('numbers are one object (apples) with different counts only', () {
-      for (var i = 110; i < 120; i++) {
-        final lesson = lessons[i];
-        expect(lesson.category, 'Numbers');
-        expect(lesson.sentence.contains('apple'), isTrue);
-        expect(lesson.translation.contains('تفاح'), isTrue);
-      }
-    });
-
-    test('colors are one object (a ball) with different colors only', () {
-      for (var i = 130; i < 140; i++) {
-        final lesson = lessons[i];
-        expect(lesson.category, 'Colors');
-        expect(lesson.sentence, 'The ball is ___.');
-        expect(lesson.translation.contains('الكرة'), isTrue);
-      }
-    });
-
-    test('jobs and actions never repeat a word inside their group', () {
-      for (final range in [
-        [90, 100],
-        [100, 110],
-      ]) {
-        final words = <String>{};
-        for (var i = range[0]; i < range[1]; i++) {
-          expect(
-            words.add(lessons[i].word.toLowerCase()),
-            isTrue,
-            reason: 'duplicate job/action word at $i',
-          );
+    test('coloring gives five pages per lesson', () {
+      for (final lesson in courseLessons) {
+        final pages = coloringPagesFor(lesson.id);
+        expect(pages.length, 5);
+        for (final p in pages) {
+          expect(p, startsWith('assets/coloring/coloring_'));
         }
       }
+    });
+
+    test('lesson 1 is Hello and lesson 100 is Wind', () {
+      expect(courseLessons.first.word, 'Hello');
+      expect(courseLessons.last.word, 'Wind');
+      expect(courseLessons[20].word, 'Cat');
+      expect(courseLessons[35].word, 'Apple');
+      expect(courseLessons[50].word, 'One');
+      expect(courseLessons[70].word, 'Policeman');
+      expect(courseLessons[85].word, 'Sun');
     });
   });
 }

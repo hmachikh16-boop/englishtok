@@ -1,17 +1,15 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
-import 'data.dart';
 import 'home_screen.dart';
-import 'learn_screen.dart';
 import 'lesson_flow.dart';
 import 'profile_screen.dart';
 import 'user_profile.dart';
 import 'update_service.dart';
-import 'speak_screen.dart';
-import 'theme.dart';
 import 'widgets.dart';
+import 'theme.dart';
 
 void main() => runApp(const LingoGoldApp());
 
@@ -49,180 +47,21 @@ class MainShell extends StatefulWidget {
 
 class _MainShellState extends State<MainShell> {
   int _tab = 0;
-  int _currentLessonIndex = pathOrder[0] * 10;
-  final Set<int> _completed = {};
-  int _selectedGroup = 0;
   Timer? _updateTimer;
-  int _speakingScore = 88;
-  final int _dailyGoal = 65;
-  final int _streak = 7;
-  final int _wordsLearned = 120;
-  final int _xp = 120;
+
+  static const int _totalLessons = 100;
 
   @override
   void initState() {
     super.initState();
-    _selectedGroup = _currentLessonIndex ~/ 10;
     UserProfile.instance.load().then((_) {
       if (!mounted) return;
       setState(() {});
     });
-    UserProfile.instance.loadProgress(
-      onLoaded: (completed, current) {
-        if (!mounted) return;
-        setState(() {
-          _completed
-            ..clear()
-            ..addAll(completed);
-          _currentLessonIndex = current.clamp(0, lessons.length - 1);
-          _selectedGroup = _currentLessonIndex ~/ 10;
-        });
-      },
-    );
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _updateTimer = Timer(const Duration(seconds: 3), () {
         if (mounted) UpdateService.checkAndPrompt(context, silent: true);
       });
-    });
-  }
-
-  Future<void> _openLesson(int index) async {
-    final result = await Navigator.of(context).push<LessonResult>(
-      MaterialPageRoute(
-        builder: (_) => LessonFlowScreen(lessonIndex: index),
-      ),
-    );
-    if (!mounted || result == null) return;
-    final passed = result.score >= 4 || result.speakingScore >= 80;
-    setState(() {
-      if (passed) _completed.add(index);
-      _currentLessonIndex = (index + 1).clamp(0, lessons.length - 1);
-      _selectedGroup = _currentLessonIndex ~/ 10;
-      if (result.speakingScore > 0) {
-        _speakingScore = result.speakingScore;
-      }
-    });
-    if (passed) {
-      // Update profile stats.
-      final up = UserProfile.instance;
-      final newXp = up.totalXP.value + 20;
-      final newLessons = up.lessonsCompleted.value + 1;
-      // Streak logic.
-      final now = DateTime.now();
-      final today = '${now.year}-${now.month}-${now.day}';
-      final last = up.lastStudyDate.value;
-      int newStreak = up.streak.value;
-      if (last.isEmpty) {
-        newStreak = 1;
-      } else {
-        final lastDate = DateTime.tryParse(last.replaceAll('-', '/'));
-        // Simple day comparison.
-        final yesterday = now.subtract(const Duration(days: 1));
-        final lastStr =
-            '${lastDate?.year}-${lastDate?.month}-${lastDate?.day}';
-        final todayStr = today;
-        final yestStr =
-            '${yesterday.year}-${yesterday.month}-${yesterday.day}';
-        if (lastStr == todayStr) {
-          // same day, no change
-        } else if (lastStr == yestStr) {
-          newStreak += 1;
-        } else {
-          newStreak = 1;
-        }
-      }
-      // Pronunciation running average.
-      final oldPron = up.pronunciationScore.value;
-      final n = up.lessonsCompleted.value;
-      final newPron = n == 0
-          ? result.speakingScore.clamp(0, 100)
-          : ((oldPron * n + result.speakingScore.clamp(0, 100)) /
-                  (n + 1))
-              .round();
-      final leveledUp = up.totalXP.value < 200 && newXp >= 200;
-      await up.saveStats(
-        xp: newXp,
-        lessons: newLessons,
-        streakVal: newStreak,
-        lastStudy: today,
-        pronunciation: newPron,
-      );
-      if (leveledUp) {
-        await up.save(newLevel: 'متوسط');
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('مبروك! طلعت مستوى 2 🎉'),
-              behavior: SnackBarBehavior.floating,
-            ),
-          );
-        }
-      }
-      UserProfile.instance.saveProgress(_completed, _currentLessonIndex);
-    }
-    if (index + 1 >= lessons.length) {
-      _showCourseComplete();
-    }
-  }
-
-  void _openPathNode(int p) {
-    final g = pathOrder[p];
-    var target = g * 10;
-    for (var i = 0; i < 10; i++) {
-      final idx = g * 10 + i;
-      if (!_completed.contains(idx)) {
-        target = idx;
-        break;
-      }
-    }
-    _openLesson(target);
-  }
-
-  void _showCourseComplete() {
-    showDialog<void>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('أكملت الدورة!'),
-        content: Text(
-          'لقد أكملت جميع الدروس (${lessons.length}). واصل التدريب لتبقى متميزاً!',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('إغلاق'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Set<int> _computeUnlockedGroups() {
-    return Set<int>.from(List.generate(groups.length, (i) => i));
-  }
-
-  void _selectGroup(int groupIndex) {
-    setState(() {
-      _selectedGroup = groupIndex.clamp(0, groups.length - 1).toInt();
-      _tab = 1;
-    });
-  }
-
-  void _openCategory(int groupIndex) {
-    if (!_computeUnlockedGroups().contains(groupIndex)) {
-      setState(() => _tab = 1);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            'هذه الوحدة مقفلة. أكمل الوحدات السابقة أو غيّر مستواك من الملف الشخصي.',
-          ),
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
-      return;
-    }
-    setState(() {
-      _selectedGroup = groupIndex;
-      _tab = 1;
     });
   }
 
@@ -232,46 +71,90 @@ class _MainShellState extends State<MainShell> {
     super.dispose();
   }
 
+  Future<void> _startLesson() async {
+    final up = UserProfile.instance;
+    final restart = up.lessonsCompleted.value >= _totalLessons;
+    final start = restart ? 1 : up.currentLessonId.value.clamp(1, _totalLessons);
+    if (restart) {
+      await up.saveCourseProgress(
+        lessonId: 1,
+        completed: 0,
+        newStars: up.stars.value,
+        xp: up.totalXP.value,
+      );
+    }
+    if (!mounted) return;
+    await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => LessonFlowScreen(
+          startLessonId: start,
+          totalLessons: _totalLessons,
+          onLessonComplete: _onLessonComplete,
+          onExit: () => setState(() => _tab = 0),
+        ),
+      ),
+    );
+    if (mounted) setState(() {});
+  }
+
+  void _onLessonComplete(int id) {
+    final up = UserProfile.instance;
+    final newCompleted =
+        id > up.lessonsCompleted.value ? id : up.lessonsCompleted.value;
+    final newStars = up.stars.value + 5;
+    final newXp = up.totalXP.value + 20;
+    final next = (id + 1).clamp(1, _totalLessons);
+    up.saveCourseProgress(
+      lessonId: next,
+      completed: newCompleted,
+      newStars: newStars,
+      xp: newXp,
+    );
+    if (mounted) setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
+    final up = UserProfile.instance;
     return Scaffold(
       backgroundColor: Colors.white,
-      body: ValueListenableBuilder<String>(
-        valueListenable: UserProfile.instance.level,
-        builder: (context, level, _) {
-          final unlocked = _computeUnlockedGroups();
-          return IndexedStack(
-            index: _tab,
-            children: [
-              HomeScreen(
-                currentIndex: _currentLessonIndex,
-                streak: _streak,
-                dailyGoal: _dailyGoal,
-                completed: _completed,
-                onContinue: () => _openLesson(_currentLessonIndex),
-                onOpenLearn: () => setState(() => _tab = 1),
-                onOpenProfile: () => setState(() => _tab = 3),
-                onSpeakChallenge: () => setState(() => _tab = 2),
-                onOpenPathNode: _openPathNode,
-              ),
-              LearnScreen(
-                selectedGroup: _selectedGroup,
-                currentIndex: _currentLessonIndex,
-                completed: _completed,
-                unlockedGroups: unlocked,
-                onSelectGroup: _selectGroup,
-                onOpenLesson: _openLesson,
-              ),
-              SpeakScreen(onOpenLesson: _openLesson),
-              ProfileScreen(
-                completedCount: _completed.length,
-                streak: _streak,
-                wordsLearned: _wordsLearned,
-                speakingScore: _speakingScore,
-                xp: _xp,
-                onContinue: () => _openLesson(_currentLessonIndex),
-              ),
-            ],
+      body: ValueListenableBuilder<int>(
+        valueListenable: up.currentLessonId,
+        builder: (context, currentLesson, _) {
+          return ValueListenableBuilder<int>(
+            valueListenable: up.lessonsCompleted,
+            builder: (context, completed, _) {
+              return ValueListenableBuilder<int>(
+                valueListenable: up.stars,
+                builder: (context, stars, _) {
+                  return ValueListenableBuilder<int>(
+                    valueListenable: up.totalXP,
+                    builder: (context, xp, _) {
+                      return IndexedStack(
+                        index: _tab,
+                        children: [
+                          HomeScreen(
+                            currentLessonId: currentLesson,
+                            completedLessons: completed,
+                            totalLessons: _totalLessons,
+                            stars: stars,
+                            onStart: _startLesson,
+                          ),
+                          ProfileScreen(
+                            completedCount: completed,
+                            streak: up.streak.value,
+                            wordsLearned: completed * 6,
+                            speakingScore: up.pronunciationScore.value,
+                            xp: xp,
+                            onContinue: () => _startLesson(),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
+              );
+            },
           );
         },
       ),

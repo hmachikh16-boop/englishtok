@@ -1,20 +1,28 @@
-// Basic smoke tests for تعلم / Lingo Gold.
+// Smoke tests for the 100-lesson Lingo Gold app.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:lingo_gold/data.dart';
+import 'package:lingo_gold/course.dart';
 import 'package:lingo_gold/main.dart';
 
 void main() {
-  test('lessons list contains exactly 140 lessons', () {
-    expect(lessons.length, 140);
-    expect(lessons.take(10).every((lesson) => !lesson.isPack), isTrue);
-    expect(lessons.skip(10).take(80).every((lesson) => lesson.isPack), isTrue);
+  setUp(() {
+    SharedPreferences.setMockInitialValues({});
   });
 
-  testWidgets('home screen renders the new dashboard', (tester) async {
-    tester.view.physicalSize = const Size(1000, 854);
+  test('curriculum contains exactly 100 lessons', () {
+    expect(courseLessons.length, 100);
+    expect(courseSections.length, 8);
+    for (var i = 0; i < 100; i++) {
+      expect(courseLessons[i].id, i + 1);
+    }
+  });
+
+  testWidgets('home screen renders the current lesson and start button',
+      (tester) async {
+    tester.view.physicalSize = const Size(1000, 900);
     tester.view.devicePixelRatio = 1.0;
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
@@ -22,14 +30,15 @@ void main() {
     await tester.pumpWidget(const LingoGoldApp());
     await tester.pumpAndSettle();
 
-    expect(find.text('تعلم العربية'), findsOneWidget);
-    expect(find.text('الدرس الأول: التحية'), findsOneWidget);
+    expect(find.text('Lingo Gold'), findsOneWidget);
+    expect(find.text('الدرس رقم 1'), findsOneWidget);
+    expect(find.text('ابدأ الدرس'), findsOneWidget);
     expect(find.text('الرئيسية'), findsOneWidget);
     expect(find.text('ملفي'), findsOneWidget);
   });
 
   testWidgets('bottom navigation opens Profile', (tester) async {
-    tester.view.physicalSize = const Size(1000, 854);
+    tester.view.physicalSize = const Size(1000, 900);
     tester.view.devicePixelRatio = 1.0;
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);

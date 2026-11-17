@@ -4,38 +4,31 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:lingo_gold/lesson_flow.dart';
 
 void main() {
-  testWidgets('lesson flow shows five steps and advances with explicit actions',
+  testWidgets('lesson flow shows listening window and checks an answer',
       (tester) async {
     tester.view.physicalSize = const Size(390, 844);
     tester.view.devicePixelRatio = 1.0;
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
 
-    await tester.pumpWidget(MaterialApp(
-      home: LessonFlowScreen(lessonIndex: 2),
+    await tester.pumpWidget(const MaterialApp(
+      home: LessonFlowScreen(startLessonId: 1, totalLessons: 100),
     ));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 200));
 
-    expect(find.text('LINGO GOLD'), findsOneWidget);
-    expect(find.text('درس التحدث'), findsOneWidget);
-    expect(find.text('السؤال 1 من 5'), findsOneWidget);
-    expect(find.text('قل هذه الجملة'), findsOneWidget);
-    expect(find.text('اضغط على الميكروفون وقلها'), findsWidgets);
+    expect(find.text('الدرس 1 من 100'), findsOneWidget);
+    expect(find.text('اسمع'), findsOneWidget);
+    expect(find.text('اختر إجابة'), findsOneWidget);
 
-    // Skip speaking, then complete the writing step for the target word "is".
-    await tester.ensureVisible(find.text('تخطي'));
+    // The correct answer for lesson 1 is "Hello".
+    await tester.tap(find.text('Hello'));
     await tester.pump();
-    await tester.tap(find.text('تخطي'));
+    expect(find.text('تحقق'), findsOneWidget);
+
+    await tester.tap(find.text('تحقق'));
     await tester.pump();
-    await tester.pump(const Duration(milliseconds: 100));
-
-    expect(find.text('درس الكتابة'), findsOneWidget);
-    expect(find.text('اكتب الكلمة'), findsWidgets);
-    expect(find.text('السؤال 2 من 5'), findsOneWidget);
-
-    // Verify the writing step renders (target word for lesson 2 is "is").
-    expect(find.text('اكتب الكلمة'), findsWidgets);
-    expect(find.text('السؤال 2 من 5'), findsOneWidget);
+    expect(find.text('إجابة صحيحة! 🎉'), findsOneWidget);
+    expect(find.text('التالي'), findsOneWidget);
   });
 }

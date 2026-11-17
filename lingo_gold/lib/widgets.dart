@@ -455,11 +455,11 @@ class BottomNavBar extends StatelessWidget {
             ),
             Expanded(
               child: GestureDetector(
-                onTap: () => onTap(3),
+                onTap: () => onTap(1),
                 child: Container(
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
-                    color: index == 3 ? const Color(0xFF2563EB) : const Color(0xFFE5E7EB),
+                    color: index == 1 ? const Color(0xFF2563EB) : const Color(0xFFE5E7EB),
                     borderRadius: BorderRadius.circular(30),
                   ),
                   child: FittedBox(
@@ -470,7 +470,7 @@ class BottomNavBar extends StatelessWidget {
                         'ملفي',
                         maxLines: 1,
                         style: TextStyle(
-                          color: index == 3 ? Colors.white : const Color(0xFF6B7280),
+                          color: index == 1 ? Colors.white : const Color(0xFF6B7280),
                           fontSize: 14,
                           fontWeight: FontWeight.w500,
                         ),

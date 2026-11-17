@@ -13,6 +13,8 @@ class UserProfile {
   static const _kStreak = 'profile_streak';
   static const _kLastStudy = 'profile_last_study';
   static const _kPronunciation = 'profile_pronunciation';
+  static const _kCurrentLesson = 'course_current_lesson';
+  static const _kStars = 'course_stars';
 
   final ValueNotifier<String> name = ValueNotifier<String>('');
   final ValueNotifier<String> avatar = ValueNotifier<String>('👦');
@@ -22,6 +24,8 @@ class UserProfile {
   final ValueNotifier<int> streak = ValueNotifier<int>(0);
   final ValueNotifier<String> lastStudyDate = ValueNotifier<String>('');
   final ValueNotifier<int> pronunciationScore = ValueNotifier<int>(88);
+  final ValueNotifier<int> currentLessonId = ValueNotifier<int>(1);
+  final ValueNotifier<int> stars = ValueNotifier<int>(0);
 
   bool _loaded = false;
 
@@ -38,6 +42,8 @@ class UserProfile {
       streak.value = prefs.getInt(_kStreak) ?? 0;
       lastStudyDate.value = prefs.getString(_kLastStudy) ?? '';
       pronunciationScore.value = prefs.getInt(_kPronunciation) ?? 88;
+      currentLessonId.value = prefs.getInt(_kCurrentLesson) ?? 1;
+      stars.value = prefs.getInt(_kStars) ?? 0;
     } catch (_) {}
   }
 
@@ -118,6 +124,25 @@ class UserProfile {
         await prefs.setInt(_kPronunciation, pronunciation);
         pronunciationScore.value = pronunciation;
       }
+    } catch (_) {}
+  }
+
+  Future<void> saveCourseProgress({
+    required int lessonId,
+    required int completed,
+    required int newStars,
+    required int xp,
+  }) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setInt(_kCurrentLesson, lessonId);
+      await prefs.setInt(_kStars, newStars);
+      await prefs.setInt(_kLessons, completed);
+      await prefs.setInt(_kXP, xp);
+      currentLessonId.value = lessonId;
+      stars.value = newStars;
+      lessonsCompleted.value = completed;
+      totalXP.value = xp;
     } catch (_) {}
   }
 

@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'data.dart';
 import 'theme.dart';
 import 'user_profile.dart';
-import 'update_service.dart';
-import 'widgets.dart';
 
 class ProfileScreen extends StatefulWidget {
   final int completedCount;
@@ -201,14 +198,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     ),
                                     const SizedBox(height: 12),
                                     Center(
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.min,
+                                      child: Wrap(
+                                        alignment: WrapAlignment.center,
+                                        spacing: 8,
+                                        runSpacing: 8,
                                         children: [
                                           _Pill(
                                             text: _levelLabel,
                                             icon: Icons.star_rounded,
                                           ),
-                                          const SizedBox(width: 8),
                                           const _Pill(
                                             text: 'متعلم العربية',
                                             icon: Icons.menu_book_rounded,
@@ -218,19 +216,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     ),
                                     const SizedBox(height: 20),
                                     Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
                                       children: [
-                                        Text(
-                                          '$xp / 200 XP',
-                                          textDirection:
-                                              TextDirection.ltr,
-                                          style: const TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.w800,
-                                            color: Color(0xFF2563EB),
+                                        Flexible(
+                                          child: Text(
+                                            '$xp / 200 XP',
+                                            textDirection:
+                                                TextDirection.ltr,
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: const TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w800,
+                                              color: Color(0xFF2563EB),
+                                            ),
                                           ),
                                         ),
+                                        const Spacer(),
                                         const Text(
                                           'تقدم المستوى',
                                           style: TextStyle(
@@ -335,7 +336,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                     ? Column(
                                                         children: [
                                                           Text(
-                                                            'أتممت $lessons / 10 دروس',
+                                                            'أتممت $lessons / 100 دروس',
                                                             style: const TextStyle(
                                                               fontSize: 14,
                                                               fontWeight:
@@ -355,7 +356,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                             child:
                                                                 LinearProgressIndicator(
                                                               value: lessons /
-                                                                  10.0,
+                                                                  100.0,
                                                               minHeight: 8,
                                                               backgroundColor:
                                                                   const Color(
