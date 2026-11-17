@@ -103,13 +103,13 @@ void main() {
       addTearDown(tester.view.resetDevicePixelRatio);
 
       final grapes = lessons[38];
-      final odd = pickDistractors(38, 3).last;
+      final distractors = pickDistractors(38, 3);
       await tester.pumpWidget(MaterialApp(
         home: Scaffold(
           body: SmartChooseStep(
             lesson: grapes,
             lessonIndex: 38,
-            odd: odd,
+            distractors: distractors,
             onComplete: (_) {},
           ),
         ),

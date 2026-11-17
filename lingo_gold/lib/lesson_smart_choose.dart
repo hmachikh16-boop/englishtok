@@ -6,21 +6,21 @@ import 'data.dart';
 import 'theme.dart';
 import 'widgets.dart';
 
-/// Window 4: pick the same-category picture that is NOT the lesson word.
+/// Window 4: pick a same-category picture that is NOT the lesson word.
 ///
-/// Example (lesson 39 Grapes): three grapes + one orange.
-/// Question: "Which fruit is NOT Grapes?"  Correct answer: the orange.
+/// Example (lesson 39 Grapes): grapes, apple, banana, orange.
+/// Question: "Which fruit is NOT Grapes?"  Any non-grape is a correct choice.
 class SmartChooseStep extends StatefulWidget {
   final Lesson lesson;
   final int lessonIndex;
-  final Lesson odd;
+  final List<Lesson> distractors;
   final ValueChanged<bool> onComplete;
 
   const SmartChooseStep({
     super.key,
     required this.lesson,
     required this.lessonIndex,
-    required this.odd,
+    required this.distractors,
     required this.onComplete,
   });
 
@@ -30,7 +30,6 @@ class SmartChooseStep extends StatefulWidget {
 
 class _SmartChooseStepState extends State<SmartChooseStep> {
   late final List<Lesson> _options;
-  late final int _correctIndex;
   int? _selected;
   bool _checked = false;
   bool _hadWrong = false;
@@ -38,15 +37,21 @@ class _SmartChooseStepState extends State<SmartChooseStep> {
   @override
   void initState() {
     super.initState();
-    _options = [widget.lesson, widget.lesson, widget.lesson, widget.odd];
+    _options = [widget.lesson, ...widget.distractors];
     _options.shuffle(Random(widget.lesson.word.hashCode + 7));
-    _correctIndex = _options.indexWhere(
-      (l) => l.imageFile == widget.odd.imageFile && l.word == widget.odd.word,
-    );
   }
 
-  bool _isTarget(Lesson l) =>
-      l.imageFile == widget.lesson.imageFile && l.word == widget.lesson.word;
+  /// Grammar lessons (am/is/are) reuse the same word on different pictures,
+  /// so the target is identified by its image there.
+  bool _isTarget(Lesson l) {
+    if (widget.lessonIndex ~/ 10 == 0) {
+      return l.imageFile == widget.lesson.imageFile;
+    }
+    return l.word.toLowerCase() == widget.lesson.word.toLowerCase();
+  }
+
+  bool get _isCorrect =>
+      _selected != null && !_isTarget(_options[_selected!]);
 
   String get _category {
     final group = widget.lessonIndex ~/ 10;
@@ -70,7 +75,7 @@ class _SmartChooseStepState extends State<SmartChooseStep> {
   String get _question => 'Which $_category is NOT ${widget.lesson.word}?';
 
   void _select(int index) {
-    if (_checked && _selected == _correctIndex) return;
+    if (_checked && _isCorrect) return;
     setState(() {
       _selected = index;
       _checked = false;
@@ -79,7 +84,7 @@ class _SmartChooseStepState extends State<SmartChooseStep> {
 
   void _check() {
     if (_selected == null) return;
-    final correct = _selected == _correctIndex;
+    final correct = !_isTarget(_options[_selected!]);
     setState(() {
       _checked = true;
       if (!correct) _hadWrong = true;
@@ -95,8 +100,10 @@ class _SmartChooseStepState extends State<SmartChooseStep> {
 
   @override
   Widget build(BuildContext context) {
-    final isCorrect = _checked && _selected == _correctIndex;
+    final isCorrect = _checked && _isCorrect;
     final isWrong = _checked && _selected != null && !isCorrect;
+    final selectedLesson =
+        _selected == null ? null : _options[_selected!];
     return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
       child: Column(
@@ -132,7 +139,7 @@ class _SmartChooseStepState extends State<SmartChooseStep> {
                       ),
                       const SizedBox(height: 4),
                       const Text(
-                        'اختر الصورة المختلفة عن الكلمة المطلوبة.',
+                        'اختر صورة لا تمثل الكلمة المطلوبة.',
                         style: TextStyle(
                           fontSize: 12.5,
                           color: kMuted,
@@ -159,24 +166,8 @@ class _SmartChooseStepState extends State<SmartChooseStep> {
             itemBuilder: (context, index) {
               final option = _options[index];
               final selected = _selected == index;
-              final correct = _checked && index == _correctIndex;
-              final wrong = _checked && selected && !correct;
-              final target = _isTarget(option);
-              final targetPosition =
-                  _options.take(index).where(_isTarget).length;
-              final tint = target
-                  ? [null, Colors.green, Colors.purple][targetPosition % 3]
-                  : null;
-              Widget image = LessonImage(lesson: option);
-              if (tint != null) {
-                image = ColorFiltered(
-                  colorFilter: ColorFilter.mode(
-                    tint.withValues(alpha: 0.18),
-                    BlendMode.srcATop,
-                  ),
-                  child: image,
-                );
-              }
+              final correct = _checked && selected && _isCorrect;
+              final wrong = _checked && selected && !_isCorrect;
               return GestureDetector(
                 onTap: () => _select(index),
                 child: AnimatedContainer(
@@ -194,7 +185,7 @@ class _SmartChooseStepState extends State<SmartChooseStep> {
                     ),
                   ),
                   clipBehavior: Clip.antiAlias,
-                  child: image,
+                  child: LessonImage(lesson: option),
                 ),
               );
             },
@@ -209,8 +200,8 @@ class _SmartChooseStepState extends State<SmartChooseStep> {
                     : (!_checked
                         ? 'اضغط تحقق للتأكد من إجابتك.'
                         : (isCorrect
-                            ? 'أحسنت! هذا هو المختلف.'
-                            : 'حاول مجدداً.')),
+                            ? 'أحسنت! ${selectedLesson?.word} ليست ${widget.lesson.word}.'
+                            : 'هذه هي ${widget.lesson.word}. اختر صورة مختلفة.')),
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w700,

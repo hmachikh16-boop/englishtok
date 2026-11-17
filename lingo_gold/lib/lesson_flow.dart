@@ -245,7 +245,7 @@ class _LessonFlowScreenState extends State<LessonFlowScreen> {
         return SmartChooseStep(
           lesson: lesson,
           lessonIndex: _lessonIndex,
-          odd: _distractors.last,
+          distractors: _distractors,
           onComplete: _onSimpleComplete,
         );
       case 4:
