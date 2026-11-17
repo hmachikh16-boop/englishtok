@@ -30,6 +30,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   bool _editingName = false;
   int? _expandedStat; // 0=pronunciation,1=lessons,2=streak
   int? _expandedBadge;
+  bool _editingAvatar = false;
 
   @override
   void initState() {
@@ -138,23 +139,80 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         valueListenable:
                                             UserProfile.instance.avatar,
                                         builder: (context, avatar, _) {
-                                          return Container(
-                                            width: 120,
-                                            height: 120,
-                                            alignment: Alignment.center,
-                                            decoration: const BoxDecoration(
-                                              shape: BoxShape.circle,
-                                              color: Color(0xFF2563EB),
-                                            ),
-                                            child: Text(
-                                              avatar,
-                                              style: const TextStyle(
-                                                  fontSize: 56),
+                                          return GestureDetector(
+                                            onTap: () => setState(() =>
+                                                _editingAvatar =
+                                                    !_editingAvatar),
+                                            child: Container(
+                                              width: 120,
+                                              height: 120,
+                                              alignment: Alignment.center,
+                                              decoration: const BoxDecoration(
+                                                shape: BoxShape.circle,
+                                                color: Color(0xFF2563EB),
+                                              ),
+                                              child: Text(
+                                                avatar,
+                                                style: const TextStyle(
+                                                    fontSize: 56),
+                                              ),
                                             ),
                                           );
                                         },
                                       ),
                                     ),
+                                    if (_editingAvatar) ...[
+                                      const SizedBox(height: 10),
+                                      Center(
+                                        child: Wrap(
+                                          spacing: 8,
+                                          runSpacing: 8,
+                                          alignment: WrapAlignment.center,
+                                          children: [
+                                            for (final e in const [
+                                              '👦',
+                                              '👧',
+                                              '👨',
+                                              '👩',
+                                              '🧑',
+                                              '🐱',
+                                              '🐶',
+                                              '🦁',
+                                              '🐼',
+                                              '🦊',
+                                            ])
+                                              GestureDetector(
+                                                onTap: () {
+                                                  UserProfile.instance
+                                                      .save(newAvatar: e);
+                                                  setState(() =>
+                                                      _editingAvatar = false);
+                                                },
+                                                child: Container(
+                                                  padding:
+                                                      const EdgeInsets.all(6),
+                                                  decoration: BoxDecoration(
+                                                    color: const Color(
+                                                        0xFFEFF6FF),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            12),
+                                                    border: Border.all(
+                                                      color: const Color(
+                                                          0xFFBFDBFE),
+                                                    ),
+                                                  ),
+                                                  child: Text(
+                                                    e,
+                                                    style: const TextStyle(
+                                                        fontSize: 26),
+                                                  ),
+                                                ),
+                                              ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
                                     const SizedBox(height: 12),
                                     Center(
                                       child: _editingName
