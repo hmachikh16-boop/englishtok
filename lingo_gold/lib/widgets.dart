@@ -426,61 +426,40 @@ class BottomNavBar extends StatelessWidget {
         ),
         child: Row(
           children: [
-            Expanded(
-              child: GestureDetector(
-                onTap: () => onTap(0),
-                child: Container(
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color: index == 0 ? const Color(0xFF2563EB) : const Color(0xFFE5E7EB),
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  child: FittedBox(
-                    fit: BoxFit.scaleDown,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8),
-                      child: Text(
-                        'الرئيسية',
-                        maxLines: 1,
-                        style: TextStyle(
-                          color: index == 0 ? Colors.white : const Color(0xFF6B7280),
-                          fontSize: 14,
-                          fontWeight: FontWeight.w800,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            Expanded(
-              child: GestureDetector(
-                onTap: () => onTap(1),
-                child: Container(
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color: index == 1 ? const Color(0xFF2563EB) : const Color(0xFFE5E7EB),
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  child: FittedBox(
-                    fit: BoxFit.scaleDown,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8),
-                      child: Text(
-                        'ملفي',
-                        maxLines: 1,
-                        style: TextStyle(
-                          color: index == 1 ? Colors.white : const Color(0xFF6B7280),
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
+            _navTab(index == 0, 'الرئيسية', () => onTap(0)),
+            _navTab(index == 1, 'الدروس', () => onTap(1)),
+            _navTab(index == 2, 'ملفي', () => onTap(2)),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _navTab(bool selected, String label, VoidCallback onTap) {
+    return Expanded(
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: selected ? const Color(0xFF2563EB) : const Color(0xFFE5E7EB),
+            borderRadius: BorderRadius.circular(30),
+          ),
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              child: Text(
+                label,
+                maxLines: 1,
+                style: TextStyle(
+                  color: selected ? Colors.white : const Color(0xFF6B7280),
+                  fontSize: 14,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+            ),
+          ),
         ),
       ),
     );

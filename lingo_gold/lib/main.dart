@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'home_screen.dart';
+import 'lessons_screen.dart';
 import 'lesson_flow.dart';
 import 'profile_screen.dart';
 import 'user_profile.dart';
@@ -139,6 +140,21 @@ class _MainShellState extends State<MainShell> {
                             totalLessons: _totalLessons,
                             stars: stars,
                             onStart: _startLesson,
+                          ),
+                          LessonsScreen(
+                            onStartLesson: (id) async {
+                              await Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (_) => LessonFlowScreen(
+                                    startLessonId: id,
+                                    totalLessons: _totalLessons,
+                                    onLessonComplete: _onLessonComplete,
+                                    onExit: () => setState(() => _tab = 0),
+                                  ),
+                                ),
+                              );
+                              if (mounted) setState(() {});
+                            },
                           ),
                           ProfileScreen(
                             completedCount: completed,
