@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+
 import 'package:lingo_gold/data.dart';
 import 'package:lingo_gold/lesson_coloring.dart';
 import 'package:lingo_gold/lesson_flow.dart';
@@ -57,10 +58,22 @@ void main() {
           ['Goodbye', 'Raise hand', 'Dinner']);
     });
 
-    test('lesson 39 smart choose odd one is a fruit, not the target', () {
-      final odd = pickDistractors(38, 3).last;
-      expect(odd.word, 'Orange');
-      expect(odd.word, isNot('Grapes'));
+    test('grammar lessons have 3 matching distractors and a non-IS writing word', () {
+      for (var i = 0; i < 10; i++) {
+        final d = pickDistractors(i, 3);
+        expect(d.length, 3, reason: 'lesson ${i + 1} distractor count');
+        for (final l in d) {
+          expect(['am', 'are', 'is'], contains(l.word.toLowerCase()),
+              reason: 'lesson ${i + 1} distractor word');
+        }
+        final w = writingWordFor(lessons[i], i).toUpperCase();
+        expect(['IS', 'ARE', 'AM', 'THE', 'A'], isNot(contains(w)),
+            reason: 'lesson ${i + 1} writing word $w');
+      }
+    });
+
+    test('lesson 10 writing word is SUN (not IS)', () {
+      expect(writingWordFor(lessons[9], 9), 'SUN');
     });
 
     test('lesson 39 has five coloring pages with the requested prompts', () {

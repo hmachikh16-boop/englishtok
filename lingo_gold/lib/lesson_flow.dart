@@ -28,22 +28,49 @@ List<Lesson> pickDistractors(int lessonIndex, int count) {
         candidate.word.toLowerCase() == lesson.word.toLowerCase()) {
       return false;
     }
-    // Grammar (am / is / are) repeats the same word with different pictures.
-    if (groupIndex != 0 &&
+    if (groupIndex != 0 && candidate.word.toLowerCase() == lesson.word.toLowerCase()) {
+      return false;
+    }
+    // For grammar, avoid duplicate words so Matching shows distinct pairs.
+    if (groupIndex == 0 &&
         candidate.word.toLowerCase() == lesson.word.toLowerCase()) {
       return false;
     }
-    if (result.any((l) =>
-        l.imageFile == candidate.imageFile &&
-        l.word.toLowerCase() == candidate.word.toLowerCase())) {
+    if (result.any((l) => l.imageFile == candidate.imageFile && l.word.toLowerCase() == candidate.word.toLowerCase())) {
       return false;
     }
     return true;
   }
 
-  for (final candidate in pool) {
-    if (acceptable(candidate)) result.add(candidate);
-    if (result.length >= count) break;
+  // For grammar, pick distinct words first, then same-word different-image.
+  if (groupIndex == 0) {
+    final seen = <String>{lesson.word.toLowerCase()};
+    // First: distinct non-target words.
+    for (final candidate in pool) {
+      if (candidate.imageFile == lesson.imageFile) continue;
+      if (seen.contains(candidate.word.toLowerCase())) continue;
+      seen.add(candidate.word.toLowerCase());
+      result.add(candidate);
+      if (result.length >= count) break;
+    }
+    // Second: same word, different image (to fill up to count).
+    if (result.length < count) {
+      for (final candidate in pool) {
+        if (candidate.imageFile == lesson.imageFile) continue;
+        if (result.any((l) => l.imageFile == candidate.imageFile)) continue;
+        result.add(candidate);
+        if (result.length >= count) break;
+      }
+    }
+  }
+
+  if (result.length < count) {
+    for (final candidate in pool) {
+      if (acceptable(candidate)) {
+        result.add(candidate);
+        if (result.length >= count) break;
+      }
+    }
   }
 
   // Safety fallback: never leave the child without options.
@@ -70,6 +97,25 @@ List<Lesson> _categoryPool(int lessonIndex) {
   final start = groupIndex * 10;
   final end = (start + 10).clamp(0, lessons.length);
   return [for (var i = start; i < end; i++) lessons[i]];
+}
+
+/// Returns the word the child must type in the Writing window.
+///
+/// The writing target is always a real word (never IS/THE/A). For grammar
+/// lessons (1-10) it is the noun of the image; otherwise it is the lesson word.
+String writingWordFor(Lesson lesson, int lessonIndex) {
+  if (lessonIndex >= 0 && lessonIndex < 10) {
+    const grammarWords = [
+      'BOY', 'STUDENTS', 'DOG', 'FLOWERS', 'APPLE',
+      'CAR', 'CAT', 'HOUSE', 'MAN', 'SUN',
+    ];
+    return grammarWords[lessonIndex];
+  }
+  final w = lesson.word.toUpperCase();
+  if (w == 'IS' || w == 'ARE' || w == 'AM' || w == 'THE' || w == 'A') {
+    return lesson.word;
+  }
+  return lesson.word;
 }
 
 class LessonFlowScreen extends StatefulWidget {
@@ -120,7 +166,7 @@ class _LessonFlowScreenState extends State<LessonFlowScreen> {
       case 3:
         return 'الاختيار الذكي';
       case 4:
-        return _lessonIndex ~/ 10 == 0 ? 'رتّب الكلمات' : 'درس المطابقة';
+        return 'درس المطابقة';
       case 5:
         return 'التلوين';
       default:
@@ -240,7 +286,11 @@ class _LessonFlowScreenState extends State<LessonFlowScreen> {
               _completeStep(correct: correct, speakingScore: score),
         );
       case 2:
-        return WritingStep(lesson: lesson, onComplete: _onSimpleComplete);
+        return WritingStep(
+      lesson: lesson,
+      targetWord: writingWordFor(lesson, _lessonIndex),
+      onComplete: _onSimpleComplete,
+    );
       case 3:
         return SmartChooseStep(
           lesson: lesson,
@@ -249,12 +299,6 @@ class _LessonFlowScreenState extends State<LessonFlowScreen> {
           onComplete: _onSimpleComplete,
         );
       case 4:
-        if (_lessonIndex ~/ 10 == 0) {
-          return ArrangeWordsStep(
-            lesson: lesson,
-            onComplete: _onSimpleComplete,
-          );
-        }
         return MatchingStep(
           lesson: lesson,
           distractors: _distractors.take(2).toList(),

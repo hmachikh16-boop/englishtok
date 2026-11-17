@@ -6,11 +6,13 @@ import 'widgets.dart';
 
 class WritingStep extends StatefulWidget {
   final Lesson lesson;
+  final String? targetWord;
   final ValueChanged<bool> onComplete;
 
   const WritingStep({
     super.key,
     required this.lesson,
+    this.targetWord,
     required this.onComplete,
   });
 
@@ -21,7 +23,7 @@ class WritingStep extends StatefulWidget {
 class _WritingStepState extends State<WritingStep> {
   String _typed = '';
 
-  String get _target => widget.lesson.word;
+  String get _target => widget.targetWord ?? widget.lesson.word;
   String get _targetLetters => _target.replaceAll(' ', '');
   String get _typedLetters => _typed.replaceAll(' ', '');
   bool get _correct =>
