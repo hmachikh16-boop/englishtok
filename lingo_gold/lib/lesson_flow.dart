@@ -11,10 +11,7 @@ import 'lesson_writing.dart';
 import 'theme.dart';
 import 'widgets.dart';
 
-/// Returns 3 distractors from the exact same category as the lesson.
-///
-/// Fruit lessons only get fruit, animal lessons only get animals, greeting
-/// lessons only get the same boy doing different actions, and so on.
+/// Returns 3 distractors from the same category as the lesson.
 List<Lesson> pickDistractors(int lessonIndex, int count) {
   final lesson = lessons[lessonIndex];
   final groupIndex = lessonIndex ~/ 10;
@@ -34,7 +31,6 @@ List<Lesson> pickDistractors(int lessonIndex, int count) {
     if (groupIndex != 0 && candidate.word.toLowerCase() == lesson.word.toLowerCase()) {
       return false;
     }
-    // For grammar, avoid duplicate words so Matching shows distinct pairs.
     if (groupIndex == 0 &&
         candidate.word.toLowerCase() == lesson.word.toLowerCase()) {
       return false;
@@ -45,10 +41,8 @@ List<Lesson> pickDistractors(int lessonIndex, int count) {
     return true;
   }
 
-  // For grammar, pick distinct words first, then same-word different-image.
   if (groupIndex == 0) {
     final seen = <String>{lesson.word.toLowerCase()};
-    // First: distinct non-target words.
     for (final candidate in pool) {
       if (candidate.imageFile == lesson.imageFile) continue;
       if (seen.contains(candidate.word.toLowerCase())) continue;
@@ -56,7 +50,6 @@ List<Lesson> pickDistractors(int lessonIndex, int count) {
       result.add(candidate);
       if (result.length >= count) break;
     }
-    // Second: same word, different image (to fill up to count).
     if (result.length < count) {
       for (final candidate in pool) {
         if (candidate.imageFile == lesson.imageFile) continue;
@@ -76,7 +69,6 @@ List<Lesson> pickDistractors(int lessonIndex, int count) {
     }
   }
 
-  // Safety fallback: never leave the child without options.
   for (var i = 0; i < lessons.length && result.length < count; i++) {
     final candidate = lessons[i];
     if (acceptable(candidate)) result.add(candidate);
@@ -88,7 +80,6 @@ List<Lesson> _categoryPool(int lessonIndex) {
   final lesson = lessons[lessonIndex];
   final groupIndex = lessonIndex ~/ 10;
 
-  // Food is split into fruit and non-fruit so a fruit lesson never shows bread.
   if (groupIndex == 3 || groupIndex == 4) {
     final fruitLesson = isFruitWord(lesson.word);
     return [
@@ -100,25 +91,6 @@ List<Lesson> _categoryPool(int lessonIndex) {
   final start = groupIndex * 10;
   final end = (start + 10).clamp(0, lessons.length);
   return [for (var i = start; i < end; i++) lessons[i]];
-}
-
-/// Returns the word the child must type in the Writing window.
-///
-/// The writing target is always a real word (never IS/THE/A). For grammar
-/// lessons (1-10) it is the noun of the image; otherwise it is the lesson word.
-String writingWordFor(Lesson lesson, int lessonIndex) {
-  final w = lesson.word.toUpperCase();
-  if (w == 'IS' || w == 'ARE' || w == 'AM' || w == 'THE' || w == 'A') {
-    // Fallback for any lesson that still has a banned word.
-    const grammarWords = [
-      'BOY', 'STUDENTS', 'DOG', 'FLOWERS', 'APPLE',
-      'CAR', 'CAT', 'HOUSE', 'MAN', 'SUN',
-    ];
-    if (lessonIndex >= 0 && lessonIndex < grammarWords.length) {
-      return grammarWords[lessonIndex];
-    }
-  }
-  return lesson.word;
 }
 
 bool _isSpecialLesson(int lessonIndex) =>
@@ -139,15 +111,15 @@ Lesson _syntheticLesson(String imageFile, bool isPack, int indexInPack, String w
 
 List<Lesson> _specialDistractors(int lessonIndex, int count) {
   switch (lessonIndex) {
-    case 0: // Lesson 1: I am (person images)
-    case 1: // Lesson 2: He is
-    case 2: // Lesson 3: They are
+    case 0:
+    case 1:
+    case 2:
       return [
         _syntheticLesson('q1', false, 0, 'are'),
         _syntheticLesson('q8', false, 0, 'is'),
         _syntheticLesson('n01', true, 0, 'boy'),
       ].take(count).toList();
-    case 9: // Lesson 10: Sun
+    case 9:
       return [
         _syntheticLesson('n66', true, 0, 'MOON'),
         _syntheticLesson('n67', true, 0, 'STARS'),
@@ -160,12 +132,22 @@ List<Lesson> _specialDistractors(int lessonIndex, int count) {
 List<Lesson> _specialMatchingPairs(int lessonIndex) {
   switch (lessonIndex) {
     case 0:
-    case 1:
-    case 2:
       return [
         _syntheticLesson('q0', false, 0, 'I am'),
         _syntheticLesson('q8', false, 0, 'He is'),
         _syntheticLesson('q1', false, 0, 'They are'),
+      ];
+    case 1:
+      return [
+        _syntheticLesson('n02', true, 0, 'She is'),
+        _syntheticLesson('n01', true, 0, 'We are'),
+        _syntheticLesson('n03', true, 0, 'You are'),
+      ];
+    case 2:
+      return [
+        _syntheticLesson('q6', false, 0, 'It is'),
+        _syntheticLesson('q6', false, 0, 'This is'),
+        _syntheticLesson('q6', false, 0, 'That is'),
       ];
     case 9:
       return [
@@ -177,41 +159,20 @@ List<Lesson> _specialMatchingPairs(int lessonIndex) {
   return [];
 }
 
-List<Lesson> _specialSmartChooseOptions(int lessonIndex) {
-  switch (lessonIndex) {
-    case 0:
-    case 1:
-    case 2:
-      return [
-        _syntheticLesson('q0', false, 0, 'I am'),
-        _syntheticLesson('q1', false, 0, 'They are'),
-        _syntheticLesson('q8', false, 0, 'He is'),
-        _syntheticLesson('n01', true, 0, 'boy'),
-      ];
-    case 9:
-      return [
-        _syntheticLesson('q9', false, 0, 'SUN'),
-        _syntheticLesson('n66', true, 0, 'MOON'),
-        _syntheticLesson('n67', true, 0, 'STARS'),
-        _syntheticLesson('n69', true, 0, 'SUNFLOWER'),
-      ];
+String writingWordFor(Lesson lesson, int lessonIndex) {
+  final w = lesson.word.toUpperCase();
+  if (w == 'IS' || w == 'ARE' || w == 'AM' || w == 'THE' || w == 'A') {
+    const grammarWords = [
+      'BOY', 'STUDENTS', 'DOG', 'FLOWERS', 'APPLE',
+      'CAR', 'CAT', 'HOUSE', 'MAN', 'SUN',
+    ];
+    if (lessonIndex >= 0 && lessonIndex < grammarWords.length) {
+      return grammarWords[lessonIndex];
+    }
   }
-  return [];
+  return lesson.word;
 }
 
-String _specialSmartChooseQuestion(int lessonIndex) {
-  switch (lessonIndex) {
-    case 0:
-    case 1:
-    case 2:
-      return 'Which picture is NOT I am?';
-    case 9:
-      return 'Which picture is NOT sun?';
-  }
-  return '';
-}
-
-/// Fruit words used to keep fruit lessons away from bread, milk, etc.
 bool isFruitWord(String word) {
   const fruits = {
     'apple',
