@@ -132,13 +132,13 @@ List<Lesson> _specialDistractors(int lessonIndex, int count) {
       ].take(count).toList();
     case 3: // Lesson 4: action images
       return [
-        _syntheticLesson('n02', true, 0, 'Drinking'),
+        _syntheticLesson('n19', true, 0, 'Drinking'),
         _syntheticLesson('n15', true, 0, 'Running'),
         _syntheticLesson('q6', false, 0, 'Sleeping'),
       ].take(count).toList();
     case 4: // Lesson 5: action images
       return [
-        _syntheticLesson('q0', false, 0, 'Eating'),
+        _syntheticLesson('n18', true, 0, 'Eating'),
         _syntheticLesson('n15', true, 0, 'Running'),
         _syntheticLesson('q6', false, 0, 'Sleeping'),
       ].take(count).toList();
@@ -162,7 +162,7 @@ List<Lesson> _specialDistractors(int lessonIndex, int count) {
       ].take(count).toList();
     case 8: // Lesson 9: action images
       return [
-        _syntheticLesson('n02', true, 0, 'Drinking'),
+        _syntheticLesson('n19', true, 0, 'Drinking'),
         _syntheticLesson('n15', true, 0, 'Running'),
         _syntheticLesson('q6', false, 0, 'Sleeping'),
       ].take(count).toList();
