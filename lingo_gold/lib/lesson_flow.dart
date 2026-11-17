@@ -113,17 +113,63 @@ Lesson _syntheticLesson(String imageFile, bool isPack, int indexInPack, String w
 List<Lesson> _specialDistractors(int lessonIndex, int count) {
   switch (lessonIndex) {
     case 0:
+      return [
+        _syntheticLesson('n02', true, 0, 'Girl'),
+        _syntheticLesson('q6', false, 0, 'Cat'),
+        _syntheticLesson('n41', true, 0, 'Dog'),
+      ].take(count).toList();
     case 1:
+      return [
+        _syntheticLesson('q0', false, 0, 'Boy'),
+        _syntheticLesson('q6', false, 0, 'Cat'),
+        _syntheticLesson('n41', true, 0, 'Dog'),
+      ].take(count).toList();
     case 2:
       return [
-        _syntheticLesson('q1', false, 0, 'are'),
-        _syntheticLesson('q8', false, 0, 'is'),
-        _syntheticLesson('n01', true, 0, 'boy'),
+        _syntheticLesson('n41', true, 0, 'Dog'),
+        _syntheticLesson('n02', true, 0, 'Girl'),
+        _syntheticLesson('q0', false, 0, 'Boy'),
+      ].take(count).toList();
+    case 3:
+      return [
+        _syntheticLesson('n02', true, 0, 'Drinking'),
+        _syntheticLesson('n15', true, 0, 'Running'),
+        _syntheticLesson('q6', false, 0, 'Sleeping'),
+      ].take(count).toList();
+    case 4:
+      return [
+        _syntheticLesson('q0', false, 0, 'Eating'),
+        _syntheticLesson('n15', true, 0, 'Running'),
+        _syntheticLesson('q6', false, 0, 'Sleeping'),
+      ].take(count).toList();
+    case 5:
+      return [
+        _syntheticLesson('n47', true, 0, 'Small'),
+        _syntheticLesson('q6', false, 0, 'Cat'),
+        _syntheticLesson('q0', false, 0, 'Boy'),
+      ].take(count).toList();
+    case 6:
+      return [
+        _syntheticLesson('n22', true, 0, 'Green'),
+        _syntheticLesson('n37', true, 0, 'Orange'),
+        _syntheticLesson('n39', true, 0, 'Grapes'),
+      ].take(count).toList();
+    case 7:
+      return [
+        _syntheticLesson('q0', false, 0, 'Boy'),
+        _syntheticLesson('n02', true, 0, 'Girl'),
+        _syntheticLesson('q6', false, 0, 'Cat'),
+      ].take(count).toList();
+    case 8:
+      return [
+        _syntheticLesson('n02', true, 0, 'Drinking'),
+        _syntheticLesson('n15', true, 0, 'Running'),
+        _syntheticLesson('q6', false, 0, 'Sleeping'),
       ].take(count).toList();
     case 9:
       return [
         _syntheticLesson('n66', true, 0, 'MOON'),
-        _syntheticLesson('n67', true, 0, 'STARS'),
+        _syntheticLesson('n67', true, 0, 'STAR'),
         _syntheticLesson('n69', true, 0, 'SUNFLOWER'),
       ].take(count).toList();
   }
@@ -132,29 +178,65 @@ List<Lesson> _specialDistractors(int lessonIndex, int count) {
 
 List<Lesson> _specialMatchingPairs(int lessonIndex) {
   switch (lessonIndex) {
-    case 0:
+    case 0: // Lesson 1: Boy, Girl, Cat
       return [
-        _syntheticLesson('q0', false, 0, 'I am'),
-        _syntheticLesson('q8', false, 0, 'He is'),
-        _syntheticLesson('q1', false, 0, 'They are'),
+        _syntheticLesson('q0', false, 0, 'Boy'),
+        _syntheticLesson('n02', true, 0, 'Girl'),
+        _syntheticLesson('q6', false, 0, 'Cat'),
       ];
-    case 1:
+    case 1: // Lesson 2: Girl, Boy, Dog
       return [
-        _syntheticLesson('n02', true, 0, 'She is'),
-        _syntheticLesson('n01', true, 0, 'We are'),
-        _syntheticLesson('n03', true, 0, 'You are'),
+        _syntheticLesson('n02', true, 0, 'Girl'),
+        _syntheticLesson('q0', false, 0, 'Boy'),
+        _syntheticLesson('n41', true, 0, 'Dog'),
       ];
-    case 2:
+    case 2: // Lesson 3: Cat, Dog, Boy
       return [
-        _syntheticLesson('q6', false, 0, 'It is'),
-        _syntheticLesson('q6', false, 0, 'This is'),
-        _syntheticLesson('q6', false, 0, 'That is'),
+        _syntheticLesson('q6', false, 0, 'Cat'),
+        _syntheticLesson('n41', true, 0, 'Dog'),
+        _syntheticLesson('q0', false, 0, 'Boy'),
       ];
-    case 9:
+    case 3: // Lesson 4: Eating, Drinking, Running
+      return [
+        _syntheticLesson('q0', false, 0, 'Eating'),
+        _syntheticLesson('n02', true, 0, 'Drinking'),
+        _syntheticLesson('n15', true, 0, 'Running'),
+      ];
+    case 4: // Lesson 5: Drinking, Eating, Running
+      return [
+        _syntheticLesson('n02', true, 0, 'Drinking'),
+        _syntheticLesson('q0', false, 0, 'Eating'),
+        _syntheticLesson('n15', true, 0, 'Running'),
+      ];
+    case 5: // Lesson 6: Big, Small, Tall
+      return [
+        _syntheticLesson('n41', true, 0, 'Big'),
+        _syntheticLesson('n47', true, 0, 'Small'),
+        _syntheticLesson('n45', true, 0, 'Tall'),
+      ];
+    case 6: // Lesson 7: Red, Green, Yellow
+      return [
+        _syntheticLesson('n21', true, 0, 'Red'),
+        _syntheticLesson('n21', true, 0, 'Green'),
+        _syntheticLesson('n21', true, 0, 'Yellow'),
+      ];
+    case 7: // Lesson 8: Boy, Girl, Boy and girl
+      return [
+        _syntheticLesson('q0', false, 0, 'Boy'),
+        _syntheticLesson('n02', true, 0, 'Girl'),
+        _syntheticLesson('q0', false, 0, 'Boy and girl'),
+      ];
+    case 8: // Lesson 9: Eating, Drinking, Running
+      return [
+        _syntheticLesson('q0', false, 0, 'Eating'),
+        _syntheticLesson('n02', true, 0, 'Drinking'),
+        _syntheticLesson('n15', true, 0, 'Running'),
+      ];
+    case 9: // Lesson 10: SUN, MOON, STAR
       return [
         _syntheticLesson('q9', false, 0, 'SUN'),
         _syntheticLesson('n66', true, 0, 'MOON'),
-        _syntheticLesson('n67', true, 0, 'STARS'),
+        _syntheticLesson('n67', true, 0, 'STAR'),
       ];
   }
   return [];
@@ -162,21 +244,75 @@ List<Lesson> _specialMatchingPairs(int lessonIndex) {
 
 List<Lesson> _specialSmartChooseOptions(int lessonIndex) {
   switch (lessonIndex) {
-    case 0:
-    case 1:
-    case 2:
+    case 0: // Lesson 1: A boy
       return [
-        _syntheticLesson('q0', false, 0, 'I am'),
-        _syntheticLesson('q1', false, 0, 'They are'),
-        _syntheticLesson('q8', false, 0, 'He is'),
-        _syntheticLesson('n01', true, 0, 'boy'),
+        _syntheticLesson('q0', false, 0, 'A boy'),
+        _syntheticLesson('n02', true, 0, 'A girl'),
+        _syntheticLesson('q6', false, 0, 'A cat'),
+        _syntheticLesson('n41', true, 0, 'A dog'),
       ];
-    case 9:
+    case 1: // Lesson 2: A girl
       return [
-        _syntheticLesson('q9', false, 0, 'SUN'),
-        _syntheticLesson('n66', true, 0, 'MOON'),
-        _syntheticLesson('n67', true, 0, 'STARS'),
-        _syntheticLesson('n69', true, 0, 'SUNFLOWER'),
+        _syntheticLesson('n02', true, 0, 'A girl'),
+        _syntheticLesson('q0', false, 0, 'A boy'),
+        _syntheticLesson('q6', false, 0, 'A cat'),
+        _syntheticLesson('n41', true, 0, 'A dog'),
+      ];
+    case 2: // Lesson 3: A cat
+      return [
+        _syntheticLesson('q6', false, 0, 'A cat'),
+        _syntheticLesson('n41', true, 0, 'A dog'),
+        _syntheticLesson('n02', true, 0, 'A girl'),
+        _syntheticLesson('q0', false, 0, 'A boy'),
+      ];
+    case 3: // Lesson 4: The boy is eating
+      return [
+        _syntheticLesson('q0', false, 0, 'The boy is eating'),
+        _syntheticLesson('n02', true, 0, 'The girl is drinking'),
+        _syntheticLesson('n15', true, 0, 'The man is running'),
+        _syntheticLesson('q6', false, 0, 'The cat is sleeping'),
+      ];
+    case 4: // Lesson 5: The girl is drinking
+      return [
+        _syntheticLesson('n02', true, 0, 'The girl is drinking'),
+        _syntheticLesson('q0', false, 0, 'The boy is eating'),
+        _syntheticLesson('n15', true, 0, 'The man is running'),
+        _syntheticLesson('q6', false, 0, 'The cat is sleeping'),
+      ];
+    case 5: // Lesson 6: A big dog
+      return [
+        _syntheticLesson('n41', true, 0, 'A big dog'),
+        _syntheticLesson('n47', true, 0, 'A small rabbit'),
+        _syntheticLesson('q6', false, 0, 'A cat'),
+        _syntheticLesson('q0', false, 0, 'A boy'),
+      ];
+    case 6: // Lesson 7: A red apple
+      return [
+        _syntheticLesson('n21', true, 0, 'A red apple'),
+        _syntheticLesson('n22', true, 0, 'A yellow banana'),
+        _syntheticLesson('n37', true, 0, 'An orange'),
+        _syntheticLesson('n39', true, 0, 'Grapes'),
+      ];
+    case 7: // Lesson 8: The boy and the girl
+      return [
+        _syntheticLesson('q0', false, 0, 'The boy and the girl'),
+        _syntheticLesson('q0', false, 0, 'A boy'),
+        _syntheticLesson('n02', true, 0, 'A girl'),
+        _syntheticLesson('q6', false, 0, 'A cat'),
+      ];
+    case 8: // Lesson 9: I am eating
+      return [
+        _syntheticLesson('q0', false, 0, 'I am eating'),
+        _syntheticLesson('n02', true, 0, 'The girl is drinking'),
+        _syntheticLesson('n15', true, 0, 'The man is running'),
+        _syntheticLesson('q6', false, 0, 'The cat is sleeping'),
+      ];
+    case 9: // Lesson 10: The sun
+      return [
+        _syntheticLesson('q9', false, 0, 'The sun'),
+        _syntheticLesson('n66', true, 0, 'The moon'),
+        _syntheticLesson('n67', true, 0, 'A star'),
+        _syntheticLesson('n69', true, 0, 'A sunflower'),
       ];
   }
   return [];
@@ -185,16 +321,37 @@ List<Lesson> _specialSmartChooseOptions(int lessonIndex) {
 String _specialSmartChooseQuestion(int lessonIndex) {
   switch (lessonIndex) {
     case 0:
+      return 'Which picture is A boy?';
     case 1:
+      return 'Which picture is A girl?';
     case 2:
-      return 'Which picture is NOT I am?';
+      return 'Which picture is A cat?';
+    case 3:
+      return 'Which picture is The boy is eating?';
+    case 4:
+      return 'Which picture is The girl is drinking?';
+    case 5:
+      return 'Which picture is A big dog?';
+    case 6:
+      return 'Which picture is A red apple?';
+    case 7:
+      return 'Which picture is The boy and the girl?';
+    case 8:
+      return 'Which picture is I am eating?';
     case 9:
-      return 'Which picture is NOT sun?';
+      return 'Which picture is The sun?';
   }
   return '';
 }
 
 String writingWordFor(Lesson lesson, int lessonIndex) {
+  if (lessonIndex >= 0 && lessonIndex < 10) {
+    const specialWords = [
+      'BOY', 'GIRL', 'CAT', 'EATING', 'DRINKING',
+      'BIG', 'RED', 'BOY AND GIRL', 'EATING', 'SUN',
+    ];
+    return specialWords[lessonIndex];
+  }
   final w = lesson.word.toUpperCase();
   if (w == 'IS' || w == 'ARE' || w == 'AM' || w == 'THE' || w == 'A') {
     const grammarWords = [

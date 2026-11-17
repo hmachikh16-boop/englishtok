@@ -47,7 +47,7 @@ class _SmartChooseStepState extends State<SmartChooseStep> {
   }
 
   bool get _isCorrect =>
-      _selected != null && !_isTarget(_options[_selected!]);
+      _selected != null && _isTarget(_options[_selected!]);
 
   String get _category {
     final group = widget.lessonIndex ~/ 10;
@@ -80,7 +80,7 @@ class _SmartChooseStepState extends State<SmartChooseStep> {
 
   void _check() {
     if (_selected == null) return;
-    final correct = !_isTarget(_options[_selected!]);
+    final correct = _isTarget(_options[_selected!]);
     setState(() {
       _checked = true;
       if (!correct) _hadWrong = true;
@@ -196,8 +196,8 @@ class _SmartChooseStepState extends State<SmartChooseStep> {
                     : (!_checked
                         ? 'اضغط تحقق للتأكد من إجابتك.'
                         : (isCorrect
-                            ? 'أحسنت! ${selectedLesson?.word} ليست ${widget.lesson.word}.'
-                            : 'هذه هي ${widget.lesson.word}. اختر صورة مختلفة.')),
+                            ? 'أحسنت! هذه هي ${widget.lesson.word}.'
+                            : 'هذه ليست ${widget.lesson.word}. اختر الصورة الصحيحة.')),
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w700,

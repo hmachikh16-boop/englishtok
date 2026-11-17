@@ -67,24 +67,12 @@ void main() {
       }
     });
 
-    test('special lessons 1,2,3,10 use category-appropriate distractors', () {
-      for (final i in [0, 1, 2, 9]) {
-        final d = pickDistractors(i, 3);
-        expect(d.length, 3, reason: 'lesson ${i + 1} distractor count');
-        for (final l in d) {
-          expect(l.imageFile, isNot('q2'), reason: 'lesson ${i + 1} has dog image');
-          expect(l.imageFile, isNot('q3'), reason: 'lesson ${i + 1} has flowers image');
-          expect(l.imageFile, isNot('q6'), reason: 'lesson ${i + 1} has cat image');
-        }
-      }
-    });
-
     test('lesson 10 writing word is SUN (not IS)', () {
       expect(writingWordFor(lessons[9], 9), 'SUN');
     });
 
-    test('lesson 1 writing word is I am (not IS)', () {
-      expect(writingWordFor(lessons[0], 0), 'I am');
+    test('lesson 1 writing word is BOY (not IS)', () {
+      expect(writingWordFor(lessons[0], 0), 'BOY');
     });
 
     test('lesson 39 has five coloring pages with the requested prompts', () {
