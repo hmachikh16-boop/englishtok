@@ -1,1 +1,1 @@
-{"version":"1.0.0","versionCode":35,"notes":"v35: Fixed image-to-sentence mapping for lesson 4 (n18_0 = boy eating). All 5 windows use correct image."}
+{"version":"1.0.0","versionCode":36,"notes":"v36: Fixed image-to-sentence mapping for all lessons 1-10. Image shows the sentence meaning. No out-of-lesson images. Lesson 4 = n18_0 (boy eating)."}

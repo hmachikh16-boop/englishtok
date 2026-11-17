@@ -68,14 +68,14 @@ const List<Lesson> lessons = [
   // ===== 1. الدروس 10 - rebuilt: 5 windows + results (Rosetta Stone) =====
   Lesson(word: 'A boy', sentence: 'A boy.', options: ['Boy', 'Girl', 'Cat'], imageFile: 'q0', indexInPack: 0, isPack: false, translation: '', category: 'Verb To Be'),
   Lesson(word: 'A girl', sentence: 'A girl.', options: ['Girl', 'Boy', 'Dog'], imageFile: 'n02', indexInPack: 0, isPack: true, translation: '', category: 'Verb To Be'),
-  Lesson(word: 'A cat', sentence: 'A cat.', options: ['Cat', 'Dog', 'Boy'], imageFile: 'q6', indexInPack: 0, isPack: false, translation: '', category: 'Verb To Be'),
+  Lesson(word: 'A cat', sentence: 'A cat.', options: ['Cat', 'Dog', 'Boy'], imageFile: 'n42', indexInPack: 0, isPack: true, translation: '', category: 'Verb To Be'),
   Lesson(word: 'The boy is eating', sentence: 'The boy is eating.', options: ['Eating', 'Drinking', 'Running'], imageFile: 'n18', indexInPack: 0, isPack: true, translation: '', category: 'Verb To Be'),
-  Lesson(word: 'The girl is drinking', sentence: 'The girl is drinking.', options: ['Drinking', 'Eating', 'Running'], imageFile: 'n02', indexInPack: 0, isPack: true, translation: '', category: 'Verb To Be'),
-  Lesson(word: 'A big dog', sentence: 'A big dog.', options: ['Big', 'Small', 'Tall'], imageFile: 'n41', indexInPack: 0, isPack: true, translation: '', category: 'Adjectives'),
-  Lesson(word: 'A red apple', sentence: 'A red apple.', options: ['Red', 'Green', 'Yellow'], imageFile: 'n21', indexInPack: 0, isPack: true, translation: '', category: 'Colors'),
-  Lesson(word: 'The boy and the girl', sentence: 'The boy and the girl.', options: ['Boy', 'Girl', 'Boy and girl'], imageFile: 'q0', indexInPack: 0, isPack: false, translation: '', category: 'Verb To Be'),
-  Lesson(word: 'I am eating', sentence: 'I am eating.', options: ['Eating', 'Drinking', 'Running'], imageFile: 'q0', indexInPack: 0, isPack: false, translation: '', category: 'Verb To Be'),
-  Lesson(word: 'The sun', sentence: 'The sun.', options: ['SUN', 'MOON', 'STAR'], imageFile: 'q9', indexInPack: 0, isPack: false, translation: '', category: 'Nature'),
+  Lesson(word: 'The girl is drinking', sentence: 'The girl is drinking.', options: ['Drinking', 'Eating', 'Running'], imageFile: 'n19', indexInPack: 0, isPack: true, translation: '', category: 'Verb To Be'),
+  Lesson(word: 'A big dog', sentence: 'A big dog.', options: ['Big', 'Small', 'Tall'], imageFile: 'q2', indexInPack: 0, isPack: false, translation: '', category: 'Adjectives'),
+  Lesson(word: 'A red apple', sentence: 'A red apple.', options: ['Red', 'Green', 'Yellow'], imageFile: 'q4', indexInPack: 0, isPack: false, translation: '', category: 'Colors'),
+  Lesson(word: 'The boy and the girl', sentence: 'The boy and the girl.', options: ['Boy', 'Girl', 'Boy and girl'], imageFile: 'n76', indexInPack: 0, isPack: true, translation: '', category: 'Verb To Be'),
+  Lesson(word: 'I am eating', sentence: 'I am eating.', options: ['Eating', 'Drinking', 'Running'], imageFile: 'n18', indexInPack: 0, isPack: true, translation: '', category: 'Verb To Be'),
+  Lesson(word: 'The sun', sentence: 'The sun.', options: ['SUN', 'MOON', 'STAR'], imageFile: 'n56', indexInPack: 0, isPack: true, translation: '', category: 'Nature'),
 
   // ===== 2. الدروس الجديدة - 70 درساً بصور عالية الجودة =====
   // GROUP 1 - Family - 11 to 20

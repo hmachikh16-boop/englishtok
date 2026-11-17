@@ -146,7 +146,7 @@ List<Lesson> _specialDistractors(int lessonIndex, int count) {
       return [
         _syntheticLesson('n47', true, 0, 'Small'),
         _syntheticLesson('q6', false, 0, 'Cat'),
-        _syntheticLesson('q0', false, 0, 'Boy'),
+        _syntheticLesson('n41', true, 0, 'Dog'),
       ].take(count).toList();
     case 6: // Lesson 7: fruit images
       return [
@@ -283,8 +283,8 @@ List<Lesson> _specialSmartChooseOptions(int lessonIndex) {
       return [
         _syntheticLesson('q2', false, 0, 'A big dog'),
         _syntheticLesson('n47', true, 0, 'A small rabbit'),
+        _syntheticLesson('n41', true, 0, 'A dog'),
         _syntheticLesson('q6', false, 0, 'A cat'),
-        _syntheticLesson('q0', false, 0, 'A boy'),
       ];
     case 6: // Lesson 7: A red apple
       return [
