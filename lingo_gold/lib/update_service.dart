@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -6,24 +7,51 @@ import 'package:open_filex/open_filex.dart';
 import 'package:path_provider/path_provider.dart';
 
 class UpdateService {
-  static const String baseUrl = 'http://192.168.1.11:8080';
-  static const String versionUrl = '$baseUrl/version.json';
-  static const String apkUrl = '$baseUrl/app-release.apk?v=21';
-  static const int currentVersionCode = 21;
+  // Public GitHub release assets. Both URLs are HTTPS and work from any network.
+  static const String _releaseBase =
+      'https://github.com/hmachikh16-boop/englishtok/releases/latest/download';
+
+  static String get versionUrl =>
+      '$_releaseBase/version.json?t=${DateTime.now().millisecondsSinceEpoch}';
+
+  static String get apkUrl =>
+      '$_releaseBase/app-release.apk?t=${DateTime.now().millisecondsSinceEpoch}';
+
+  static const int currentVersionCode = 25;
+
+  /// Last error message from check/download/install, for user feedback.
+  static String? lastError;
 
   /// Checks for an update. Returns the new version code if available, else null.
   static Future<int?> checkForUpdate() async {
+    lastError = null;
     try {
-      final res = await http.get(Uri.parse(versionUrl)).timeout(const Duration(seconds: 8));
-      if (res.statusCode != 200) return null;
-      final body = res.body;
-      // Simple JSON parse without dart:convert dependency issues.
-      final codeMatch = RegExp(r'"versionCode"\s*:\s*(\d+)').firstMatch(body);
-      if (codeMatch == null) return null;
-      final code = int.tryParse(codeMatch.group(1) ?? '');
-      if (code == null || code <= currentVersionCode) return null;
+      final res = await http
+          .get(Uri.parse(versionUrl))
+          .timeout(const Duration(seconds: 10));
+      if (res.statusCode != 200) {
+        lastError = 'الخادم رد بحالة ${res.statusCode}.';
+        return null;
+      }
+
+      final Map<String, dynamic> data;
+      try {
+        data = jsonDecode(res.body) as Map<String, dynamic>;
+      } catch (_) {
+        lastError = 'ملف الإصدار على الخادم غير صالح.';
+        return null;
+      }
+
+      final code = data['versionCode'];
+      if (code is! int) {
+        lastError = 'رقم الإصدار غير موجود في version.json.';
+        return null;
+      }
+      if (code <= currentVersionCode) return null;
       return code;
     } catch (_) {
+      lastError =
+          'تعذر الاتصال بخادم التحديث. تأكد من اتصال الهاتف بالإنترنت وحاول مرة أخرى.';
       return null;
     }
   }
@@ -32,17 +60,27 @@ class UpdateService {
   static Future<String?> downloadApk({
     void Function(double progress)? onProgress,
   }) async {
+    lastError = null;
+    http.Client? client;
+    IOSink? sink;
     try {
-      final client = http.Client();
+      client = http.Client();
       final req = http.Request('GET', Uri.parse(apkUrl));
-      final streamed = await client.send(req).timeout(const Duration(minutes: 5));
+      final streamed =
+          await client.send(req).timeout(const Duration(minutes: 5));
       if (streamed.statusCode != 200) {
-        client.close();
+        lastError = 'فشل تنزيل الملف (${streamed.statusCode}).';
         return null;
       }
-      final dir = await getExternalStorageDirectory() ?? await getApplicationDocumentsDirectory();
-      final file = File('${dir.path}/app-release-v11.apk');
-      final sink = file.openWrite();
+
+      final dir = await getExternalStorageDirectory() ??
+          await getApplicationDocumentsDirectory();
+      final file = File('${dir.path}/lingo_gold_update.apk');
+      if (await file.exists()) {
+        await file.delete();
+      }
+
+      sink = file.openWrite();
       final total = streamed.contentLength ?? 0;
       var received = 0;
       await for (final chunk in streamed.stream) {
@@ -52,50 +90,78 @@ class UpdateService {
       }
       await sink.flush();
       await sink.close();
-      client.close();
+      sink = null;
       onProgress?.call(1.0);
       return file.path;
-    } catch (_) {
+    } catch (e) {
+      lastError = 'فشل التنزيل: $e';
       return null;
+    } finally {
+      try {
+        await sink?.close();
+      } catch (_) {}
+      client?.close();
     }
   }
 
   /// Triggers the Android installer for the given APK path.
   static Future<bool> installApk(String path) async {
     try {
-      final result = await OpenFilex.open(path);
-      return result.type == ResultType.done;
-    } catch (_) {
+      final result = await OpenFilex.open(
+        path,
+        type: 'application/vnd.android.package-archive',
+      );
+      if (result.type != ResultType.done) {
+        lastError = result.message;
+        return false;
+      }
+      return true;
+    } catch (e) {
+      lastError = 'فشل فتح المثبّت: $e';
       return false;
     }
   }
 
   /// Full flow: check, confirm, download, install.
-  static Future<void> checkAndPrompt(BuildContext context, {bool silent = false}) async {
+  static Future<void> checkAndPrompt(
+    BuildContext context, {
+    bool silent = false,
+  }) async {
     final newCode = await checkForUpdate();
+    if (!context.mounted) return;
+
     if (newCode == null) {
-      if (!silent && context.mounted) {
+      if (!silent) {
+        final msg = lastError ??
+            'أنت على أحدث إصدار (${UpdateService.currentVersionCode}).';
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('أنت على أحدث إصدار.')),
+          SnackBar(content: Text(msg), duration: const Duration(seconds: 5)),
         );
       }
       return;
     }
-    if (!context.mounted) return;
+
     final proceed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
         title: const Text('تحديث متاح'),
-        content: Text('يتوفر إصدار جديد ($newCode). هل تريد التنزيل والتثبيت الآن؟'),
+        content: Text(
+          'يتوفر إصدار جديد ($newCode). هل تريد التنزيل والتثبيت الآن؟',
+        ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('لاحقاً')),
-          FilledButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('تحديث')),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('لاحقاً'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('تحديث'),
+          ),
         ],
       ),
     );
     if (proceed != true || !context.mounted) return;
 
-    // Show progress dialog.
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -112,22 +178,36 @@ class UpdateService {
     );
 
     final path = await downloadApk();
-    if (context.mounted) Navigator.pop(context); // close progress
+    if (context.mounted) Navigator.pop(context);
 
     if (path == null) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('فشل التنزيل. حاول مرة أخرى.')),
+          SnackBar(
+            content: Text(lastError ?? 'فشل التنزيل. حاول مرة أخرى.'),
+            duration: const Duration(seconds: 6),
+          ),
         );
       }
       return;
     }
+
     final ok = await installApk(path);
     if (!ok && context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('فشل التثبيت. افتح يدوياً: $path'),
-          duration: const Duration(seconds: 6),
+      await showDialog<void>(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: const Text('لم يتم فتح المثبّت'),
+          content: const Text(
+            'افتح إعدادات الهاتف ثم اسمح لهذا التطبيق بتثبيت التطبيقات '
+            '(Install unknown apps)، وبعدها اضغط تحديث التطبيق مرة أخرى.',
+          ),
+          actions: [
+            FilledButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: const Text('حسناً'),
+            ),
+          ],
         ),
       );
     }

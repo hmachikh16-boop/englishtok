@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'theme.dart';
+import 'update_service.dart';
 import 'user_profile.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -597,6 +598,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         ),
                                       ),
                                     ],
+                                    OutlinedButton.icon(
+                                      onPressed: () =>
+                                          UpdateService.checkAndPrompt(
+                                        context,
+                                        silent: false,
+                                      ),
+                                      icon: const Icon(
+                                        Icons.system_update_rounded,
+                                        size: 20,
+                                      ),
+                                      label: const Text('تحديث التطبيق'),
+                                    ),
+                                    const SizedBox(height: 6),
+                                    Text(
+                                      'الإصدار ${UpdateService.currentVersionCode}',
+                                      textAlign: TextAlign.center,
+                                      style: const TextStyle(
+                                        fontSize: 12,
+                                        color: Color(0xFF6B7280),
+                                      ),
+                                    ),
                                     const SizedBox(height: 80),
                                   ],
                                 ),
