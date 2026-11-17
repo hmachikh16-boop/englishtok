@@ -6,6 +6,7 @@ import 'data.dart';
 import 'lesson_choice.dart';
 import 'lesson_coloring.dart';
 import 'lesson_matching.dart';
+import 'lesson_smart_choose.dart';
 import 'lesson_speaking.dart';
 import 'lesson_writing.dart';
 import 'theme.dart';
@@ -159,6 +160,40 @@ List<Lesson> _specialMatchingPairs(int lessonIndex) {
   return [];
 }
 
+List<Lesson> _specialSmartChooseOptions(int lessonIndex) {
+  switch (lessonIndex) {
+    case 0:
+    case 1:
+    case 2:
+      return [
+        _syntheticLesson('q0', false, 0, 'I am'),
+        _syntheticLesson('q1', false, 0, 'They are'),
+        _syntheticLesson('q8', false, 0, 'He is'),
+        _syntheticLesson('n01', true, 0, 'boy'),
+      ];
+    case 9:
+      return [
+        _syntheticLesson('q9', false, 0, 'SUN'),
+        _syntheticLesson('n66', true, 0, 'MOON'),
+        _syntheticLesson('n67', true, 0, 'STARS'),
+        _syntheticLesson('n69', true, 0, 'SUNFLOWER'),
+      ];
+  }
+  return [];
+}
+
+String _specialSmartChooseQuestion(int lessonIndex) {
+  switch (lessonIndex) {
+    case 0:
+    case 1:
+    case 2:
+      return 'Which picture is NOT I am?';
+    case 9:
+      return 'Which picture is NOT sun?';
+  }
+  return '';
+}
+
 String writingWordFor(Lesson lesson, int lessonIndex) {
   final w = lesson.word.toUpperCase();
   if (w == 'IS' || w == 'ARE' || w == 'AM' || w == 'THE' || w == 'A') {
@@ -238,7 +273,7 @@ class _LessonFlowScreenState extends State<LessonFlowScreen> {
       case 3:
         return 'درس الكتابة';
       case 4:
-        return 'التلوين';
+        return _isSpecialLesson(_lessonIndex) ? 'الاختيار الذكي' : 'التلوين';
       default:
         return 'مراجعة الدرس';
     }
@@ -348,12 +383,14 @@ class _LessonFlowScreenState extends State<LessonFlowScreen> {
           lesson: lesson,
           distractors: _distractors,
           onComplete: _onSimpleComplete,
+          showTranslation: !_isSpecialLesson(_lessonIndex),
         );
       case 1:
         return SpeakingStep(
           lesson: lesson,
           onComplete: (correct, score) =>
               _completeStep(correct: correct, speakingScore: score),
+          showTranslation: !_isSpecialLesson(_lessonIndex),
         );
       case 2:
         if (_isSpecialLesson(_lessonIndex)) {
@@ -376,6 +413,16 @@ class _LessonFlowScreenState extends State<LessonFlowScreen> {
           onComplete: _onSimpleComplete,
         );
       case 4:
+        if (_isSpecialLesson(_lessonIndex)) {
+          final opts = _specialSmartChooseOptions(_lessonIndex);
+          return SmartChooseStep(
+            lesson: opts.first,
+            lessonIndex: _lessonIndex,
+            distractors: opts.sublist(1),
+            question: _specialSmartChooseQuestion(_lessonIndex),
+            onComplete: _onSimpleComplete,
+          );
+        }
         return ColoringStep(
           lesson: lesson,
           lessonIndex: _lessonIndex,

@@ -307,12 +307,14 @@ class ListeningStep extends StatefulWidget {
   final Lesson lesson;
   final List<Lesson> distractors;
   final ValueChanged<bool> onComplete;
+  final bool showTranslation;
 
   const ListeningStep({
     super.key,
     required this.lesson,
     required this.distractors,
     required this.onComplete,
+    this.showTranslation = true,
   });
 
   @override
@@ -471,23 +473,25 @@ class _ListeningStepState extends State<ListeningStep> {
               fontWeight: FontWeight.w500,
             ),
           ),
-          const SizedBox(height: 8),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-            decoration: BoxDecoration(
-              color: Colors.green.shade50,
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Text(
-              widget.lesson.translation,
-              textDirection: TextDirection.rtl,
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Colors.green.shade800,
+          if (widget.showTranslation) ...[
+            const SizedBox(height: 8),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              decoration: BoxDecoration(
+                color: Colors.green.shade50,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(
+                widget.lesson.translation,
+                textDirection: TextDirection.rtl,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.green.shade800,
+                ),
               ),
             ),
-          ),
+          ],
           const SizedBox(height: 14),
           ImageChoiceGrid(
             choices: _choices,

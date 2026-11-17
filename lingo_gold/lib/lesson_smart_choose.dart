@@ -6,10 +6,6 @@ import 'data.dart';
 import 'theme.dart';
 import 'widgets.dart';
 
-/// Window 4: pick a same-category picture that is NOT the lesson word.
-///
-/// Example (lesson 39 Grapes): grapes, apple, banana, orange.
-/// Question: "Which fruit is NOT Grapes?"  Any non-grape is a correct choice.
 class SmartChooseStep extends StatefulWidget {
   final Lesson lesson;
   final int lessonIndex;
@@ -43,8 +39,6 @@ class _SmartChooseStepState extends State<SmartChooseStep> {
     _options.shuffle(Random(widget.lesson.word.hashCode + 7));
   }
 
-  /// Grammar lessons (am/is/are) reuse the same word on different pictures,
-  /// so the target is identified by its image there.
   bool _isTarget(Lesson l) {
     if (widget.lessonIndex ~/ 10 == 0) {
       return l.imageFile == widget.lesson.imageFile;
@@ -240,7 +234,6 @@ class _SmartChooseStepState extends State<SmartChooseStep> {
   }
 }
 
-/// Fruit words used to keep fruit lessons away from bread, milk, etc.
 bool isFruitWord(String word) {
   const fruits = {
     'apple',
