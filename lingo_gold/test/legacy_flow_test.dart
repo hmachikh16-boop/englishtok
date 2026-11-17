@@ -4,11 +4,10 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:lingo_gold/data.dart';
 import 'package:lingo_gold/lesson_coloring.dart';
 import 'package:lingo_gold/lesson_flow.dart';
-import 'package:lingo_gold/lesson_smart_choose.dart';
 import 'package:lingo_gold/widgets.dart';
 
 void main() {
-  group('legacy 6-window flow rules', () {
+  group('6-window flow rules (5 questions + results)', () {
     test('lesson 39 is Grapes with its own image and sentence', () {
       final grapes = lessons[38];
       expect(grapes.word, 'Grapes');
@@ -58,17 +57,12 @@ void main() {
           ['Goodbye', 'Raise hand', 'Dinner']);
     });
 
-    test('grammar lessons have 3 matching distractors and a non-IS writing word', () {
-      for (var i = 0; i < 10; i++) {
-        if (i == 0 || i == 1 || i == 2 || i == 9) continue; // special lessons
+    test('all 100 lessons have 3 matching distractors and a non-IS writing word', () {
+      for (var i = 0; i < 100; i++) {
         final d = pickDistractors(i, 3);
         expect(d.length, 3, reason: 'lesson ${i + 1} distractor count');
-        for (final l in d) {
-          expect(['am', 'are', 'is'], contains(l.word.toLowerCase()),
-              reason: 'lesson ${i + 1} distractor word');
-        }
         final w = writingWordFor(lessons[i], i).toUpperCase();
-        expect(['IS', 'ARE', 'AM', 'THE', 'A'], isNot(contains(w)),
+        expect(['IS', 'THE', 'A'], isNot(contains(w)),
             reason: 'lesson ${i + 1} writing word $w');
       }
     });
@@ -77,7 +71,6 @@ void main() {
       for (final i in [0, 1, 2, 9]) {
         final d = pickDistractors(i, 3);
         expect(d.length, 3, reason: 'lesson ${i + 1} distractor count');
-        // No dog/flowers/cat in person lessons; no dog/cat in sun lesson.
         for (final l in d) {
           expect(l.imageFile, isNot('q2'), reason: 'lesson ${i + 1} has dog image');
           expect(l.imageFile, isNot('q3'), reason: 'lesson ${i + 1} has flowers image');
@@ -88,6 +81,10 @@ void main() {
 
     test('lesson 10 writing word is SUN (not IS)', () {
       expect(writingWordFor(lessons[9], 9), 'SUN');
+    });
+
+    test('lesson 1 writing word is I am (not IS)', () {
+      expect(writingWordFor(lessons[0], 0), 'I am');
     });
 
     test('lesson 39 has five coloring pages with the requested prompts', () {
@@ -112,6 +109,22 @@ void main() {
       expect(coloringPromptAr(grapes, 4), 'لوّن كما تحب!');
     });
 
+    test('lessons 1 and 10 have special coloring prompts', () {
+      final l1 = lessons[0];
+      expect(coloringPromptEn(l1, 0, 0), 'Color I am');
+      expect(coloringPromptEn(l1, 0, 1), 'Color He is');
+      expect(coloringPromptEn(l1, 0, 2), 'Color They are');
+      expect(coloringPromptEn(l1, 0, 3), 'Tom says: I am a boy. Color what Tom said');
+      expect(coloringPromptEn(l1, 0, 4), 'Color as you like!');
+
+      final l10 = lessons[9];
+      expect(coloringPromptEn(l10, 9, 0), 'Color the sun');
+      expect(coloringPromptEn(l10, 9, 1), 'Color the bright sun');
+      expect(coloringPromptEn(l10, 9, 2), 'Color the moon');
+      expect(coloringPromptEn(l10, 9, 3), 'Tom says: The sun is bright. Color what Tom said');
+      expect(coloringPromptEn(l10, 9, 4), 'Color as you like!');
+    });
+
     test('every one of the first 100 lessons has 5 coloring pages', () {
       for (var i = 0; i < 100; i++) {
         final pages = coloringPagesFor(lessons[i], i);
@@ -123,26 +136,23 @@ void main() {
       }
     });
 
-    testWidgets('smart choose renders the lesson 39 question', (tester) async {
+    testWidgets('flow starts with the listening window', (tester) async {
       tester.view.physicalSize = const Size(390, 844);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
       addTearDown(tester.view.resetDevicePixelRatio);
 
-      final grapes = lessons[38];
-      final distractors = pickDistractors(38, 3);
-      await tester.pumpWidget(MaterialApp(
-        home: Scaffold(
-          body: SmartChooseStep(
-            lesson: grapes,
-            lessonIndex: 38,
-            distractors: distractors,
-            onComplete: (_) {},
-          ),
-        ),
+      await tester.pumpWidget(const MaterialApp(
+        home: LessonFlowScreen(startLessonId: 39, totalLessons: 100),
       ));
       await tester.pump();
-      expect(find.text('Which fruit is NOT Grapes?'), findsOneWidget);
+      await tester.pump(const Duration(milliseconds: 200));
+
+      expect(find.text('درس الاستماع'), findsOneWidget);
+      expect(find.text('السؤال 1 من 5'), findsOneWidget);
+      expect(find.text('الدرس 39 • الطعام'), findsOneWidget);
+      expect(find.text('استمع بعناية'), findsOneWidget);
+      expect(find.text('أي صورة تطابق ما سمعته؟'), findsOneWidget);
     });
 
     testWidgets('coloring renders the grapes prompt', (tester) async {

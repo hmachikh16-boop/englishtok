@@ -65,17 +65,17 @@ const List<LessonGroup> groups = [
 
 // ================= 90 LESSONS =================
 const List<Lesson> lessons = [
-  // ===== 1. الدروس 10 القديمة - Verb To Be - تبقى كما هي =====
-  Lesson(word: 'am', sentence: 'I ___ a boy.', options: ['am', 'is', 'are'], imageFile: 'q0', indexInPack: 0, isPack: false, translation: 'أنا صبي.', category: 'Verb To Be'),
-  Lesson(word: 'are', sentence: 'We ___ students.', options: ['am', 'is', 'are'], imageFile: 'q1', indexInPack: 0, isPack: false, translation: 'نحن طلاب.', category: 'Verb To Be'),
-  Lesson(word: 'is', sentence: 'The dog ___ black.', options: ['am', 'is', 'are'], imageFile: 'q2', indexInPack: 0, isPack: false, translation: 'الكلب أسود.', category: 'Verb To Be'),
-  Lesson(word: 'are', sentence: 'The flowers ___ small.', options: ['am', 'is', 'are'], imageFile: 'q3', indexInPack: 0, isPack: false, translation: 'الزهور صغيرة.', category: 'Verb To Be'),
-  Lesson(word: 'is', sentence: 'The apple ___ red.', options: ['am', 'is', 'are'], imageFile: 'q4', indexInPack: 0, isPack: false, translation: 'التفاحة حمراء.', category: 'Verb To Be'),
-  Lesson(word: 'is', sentence: 'The car ___ blue.', options: ['am', 'is', 'are'], imageFile: 'q5', indexInPack: 0, isPack: false, translation: 'السيارة زرقاء.', category: 'Verb To Be'),
-  Lesson(word: 'is', sentence: 'The cat ___ fast.', options: ['am', 'is', 'are'], imageFile: 'q6', indexInPack: 0, isPack: false, translation: 'القطة سريعة.', category: 'Verb To Be'),
-  Lesson(word: 'is', sentence: 'The house ___ big.', options: ['am', 'is', 'are'], imageFile: 'q7', indexInPack: 0, isPack: false, translation: 'البيت كبير.', category: 'Verb To Be'),
-  Lesson(word: 'is', sentence: 'The man ___ eating.', options: ['am', 'is', 'are'], imageFile: 'q8', indexInPack: 0, isPack: false, translation: 'الرجل يأكل.', category: 'Verb To Be'),
-  Lesson(word: 'is', sentence: 'The sun ___ bright.', options: ['am', 'is', 'are'], imageFile: 'q9', indexInPack: 0, isPack: false, translation: 'الشمس مشرقة.', category: 'Verb To Be'),
+  // ===== 1. الدروس 10 - rebuilt: 5 windows + results =====
+  Lesson(word: 'I am', sentence: 'I am a boy.', options: ['I am', 'He is', 'They are'], imageFile: 'q0', indexInPack: 0, isPack: false, translation: 'أنا صبي.', category: 'Verb To Be'),
+  Lesson(word: 'She is', sentence: 'She is a girl.', options: ['She is', 'We are', 'You are'], imageFile: 'n02', indexInPack: 0, isPack: true, translation: 'هي فتاة.', category: 'Verb To Be'),
+  Lesson(word: 'It is', sentence: 'It is a cat.', options: ['It is', 'This is', 'That is'], imageFile: 'q6', indexInPack: 0, isPack: false, translation: 'إنها قطة.', category: 'Verb To Be'),
+  Lesson(word: 'My book', sentence: 'This is my book.', options: ['My book', 'Your book', 'His book'], imageFile: 'n63', indexInPack: 0, isPack: true, translation: 'هذا كتابي.', category: 'Verb To Be'),
+  Lesson(word: 'Big', sentence: 'The elephant is big.', options: ['Big', 'Small', 'Tall'], imageFile: 'n45', indexInPack: 0, isPack: true, translation: 'الفيل كبير.', category: 'Adjectives'),
+  Lesson(word: 'Red', sentence: 'The apple is red.', options: ['Red', 'Blue', 'Yellow'], imageFile: 'n21', indexInPack: 0, isPack: true, translation: 'التفاحة حمراء.', category: 'Colors'),
+  Lesson(word: 'fast', sentence: 'The cat is fast.', options: ['fast', 'sleeping', 'eating'], imageFile: 'q6', indexInPack: 0, isPack: false, translation: 'القطة سريعة.', category: 'Actions'),
+  Lesson(word: 'happy', sentence: 'The dog is happy.', options: ['happy', 'sad', 'running'], imageFile: 'n41', indexInPack: 0, isPack: true, translation: 'الكلب سعيد.', category: 'Feelings'),
+  Lesson(word: 'Apples', sentence: 'I like apples.', options: ['Apples', 'Milk', 'Bread'], imageFile: 'n39', indexInPack: 0, isPack: true, translation: 'أحب التفاح.', category: 'Food'),
+  Lesson(word: 'SUN', sentence: 'The sun is bright.', options: ['SUN', 'MOON', 'STARS'], imageFile: 'q9', indexInPack: 0, isPack: false, translation: 'الشمس مشرقة.', category: 'Nature'),
 
   // ===== 2. الدروس الجديدة - 70 درساً بصور عالية الجودة =====
   // GROUP 1 - Family - 11 to 20

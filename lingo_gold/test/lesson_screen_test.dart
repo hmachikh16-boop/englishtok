@@ -17,7 +17,7 @@ void main() {
     await tester.pump(const Duration(milliseconds: 200));
 
     expect(find.text('درس الاستماع'), findsOneWidget);
-    expect(find.text('السؤال 1 من 6'), findsOneWidget);
+    expect(find.text('السؤال 1 من 5'), findsOneWidget);
     expect(find.text('الدرس 39 • الطعام'), findsOneWidget);
     expect(find.text('استمع بعناية'), findsOneWidget);
     expect(find.text('أي صورة تطابق ما سمعته؟'), findsOneWidget);

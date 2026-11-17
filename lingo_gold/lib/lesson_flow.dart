@@ -5,9 +5,7 @@ import 'package:flutter/material.dart';
 import 'data.dart';
 import 'lesson_choice.dart';
 import 'lesson_coloring.dart';
-import 'lesson_fill_arrange.dart';
 import 'lesson_matching.dart';
-import 'lesson_smart_choose.dart';
 import 'lesson_speaking.dart';
 import 'lesson_writing.dart';
 import 'theme.dart';
@@ -109,16 +107,16 @@ List<Lesson> _categoryPool(int lessonIndex) {
 /// The writing target is always a real word (never IS/THE/A). For grammar
 /// lessons (1-10) it is the noun of the image; otherwise it is the lesson word.
 String writingWordFor(Lesson lesson, int lessonIndex) {
-  if (lessonIndex >= 0 && lessonIndex < 10) {
+  final w = lesson.word.toUpperCase();
+  if (w == 'IS' || w == 'ARE' || w == 'AM' || w == 'THE' || w == 'A') {
+    // Fallback for any lesson that still has a banned word.
     const grammarWords = [
       'BOY', 'STUDENTS', 'DOG', 'FLOWERS', 'APPLE',
       'CAR', 'CAT', 'HOUSE', 'MAN', 'SUN',
     ];
-    return grammarWords[lessonIndex];
-  }
-  final w = lesson.word.toUpperCase();
-  if (w == 'IS' || w == 'ARE' || w == 'AM' || w == 'THE' || w == 'A') {
-    return lesson.word;
+    if (lessonIndex >= 0 && lessonIndex < grammarWords.length) {
+      return grammarWords[lessonIndex];
+    }
   }
   return lesson.word;
 }
@@ -213,6 +211,24 @@ String _specialSmartChooseQuestion(int lessonIndex) {
   return '';
 }
 
+/// Fruit words used to keep fruit lessons away from bread, milk, etc.
+bool isFruitWord(String word) {
+  const fruits = {
+    'apple',
+    'apples',
+    'banana',
+    'bananas',
+    'orange',
+    'oranges',
+    'strawberry',
+    'strawberries',
+    'grapes',
+    'lemon',
+    'lemons',
+  };
+  return fruits.contains(word.toLowerCase());
+}
+
 class LessonFlowScreen extends StatefulWidget {
   final int startLessonId;
   final int totalLessons;
@@ -257,12 +273,10 @@ class _LessonFlowScreenState extends State<LessonFlowScreen> {
       case 1:
         return 'درس التحدث';
       case 2:
-        return 'درس الكتابة';
-      case 3:
-        return 'الاختيار الذكي';
-      case 4:
         return 'درس المطابقة';
-      case 5:
+      case 3:
+        return 'درس الكتابة';
+      case 4:
         return 'التلوين';
       default:
         return 'مراجعة الدرس';
@@ -287,7 +301,7 @@ class _LessonFlowScreenState extends State<LessonFlowScreen> {
     } else {
       setState(() {
         _coloringPage = 0;
-        _step = 6;
+        _step = 5;
       });
     }
   }
@@ -381,29 +395,6 @@ class _LessonFlowScreenState extends State<LessonFlowScreen> {
               _completeStep(correct: correct, speakingScore: score),
         );
       case 2:
-        return WritingStep(
-      lesson: lesson,
-      targetWord: writingWordFor(lesson, _lessonIndex),
-      onComplete: _onSimpleComplete,
-    );
-      case 3:
-        if (_isSpecialLesson(_lessonIndex)) {
-          final opts = _specialSmartChooseOptions(_lessonIndex);
-          return SmartChooseStep(
-            lesson: opts.first,
-            lessonIndex: _lessonIndex,
-            distractors: opts.sublist(1),
-            question: _specialSmartChooseQuestion(_lessonIndex),
-            onComplete: _onSimpleComplete,
-          );
-        }
-        return SmartChooseStep(
-          lesson: lesson,
-          lessonIndex: _lessonIndex,
-          distractors: _distractors,
-          onComplete: _onSimpleComplete,
-        );
-      case 4:
         if (_isSpecialLesson(_lessonIndex)) {
           final pairs = _specialMatchingPairs(_lessonIndex);
           return MatchingStep(
@@ -417,7 +408,13 @@ class _LessonFlowScreenState extends State<LessonFlowScreen> {
           distractors: _distractors.take(2).toList(),
           onComplete: _onSimpleComplete,
         );
-      case 5:
+      case 3:
+        return WritingStep(
+          lesson: lesson,
+          targetWord: writingWordFor(lesson, _lessonIndex),
+          onComplete: _onSimpleComplete,
+        );
+      case 4:
         return ColoringStep(
           lesson: lesson,
           lessonIndex: _lessonIndex,
@@ -455,8 +452,8 @@ class _LessonTopBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final progress = step >= 6 ? 1.0 : (step + 1) / 6.0;
-    final stepLabel = step >= 6 ? 6 : step + 1;
+    final progress = step >= 5 ? 1.0 : (step + 1) / 5.0;
+    final stepLabel = step >= 5 ? 5 : step + 1;
     return Container(
       padding: const EdgeInsets.fromLTRB(6, 6, 12, 10),
       decoration: const BoxDecoration(
@@ -504,7 +501,7 @@ class _LessonTopBar extends StatelessWidget {
               ),
               const SizedBox(width: 6),
               Pill(
-                text: step >= 6 ? 'المراجعة' : 'السؤال $stepLabel من 6',
+                text: step >= 5 ? 'المراجعة' : 'السؤال $stepLabel من 5',
                 background: kSoftGreen,
                 foreground: kPrimaryDark,
               ),

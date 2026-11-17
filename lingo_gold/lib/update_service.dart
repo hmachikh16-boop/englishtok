@@ -17,7 +17,7 @@ class UpdateService {
   static String get apkUrl =>
       '$_releaseBase/app-release.apk?t=${DateTime.now().millisecondsSinceEpoch}';
 
-  static const int currentVersionCode = 28;
+  static const int currentVersionCode = 29;
 
   /// Last error message from check/download/install, for user feedback.
   static String? lastError;

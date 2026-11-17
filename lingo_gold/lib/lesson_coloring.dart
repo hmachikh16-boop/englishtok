@@ -134,6 +134,33 @@ List<int> coloringPagesFor(Lesson lesson, int lessonIndex) {
 }
 
 String coloringPromptEn(Lesson lesson, int lessonIndex, int page) {
+  // Special prompts for lessons 1-10.
+  if (lessonIndex >= 0 && lessonIndex < 10) {
+    const specialPrompts = [
+      // Lesson 1: I am / He is / They are
+      ['Color I am', 'Color He is', 'Color They are', 'Tom says: I am a boy. Color what Tom said', 'Color as you like!'],
+      // Lesson 2: She is / We are / You are
+      ['Color She is', 'Color We are', 'Color You are', 'Tom says: She is a girl. Color what Tom said', 'Color as you like!'],
+      // Lesson 3: It is / This is / That is
+      ['Color It is', 'Color This is', 'Color That is', 'Tom says: It is a cat. Color what Tom said', 'Color as you like!'],
+      // Lesson 4: My book / Your book / His book
+      ['Color My book', 'Color Your book', 'Color His book', 'Tom says: This is my book. Color what Tom said', 'Color as you like!'],
+      // Lesson 5: Big / Small / Tall
+      ['Color Big', 'Color Small', 'Color Tall', 'Tom says: The elephant is big. Color what Tom said', 'Color as you like!'],
+      // Lesson 6: Red / Blue / Yellow
+      ['Color Red', 'Color Blue', 'Color Yellow', 'Tom says: The apple is red. Color what Tom said', 'Color as you like!'],
+      // Lesson 7: fast / sleeping / eating
+      ['Color fast', 'Color sleeping', 'Color eating', 'Tom says: The cat is fast. Color what Tom said', 'Color as you like!'],
+      // Lesson 8: happy / sad / running
+      ['Color happy', 'Color sad', 'Color running', 'Tom says: The dog is happy. Color what Tom said', 'Color as you like!'],
+      // Lesson 9: Apples / Milk / Bread
+      ['Color Apples', 'Color Milk', 'Color Bread', 'Tom says: I like apples. Color what Tom said', 'Color as you like!'],
+      // Lesson 10: SUN / MOON / STARS
+      ['Color the sun', 'Color the bright sun', 'Color the moon', 'Tom says: The sun is bright. Color what Tom said', 'Color as you like!'],
+    ];
+    return specialPrompts[lessonIndex][page.clamp(0, 4)];
+  }
+
   final isGrammar = lessonIndex < 10;
   final target = isGrammar ? 'picture' : lesson.word;
   final plural = !isGrammar &&
