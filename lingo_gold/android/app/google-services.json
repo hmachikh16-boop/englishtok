@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "260123462264",
+    "project_id": "lingo-gold",
+    "storage_bucket": "lingo-gold.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:260123462264:android:d279924d0379549163bb8d",
+        "android_client_info": {
+          "package_name": "com.example.lingo_gold"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC5f3g5Bc3Mi5VVDD77DujOQVIH55kFu1w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
