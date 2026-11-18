@@ -1,1 +1,1 @@
-{"version":"1.0.0","versionCode":40,"notes":"v40: Lessons 1-10 image/answer fixes (lesson 5 boy drinking, distinct smart-choose images, real sleeping/elephant/grapes images) + smart choose enabled for lessons 4-9."}
+{"version":"1.0.0","versionCode":41,"notes":"v41: Lessons 1-10 coloring rebuilt with the project's professional line-art pages (assets/coloring) and bitmap flood-fill tap-to-fill; guided English instructions with target rings; undo/clear/mute/skip; 6 colors. Intro unchanged."}

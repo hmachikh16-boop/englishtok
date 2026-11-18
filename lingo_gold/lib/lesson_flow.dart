@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'data.dart';
 import 'lesson_choice.dart';
 import 'lesson_coloring.dart';
+import 'lesson_coloring_step.dart';
+import 'lesson_intro.dart';
 import 'lesson_matching.dart';
 import 'lesson_smart_choose.dart';
 import 'lesson_speaking.dart';
@@ -29,14 +31,17 @@ List<Lesson> pickDistractors(int lessonIndex, int count) {
         candidate.word.toLowerCase() == lesson.word.toLowerCase()) {
       return false;
     }
-    if (groupIndex != 0 && candidate.word.toLowerCase() == lesson.word.toLowerCase()) {
+    if (groupIndex != 0 &&
+        candidate.word.toLowerCase() == lesson.word.toLowerCase()) {
       return false;
     }
     if (groupIndex == 0 &&
         candidate.word.toLowerCase() == lesson.word.toLowerCase()) {
       return false;
     }
-    if (result.any((l) => l.imageFile == candidate.imageFile && l.word.toLowerCase() == candidate.word.toLowerCase())) {
+    if (result.any((l) =>
+        l.imageFile == candidate.imageFile &&
+        l.word.toLowerCase() == candidate.word.toLowerCase())) {
       return false;
     }
     return true;
@@ -94,10 +99,10 @@ List<Lesson> _categoryPool(int lessonIndex) {
   return [for (var i = start; i < end; i++) lessons[i]];
 }
 
-bool _isSpecialLesson(int lessonIndex) =>
-    lessonIndex >= 0 && lessonIndex < 10;
+bool _isSpecialLesson(int lessonIndex) => lessonIndex >= 0 && lessonIndex < 10;
 
-Lesson _syntheticLesson(String imageFile, bool isPack, int indexInPack, String word) {
+Lesson _syntheticLesson(
+    String imageFile, bool isPack, int indexInPack, String word) {
   return Lesson(
     word: word,
     sentence: '',
@@ -151,7 +156,7 @@ List<Lesson> _specialDistractors(int lessonIndex, int count) {
     case 6: // Lesson 7: fruit images
       return [
         _syntheticLesson('n22', true, 0, 'Banana'),
-        _syntheticLesson('n37', true, 0, 'Orange'),
+        _syntheticLesson('n37', true, 0, 'Oranges'),
         _syntheticLesson('n29', true, 0, 'Grapes'),
       ].take(count).toList();
     case 7: // Lesson 8: person images
@@ -283,7 +288,7 @@ List<Lesson> _specialSmartChooseOptions(int lessonIndex) {
       return [
         _syntheticLesson('q2', false, 0, 'A big dog'),
         _syntheticLesson('n47', true, 0, 'A small rabbit'),
-        _syntheticLesson('n41', true, 0, 'A dog'),
+        _syntheticLesson('n41', true, 0, 'A small dog'),
         _syntheticLesson('q6', false, 0, 'A cat'),
       ];
     case 6: // Lesson 7: A red apple
@@ -344,19 +349,69 @@ String _specialSmartChooseQuestion(int lessonIndex) {
   return '';
 }
 
+/// Builds the listening-first introduction for lessons 1–10.
+/// It contains the target image first, then every other image the learner
+/// will meet in the lesson, without duplicates.
+List<Lesson> introItemsFor(int lessonIndex) {
+  if (!_isSpecialLesson(lessonIndex)) {
+    final target = lessons[lessonIndex];
+    final items = <Lesson>[target];
+    for (final distractor in pickDistractors(lessonIndex, 3)) {
+      if (items.any((e) => e.imageFile == distractor.imageFile)) continue;
+      items.add(distractor);
+    }
+    return items;
+  }
+
+  final result = <Lesson>[];
+  void add(Lesson lesson) {
+    if (result.any((e) => e.imageFile == lesson.imageFile)) return;
+    result.add(lesson);
+  }
+
+  // The target comes first, with its full sentence.
+  add(lessons[lessonIndex]);
+  for (final item in _specialSmartChooseOptions(lessonIndex)) {
+    add(item);
+  }
+  for (final item in _specialMatchingPairs(lessonIndex)) {
+    add(item);
+  }
+  for (final item in _specialDistractors(lessonIndex, 3)) {
+    add(item);
+  }
+  return result;
+}
+
 String writingWordFor(Lesson lesson, int lessonIndex) {
   if (lessonIndex >= 0 && lessonIndex < 10) {
     const specialWords = [
-      'BOY', 'GIRL', 'CAT', 'EATING', 'DRINKING',
-      'BIG', 'RED', 'BOY AND GIRL', 'EATING', 'SUN',
+      'BOY',
+      'GIRL',
+      'CAT',
+      'EATING',
+      'DRINKING',
+      'BIG',
+      'RED',
+      'BOY AND GIRL',
+      'EATING',
+      'SUN',
     ];
     return specialWords[lessonIndex];
   }
   final w = lesson.word.toUpperCase();
   if (w == 'IS' || w == 'ARE' || w == 'AM' || w == 'THE' || w == 'A') {
     const grammarWords = [
-      'BOY', 'STUDENTS', 'DOG', 'FLOWERS', 'APPLE',
-      'CAR', 'CAT', 'HOUSE', 'MAN', 'SUN',
+      'BOY',
+      'STUDENTS',
+      'DOG',
+      'FLOWERS',
+      'APPLE',
+      'CAR',
+      'CAT',
+      'HOUSE',
+      'MAN',
+      'SUN',
     ];
     if (lessonIndex >= 0 && lessonIndex < grammarWords.length) {
       return grammarWords[lessonIndex];
@@ -406,6 +461,7 @@ class _LessonFlowScreenState extends State<LessonFlowScreen> {
   int _score = 0;
   int _speakingScore = 0;
   int _coloringPage = 0;
+  bool _showIntro = true;
   bool _rewardVisible = false;
   bool _congratsVisible = false;
 
@@ -417,6 +473,7 @@ class _LessonFlowScreenState extends State<LessonFlowScreen> {
   void initState() {
     super.initState();
     _lessonId = widget.startLessonId.clamp(1, widget.totalLessons);
+    _showIntro = _lessonIndex < 10;
   }
 
   String get _title {
@@ -431,6 +488,8 @@ class _LessonFlowScreenState extends State<LessonFlowScreen> {
         return 'درس الكتابة';
       case 4:
         return _isSpecialLesson(_lessonIndex) ? 'الاختيار الذكي' : 'التلوين';
+      case 5:
+        return _isSpecialLesson(_lessonIndex) ? 'درس التلوين' : 'مراجعة الدرس';
       default:
         return 'مراجعة الدرس';
     }
@@ -465,6 +524,7 @@ class _LessonFlowScreenState extends State<LessonFlowScreen> {
       _score = 0;
       _speakingScore = 0;
       _coloringPage = 0;
+      _showIntro = _lessonIndex < 10;
     });
   }
 
@@ -490,6 +550,7 @@ class _LessonFlowScreenState extends State<LessonFlowScreen> {
       _score = 0;
       _speakingScore = 0;
       _coloringPage = 0;
+      _showIntro = _lessonIndex < 10;
     });
   }
 
@@ -502,6 +563,7 @@ class _LessonFlowScreenState extends State<LessonFlowScreen> {
   Widget build(BuildContext context) {
     final lesson = _lesson;
     final group = groups[(_lessonIndex ~/ 10).clamp(0, groups.length - 1)];
+    final showIntro = _showIntro && _lessonIndex < 10;
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -510,8 +572,12 @@ class _LessonFlowScreenState extends State<LessonFlowScreen> {
             Column(
               children: [
                 _LessonTopBar(
-                  title: _title,
+                  title: showIntro ? 'مقدمة الدرس' : _title,
                   step: _step,
+                  intro: showIntro,
+                  coloring: !showIntro &&
+                      _isSpecialLesson(_lessonIndex) &&
+                      _step == 5,
                   lessonNumber: _lessonId,
                   groupName: group.name,
                   onBack: () => Navigator.of(context).pop(),
@@ -519,8 +585,15 @@ class _LessonFlowScreenState extends State<LessonFlowScreen> {
                 ),
                 Expanded(
                   child: KeyedSubtree(
-                    key: ValueKey('$_lessonId-$_step-$_coloringPage'),
-                    child: _buildStep(lesson),
+                    key:
+                        ValueKey('$_lessonId-$showIntro-$_step-$_coloringPage'),
+                    child: showIntro
+                        ? LessonIntroStep(
+                            items: introItemsFor(_lessonIndex),
+                            onComplete: () =>
+                                setState(() => _showIntro = false),
+                          )
+                        : _buildStep(lesson),
                   ),
                 ),
               ],
@@ -586,21 +659,35 @@ class _LessonFlowScreenState extends State<LessonFlowScreen> {
           page: _coloringPage,
           onPageDone: _onColoringPageDone,
         );
+      case 5:
+        if (_isSpecialLesson(_lessonIndex)) {
+          return LessonColoringStep(
+            lessonIndex: _lessonIndex,
+            onComplete: () => setState(() => _step = 6),
+          );
+        }
+        return _resultStep(lesson);
       default:
-        return _ResultStep(
-          lesson: lesson,
-          score: _score,
-          speakingScore: _speakingScore,
-          onRepeat: _reset,
-          onContinue: _nextLesson,
-        );
+        return _resultStep(lesson);
     }
+  }
+
+  Widget _resultStep(Lesson lesson) {
+    return _ResultStep(
+      lesson: lesson,
+      score: _score,
+      speakingScore: _speakingScore,
+      onRepeat: _reset,
+      onContinue: _nextLesson,
+    );
   }
 }
 
 class _LessonTopBar extends StatelessWidget {
   final String title;
   final int step;
+  final bool intro;
+  final bool coloring;
   final int lessonNumber;
   final String groupName;
   final VoidCallback onBack;
@@ -609,6 +696,8 @@ class _LessonTopBar extends StatelessWidget {
   const _LessonTopBar({
     required this.title,
     required this.step,
+    this.intro = false,
+    this.coloring = false,
     required this.lessonNumber,
     required this.groupName,
     required this.onBack,
@@ -617,8 +706,13 @@ class _LessonTopBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final progress = step >= 5 ? 1.0 : (step + 1) / 5.0;
-    final stepLabel = step >= 5 ? 5 : step + 1;
+    final progress =
+        intro ? 0.0 : (coloring ? 1.0 : (step >= 5 ? 1.0 : (step + 1) / 5.0));
+    final stepLabel = intro
+        ? 'مقدمة'
+        : (coloring
+            ? 'التلوين'
+            : (step >= 5 ? 'المراجعة' : 'السؤال ${step + 1} من 5'));
     return Container(
       padding: const EdgeInsets.fromLTRB(6, 6, 12, 10),
       decoration: const BoxDecoration(
@@ -666,9 +760,9 @@ class _LessonTopBar extends StatelessWidget {
               ),
               const SizedBox(width: 6),
               Pill(
-                text: step >= 5 ? 'المراجعة' : 'السؤال $stepLabel من 5',
-                background: kSoftGreen,
-                foreground: kPrimaryDark,
+                text: stepLabel,
+                background: intro ? kSoftBlue : kSoftGreen,
+                foreground: intro ? kSecondary : kPrimaryDark,
               ),
               IconButton(
                 onPressed: onHome,
