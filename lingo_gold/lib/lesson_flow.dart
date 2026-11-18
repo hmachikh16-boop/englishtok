@@ -95,7 +95,7 @@ List<Lesson> _categoryPool(int lessonIndex) {
 }
 
 bool _isSpecialLesson(int lessonIndex) =>
-    lessonIndex == 0 || lessonIndex == 1 || lessonIndex == 2 || lessonIndex == 9;
+    lessonIndex >= 0 && lessonIndex < 10;
 
 Lesson _syntheticLesson(String imageFile, bool isPack, int indexInPack, String word) {
   return Lesson(
@@ -134,13 +134,13 @@ List<Lesson> _specialDistractors(int lessonIndex, int count) {
       return [
         _syntheticLesson('n19', true, 0, 'Drinking'),
         _syntheticLesson('n15', true, 0, 'Running'),
-        _syntheticLesson('q6', false, 0, 'Sleeping'),
+        _syntheticLesson('n20', true, 0, 'Sleeping'),
       ].take(count).toList();
     case 4: // Lesson 5: action images
       return [
         _syntheticLesson('n18', true, 0, 'Eating'),
         _syntheticLesson('n15', true, 0, 'Running'),
-        _syntheticLesson('q6', false, 0, 'Sleeping'),
+        _syntheticLesson('n20', true, 0, 'Sleeping'),
       ].take(count).toList();
     case 5: // Lesson 6: animal images
       return [
@@ -152,7 +152,7 @@ List<Lesson> _specialDistractors(int lessonIndex, int count) {
       return [
         _syntheticLesson('n22', true, 0, 'Banana'),
         _syntheticLesson('n37', true, 0, 'Orange'),
-        _syntheticLesson('n39', true, 0, 'Grapes'),
+        _syntheticLesson('n29', true, 0, 'Grapes'),
       ].take(count).toList();
     case 7: // Lesson 8: person images
       return [
@@ -164,13 +164,13 @@ List<Lesson> _specialDistractors(int lessonIndex, int count) {
       return [
         _syntheticLesson('n19', true, 0, 'Drinking'),
         _syntheticLesson('n15', true, 0, 'Running'),
-        _syntheticLesson('q6', false, 0, 'Sleeping'),
+        _syntheticLesson('n20', true, 0, 'Sleeping'),
       ].take(count).toList();
     case 9: // Lesson 10: celestial images (no sunflower)
       return [
         _syntheticLesson('n57', true, 0, 'MOON'),
         _syntheticLesson('n58', true, 0, 'STAR'),
-        _syntheticLesson('n56', true, 0, 'BRIGHT SUN'),
+        _syntheticLesson('n55', true, 0, 'TREE'),
       ].take(count).toList();
   }
   return [];
@@ -208,11 +208,11 @@ List<Lesson> _specialMatchingPairs(int lessonIndex) {
         _syntheticLesson('n18', true, 0, 'Eating'),
         _syntheticLesson('n15', true, 0, 'Running'),
       ];
-    case 5: // Lesson 6: Big, Small, Tall
+    case 5: // Lesson 6: Big dog, Small dog, Elephant
       return [
-        _syntheticLesson('q2', false, 0, 'Big'),
-        _syntheticLesson('n41', true, 0, 'Small'),
-        _syntheticLesson('n45', true, 0, 'Tall'),
+        _syntheticLesson('q2', false, 0, 'Big dog'),
+        _syntheticLesson('n41', true, 0, 'Small dog'),
+        _syntheticLesson('n45', true, 0, 'Elephant'),
       ];
     case 6: // Lesson 7: Red, Green, Yellow
       return [
@@ -268,16 +268,16 @@ List<Lesson> _specialSmartChooseOptions(int lessonIndex) {
     case 3: // Lesson 4: The boy is eating
       return [
         _syntheticLesson('n18', true, 0, 'The boy is eating'),
-        _syntheticLesson('n19', true, 0, 'The girl is drinking'),
-        _syntheticLesson('n15', true, 0, 'The man is running'),
-        _syntheticLesson('q6', false, 0, 'The cat is sleeping'),
+        _syntheticLesson('n19', true, 0, 'The boy is drinking'),
+        _syntheticLesson('n15', true, 0, 'The boy is running'),
+        _syntheticLesson('n20', true, 0, 'The boy is sleeping'),
       ];
-    case 4: // Lesson 5: The girl is drinking
+    case 4: // Lesson 5: The boy is drinking
       return [
-        _syntheticLesson('n19', true, 0, 'The girl is drinking'),
+        _syntheticLesson('n19', true, 0, 'The boy is drinking'),
         _syntheticLesson('n18', true, 0, 'The boy is eating'),
-        _syntheticLesson('n15', true, 0, 'The man is running'),
-        _syntheticLesson('q6', false, 0, 'The cat is sleeping'),
+        _syntheticLesson('n15', true, 0, 'The boy is running'),
+        _syntheticLesson('n20', true, 0, 'The boy is sleeping'),
       ];
     case 5: // Lesson 6: A big dog
       return [
@@ -289,9 +289,9 @@ List<Lesson> _specialSmartChooseOptions(int lessonIndex) {
     case 6: // Lesson 7: A red apple
       return [
         _syntheticLesson('q4', false, 0, 'A red apple'),
-        _syntheticLesson('q4', false, 0, 'A green apple'),
         _syntheticLesson('n22', true, 0, 'A yellow banana'),
-        _syntheticLesson('n37', true, 0, 'An orange'),
+        _syntheticLesson('n27', true, 0, 'An orange'),
+        _syntheticLesson('n29', true, 0, 'Grapes'),
       ];
     case 7: // Lesson 8: The boy and the girl
       return [
@@ -303,16 +303,16 @@ List<Lesson> _specialSmartChooseOptions(int lessonIndex) {
     case 8: // Lesson 9: I am eating
       return [
         _syntheticLesson('n18', true, 0, 'I am eating'),
-        _syntheticLesson('n19', true, 0, 'The girl is drinking'),
-        _syntheticLesson('n15', true, 0, 'The man is running'),
-        _syntheticLesson('q6', false, 0, 'The cat is sleeping'),
+        _syntheticLesson('n19', true, 0, 'I am drinking'),
+        _syntheticLesson('n15', true, 0, 'I am running'),
+        _syntheticLesson('n20', true, 0, 'I am sleeping'),
       ];
     case 9: // Lesson 10: The sun
       return [
         _syntheticLesson('n56', true, 0, 'The sun'),
-        _syntheticLesson('n56', true, 0, 'The bright sun'),
         _syntheticLesson('n57', true, 0, 'The moon'),
         _syntheticLesson('n58', true, 0, 'A star'),
+        _syntheticLesson('n55', true, 0, 'A tree'),
       ];
   }
   return [];
@@ -329,7 +329,7 @@ String _specialSmartChooseQuestion(int lessonIndex) {
     case 3:
       return 'Which picture is The boy is eating?';
     case 4:
-      return 'Which picture is The girl is drinking?';
+      return 'Which picture is The boy is drinking?';
     case 5:
       return 'Which picture is A big dog?';
     case 6:

@@ -70,7 +70,7 @@ const List<Lesson> lessons = [
   Lesson(word: 'A girl', sentence: 'A girl.', options: ['Girl', 'Boy', 'Dog'], imageFile: 'n02', indexInPack: 0, isPack: true, translation: '', category: 'Verb To Be'),
   Lesson(word: 'A cat', sentence: 'A cat.', options: ['Cat', 'Dog', 'Boy'], imageFile: 'n42', indexInPack: 0, isPack: true, translation: '', category: 'Verb To Be'),
   Lesson(word: 'The boy is eating', sentence: 'The boy is eating.', options: ['Eating', 'Drinking', 'Running'], imageFile: 'n18', indexInPack: 0, isPack: true, translation: '', category: 'Verb To Be'),
-  Lesson(word: 'The girl is drinking', sentence: 'The girl is drinking.', options: ['Drinking', 'Eating', 'Running'], imageFile: 'n19', indexInPack: 0, isPack: true, translation: '', category: 'Verb To Be'),
+  Lesson(word: 'The boy is drinking', sentence: 'The boy is drinking.', options: ['Drinking', 'Eating', 'Running'], imageFile: 'n19', indexInPack: 0, isPack: true, translation: '', category: 'Verb To Be'),
   Lesson(word: 'A big dog', sentence: 'A big dog.', options: ['Big', 'Small', 'Tall'], imageFile: 'q2', indexInPack: 0, isPack: false, translation: '', category: 'Adjectives'),
   Lesson(word: 'A red apple', sentence: 'A red apple.', options: ['Red', 'Green', 'Yellow'], imageFile: 'q4', indexInPack: 0, isPack: false, translation: '', category: 'Colors'),
   Lesson(word: 'The boy and the girl', sentence: 'The boy and the girl.', options: ['Boy', 'Girl', 'Boy and girl'], imageFile: 'n76', indexInPack: 0, isPack: true, translation: '', category: 'Verb To Be'),

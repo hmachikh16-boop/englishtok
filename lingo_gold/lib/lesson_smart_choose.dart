@@ -135,7 +135,7 @@ class _SmartChooseStepState extends State<SmartChooseStep> {
                       ),
                       const SizedBox(height: 4),
                       const Text(
-                        'اختر صورة لا تمثل الكلمة المطلوبة.',
+                        'اختر الصورة التي تمثل الكلمة المطلوبة.',
                         style: TextStyle(
                           fontSize: 12.5,
                           color: kMuted,
