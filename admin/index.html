@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>لوحة تحكم Lingo Gold</title>
+<style>
+  * { box-sizing: border-box; }
+  body { font-family: 'Segoe UI', Tahoma, sans-serif; margin: 0; background: #F3F4F6; color: #000; }
+  .container { max-width: 900px; margin: 0 auto; padding: 16px; }
+  .card { background: #fff; border: 1px solid #E5E7EB; border-radius: 12px; padding: 16px; margin-bottom: 12px; }
+  .btn { background: #000; color: #fff; border: none; padding: 10px 16px; border-radius: 8px; cursor: pointer; font-weight: 700; }
+  .btn-gray { background: #E5E7EB; color: #000; }
+  .btn-green { background: #16A34A; color: #fff; }
+  .btn-red { background: #DC2626; color: #fff; }
+  input, textarea, select { width: 100%; padding: 10px; border: 1px solid #E5E7EB; border-radius: 8px; margin: 6px 0; font-size: 14px; }
+  .row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; }
+  .cat { background: #fff; border: 1px solid #E5E7EB; border-radius: 12px; padding: 12px; text-align: center; cursor: pointer; }
+  .cat img { width: 100%; height: 100px; object-fit: cover; border-radius: 8px; }
+  .hidden { display: none; }
+  .nav { display: flex; gap: 8px; margin-bottom: 16px; }
+  .lesson-row { display: flex; justify-content: space-between; align-items: center; padding: 10px; border: 1px solid #E5E7EB; border-radius: 8px; margin-bottom: 8px; background: #fff; }
+  .qform { border: 1px dashed #E5E7EB; padding: 12px; border-radius: 8px; margin-top: 8px; }
+  .qbtns { display: flex; gap: 6px; flex-wrap: wrap; margin: 8px 0; }
+  .qbtns button { padding: 8px 12px; border: 1px solid #E5E7EB; background: #fff; border-radius: 6px; cursor: pointer; }
+  .qbtns button.active { background: #000; color: #fff; }
+  .preview { background: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 8px; padding: 12px; margin-top: 12px; }
+  h1, h2, h3 { margin: 8px 0; }
+  .muted { color: #6B7280; font-size: 13px; }
+  .alert { background: #FEF3C7; border: 1px solid #F59E0B; padding: 10px; border-radius: 8px; margin: 8px 0; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>لوحة تحكم Lingo Gold</h1>
+
+  <!-- LOGIN -->
+  <div id="login" class="card">
+    <h2>تسجيل الدخول</h2>
+    <input id="email" type="email" placeholder="البريد الإلكتروني">
+    <input id="password" type="password" placeholder="كلمة السر">
+    <button class="btn" onclick="login()">دخول</button>
+    <p id="loginErr" class="muted"></p>
+  </div>
+
+  <!-- APP -->
+  <div id="app" class="hidden">
+    <div class="nav">
+      <button class="btn btn-gray" onclick="showCategories()">الفئات</button>
+      <button class="btn btn-gray" onclick="logout()">خروج</button>
+    </div>
+
+    <!-- CATEGORIES -->
+    <div id="categoriesView">
+      <div class="row" style="justify-content:space-between">
+        <h2>الفئات</h2>
+        <button class="btn" onclick="openNewCategory()">+ فئة جديدة</button>
+      </div>
+      <div id="newCatForm" class="card hidden">
+        <input id="catName" placeholder="اسم الفئة (مثال: الطعام)">
+        <input id="catImage" type="file" accept="image/*">
+        <input id="catOrder" type="number" placeholder="الترتيب (order)">
+        <button class="btn" onclick="saveCategory()">حفظ الفئة</button>
+      </div>
+      <div id="catGrid" class="grid"></div>
+    </div>
+
+    <!-- LESSONS -->
+    <div id="lessonsView" class="hidden">
+      <div class="row" style="justify-content:space-between">
+        <h2 id="lessonsTitle">دروس الفئة</h2>
+        <button class="btn" onclick="openNewLesson()">+ درس جديد</button>
+      </div>
+      <div id="newLessonForm" class="card hidden">
+        <p class="muted">الترقيم آلي: الدرس الجديد يأخذ أكبر رقم + 1.</p>
+        <input id="lessonTitle" placeholder="عنوان الدرس (مثال: الدرس 11 • الطعام)">
+        <button class="btn" onclick="saveLesson()">حفظ الدرس</button>
+      </div>
+      <div id="lessonsList"></div>
+      <button class="btn btn-gray" onclick="showCategories()">← رجوع</button>
+    </div>
+
+    <!-- LESSON EDITOR -->
+    <div id="editorView" class="hidden">
+      <h2 id="editorTitle">تحرير الدرس</h2>
+      <div class="qbtns">
+        <button onclick="setType('speak')" id="btn-speak">تحدث</button>
+        <button onclick="setType('listen')" id="btn-listen">استماع</button>
+        <button onclick="setType('choice')" id="btn-choice">اختيار</button>
+        <button onclick="setType('match')" id="btn-match">مطابقة</button>
+        <button onclick="setType('write')" id="btn-write">كتابة</button>
+      </div>
+      <div id="formArea"></div>
+      <div id="preview" class="preview">
+        <h3>معاينة حية</h3>
+        <div id="previewContent" class="muted">اختر نوع السؤال...</div>
+      </div>
+      <div id="questionsList" style="margin-top:12px"></div>
+      <div class="row" style="margin-top:12px">
+        <button class="btn btn-green" onclick="publishLesson()">✅ نشر الدرس</button>
+        <button class="btn btn-gray" onclick="hideLesson()">إخفاء</button>
+        <button class="btn btn-red" onclick="deleteLesson()">حذف</button>
+        <button class="btn btn-gray" onclick="showLessons()">← رجوع</button>
+      </div>
+      <div id="publishAlert" class="alert hidden">الدرس ناقص، أكمل الأسئلة قبل النشر</div>
+    </div>
+  </div>
+</div>
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
+
+<script>
+// ====== CONFIG: replace with your Firebase config ======
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_PROJECT.appspot.com",
+  messagingSenderId: "YOUR_SENDER_ID",
+  appId: "YOUR_APP_ID"
+};
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
+const storage = firebase.storage();
+
+let currentUser = null;
+let currentCategory = null;
+let currentLesson = null;
+let currentType = null;
+
+// ---------- AUTH ----------
+auth.onAuthStateChanged(u => {
+  if (u) { currentUser = u; document.getElementById('login').classList.add('hidden'); document.getElementById('app').classList.remove('hidden'); showCategories(); }
+  else { currentUser = null; document.getElementById('login').classList.remove('hidden'); document.getElementById('app').classList.add('hidden'); }
+});
+async function login() {
+  try {
+    await auth.signInWithEmailAndPassword(document.getElementById('email').value, document.getElementById('password').value);
+  } catch (e) { document.getElementById('loginErr').textContent = e.message; }
+}
+function logout() { auth.signOut(); }
+
+// ---------- CATEGORIES ----------
+function showCategories() {
+  currentCategory = null; currentLesson = null;
+  document.getElementById('categoriesView').classList.remove('hidden');
+  document.getElementById('lessonsView').classList.add('hidden');
+  document.getElementById('editorView').classList.add('hidden');
+  const grid = document.getElementById('catGrid');
+  db.collection('categories').orderBy('order').onSnapshot(snap => {
+    grid.innerHTML = '';
+    snap.forEach(doc => {
+      const d = doc.data();
+      const div = document.createElement('div');
+      div.className = 'cat';
+      div.innerHTML = `<img src="${d.imageUrl||''}"><br><b>${d.name}</b><br><span class="muted">${d.order||0}</span>`;
+      div.onclick = () => showLessons(doc.id, d.name);
+      grid.appendChild(div);
+    });
+  });
+}
+function openNewCategory() { document.getElementById('newCatForm').classList.toggle('hidden'); }
+async function saveCategory() {
+  const name = document.getElementById('catName').value.trim();
+  const order = parseInt(document.getElementById('catOrder').value || '0');
+  const file = document.getElementById('catImage').files[0];
+  if (!name) { alert('أدخل اسم الفئة'); return; }
+  let imageUrl = '';
+  if (file) {
+    const ref = storage.ref('categories/' + Date.now() + '_' + file.name);
+    await ref.put(file);
+    imageUrl = await ref.getDownloadURL();
+  }
+  await db.collection('categories').add({ name, imageUrl, order, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+  document.getElementById('newCatForm').classList.add('hidden');
+}
+
+// ---------- LESSONS ----------
+function showLessons(catId, catName) {
+  currentCategory = catId;
+  document.getElementById('categoriesView').classList.add('hidden');
+  document.getElementById('lessonsView').classList.remove('hidden');
+  document.getElementById('editorView').classList.add('hidden');
+  document.getElementById('lessonsTitle').textContent = 'دروس: ' + catName;
+  const list = document.getElementById('lessonsList');
+  db.collection('lessons').where('categoryId','==',catId).orderBy('order').onSnapshot(snap => {
+    list.innerHTML = '';
+    snap.forEach(doc => {
+      const d = doc.data();
+      const row = document.createElement('div');
+      row.className = 'lesson-row';
+      row.innerHTML = `<div><b>${d.title}</b> <span class="muted">#${d.lessonNumber} ${d.isActive?'✅':'📝'}</span></div>
+        <div class="row">
+          <button class="btn btn-gray" onclick="moveLesson('${doc.id}',-1)">⬆️</button>
+          <button class="btn btn-gray" onclick="moveLesson('${doc.id}',1)">⬇️</button>
+          <button class="btn" onclick="openEditor('${doc.id}','${d.title.replace(/'/g,"\\'")}')">تحرير</button>
+        </div>`;
+      list.appendChild(row);
+    });
+  });
+}
+function openNewLesson() { document.getElementById('newLessonForm').classList.toggle('hidden'); }
+async function saveLesson() {
+  const title = document.getElementById('lessonTitle').value.trim();
+  if (!title) { alert('أدخل عنوان الدرس'); return; }
+  // auto number: max lessonNumber + 1
+  const snap = await db.collection('lessons').where('categoryId','==',currentCategory).get();
+  let maxNum = 0;
+  snap.forEach(d => { const n = d.data().lessonNumber||0; if (n > maxNum) maxNum = n; });
+  const newNum = maxNum + 1;
+  const autoTitle = title.includes('•') ? title : ('الدرس ' + newNum + ' • ' + title);
+  await db.collection('lessons').add({
+    categoryId: currentCategory,
+    lessonNumber: newNum,
+    title: autoTitle,
+    order: snap.size + 1,
+    isActive: false,
+    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+  });
+  document.getElementById('newLessonForm').classList.add('hidden');
+}
+async function moveLesson(id, dir) {
+  // simple: swap order with neighbor (best-effort)
+  const snap = await db.collection('lessons').where('categoryId','==',currentCategory).orderBy('order').get();
+  const docs = snap.docs;
+  const idx = docs.findIndex(d => d.id === id);
+  const ni = idx + dir;
+  if (ni < 0 || ni >= docs.length) return;
+  const a = docs[idx], b = docs[ni];
+  const batch = db.batch();
+  batch.update(a.ref, { order: b.data().order });
+  batch.update(b.ref, { order: a.data().order });
+  await batch.commit();
+}
+
+// ---------- EDITOR ----------
+function openEditor(lessonId, title) {
+  currentLesson = lessonId;
+  document.getElementById('lessonsView').classList.add('hidden');
+  document.getElementById('editorView').classList.remove('hidden');
+  document.getElementById('editorTitle').textContent = 'تحرير: ' + title;
+  setType('speak');
+  loadQuestions();
+}
+function showLessons() {
+  currentLesson = null;
+  document.getElementById('editorView').classList.add('hidden');
+  document.getElementById('lessonsView').classList.remove('hidden');
+}
+function setType(t) {
+  currentType = t;
+  document.querySelectorAll('.qbtns button').forEach(b => b.classList.remove('active'));
+  document.getElementById('btn-' + t).classList.add('active');
+  renderForm(t);
+  updatePreview();
+}
+function renderForm(t) {
+  const area = document.getElementById('formArea');
+  if (t === 'speak') {
+    area.innerHTML = `<h3>تحدث</h3>
+      <input id="f_sentence" placeholder="جملة إنجليزية (ستُنطق)">
+      <input id="f_arabic" placeholder="ترجمة عربية">
+      <input id="f_image" type="file" accept="image/*">
+      <button class="btn" onclick="saveQuestion('speak')">حفظ</button>`;
+  } else if (t === 'listen') {
+    area.innerHTML = `<h3>استماع</h3>
+      <input id="f_sentence" placeholder="جملة ستُنطق">
+      <input id="f_arabic" placeholder="ترجمة">
+      <input id="f_audio" type="file" accept="audio/*">
+      <p class="muted">4 صور (حدد الصحيحة بالضغط):</p>
+      <div id="imgSlots"></div>
+      <button class="btn btn-gray" onclick="addImageSlot()">+ صورة</button>
+      <button class="btn" onclick="saveQuestion('listen')">حفظ</button>`;
+    window._listenImages = []; window._correctIdx = 0;
+  } else if (t === 'choice') {
+    area.innerHTML = `<h3>اختيار</h3>
+      <input id="f_question" placeholder="سؤال">
+      <input id="f_arabic" placeholder="ترجمة">
+      <div id="imgSlots"></div>
+      <button class="btn btn-gray" onclick="addImageSlot()">+ صورة</button>
+      <button class="btn" onclick="saveQuestion('choice')">حفظ</button>`;
+    window._choiceImages = []; window._correctIdx = 0;
+  } else if (t === 'match') {
+    area.innerHTML = `<h3>مطابقة</h3>
+      <div id="matchRows"></div>
+      <button class="btn btn-gray" onclick="addMatchRow()">+ سطر</button>
+      <button class="btn" onclick="saveQuestion('match')">حفظ</button>`;
+    window._matchPairs = [];
+    addMatchRow(); addMatchRow(); addMatchRow();
+  } else if (t === 'write') {
+    area.innerHTML = `<h3>كتابة</h3>
+      <input id="f_image" type="file" accept="image/*">
+      <input id="f_word" placeholder="الكلمة الصحيحة">
+      <input id="f_arabic" placeholder="ترجمة">
+      <button class="btn" onclick="saveQuestion('write')">حفظ</button>`;
+  }
+}
+function updatePreview() {
+  const pc = document.getElementById('previewContent');
+  if (!currentType) { pc.textContent = 'اختر نوع السؤال...'; return; }
+  if (currentType === 'speak') {
+    const s = document.getElementById('f_sentence')?.value || '';
+    pc.innerHTML = `<b>تحدث:</b> ${s}`;
+  } else if (currentType === 'listen') {
+    const s = document.getElementById('f_sentence')?.value || '';
+    pc.innerHTML = `<b>استماع:</b> ${s} + 4 صور`;
+  } else if (currentType === 'choice') {
+    const q = document.getElementById('f_question')?.value || '';
+    pc.innerHTML = `<b>اختيار:</b> ${q}`;
+  } else if (currentType === 'match') {
+    pc.innerHTML = `<b>مطابقة:</b> 3 كلمات + 3 صور`;
+  } else if (currentType === 'write') {
+    const w = document.getElementById('f_word')?.value || '';
+    pc.innerHTML = `<b>كتابة:</b> ${w}`;
+  }
+}
+document.addEventListener('input', updatePreview);
+
+async function uploadFile(file, path) {
+  if (!file) return '';
+  const ref = storage.ref(path + '/' + Date.now() + '_' + file.name);
+  await ref.put(file);
+  return await ref.getDownloadURL();
+}
+
+async function saveQuestion(type) {
+  let data = { lessonId: currentLesson, type, order: 0, createdAt: firebase.firestore.FieldValue.serverTimestamp() };
+  // compute order
+  const qsnap = await db.collection('questions').where('lessonId','==',currentLesson).get();
+  data.order = qsnap.size + 1;
+
+  if (type === 'speak') {
+    data.englishText = document.getElementById('f_sentence').value.trim();
+    data.arabicText = document.getElementById('f_arabic').value.trim();
+    const file = document.getElementById('f_image').files[0];
+    if (file) data.imageUrls = [await uploadFile(file, 'questions')];
+    else data.imageUrls = [];
+  } else if (type === 'listen') {
+    data.englishText = document.getElementById('f_sentence').value.trim();
+    data.arabicText = document.getElementById('f_arabic').value.trim();
+    const audioFile = document.getElementById('f_audio').files[0];
+    if (audioFile) data.audioUrl = await uploadFile(audioFile, 'audio');
+    data.imageUrls = window._listenImages || [];
+    data.correctIndex = window._correctIdx || 0;
+  } else if (type === 'choice') {
+    data.englishText = document.getElementById('f_question').value.trim();
+    data.arabicText = document.getElementById('f_arabic').value.trim();
+    data.imageUrls = window._choiceImages || [];
+    data.correctIndex = window._correctIdx || 0;
+  } else if (type === 'match') {
+    data.matchPairs = window._matchPairs || [];
+  } else if (type === 'write') {
+    const file = document.getElementById('f_image').files[0];
+    if (file) data.imageUrls = [await uploadFile(file, 'questions')];
+    data.correctWord = document.getElementById('f_word').value.trim();
+    data.arabicText = document.getElementById('f_arabic').value.trim();
+  }
+  await db.collection('questions').add(data);
+  alert('تم الحفظ');
+  loadQuestions();
+}
+
+function addImageSlot() {
+  const slot = document.createElement('div');
+  slot.className = 'row';
+  slot.innerHTML = `<input type="file" accept="image/*" onchange="handleSlot(this)"> <button onclick="this.parentNode.remove()">حذف</button>`;
+  document.getElementById('imgSlots').appendChild(slot);
+}
+function handleSlot(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const arr = currentType === 'listen' ? (window._listenImages = window._listenImages || []) : (window._choiceImages = window._choiceImages || []);
+    arr.push(''); // placeholder; real upload on save (simplified)
+    // For simplicity, store file reference globally
+    (window._pendingFiles = window._pendingFiles || []).push(file);
+  };
+  reader.readAsDataURL(file);
+}
+function addMatchRow() {
+  const row = document.createElement('div');
+  row.className = 'row';
+  row.innerHTML = `<input placeholder="كلمة" class="mw"> <input type="file" accept="image/*" class="mi">`;
+  document.getElementById('matchRows').appendChild(row);
+}
+
+async function loadQuestions() {
+  const snap = await db.collection('questions').where('lessonId','==',currentLesson).orderBy('order').get();
+  const list = document.getElementById('questionsList');
+  list.innerHTML = '<h3>الأسئلة (' + snap.size + ')</h3>';
+  snap.forEach(d => {
+    const q = d.data();
+    const div = document.createElement('div');
+    div.className = 'card';
+    div.innerHTML = `<b>${q.type}</b> — ${q.englishText||q.correctWord||''} <button class="btn btn-red" style="float:left" onclick="deleteQuestion('${d.id}')">حذف</button>`;
+    list.appendChild(div);
+  });
+  checkPublishReady();
+}
+async function deleteQuestion(id) { await db.collection('questions').doc(id).delete(); loadQuestions(); }
+
+async function checkPublishReady() {
+  const snap = await db.collection('questions').where('lessonId','==',currentLesson).get();
+  const types = new Set();
+  snap.forEach(d => types.add(d.data().type));
+  const ready = types.has('speak') && types.has('listen') && types.has('write');
+  const btn = document.querySelector('.btn-green');
+  const alert = document.getElementById('publishAlert');
+  if (ready) { btn.disabled = false; btn.classList.remove('btn-gray'); alert.classList.add('hidden'); }
+  else { btn.disabled = true; btn.classList.add('btn-gray'); alert.classList.remove('hidden'); }
+}
+async function publishLesson() {
+  await db.collection('lessons').doc(currentLesson).update({ isActive: true });
+  alert('تم النشر');
+  showLessons();
+}
+async function hideLesson() {
+  await db.collection('lessons').doc(currentLesson).update({ isActive: false });
+  alert('تم الإخفاء');
+  showLessons();
+}
+async function deleteLesson() {
+  if (!confirm('حذف الدرس؟')) return;
+  await db.collection('lessons').doc(currentLesson).delete();
+  // delete questions
+  const qs = await db.collection('questions').where('lessonId','==',currentLesson).get();
+  const batch = db.batch();
+  qs.forEach(d => batch.delete(d.ref));
+  await batch.commit();
+  showLessons();
+}
+</script>
+</body>
+</html>

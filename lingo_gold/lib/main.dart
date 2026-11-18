@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
+import 'package:firebase_core/firebase_core.dart';
+
 import 'home_screen.dart';
 import 'lessons_screen.dart';
 import 'lesson_flow.dart';
@@ -12,7 +14,16 @@ import 'update_service.dart';
 import 'widgets.dart';
 import 'theme.dart';
 
-void main() => runApp(const LingoGoldApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  try {
+    await Firebase.initializeApp();
+  } catch (_) {
+    // Firebase is not configured yet (missing google-services.json).
+    // The app still runs; Firestore features are disabled until configured.
+  }
+  runApp(const LingoGoldApp());
+}
 
 class LingoGoldApp extends StatelessWidget {
   const LingoGoldApp({super.key});
