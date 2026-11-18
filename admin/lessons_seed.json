@@ -1,0 +1,1962 @@
+[
+  {
+    "word": "A boy",
+    "sentence": "A boy.",
+    "options": [
+      "Boy",
+      "Girl",
+      "Cat"
+    ],
+    "imageFile": "q0",
+    "indexInPack": 0,
+    "isPack": false,
+    "category": "Verb To Be",
+    "translation": ""
+  },
+  {
+    "word": "A girl",
+    "sentence": "A girl.",
+    "options": [
+      "Girl",
+      "Boy",
+      "Dog"
+    ],
+    "imageFile": "n02",
+    "indexInPack": 0,
+    "isPack": true,
+    "category": "Verb To Be",
+    "translation": ""
+  },
+  {
+    "word": "A cat",
+    "sentence": "A cat.",
+    "options": [
+      "Cat",
+      "Dog",
+      "Boy"
+    ],
+    "imageFile": "n42",
+    "indexInPack": 0,
+    "isPack": true,
+    "category": "Verb To Be",
+    "translation": ""
+  },
+  {
+    "word": "The boy is eating",
+    "sentence": "The boy is eating.",
+    "options": [
+      "Eating",
+      "Drinking",
+      "Running"
+    ],
+    "imageFile": "n18",
+    "indexInPack": 0,
+    "isPack": true,
+    "category": "Verb To Be",
+    "translation": ""
+  },
+  {
+    "word": "The boy is drinking",
+    "sentence": "The boy is drinking.",
+    "options": [
+      "Drinking",
+      "Eating",
+      "Running"
+    ],
+    "imageFile": "n19",
+    "indexInPack": 0,
+    "isPack": true,
+    "category": "Verb To Be",
+    "translation": ""
+  },
+  {
+    "word": "A big dog",
+    "sentence": "A big dog.",
+    "options": [
+      "Big",
+      "Small",
+      "Tall"
+    ],
+    "imageFile": "q2",
+    "indexInPack": 0,
+    "isPack": false,
+    "category": "Adjectives",
+    "translation": ""
+  },
+  {
+    "word": "A red apple",
+    "sentence": "A red apple.",
+    "options": [
+      "Red",
+      "Green",
+      "Yellow"
+    ],
+    "imageFile": "q4",
+    "indexInPack": 0,
+    "isPack": false,
+    "category": "Colors",
+    "translation": ""
+  },
+  {
+    "word": "The boy and the girl",
+    "sentence": "The boy and the girl.",
+    "options": [
+      "Boy",
+      "Girl",
+      "Boy and girl"
+    ],
+    "imageFile": "n76",
+    "indexInPack": 0,
+    "isPack": true,
+    "category": "Verb To Be",
+    "translation": ""
+  },
+  {
+    "word": "I am eating",
+    "sentence": "I am eating.",
+    "options": [
+      "Eating",
+      "Drinking",
+      "Running"
+    ],
+    "imageFile": "n18",
+    "indexInPack": 0,
+    "isPack": true,
+    "category": "Verb To Be",
+    "translation": ""
+  },
+  {
+    "word": "The sun",
+    "sentence": "The sun.",
+    "options": [
+      "SUN",
+      "MOON",
+      "STAR"
+    ],
+    "imageFile": "n56",
+    "indexInPack": 0,
+    "isPack": true,
+    "category": "Nature",
+    "translation": ""
+  },
+  {
+    "word": "Boy",
+    "sentence": "I am a ___.",
+    "options": [
+      "Boy",
+      "Girl",
+      "Baby"
+    ],
+    "imageFile": "n01",
+    "indexInPack": 0,
+    "isPack": true,
+    "category": "Family",
+    "translation": "أنا صبي."
+  },
+  {
+    "word": "Girl",
+    "sentence": "She is a ___.",
+    "options": [
+      "Boy",
+      "Girl",
+      "Baby"
+    ],
+    "imageFile": "n02",
+    "indexInPack": 0,
+    "isPack": true,
+    "category": "Family",
+    "translation": "هي فتاة."
+  },
+  {
+    "word": "Father",
+    "sentence": "This is my ___.",
+    "options": [
+      "Father",
+      "Mother",
+      "Baby"
+    ],
+    "imageFile": "n03",
+    "indexInPack": 0,
+    "isPack": true,
+    "category": "Family",
+    "translation": "هذا أبي."
+  },
+  {
+    "word": "Mother",
+    "sentence": "This is my ___.",
+    "options": [
+      "Father",
+      "Mother",
+      "Baby"
+    ],
+    "imageFile": "n04",
+    "indexInPack": 0,
+    "isPack": true,
+    "category": "Family",
+    "translation": "هذه أمي."
+  },
+  {
+    "word": "Baby",
+    "sentence": "The ___ is small.",
+    "options": [
+      "Baby",
+      "Boy",
+      "Girl"
+    ],
+    "imageFile": "n05",
+    "indexInPack": 0,
+    "isPack": true,
+    "category": "Family",
+    "translation": "الطفل صغير."
+  },
+  {
+    "word": "Grandfather",
+    "sentence": "He is my ___.",
+    "options": [
+      "Grandfather",
+      "Grandmother",
+      "Father"
+    ],
+    "imageFile": "n06",
+    "indexInPack": 0,
+    "isPack": true,
+    "category": "Family",
+    "translation": "هو جدي."
+  },
+  {
+    "word": "Grandmother",
+    "sentence": "She is my ___.",
+    "options": [
+      "Grandfather",
+      "Grandmother",
+      "Mother"
+    ],
+    "imageFile": "n07",
+    "indexInPack": 0,
+    "isPack": true,
+    "category": "Family",
+    "translation": "هي جدتي."
+  },
+  {
+    "word": "Family",
+    "sentence": "This is my ___.",
+    "options": [
+      "Family",
+      "Father",
+      "Mother"
+    ],
+    "imageFile": "n08",
+    "indexInPack": 0,
+    "isPack": true,
+    "category": "Family",
+    "translation": "هذه عائلتي."
+  },
+  {
+    "word": "Man",
+    "sentence": "He is a ___.",
+    "options": [
+      "Man",
+      "Woman",
+      "Boy"
+    ],
+    "imageFile": "n09",
+    "indexInPack": 0,
+    "isPack": true,
+    "category": "Family",
+    "translation": "هو رجل."
+  },
+  {
+    "word": "Woman",
+    "sentence": "She is a ___.",
+    "options": [
+      "Woman",
+      "Man",
+      "Girl"
+    ],
+    "imageFile": "n10",
+    "indexInPack": 0,
+    "isPack": true,
+    "category": "Family",
+    "translation": "هي امرأة."
+  },
+  {
+    "word": "Daughter",
+    "sentence": "She is my ___.",
+    "options": [
+      "Daughter",
+      "Mother",
+      "Girl"
+    ],
+    "imageFile": "n11",
+    "indexInPack": 0,
+    "isPack": true,
+    "category": "People & Actions",
+    "translation": "هي ابنتي."
+  },
+  {
+    "word": "Happy",
+    "sentence": "The boy is ___.",
+    "options": [
+      "Happy",
+      "Sad",
+      "Angry"
+    ],
+    "imageFile": "n12",
+    "indexInPack": 0,
+    "isPack": true,
+    "category": "People & Actions",
+    "translation": "الصبي سعيد."
+  },
+  {
+    "word": "Sad",
+    "sentence": "The boy is ___.",
+    "options": [
+      "Happy",
+      "Sad",
+      "Angry"
+    ],
+    "imageFile": "n13",
+    "indexInPack": 0,
+    "isPack": true,
+    "category": "People & Actions",
+    "translation": "الصبي حزين."
+  },
+  {
+    "word": "Hello",
+    "sentence": "He says ___.",
+    "options": [
+      "Hello",
+      "Goodbye",
+      "Sorry"
+    ],
+    "imageFile": "n14",
+    "indexInPack": 0,
+    "isPack": true,
+    "category": "People & Actions",
+    "translation": "هو يقول مرحبا."
+  },
+  {
+    "word": "Run",
+    "sentence": "The boy can ___.",
+    "options": [
+      "Run",
+      "Jump",
+      "Sleep"
+    ],
+    "imageFile": "n15",
+    "indexInPack": 0,
+    "isPack": true,
+    "category": "People & Actions",
+    "translation": "الصبي يستطيع الركض."
+  },
+  {
+    "word": "Jump",
+    "sentence": "The girl can ___.",
+    "options": [
+      "Jump",
+      "Run",
+      "Sleep"
+    ],
+    "imageFile": "n16",
+    "indexInPack": 0,
+    "isPack": true,
+    "category": "People & Actions",
+    "translation": "الفتاة تستطيع القفز."
+  },
+  {
+    "word": "Play",
+    "sentence": "The children ___.",
+    "options": [
+      "Play",
+      "Sleep",
+      "Eat"
+    ],
+    "imageFile": "n17",
+    "indexInPack": 0,
+    "isPack": true,
+    "category": "People & Actions",
+    "translation": "الأطفال يلعبون."
+  },
+  {
+    "word": "Eat",
+    "sentence": "The boy can ___.",
+    "options": [
+      "Eat",
+      "Drink",
+      "Sleep"
+    ],
+    "imageFile": "n18",
+    "indexInPack": 0,
+    "isPack": true,
+    "category": "People & Actions",
+    "translation": "الصبي يستطيع الأكل."
+  },
+  {
+    "word": "Drink",
+    "sentence": "The boy can ___.",
+    "options": [
+      "Drink",
+      "Eat",
+      "Sleep"
+    ],
+    "imageFile": "n19",
+    "indexInPack": 0,
+    "isPack": true,
+    "category": "People & Actions",
+    "translation": "الصبي يستطيع الشرب."
+  },
+  {
+    "word": "Sleep",
+    "sentence": "The boy can ___.",
+    "options": [
+      "Sleep",
+      "Run",
+      "Jump"
+    ],
+    "imageFile": "n20",
+    "indexInPack": 0,
+    "isPack": true,
+    "category": "People & Actions",
+    "translation": "الصبي يستطيع النوم."
+  },
+  {
+    "word": "Apple",
+    "sentence": "The ___ is red.",
+    "options": [
+      "Apple",
+      "Banana",
+      "Egg"
+    ],
+    "imageFile": "n21",
+    "indexInPack": 0,
+    "isPack": true,
+    "category": "Food",
+    "translation": "التفاحة حمراء."
+  },
+  {
+    "word": "Banana",
+    "sentence": "The ___ is yellow.",
+    "options": [
+      "Banana",
+      "Apple",
+      "Bread"
+    ],
+    "imageFile": "n22",
+    "indexInPack": 0,
+    "isPack": true,
+    "category": "Food",
+    "translation": "الموزة صفراء."
+  },
+  {
+    "word": "Bread",
+    "sentence": "I eat ___.",
+    "options": [
+      "Bread",
+      "Milk",
+      "Egg"
+    ],
+    "imageFile": "n23",
+    "indexInPack": 0,
+    "isPack": true,
+    "category": "Food",
+    "translation": "أنا آكل خبزاً."
+  },
+  {
+    "word": "Milk",
+    "sentence": "I drink ___.",
+    "options": [
+      "Milk",
+      "Bread",
+      "Egg"
+    ],
+    "imageFile": "n24",
+    "indexInPack": 0,
+    "isPack": true,
+    "category": "Food",
+    "translation": "أنا أشرب حليباً."
+  },
+  {
+    "word": "Egg",
+    "sentence": "The ___ is white.",
+    "options": [
+      "Egg",
+      "Milk",
+      "Apple"
+    ],
+    "imageFile": "n25",
+    "indexInPack": 0,
+    "isPack": true,
+    "category": "Food",
+    "translation": "البيضة بيضاء."
+  },
+  {
+    "word": "Cheese",
+    "sentence": "I like ___.",
+    "options": [
+      "Cheese",
+      "Bread",
+      "Milk"
+    ],
+    "imageFile": "n26",
+    "indexInPack": 0,
+    "isPack": true,
+    "category": "Food",
+    "translation": "أنا أحب الجبن."
+  },
+  {
+    "word": "Orange",
+    "sentence": "The ___ is orange.",
+    "options": [
+      "Orange",
+      "Apple",
+      "Banana"
+    ],
+    "imageFile": "n27",
+    "indexInPack": 0,
+    "isPack": true,
+    "category": "Food",
+    "translation": "البرتقالة برتقالية."
+  },
+  {
+    "word": "Strawberry",
+    "sentence": "The ___ is red.",
+    "options": [
+      "Strawberry",
+      "Banana",
+      "Bread"
+    ],
+    "imageFile": "n28",
+    "indexInPack": 0,
+    "isPack": true,
+    "category": "Food",
+    "translation": "الفراولة حمراء."
+  },
+  {
+    "word": "Grapes",
+    "sentence": "I like ___.",
+    "options": [
+      "Grapes",
+      "Cheese",
+      "Egg"
+    ],
+    "imageFile": "n29",
+    "indexInPack": 0,
+    "isPack": true,
+    "category": "Food",
+    "translation": "أنا أحب العنب."
+  },
+  {
+    "word": "Cookie",
+    "sentence": "I eat a ___.",
+    "options": [
+      "Cookie",
+      "Apple",
+      "Egg"
+    ],
+    "imageFile": "n30",
+    "indexInPack": 0,
+    "isPack": true,
+    "category": "Food",
+    "translation": "أنا آكل بسكويتاً."
+  },
+  {
+    "word": "Ice Cream",
+    "sentence": "I like ___.",
+    "options": [
+      "Ice Cream",
+      "Bread",
+      "Egg"
+    ],
+    "imageFile": "n31",
+    "indexInPack": 0,
+    "isPack": true,
+    "category": "Food & More",
+    "translation": "أنا أحب آيس كريم."
+  },
+  {
+    "word": "Juice",
+    "sentence": "I drink ___.",
+    "options": [
+      "Juice",
+      "Milk",
+      "Water"
+    ],
+    "imageFile": "n32",
+    "indexInPack": 0,
+    "isPack": true,
+    "category": "Food & More",
+    "translation": "أنا أشرب عصيراً."
+  },
+  {
+    "word": "Cake",
+    "sentence": "The ___ is sweet.",
+    "options": [
+      "Cake",
+      "Bread",
+      "Cheese"
+    ],
+    "imageFile": "n33",
+    "indexInPack": 0,
+    "isPack": true,
+    "category": "Food & More",
+    "translation": "الكعكة حلوة."
+  },
+  {
+    "word": "Lemon",
+    "sentence": "The ___ is yellow.",
+    "options": [
+      "Lemon",
+      "Banana",
+      "Apple"
+    ],
+    "imageFile": "n34",
+    "indexInPack": 0,
+    "isPack": true,
+    "category": "Food & More",
+    "translation": "الليمونة صفراء."
+  },
+  {
+    "word": "Cup",
+    "sentence": "This is a ___.",
+    "options": [
+      "Cup",
+      "Book",
+      "Chair"
+    ],
+    "imageFile": "n35",
+    "indexInPack": 0,
+    "isPack": true,
+    "category": "Food & More",
+    "translation": "هذا كوب."
+  },
+  {
+    "word": "Kitchen",
+    "sentence": "This is a ___.",
+    "options": [
+      "Kitchen",
+      "House",
+      "Door"
+    ],
+    "imageFile": "n36",
+    "indexInPack": 0,
+    "isPack": true,
+    "category": "Food & More",
+    "translation": "هذا مطبخ."
+  },
+  {
+    "word": "Oranges",
+    "sentence": "I like ___.",
+    "options": [
+      "Oranges",
+      "Apples",
+      "Grapes"
+    ],
+    "imageFile": "n37",
+    "indexInPack": 0,
+    "isPack": true,
+    "category": "Food & More",
+    "translation": "أنا أحب البرتقال."
+  },
+  {
+    "word": "Strawberries",
+    "sentence": "I like ___.",
+    "options": [
+      "Strawberries",
+      "Oranges",
+      "Grapes"
+    ],
+    "imageFile": "n38",
+    "indexInPack": 0,
+    "isPack": true,
+    "category": "Food & More",
+    "translation": "أنا أحب الفراولة."
+  },
+  {
+    "word": "Apples",
+    "sentence": "The ___ are red.",
+    "options": [
+      "Apples",
+      "Bananas",
+      "Eggs"
+    ],
+    "imageFile": "n39",
+    "indexInPack": 0,
+    "isPack": true,
+    "category": "Food & More",
+    "translation": "التفاح أحمر."
+  },
+  {
+    "word": "Red",
+    "sentence": "The apple is ___.",
+    "options": [
+      "Red",
+      "Blue",
+      "Yellow"
+    ],
+    "imageFile": "n40",
+    "indexInPack": 0,
+    "isPack": true,
+    "category": "Food & More",
+    "translation": "التفاحة حمراء."
+  },
+  {
+    "word": "Dog",
+    "sentence": "The ___ is small.",
+    "options": [
+      "Dog",
+      "Cat",
+      "Bird"
+    ],
+    "imageFile": "n41",
+    "indexInPack": 0,
+    "isPack": true,
+    "category": "Animals",
+    "translation": "الكلب صغير."
+  },
+  {
+    "word": "Cat",
+    "sentence": "The ___ is white.",
+    "options": [
+      "Cat",
+      "Dog",
+      "Fish"
+    ],
+    "imageFile": "n42",
+    "indexInPack": 0,
+    "isPack": true,
+    "category": "Animals",
+    "translation": "القطة بيضاء."
+  },
+  {
+    "word": "Bird",
+    "sentence": "The ___ can fly.",
+    "options": [
+      "Bird",
+      "Fish",
+      "Dog"
+    ],
+    "imageFile": "n43",
+    "indexInPack": 0,
+    "isPack": true,
+    "category": "Animals",
+    "translation": "الطائر يستطيع الطيران."
+  },
+  {
+    "word": "Fish",
+    "sentence": "The ___ can swim.",
+    "options": [
+      "Fish",
+      "Bird",
+      "Cat"
+    ],
+    "imageFile": "n44",
+    "indexInPack": 0,
+    "isPack": true,
+    "category": "Animals",
+    "translation": "السمكة تستطيع السباحة."
+  },
+  {
+    "word": "Elephant",
+    "sentence": "The ___ is big.",
+    "options": [
+      "Elephant",
+      "Dog",
+      "Cat"
+    ],
+    "imageFile": "n45",
+    "indexInPack": 0,
+    "isPack": true,
+    "category": "Animals",
+    "translation": "الفيل كبير."
+  },
+  {
+    "word": "Turtle",
+    "sentence": "The ___ is slow.",
+    "options": [
+      "Turtle",
+      "Rabbit",
+      "Bird"
+    ],
+    "imageFile": "n46",
+    "indexInPack": 0,
+    "isPack": true,
+    "category": "Animals",
+    "translation": "السلحفاة بطيئة."
+  },
+  {
+    "word": "Rabbit",
+    "sentence": "The ___ is fast.",
+    "options": [
+      "Rabbit",
+      "Turtle",
+      "Fish"
+    ],
+    "imageFile": "n47",
+    "indexInPack": 0,
+    "isPack": true,
+    "category": "Animals",
+    "translation": "الأرنب سريع."
+  },
+  {
+    "word": "Leopard",
+    "sentence": "The ___ is fast.",
+    "options": [
+      "Leopard",
+      "Turtle",
+      "Elephant"
+    ],
+    "imageFile": "n48",
+    "indexInPack": 0,
+    "isPack": true,
+    "category": "Animals",
+    "translation": "النمر سريع."
+  },
+  {
+    "word": "Kitten",
+    "sentence": "The ___ is small.",
+    "options": [
+      "Kitten",
+      "Dog",
+      "Elephant"
+    ],
+    "imageFile": "n49",
+    "indexInPack": 0,
+    "isPack": true,
+    "category": "Animals",
+    "translation": "القطة الصغيرة صغيرة."
+  },
+  {
+    "word": "Black Cat",
+    "sentence": "The ___ is black.",
+    "options": [
+      "Black Cat",
+      "White Cat",
+      "Dog"
+    ],
+    "imageFile": "n50",
+    "indexInPack": 0,
+    "isPack": true,
+    "category": "Animals",
+    "translation": "القطة السوداء سوداء."
+  },
+  {
+    "word": "House",
+    "sentence": "The ___ is big.",
+    "options": [
+      "House",
+      "Door",
+      "Tree"
+    ],
+    "imageFile": "n51",
+    "indexInPack": 0,
+    "isPack": true,
+    "category": "Home & Nature",
+    "translation": "البيت كبير."
+  },
+  {
+    "word": "Door",
+    "sentence": "Open the ___.",
+    "options": [
+      "Door",
+      "Window",
+      "Chair"
+    ],
+    "imageFile": "n52",
+    "indexInPack": 0,
+    "isPack": true,
+    "category": "Home & Nature",
+    "translation": "افتح الباب."
+  },
+  {
+    "word": "Window",
+    "sentence": "Open the ___.",
+    "options": [
+      "Window",
+      "Door",
+      "House"
+    ],
+    "imageFile": "n53",
+    "indexInPack": 0,
+    "isPack": true,
+    "category": "Home & Nature",
+    "translation": "افتح النافذة."
+  },
+  {
+    "word": "Chair",
+    "sentence": "Sit on the ___.",
+    "options": [
+      "Chair",
+      "Door",
+      "Window"
+    ],
+    "imageFile": "n54",
+    "indexInPack": 0,
+    "isPack": true,
+    "category": "Home & Nature",
+    "translation": "اجلس على الكرسي."
+  },
+  {
+    "word": "Tree",
+    "sentence": "The ___ is green.",
+    "options": [
+      "Tree",
+      "Rose",
+      "Sunflower"
+    ],
+    "imageFile": "n55",
+    "indexInPack": 0,
+    "isPack": true,
+    "category": "Home & Nature",
+    "translation": "الشجرة خضراء."
+  },
+  {
+    "word": "Sky",
+    "sentence": "The ___ is blue.",
+    "options": [
+      "Sky",
+      "Moon",
+      "Star"
+    ],
+    "imageFile": "n56",
+    "indexInPack": 0,
+    "isPack": true,
+    "category": "Home & Nature",
+    "translation": "السماء زرقاء."
+  },
+  {
+    "word": "Moon",
+    "sentence": "The ___ is white.",
+    "options": [
+      "Moon",
+      "Sky",
+      "Star"
+    ],
+    "imageFile": "n57",
+    "indexInPack": 0,
+    "isPack": true,
+    "category": "Home & Nature",
+    "translation": "القمر أبيض."
+  },
+  {
+    "word": "Star",
+    "sentence": "The ___ is bright.",
+    "options": [
+      "Star",
+      "Moon",
+      "Sky"
+    ],
+    "imageFile": "n58",
+    "indexInPack": 0,
+    "isPack": true,
+    "category": "Home & Nature",
+    "translation": "النجمة مشرقة."
+  },
+  {
+    "word": "Rose",
+    "sentence": "The ___ is red.",
+    "options": [
+      "Rose",
+      "Sunflower",
+      "Tree"
+    ],
+    "imageFile": "n59",
+    "indexInPack": 0,
+    "isPack": true,
+    "category": "Home & Nature",
+    "translation": "الوردة حمراء."
+  },
+  {
+    "word": "Sunflower",
+    "sentence": "The ___ is yellow.",
+    "options": [
+      "Sunflower",
+      "Rose",
+      "Tree"
+    ],
+    "imageFile": "n60",
+    "indexInPack": 0,
+    "isPack": true,
+    "category": "Home & Nature",
+    "translation": "دوار الشمس أصفر."
+  },
+  {
+    "word": "Snowman",
+    "sentence": "The ___ is white.",
+    "options": [
+      "Snowman",
+      "Rainbow",
+      "Balloon"
+    ],
+    "imageFile": "n61",
+    "indexInPack": 0,
+    "isPack": true,
+    "category": "Fun & School",
+    "translation": "رجل الثلج أبيض."
+  },
+  {
+    "word": "Rainbow",
+    "sentence": "The ___ is colorful.",
+    "options": [
+      "Rainbow",
+      "Snowman",
+      "Star"
+    ],
+    "imageFile": "n62",
+    "indexInPack": 0,
+    "isPack": true,
+    "category": "Fun & School",
+    "translation": "قوس قزح ملون."
+  },
+  {
+    "word": "Balloons",
+    "sentence": "The ___ are colorful.",
+    "options": [
+      "Balloons",
+      "Balloon",
+      "Ball"
+    ],
+    "imageFile": "n63",
+    "indexInPack": 0,
+    "isPack": true,
+    "category": "Fun & School",
+    "translation": "البالونات ملونة."
+  },
+  {
+    "word": "Balloon",
+    "sentence": "The ___ is red.",
+    "options": [
+      "Balloon",
+      "Balloons",
+      "Ball"
+    ],
+    "imageFile": "n64",
+    "indexInPack": 0,
+    "isPack": true,
+    "category": "Fun & School",
+    "translation": "البالون أحمر."
+  },
+  {
+    "word": "Water",
+    "sentence": "I drink ___.",
+    "options": [
+      "Water",
+      "Juice",
+      "Milk"
+    ],
+    "imageFile": "n65",
+    "indexInPack": 0,
+    "isPack": true,
+    "category": "Fun & School",
+    "translation": "أنا أشرب ماء."
+  },
+  {
+    "word": "Ball",
+    "sentence": "The ___ is orange.",
+    "options": [
+      "Ball",
+      "Balloon",
+      "Balloons"
+    ],
+    "imageFile": "n66",
+    "indexInPack": 0,
+    "isPack": true,
+    "category": "Fun & School",
+    "translation": "الكرة برتقالية."
+  },
+  {
+    "word": "Pencils",
+    "sentence": "I write with ___.",
+    "options": [
+      "Pencils",
+      "Pen",
+      "Book"
+    ],
+    "imageFile": "n67",
+    "indexInPack": 0,
+    "isPack": true,
+    "category": "Fun & School",
+    "translation": "أنا أكتب بأقلام."
+  },
+  {
+    "word": "Pen",
+    "sentence": "I write with a ___.",
+    "options": [
+      "Pen",
+      "Pencils",
+      "Book"
+    ],
+    "imageFile": "n68",
+    "indexInPack": 0,
+    "isPack": true,
+    "category": "Fun & School",
+    "translation": "أنا أكتب بقلم."
+  },
+  {
+    "word": "Book",
+    "sentence": "I read a ___.",
+    "options": [
+      "Book",
+      "Pen",
+      "Pencils"
+    ],
+    "imageFile": "n69",
+    "indexInPack": 0,
+    "isPack": true,
+    "category": "Fun & School",
+    "translation": "أنا أقرأ كتاباً."
+  },
+  {
+    "word": "Car",
+    "sentence": "The ___ is red.",
+    "options": [
+      "Car",
+      "Ball",
+      "Book"
+    ],
+    "imageFile": "n70",
+    "indexInPack": 0,
+    "isPack": true,
+    "category": "Fun & School",
+    "translation": "السيارة حمراء."
+  },
+  {
+    "word": "Wave",
+    "sentence": "He can ___.",
+    "options": [
+      "Wave",
+      "Run",
+      "Sleep"
+    ],
+    "imageFile": "n71",
+    "indexInPack": 0,
+    "isPack": true,
+    "category": "Greetings",
+    "translation": "هو يستطيع أن يلوّح."
+  },
+  {
+    "word": "Goodbye",
+    "sentence": "He says ___.",
+    "options": [
+      "Goodbye",
+      "Hello",
+      "Welcome"
+    ],
+    "imageFile": "n72",
+    "indexInPack": 0,
+    "isPack": true,
+    "category": "Greetings",
+    "translation": "هو يقول وداعاً."
+  },
+  {
+    "word": "Raise hand",
+    "sentence": "He can ___.",
+    "options": [
+      "Raise hand",
+      "Wave",
+      "Run"
+    ],
+    "imageFile": "n73",
+    "indexInPack": 0,
+    "isPack": true,
+    "category": "Greetings",
+    "translation": "هو يستطيع رفع يده."
+  },
+  {
+    "word": "Dinner",
+    "sentence": "We eat ___.",
+    "options": [
+      "Dinner",
+      "Breakfast",
+      "Lunch"
+    ],
+    "imageFile": "n74",
+    "indexInPack": 0,
+    "isPack": true,
+    "category": "Greetings",
+    "translation": "نحن نأكل عشاء."
+  },
+  {
+    "word": "Goodnight",
+    "sentence": "She says ___.",
+    "options": [
+      "Goodnight",
+      "Hello",
+      "Goodbye"
+    ],
+    "imageFile": "n75",
+    "indexInPack": 0,
+    "isPack": true,
+    "category": "Greetings",
+    "translation": "هي تقول تصبح على خير."
+  },
+  {
+    "word": "Talk",
+    "sentence": "They ___.",
+    "options": [
+      "Talk",
+      "Sleep",
+      "Run"
+    ],
+    "imageFile": "n76",
+    "indexInPack": 0,
+    "isPack": true,
+    "category": "Greetings",
+    "translation": "هم يتحدثون."
+  },
+  {
+    "word": "Gift",
+    "sentence": "This is a ___.",
+    "options": [
+      "Gift",
+      "Book",
+      "Ball"
+    ],
+    "imageFile": "n77",
+    "indexInPack": 0,
+    "isPack": true,
+    "category": "Greetings",
+    "translation": "هذه هدية."
+  },
+  {
+    "word": "Welcome",
+    "sentence": "They say ___.",
+    "options": [
+      "Welcome",
+      "Goodbye",
+      "Sorry"
+    ],
+    "imageFile": "n78",
+    "indexInPack": 0,
+    "isPack": true,
+    "category": "Greetings",
+    "translation": "هم يقولون أهلاً."
+  },
+  {
+    "word": "Wake up",
+    "sentence": "I ___ in the morning.",
+    "options": [
+      "Wake up",
+      "Sleep",
+      "Eat"
+    ],
+    "imageFile": "n79",
+    "indexInPack": 0,
+    "isPack": true,
+    "category": "Greetings",
+    "translation": "أنا أستيقظ في الصباح."
+  },
+  {
+    "word": "Shake hands",
+    "sentence": "They ___.",
+    "options": [
+      "Shake hands",
+      "Run",
+      "Sleep"
+    ],
+    "imageFile": "n80",
+    "indexInPack": 0,
+    "isPack": true,
+    "category": "Greetings",
+    "translation": "هم يتصافحون."
+  },
+  {
+    "word": "Doctor",
+    "sentence": "He is a ___.",
+    "options": [
+      "Doctor",
+      "Nurse",
+      "Pilot"
+    ],
+    "imageFile": "job_doctor",
+    "indexInPack": 0,
+    "isPack": false,
+    "category": "Jobs",
+    "translation": "هو طبيب."
+  },
+  {
+    "word": "Nurse",
+    "sentence": "She is a ___.",
+    "options": [
+      "Nurse",
+      "Doctor",
+      "Teacher"
+    ],
+    "imageFile": "job_nurse",
+    "indexInPack": 0,
+    "isPack": false,
+    "category": "Jobs",
+    "translation": "هي ممرضة."
+  },
+  {
+    "word": "Pilot",
+    "sentence": "He is a ___.",
+    "options": [
+      "Pilot",
+      "Doctor",
+      "Farmer"
+    ],
+    "imageFile": "job_pilot",
+    "indexInPack": 0,
+    "isPack": false,
+    "category": "Jobs",
+    "translation": "هو طيار."
+  },
+  {
+    "word": "Firefighter",
+    "sentence": "He is a ___.",
+    "options": [
+      "Firefighter",
+      "Pilot",
+      "Chef"
+    ],
+    "imageFile": "job_firefighter",
+    "indexInPack": 0,
+    "isPack": false,
+    "category": "Jobs",
+    "translation": "هو رجل إطفاء."
+  },
+  {
+    "word": "Chef",
+    "sentence": "He is a ___.",
+    "options": [
+      "Chef",
+      "Baker",
+      "Farmer"
+    ],
+    "imageFile": "job_chef",
+    "indexInPack": 0,
+    "isPack": false,
+    "category": "Jobs",
+    "translation": "هو طاهٍ."
+  },
+  {
+    "word": "Teacher",
+    "sentence": "She is a ___.",
+    "options": [
+      "Teacher",
+      "Nurse",
+      "Doctor"
+    ],
+    "imageFile": "job_teacher",
+    "indexInPack": 0,
+    "isPack": false,
+    "category": "Jobs",
+    "translation": "هي معلمة."
+  },
+  {
+    "word": "Police Officer",
+    "sentence": "He is a ___.",
+    "options": [
+      "Police Officer",
+      "Pilot",
+      "Chef"
+    ],
+    "imageFile": "job_police",
+    "indexInPack": 0,
+    "isPack": false,
+    "category": "Jobs",
+    "translation": "هو شرطي."
+  },
+  {
+    "word": "Farmer",
+    "sentence": "He is a ___.",
+    "options": [
+      "Farmer",
+      "Baker",
+      "Chef"
+    ],
+    "imageFile": "job_farmer",
+    "indexInPack": 0,
+    "isPack": false,
+    "category": "Jobs",
+    "translation": "هو مزارع."
+  },
+  {
+    "word": "Baker",
+    "sentence": "He is a ___.",
+    "options": [
+      "Baker",
+      "Chef",
+      "Farmer"
+    ],
+    "imageFile": "job_baker",
+    "indexInPack": 0,
+    "isPack": false,
+    "category": "Jobs",
+    "translation": "هو خباز."
+  },
+  {
+    "word": "Student",
+    "sentence": "He is a ___.",
+    "options": [
+      "Student",
+      "Teacher",
+      "Doctor"
+    ],
+    "imageFile": "job_student",
+    "indexInPack": 0,
+    "isPack": false,
+    "category": "Jobs",
+    "translation": "هو طالب."
+  },
+  {
+    "word": "Brush",
+    "sentence": "I ___ my teeth.",
+    "options": [
+      "Brush",
+      "Read",
+      "Cook"
+    ],
+    "imageFile": "act_brush",
+    "indexInPack": 0,
+    "isPack": false,
+    "category": "Actions",
+    "translation": "أنا أنظف أسناني."
+  },
+  {
+    "word": "Read",
+    "sentence": "I ___ a book.",
+    "options": [
+      "Read",
+      "Drink",
+      "Cook"
+    ],
+    "imageFile": "act_read",
+    "indexInPack": 0,
+    "isPack": false,
+    "category": "Actions",
+    "translation": "أنا أقرأ كتاباً."
+  },
+  {
+    "word": "Drink",
+    "sentence": "I ___ juice.",
+    "options": [
+      "Drink",
+      "Read",
+      "Brush"
+    ],
+    "imageFile": "act_drink",
+    "indexInPack": 0,
+    "isPack": false,
+    "category": "Actions",
+    "translation": "أنا أشرب عصيراً."
+  },
+  {
+    "word": "Wave",
+    "sentence": "I ___ my hand.",
+    "options": [
+      "Wave",
+      "Read",
+      "Cook"
+    ],
+    "imageFile": "act_wave",
+    "indexInPack": 0,
+    "isPack": false,
+    "category": "Actions",
+    "translation": "أنا ألوّح بيدي."
+  },
+  {
+    "word": "Play",
+    "sentence": "I ___ soccer.",
+    "options": [
+      "Play",
+      "Read",
+      "Sleep"
+    ],
+    "imageFile": "act_play",
+    "indexInPack": 0,
+    "isPack": false,
+    "category": "Actions",
+    "translation": "أنا ألعب كرة القدم."
+  },
+  {
+    "word": "Shake",
+    "sentence": "I ___ hands.",
+    "options": [
+      "Shake",
+      "Wave",
+      "Play"
+    ],
+    "imageFile": "act_shake",
+    "indexInPack": 0,
+    "isPack": false,
+    "category": "Actions",
+    "translation": "أنا أتصافح."
+  },
+  {
+    "word": "Raise",
+    "sentence": "I ___ my hand.",
+    "options": [
+      "Raise",
+      "Wave",
+      "Play"
+    ],
+    "imageFile": "act_raise",
+    "indexInPack": 0,
+    "isPack": false,
+    "category": "Actions",
+    "translation": "أنا أرفع يدي."
+  },
+  {
+    "word": "Cook",
+    "sentence": "I ___ food.",
+    "options": [
+      "Cook",
+      "Read",
+      "Brush"
+    ],
+    "imageFile": "act_cook",
+    "indexInPack": 0,
+    "isPack": false,
+    "category": "Actions",
+    "translation": "أنا أطبخ الطعام."
+  },
+  {
+    "word": "Buy",
+    "sentence": "I ___ food.",
+    "options": [
+      "Buy",
+      "Cook",
+      "Read"
+    ],
+    "imageFile": "act_buy",
+    "indexInPack": 0,
+    "isPack": false,
+    "category": "Actions",
+    "translation": "أنا أشتري طعاماً."
+  },
+  {
+    "word": "Sit",
+    "sentence": "I ___ on the bench.",
+    "options": [
+      "Sit",
+      "Run",
+      "Play"
+    ],
+    "imageFile": "act_sit",
+    "indexInPack": 0,
+    "isPack": false,
+    "category": "Actions",
+    "translation": "أنا أجلس على المقعد."
+  },
+  {
+    "word": "One",
+    "sentence": "___ apple.",
+    "options": [
+      "One",
+      "Two",
+      "Three"
+    ],
+    "imageFile": "num_01",
+    "indexInPack": 0,
+    "isPack": false,
+    "category": "Numbers",
+    "translation": "تفاحة واحدة."
+  },
+  {
+    "word": "Two",
+    "sentence": "___ balloons.",
+    "options": [
+      "Two",
+      "One",
+      "Three"
+    ],
+    "imageFile": "num_02",
+    "indexInPack": 0,
+    "isPack": false,
+    "category": "Numbers",
+    "translation": "بالونان."
+  },
+  {
+    "word": "Three",
+    "sentence": "___ bananas.",
+    "options": [
+      "Three",
+      "Two",
+      "Four"
+    ],
+    "imageFile": "num_03",
+    "indexInPack": 0,
+    "isPack": false,
+    "category": "Numbers",
+    "translation": "ثلاث موزات."
+  },
+  {
+    "word": "Four",
+    "sentence": "___ pencils.",
+    "options": [
+      "Four",
+      "Three",
+      "Five"
+    ],
+    "imageFile": "num_04",
+    "indexInPack": 0,
+    "isPack": false,
+    "category": "Numbers",
+    "translation": "أربعة أقلام."
+  },
+  {
+    "word": "Five",
+    "sentence": "___ strawberries.",
+    "options": [
+      "Five",
+      "Four",
+      "Six"
+    ],
+    "imageFile": "num_05",
+    "indexInPack": 0,
+    "isPack": false,
+    "category": "Numbers",
+    "translation": "خمس فراولات."
+  },
+  {
+    "word": "Six",
+    "sentence": "___ eggs.",
+    "options": [
+      "Six",
+      "Five",
+      "Seven"
+    ],
+    "imageFile": "num_06",
+    "indexInPack": 0,
+    "isPack": false,
+    "category": "Numbers",
+    "translation": "ست بيضات."
+  },
+  {
+    "word": "Seven",
+    "sentence": "___ strawberries.",
+    "options": [
+      "Seven",
+      "Six",
+      "Eight"
+    ],
+    "imageFile": "num_07",
+    "indexInPack": 0,
+    "isPack": false,
+    "category": "Numbers",
+    "translation": "سبع فراولات."
+  },
+  {
+    "word": "Eight",
+    "sentence": "___ crayons.",
+    "options": [
+      "Eight",
+      "Seven",
+      "Nine"
+    ],
+    "imageFile": "num_08",
+    "indexInPack": 0,
+    "isPack": false,
+    "category": "Numbers",
+    "translation": "ثمانية أقلام تلوين."
+  },
+  {
+    "word": "Nine",
+    "sentence": "___ grapes.",
+    "options": [
+      "Nine",
+      "Eight",
+      "Ten"
+    ],
+    "imageFile": "num_09",
+    "indexInPack": 0,
+    "isPack": false,
+    "category": "Numbers",
+    "translation": "تسع حبات عنب."
+  },
+  {
+    "word": "Ten",
+    "sentence": "___ fingers.",
+    "options": [
+      "Ten",
+      "Nine",
+      "Eight"
+    ],
+    "imageFile": "num_10",
+    "indexInPack": 0,
+    "isPack": false,
+    "category": "Numbers",
+    "translation": "عشرة أصابع."
+  },
+  {
+    "word": "Tomato",
+    "sentence": "The ___ is red.",
+    "options": [
+      "Tomato",
+      "Apple",
+      "Orange"
+    ],
+    "imageFile": "food_tomato",
+    "indexInPack": 0,
+    "isPack": false,
+    "category": "Discover",
+    "translation": "الطماطم حمراء."
+  },
+  {
+    "word": "Chocolate",
+    "sentence": "I like ___.",
+    "options": [
+      "Chocolate",
+      "Bread",
+      "Cheese"
+    ],
+    "imageFile": "food_chocolate",
+    "indexInPack": 0,
+    "isPack": false,
+    "category": "Discover",
+    "translation": "أنا أحب الشوكولاتة."
+  },
+  {
+    "word": "Leaf",
+    "sentence": "This is a ___.",
+    "options": [
+      "Leaf",
+      "Tree",
+      "Flower"
+    ],
+    "imageFile": "nat_leaf",
+    "indexInPack": 0,
+    "isPack": false,
+    "category": "Discover",
+    "translation": "هذه ورقة شجر."
+  },
+  {
+    "word": "Snow",
+    "sentence": "The ___ is white.",
+    "options": [
+      "Snow",
+      "Sun",
+      "Rain"
+    ],
+    "imageFile": "nat_snow",
+    "indexInPack": 0,
+    "isPack": false,
+    "category": "Discover",
+    "translation": "الثلج أبيض."
+  },
+  {
+    "word": "Wave",
+    "sentence": "The ___ is big.",
+    "options": [
+      "Wave",
+      "Sun",
+      "Moon"
+    ],
+    "imageFile": "nat_wave",
+    "indexInPack": 0,
+    "isPack": false,
+    "category": "Discover",
+    "translation": "الموجة كبيرة."
+  },
+  {
+    "word": "Flower",
+    "sentence": "The ___ is pink.",
+    "options": [
+      "Flower",
+      "Tree",
+      "Leaf"
+    ],
+    "imageFile": "nat_flower",
+    "indexInPack": 0,
+    "isPack": false,
+    "category": "Discover",
+    "translation": "الزهرة وردية."
+  },
+  {
+    "word": "Sunflower",
+    "sentence": "The ___ is yellow.",
+    "options": [
+      "Sunflower",
+      "Rose",
+      "Tree"
+    ],
+    "imageFile": "nat_sunflower",
+    "indexInPack": 0,
+    "isPack": false,
+    "category": "Discover",
+    "translation": "دوار الشمس أصفر."
+  },
+  {
+    "word": "Grapes",
+    "sentence": "I like ___.",
+    "options": [
+      "Grapes",
+      "Apples",
+      "Bananas"
+    ],
+    "imageFile": "food_grapes",
+    "indexInPack": 0,
+    "isPack": false,
+    "category": "Discover",
+    "translation": "أنا أحب العنب."
+  },
+  {
+    "word": "Orange",
+    "sentence": "The ___ is orange.",
+    "options": [
+      "Orange",
+      "Apple",
+      "Banana"
+    ],
+    "imageFile": "food_orange",
+    "indexInPack": 0,
+    "isPack": false,
+    "category": "Discover",
+    "translation": "البرتقالة برتقالية."
+  },
+  {
+    "word": "Car",
+    "sentence": "The ___ is red.",
+    "options": [
+      "Car",
+      "Ball",
+      "Book"
+    ],
+    "imageFile": "toy_car",
+    "indexInPack": 0,
+    "isPack": false,
+    "category": "Discover",
+    "translation": "السيارة حمراء."
+  },
+  {
+    "word": "Red",
+    "sentence": "The ball is ___.",
+    "options": [
+      "Red",
+      "Blue",
+      "Green"
+    ],
+    "imageFile": "color_red",
+    "indexInPack": 0,
+    "isPack": false,
+    "category": "Colors",
+    "translation": "الكرة حمراء."
+  },
+  {
+    "word": "Blue",
+    "sentence": "The ball is ___.",
+    "options": [
+      "Blue",
+      "Red",
+      "Yellow"
+    ],
+    "imageFile": "color_blue",
+    "indexInPack": 0,
+    "isPack": false,
+    "category": "Colors",
+    "translation": "الكرة زرقاء."
+  },
+  {
+    "word": "Green",
+    "sentence": "The ball is ___.",
+    "options": [
+      "Green",
+      "Red",
+      "Blue"
+    ],
+    "imageFile": "color_green",
+    "indexInPack": 0,
+    "isPack": false,
+    "category": "Colors",
+    "translation": "الكرة خضراء."
+  },
+  {
+    "word": "Yellow",
+    "sentence": "The ball is ___.",
+    "options": [
+      "Yellow",
+      "Green",
+      "Orange"
+    ],
+    "imageFile": "color_yellow",
+    "indexInPack": 0,
+    "isPack": false,
+    "category": "Colors",
+    "translation": "الكرة صفراء."
+  },
+  {
+    "word": "Orange",
+    "sentence": "The ball is ___.",
+    "options": [
+      "Orange",
+      "Red",
+      "Brown"
+    ],
+    "imageFile": "color_orange",
+    "indexInPack": 0,
+    "isPack": false,
+    "category": "Colors",
+    "translation": "الكرة برتقالية."
+  },
+  {
+    "word": "Purple",
+    "sentence": "The ball is ___.",
+    "options": [
+      "Purple",
+      "Pink",
+      "Blue"
+    ],
+    "imageFile": "color_purple",
+    "indexInPack": 0,
+    "isPack": false,
+    "category": "Colors",
+    "translation": "الكرة بنفسجية."
+  },
+  {
+    "word": "Pink",
+    "sentence": "The ball is ___.",
+    "options": [
+      "Pink",
+      "Purple",
+      "Red"
+    ],
+    "imageFile": "color_pink",
+    "indexInPack": 0,
+    "isPack": false,
+    "category": "Colors",
+    "translation": "الكرة وردية."
+  },
+  {
+    "word": "Brown",
+    "sentence": "The ball is ___.",
+    "options": [
+      "Brown",
+      "Orange",
+      "Black"
+    ],
+    "imageFile": "color_brown",
+    "indexInPack": 0,
+    "isPack": false,
+    "category": "Colors",
+    "translation": "الكرة بنية."
+  },
+  {
+    "word": "Black",
+    "sentence": "The ball is ___.",
+    "options": [
+      "Black",
+      "Brown",
+      "White"
+    ],
+    "imageFile": "color_black",
+    "indexInPack": 0,
+    "isPack": false,
+    "category": "Colors",
+    "translation": "الكرة سوداء."
+  },
+  {
+    "word": "White",
+    "sentence": "The ball is ___.",
+    "options": [
+      "White",
+      "Black",
+      "Yellow"
+    ],
+    "imageFile": "color_white",
+    "indexInPack": 0,
+    "isPack": false,
+    "category": "Colors",
+    "translation": "الكرة بيضاء."
+  }
+]

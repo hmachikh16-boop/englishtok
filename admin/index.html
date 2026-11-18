@@ -55,7 +55,10 @@
     <div id="categoriesView">
       <div class="row" style="justify-content:space-between">
         <h2>الفئات</h2>
-        <button class="btn" onclick="openNewCategory()">+ فئة جديدة</button>
+        <div class="row">
+          <button class="btn" onclick="seedLessons()">Seed 140 lessons</button>
+          <button class="btn" onclick="openNewCategory()">+ فئة جديدة</button>
+        </div>
       </div>
       <div id="newCatForm" class="card hidden">
         <input id="catName" placeholder="اسم الفئة (مثال: الطعام)">
@@ -166,19 +169,38 @@ function showCategories() {
   });
 }
 function openNewCategory() { document.getElementById('newCatForm').classList.toggle('hidden'); }
-async function saveCategory() {
-  const name = document.getElementById('catName').value.trim();
-  const order = parseInt(document.getElementById('catOrder').value || '0');
-  const file = document.getElementById('catImage').files[0];
-  if (!name) { alert('أدخل اسم الفئة'); return; }
-  let imageUrl = '';
-  if (file) {
-    const ref = storage.ref('categories/' + Date.now() + '_' + file.name);
-    await ref.put(file);
-    imageUrl = await ref.getDownloadURL();
+async function seedLessons() {
+  if (!confirm('Seed all lessons from lessons_seed.json?')) return;
+  const res = await fetch('lessons_seed.json');
+  const lessons = await res.json();
+  // unique categories
+  const catNames = [...new Set(lessons.map(l => l.category))];
+  const catMap = {};
+  for (const name of catNames) {
+    const existing = await db.collection('categories').where('name','==',name).get();
+    if (!existing.empty) { catMap[name] = existing.docs[0].id; continue; }
+    const r = await db.collection('categories').add({ name, imageUrl: '', order: Object.keys(catMap).length + 1, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+    catMap[name] = r.id;
   }
-  await db.collection('categories').add({ name, imageUrl, order, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
-  document.getElementById('newCatForm').classList.add('hidden');
+  // lessons
+  let n = 0;
+  for (const l of lessons) {
+    const cid = catMap[l.category];
+    // auto number per category
+    const snap = await db.collection('lessons').where('categoryId','==',cid).get();
+    const maxNum = snap.docs.reduce((m,d)=>Math.max(m, d.data().lessonNumber||0), 0);
+    await db.collection('lessons').add({
+      categoryId: cid,
+      lessonNumber: maxNum + 1,
+      title: 'الدرس ' + (maxNum+1) + ' • ' + l.word,
+      order: snap.size + 1,
+      isActive: true,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    n++;
+  }
+  alert('Seeded ' + n + ' lessons into ' + catNames.length + ' categories.');
+  showCategories();
 }
 
 // ---------- LESSONS ----------
