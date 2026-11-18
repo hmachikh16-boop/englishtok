@@ -23,4 +23,3 @@ http.createServer((req,res)=>{
     res.end(data);
   });
 }).listen(PORT, ()=>console.log('Admin panel: http://localhost:'+PORT));
-"
