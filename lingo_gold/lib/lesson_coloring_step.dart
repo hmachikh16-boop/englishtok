@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 
 import 'lesson_coloring_pages.dart';
+import 'services/sound_service.dart';
 import 'services/speech_service.dart';
 import 'theme.dart';
 import 'widgets.dart';
@@ -269,12 +270,16 @@ class _LessonColoringStepState extends State<LessonColoringStep> {
         _taskIndex = next;
         advanced = true;
       }
+    } else if (task != null && isTarget) {
+      SoundService.instance.playError();
     }
 
     _refreshImage();
     if (completedNow) {
+      SoundService.instance.playComplete();
       _speak('Great job!');
     } else if (advanced) {
+      SoundService.instance.playCorrect();
       _speakInstruction();
     }
   }
@@ -308,6 +313,7 @@ class _LessonColoringStepState extends State<LessonColoringStep> {
 
   void _toggleMute() {
     setState(() => _muted = !_muted);
+    SoundService.instance.muted = _muted;
     if (_muted) TtsService.instance.stop();
   }
 

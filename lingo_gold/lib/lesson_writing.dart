@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'data.dart';
+import 'services/sound_service.dart';
 import 'theme.dart';
 import 'widgets.dart';
 
@@ -38,6 +39,14 @@ class _WritingStepState extends State<WritingStep> {
     }
     if (_typedLetters.length >= _targetLetters.length) return;
     setState(() => _typed += key);
+    // Play feedback after the state update.
+    final nowCorrect = _typedLetters.isNotEmpty &&
+        _typedLetters.toLowerCase() == _targetLetters.toLowerCase();
+    if (nowCorrect) {
+      SoundService.instance.playCorrect();
+    } else if (_typedLetters.length >= _targetLetters.length) {
+      SoundService.instance.playError();
+    }
   }
 
   void _backspace() {

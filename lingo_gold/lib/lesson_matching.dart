@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 
 import 'data.dart';
+import 'services/sound_service.dart';
 import 'theme.dart';
 import 'widgets.dart';
 
@@ -59,6 +60,7 @@ class _MatchingStepState extends State<MatchingStep> {
   void _tryMatch(int imageIndex, int wordPairIndex) {
     if (_matched.contains(imageIndex)) return;
     if (imageIndex == wordPairIndex) {
+      SoundService.instance.playCorrect();
       setState(() {
         _matched.add(imageIndex);
         _selectedWord = null;
@@ -66,6 +68,7 @@ class _MatchingStepState extends State<MatchingStep> {
       });
       WidgetsBinding.instance.addPostFrameCallback((_) => _updateLines());
     } else {
+      SoundService.instance.playError();
       _wrongTimer?.cancel();
       setState(() {
         _hadWrong = true;

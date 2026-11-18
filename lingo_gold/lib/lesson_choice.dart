@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'data.dart';
+import 'services/sound_service.dart';
 import 'services/speech_service.dart';
 import 'theme.dart';
 import 'widgets.dart';
@@ -175,9 +176,9 @@ class _ChooseStepState extends State<ChooseStep> {
       if (!correct) _hadWrong = true;
     });
     if (correct) {
-      SystemSound.play(SystemSoundType.click);
+      SoundService.instance.playCorrect();
     } else {
-      HapticFeedback.vibrate();
+      SoundService.instance.playError();
     }
   }
 
@@ -369,9 +370,9 @@ class _ListeningStepState extends State<ListeningStep> {
       if (!correct) _hadWrong = true;
     });
     if (correct) {
-      SystemSound.play(SystemSoundType.click);
+      SoundService.instance.playCorrect();
     } else {
-      HapticFeedback.vibrate();
+      SoundService.instance.playError();
     }
   }
 

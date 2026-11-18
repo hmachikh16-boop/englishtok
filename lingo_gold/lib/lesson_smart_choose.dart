@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 
 import 'data.dart';
+import 'services/sound_service.dart';
 import 'theme.dart';
 import 'widgets.dart';
 
@@ -85,6 +86,11 @@ class _SmartChooseStepState extends State<SmartChooseStep> {
       _checked = true;
       if (!correct) _hadWrong = true;
     });
+    if (correct) {
+      SoundService.instance.playCorrect();
+    } else {
+      SoundService.instance.playError();
+    }
   }
 
   void _reset() {

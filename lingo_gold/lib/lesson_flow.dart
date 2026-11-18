@@ -11,6 +11,7 @@ import 'lesson_matching.dart';
 import 'lesson_smart_choose.dart';
 import 'lesson_speaking.dart';
 import 'lesson_writing.dart';
+import 'services/sound_service.dart';
 import 'theme.dart';
 import 'widgets.dart';
 
@@ -503,8 +504,17 @@ class _LessonFlowScreenState extends State<LessonFlowScreen> {
     if (_step == 1) {
       _speakingScore = speakingScore ?? 0;
     }
-    if (correct) _score++;
-    setState(() => _step++);
+    if (correct) {
+      _score++;
+      SoundService.instance.playCorrect();
+    } else {
+      SoundService.instance.playError();
+    }
+    final nextStep = _step + 1;
+    setState(() => _step = nextStep);
+    if (nextStep == 6) {
+      SoundService.instance.playComplete();
+    }
   }
 
   void _onColoringPageDone() {
@@ -663,7 +673,11 @@ class _LessonFlowScreenState extends State<LessonFlowScreen> {
         if (_isSpecialLesson(_lessonIndex)) {
           return LessonColoringStep(
             lessonIndex: _lessonIndex,
-            onComplete: () => setState(() => _step = 6),
+            onComplete: () {
+              SoundService.instance.playCorrect();
+              SoundService.instance.playComplete();
+              setState(() => _step = 6);
+            },
           );
         }
         return _resultStep(lesson);
