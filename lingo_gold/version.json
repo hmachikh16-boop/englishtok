@@ -1,1 +1,1 @@
-{"version":"1.0.0","versionCode":42,"notes":"v42: Removed standalone coloring game list from home; pronunciation fix (en-US voice selection, spoken forms for lessons 1-10); update_service currentVersionCode corrected to 42."}
+{"version":"1.0.0","versionCode":43,"notes":"v43: Professional sound effects (correct/error/complete) added across lessons; SoundService (audioplayers) with mute support."}
