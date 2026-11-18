@@ -343,7 +343,287 @@ const _lesson10 = LessonColoringData(
   ],
 );
 
-/// Returns the guided coloring page for lessons 1–10 (indices 0–9).
+const _lesson11 = LessonColoringData(
+  asset: 'assets/coloring/coloring_009.jpg',
+  titleEn: 'Boy',
+  tasks: [
+    LessonColoringTask(
+      label: 'boy',
+      color: kColoringBlue,
+      colorName: 'Blue',
+      x: 0.521,
+      y: 0.303,
+    ),
+    LessonColoringTask(
+      label: 'legs',
+      color: kColoringRed,
+      colorName: 'Red',
+      x: 0.556,
+      y: 0.584,
+    ),
+    LessonColoringTask(
+      label: 'background',
+      color: kColoringGreen,
+      colorName: 'Green',
+      x: 0.05,
+      y: 0.05,
+    ),
+  ],
+);
+
+const _lesson12 = LessonColoringData(
+  asset: 'assets/coloring/coloring_011.jpg',
+  titleEn: 'Girl',
+  tasks: [
+    LessonColoringTask(
+      label: 'girl',
+      color: kColoringBlue,
+      colorName: 'Blue',
+      x: 0.502,
+      y: 0.291,
+    ),
+    LessonColoringTask(
+      label: 'head',
+      color: kColoringRed,
+      colorName: 'Red',
+      x: 0.486,
+      y: 0.134,
+    ),
+    LessonColoringTask(
+      label: 'background',
+      color: kColoringGreen,
+      colorName: 'Green',
+      x: 0.05,
+      y: 0.05,
+    ),
+  ],
+);
+
+const _lesson13 = LessonColoringData(
+  asset: 'assets/coloring/coloring_096.jpg',
+  titleEn: 'Father',
+  tasks: [
+    LessonColoringTask(
+      label: 'father',
+      color: kColoringBlue,
+      colorName: 'Blue',
+      x: 0.286,
+      y: 0.633,
+    ),
+    LessonColoringTask(
+      label: 'head',
+      color: kColoringRed,
+      colorName: 'Red',
+      x: 0.691,
+      y: 0.382,
+    ),
+    LessonColoringTask(
+      label: 'background',
+      color: kColoringGreen,
+      colorName: 'Green',
+      x: 0.05,
+      y: 0.05,
+    ),
+  ],
+);
+
+const _lesson14 = LessonColoringData(
+  asset: 'assets/coloring/coloring_054.jpg',
+  titleEn: 'Mother',
+  tasks: [
+    LessonColoringTask(
+      label: 'mother',
+      color: kColoringBlue,
+      colorName: 'Blue',
+      x: 0.420,
+      y: 0.754,
+    ),
+    LessonColoringTask(
+      label: 'head',
+      color: kColoringRed,
+      colorName: 'Red',
+      x: 0.446,
+      y: 0.347,
+    ),
+    LessonColoringTask(
+      label: 'background',
+      color: kColoringGreen,
+      colorName: 'Green',
+      x: 0.05,
+      y: 0.05,
+    ),
+  ],
+);
+
+const _lesson15 = LessonColoringData(
+  asset: 'assets/coloring/coloring_025.jpg',
+  titleEn: 'Baby',
+  tasks: [
+    LessonColoringTask(
+      label: 'baby',
+      color: kColoringBlue,
+      colorName: 'Blue',
+      x: 0.526,
+      y: 0.284,
+    ),
+    LessonColoringTask(
+      label: 'body',
+      color: kColoringRed,
+      colorName: 'Red',
+      x: 0.583,
+      y: 0.645,
+    ),
+    LessonColoringTask(
+      label: 'background',
+      color: kColoringGreen,
+      colorName: 'Green',
+      x: 0.05,
+      y: 0.05,
+    ),
+  ],
+);
+
+const _lesson16 = LessonColoringData(
+  asset: 'assets/coloring/coloring_097.jpg',
+  titleEn: 'Grandfather',
+  tasks: [
+    LessonColoringTask(
+      label: 'grandfather',
+      color: kColoringBlue,
+      colorName: 'Blue',
+      x: 0.331,
+      y: 0.532,
+    ),
+    LessonColoringTask(
+      label: 'head',
+      color: kColoringRed,
+      colorName: 'Red',
+      x: 0.353,
+      y: 0.271,
+    ),
+    LessonColoringTask(
+      label: 'background',
+      color: kColoringGreen,
+      colorName: 'Green',
+      x: 0.05,
+      y: 0.05,
+    ),
+  ],
+);
+
+const _lesson17 = LessonColoringData(
+  asset: 'assets/coloring/coloring_051.jpg',
+  titleEn: 'Grandmother',
+  tasks: [
+    LessonColoringTask(
+      label: 'grandmother',
+      color: kColoringBlue,
+      colorName: 'Blue',
+      x: 0.338,
+      y: 0.665,
+    ),
+    LessonColoringTask(
+      label: 'head',
+      color: kColoringRed,
+      colorName: 'Red',
+      x: 0.287,
+      y: 0.163,
+    ),
+    LessonColoringTask(
+      label: 'background',
+      color: kColoringGreen,
+      colorName: 'Green',
+      x: 0.05,
+      y: 0.05,
+    ),
+  ],
+);
+
+const _lesson18 = LessonColoringData(
+  asset: 'assets/coloring/coloring_046.jpg',
+  titleEn: 'Family',
+  tasks: [
+    LessonColoringTask(
+      label: 'family',
+      color: kColoringBlue,
+      colorName: 'Blue',
+      x: 0.250,
+      y: 0.693,
+    ),
+    LessonColoringTask(
+      label: 'person',
+      color: kColoringRed,
+      colorName: 'Red',
+      x: 0.750,
+      y: 0.591,
+    ),
+    LessonColoringTask(
+      label: 'background',
+      color: kColoringGreen,
+      colorName: 'Green',
+      x: 0.05,
+      y: 0.05,
+    ),
+  ],
+);
+
+const _lesson19 = LessonColoringData(
+  asset: 'assets/coloring/coloring_003.jpg',
+  titleEn: 'Man',
+  tasks: [
+    LessonColoringTask(
+      label: 'man',
+      color: kColoringBlue,
+      colorName: 'Blue',
+      x: 0.345,
+      y: 0.693,
+    ),
+    LessonColoringTask(
+      label: 'head',
+      color: kColoringRed,
+      colorName: 'Red',
+      x: 0.394,
+      y: 0.297,
+    ),
+    LessonColoringTask(
+      label: 'background',
+      color: kColoringGreen,
+      colorName: 'Green',
+      x: 0.05,
+      y: 0.05,
+    ),
+  ],
+);
+
+const _lesson20 = LessonColoringData(
+  asset: 'assets/coloring/coloring_022.jpg',
+  titleEn: 'Woman',
+  tasks: [
+    LessonColoringTask(
+      label: 'woman',
+      color: kColoringBlue,
+      colorName: 'Blue',
+      x: 0.501,
+      y: 0.770,
+    ),
+    LessonColoringTask(
+      label: 'head',
+      color: kColoringRed,
+      colorName: 'Red',
+      x: 0.746,
+      y: 0.398,
+    ),
+    LessonColoringTask(
+      label: 'background',
+      color: kColoringGreen,
+      colorName: 'Green',
+      x: 0.05,
+      y: 0.05,
+    ),
+  ],
+);
+
+/// Returns the guided coloring page for lessons 1–20 (indices 0–19).
 LessonColoringData lessonColoringDataFor(int lessonIndex) {
   switch (lessonIndex) {
     case 0:
@@ -364,7 +644,27 @@ LessonColoringData lessonColoringDataFor(int lessonIndex) {
       return _lesson8;
     case 8:
       return _lesson9;
-    default:
+    case 9:
       return _lesson10;
+    case 10:
+      return _lesson11;
+    case 11:
+      return _lesson12;
+    case 12:
+      return _lesson13;
+    case 13:
+      return _lesson14;
+    case 14:
+      return _lesson15;
+    case 15:
+      return _lesson16;
+    case 16:
+      return _lesson17;
+    case 17:
+      return _lesson18;
+    case 18:
+      return _lesson19;
+    default:
+      return _lesson20;
   }
 }

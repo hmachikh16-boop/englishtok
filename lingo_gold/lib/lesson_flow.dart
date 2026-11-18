@@ -100,7 +100,7 @@ List<Lesson> _categoryPool(int lessonIndex) {
   return [for (var i = start; i < end; i++) lessons[i]];
 }
 
-bool _isSpecialLesson(int lessonIndex) => lessonIndex >= 0 && lessonIndex < 10;
+bool _isSpecialLesson(int lessonIndex) => lessonIndex >= 0 && lessonIndex < 20;
 
 Lesson _syntheticLesson(
     String imageFile, bool isPack, int indexInPack, String word) {
@@ -178,6 +178,67 @@ List<Lesson> _specialDistractors(int lessonIndex, int count) {
         _syntheticLesson('n58', true, 0, 'STAR'),
         _syntheticLesson('n55', true, 0, 'TREE'),
       ].take(count).toList();
+    // Family (lessons 11-20)
+    case 10: // Boy
+      return [
+        _syntheticLesson('n02', true, 0, 'Girl'),
+        _syntheticLesson('n42', true, 0, 'Cat'),
+        _syntheticLesson('n41', true, 0, 'Dog'),
+      ].take(count).toList();
+    case 11: // Girl
+      return [
+        _syntheticLesson('n01', true, 0, 'Boy'),
+        _syntheticLesson('n42', true, 0, 'Cat'),
+        _syntheticLesson('n41', true, 0, 'Dog'),
+      ].take(count).toList();
+    case 12: // Father
+      return [
+        _syntheticLesson('n04', true, 0, 'Mother'),
+        _syntheticLesson('n01', true, 0, 'Boy'),
+        _syntheticLesson('n02', true, 0, 'Girl'),
+      ].take(count).toList();
+    case 13: // Mother
+      return [
+        _syntheticLesson('n03', true, 0, 'Father'),
+        _syntheticLesson('n01', true, 0, 'Boy'),
+        _syntheticLesson('n02', true, 0, 'Girl'),
+      ].take(count).toList();
+    case 14: // Baby
+      return [
+        _syntheticLesson('n01', true, 0, 'Boy'),
+        _syntheticLesson('n02', true, 0, 'Girl'),
+        _syntheticLesson('n42', true, 0, 'Cat'),
+      ].take(count).toList();
+    case 15: // Grandfather
+      return [
+        _syntheticLesson('n07', true, 0, 'Grandmother'),
+        _syntheticLesson('n03', true, 0, 'Father'),
+        _syntheticLesson('n04', true, 0, 'Mother'),
+      ].take(count).toList();
+    case 16: // Grandmother
+      return [
+        _syntheticLesson('n06', true, 0, 'Grandfather'),
+        _syntheticLesson('n03', true, 0, 'Father'),
+        _syntheticLesson('n04', true, 0, 'Mother'),
+      ].take(count).toList();
+    case 17: // Family
+      return [
+        _syntheticLesson('n01', true, 0, 'Boy'),
+        _syntheticLesson('n02', true, 0, 'Girl'),
+        _syntheticLesson('n05', true, 0, 'Baby'),
+      ].take(count).toList();
+    case 18: // Man
+      return [
+        _syntheticLesson('n10', true, 0, 'Woman'),
+        _syntheticLesson('n01', true, 0, 'Boy'),
+        _syntheticLesson('n02', true, 0, 'Girl'),
+      ].take(count).toList();
+    case 19: // Woman
+      return [
+        _syntheticLesson('n09', true, 0, 'Man'),
+        _syntheticLesson('n01', true, 0, 'Boy'),
+        _syntheticLesson('n02', true, 0, 'Girl'),
+      ].take(count).toList();
   }
   return [];
 }
@@ -243,6 +304,67 @@ List<Lesson> _specialMatchingPairs(int lessonIndex) {
         _syntheticLesson('n56', true, 0, 'SUN'),
         _syntheticLesson('n57', true, 0, 'MOON'),
         _syntheticLesson('n58', true, 0, 'STAR'),
+      ];
+    // Family (lessons 11-20)
+    case 10:
+      return [
+        _syntheticLesson('n01', true, 0, 'Boy'),
+        _syntheticLesson('n02', true, 0, 'Girl'),
+        _syntheticLesson('n42', true, 0, 'Cat'),
+      ];
+    case 11:
+      return [
+        _syntheticLesson('n02', true, 0, 'Girl'),
+        _syntheticLesson('n01', true, 0, 'Boy'),
+        _syntheticLesson('n41', true, 0, 'Dog'),
+      ];
+    case 12:
+      return [
+        _syntheticLesson('n03', true, 0, 'Father'),
+        _syntheticLesson('n04', true, 0, 'Mother'),
+        _syntheticLesson('n01', true, 0, 'Boy'),
+      ];
+    case 13:
+      return [
+        _syntheticLesson('n04', true, 0, 'Mother'),
+        _syntheticLesson('n03', true, 0, 'Father'),
+        _syntheticLesson('n02', true, 0, 'Girl'),
+      ];
+    case 14:
+      return [
+        _syntheticLesson('n05', true, 0, 'Baby'),
+        _syntheticLesson('n01', true, 0, 'Boy'),
+        _syntheticLesson('n02', true, 0, 'Girl'),
+      ];
+    case 15:
+      return [
+        _syntheticLesson('n06', true, 0, 'Grandfather'),
+        _syntheticLesson('n07', true, 0, 'Grandmother'),
+        _syntheticLesson('n03', true, 0, 'Father'),
+      ];
+    case 16:
+      return [
+        _syntheticLesson('n07', true, 0, 'Grandmother'),
+        _syntheticLesson('n06', true, 0, 'Grandfather'),
+        _syntheticLesson('n04', true, 0, 'Mother'),
+      ];
+    case 17:
+      return [
+        _syntheticLesson('n08', true, 0, 'Family'),
+        _syntheticLesson('n01', true, 0, 'Boy'),
+        _syntheticLesson('n02', true, 0, 'Girl'),
+      ];
+    case 18:
+      return [
+        _syntheticLesson('n09', true, 0, 'Man'),
+        _syntheticLesson('n10', true, 0, 'Woman'),
+        _syntheticLesson('n01', true, 0, 'Boy'),
+      ];
+    case 19:
+      return [
+        _syntheticLesson('n10', true, 0, 'Woman'),
+        _syntheticLesson('n09', true, 0, 'Man'),
+        _syntheticLesson('n02', true, 0, 'Girl'),
       ];
   }
   return [];
@@ -320,6 +442,77 @@ List<Lesson> _specialSmartChooseOptions(int lessonIndex) {
         _syntheticLesson('n58', true, 0, 'A star'),
         _syntheticLesson('n55', true, 0, 'A tree'),
       ];
+    // Family (lessons 11-20)
+    case 10:
+      return [
+        _syntheticLesson('n01', true, 0, 'Boy'),
+        _syntheticLesson('n02', true, 0, 'Girl'),
+        _syntheticLesson('n42', true, 0, 'Cat'),
+        _syntheticLesson('n41', true, 0, 'Dog'),
+      ];
+    case 11:
+      return [
+        _syntheticLesson('n02', true, 0, 'Girl'),
+        _syntheticLesson('n01', true, 0, 'Boy'),
+        _syntheticLesson('n42', true, 0, 'Cat'),
+        _syntheticLesson('n41', true, 0, 'Dog'),
+      ];
+    case 12:
+      return [
+        _syntheticLesson('n03', true, 0, 'Father'),
+        _syntheticLesson('n04', true, 0, 'Mother'),
+        _syntheticLesson('n01', true, 0, 'Boy'),
+        _syntheticLesson('n02', true, 0, 'Girl'),
+      ];
+    case 13:
+      return [
+        _syntheticLesson('n04', true, 0, 'Mother'),
+        _syntheticLesson('n03', true, 0, 'Father'),
+        _syntheticLesson('n01', true, 0, 'Boy'),
+        _syntheticLesson('n02', true, 0, 'Girl'),
+      ];
+    case 14:
+      return [
+        _syntheticLesson('n05', true, 0, 'Baby'),
+        _syntheticLesson('n01', true, 0, 'Boy'),
+        _syntheticLesson('n02', true, 0, 'Girl'),
+        _syntheticLesson('n42', true, 0, 'Cat'),
+      ];
+    case 15:
+      return [
+        _syntheticLesson('n06', true, 0, 'Grandfather'),
+        _syntheticLesson('n07', true, 0, 'Grandmother'),
+        _syntheticLesson('n03', true, 0, 'Father'),
+        _syntheticLesson('n04', true, 0, 'Mother'),
+      ];
+    case 16:
+      return [
+        _syntheticLesson('n07', true, 0, 'Grandmother'),
+        _syntheticLesson('n06', true, 0, 'Grandfather'),
+        _syntheticLesson('n03', true, 0, 'Father'),
+        _syntheticLesson('n04', true, 0, 'Mother'),
+      ];
+    case 17:
+      return [
+        _syntheticLesson('n08', true, 0, 'Family'),
+        _syntheticLesson('n01', true, 0, 'Boy'),
+        _syntheticLesson('n02', true, 0, 'Girl'),
+        _syntheticLesson('n05', true, 0, 'Baby'),
+      ];
+    case 18:
+      return [
+        _syntheticLesson('n09', true, 0, 'Man'),
+        _syntheticLesson('n10', true, 0, 'Woman'),
+        _syntheticLesson('n01', true, 0, 'Boy'),
+        _syntheticLesson('n02', true, 0, 'Girl'),
+      ];
+    case 19:
+      return [
+        _syntheticLesson('n10', true, 0, 'Woman'),
+        _syntheticLesson('n09', true, 0, 'Man'),
+        _syntheticLesson('n01', true, 0, 'Boy'),
+        _syntheticLesson('n02', true, 0, 'Girl'),
+      ];
   }
   return [];
 }
@@ -346,6 +539,27 @@ String _specialSmartChooseQuestion(int lessonIndex) {
       return 'Which picture is I am eating?';
     case 9:
       return 'Which picture is The sun?';
+    // Family (lessons 11-20)
+    case 10:
+      return 'Which picture is Boy?';
+    case 11:
+      return 'Which picture is Girl?';
+    case 12:
+      return 'Which picture is Father?';
+    case 13:
+      return 'Which picture is Mother?';
+    case 14:
+      return 'Which picture is Baby?';
+    case 15:
+      return 'Which picture is Grandfather?';
+    case 16:
+      return 'Which picture is Grandmother?';
+    case 17:
+      return 'Which picture is Family?';
+    case 18:
+      return 'Which picture is Man?';
+    case 19:
+      return 'Which picture is Woman?';
   }
   return '';
 }
@@ -385,7 +599,7 @@ List<Lesson> introItemsFor(int lessonIndex) {
 }
 
 String writingWordFor(Lesson lesson, int lessonIndex) {
-  if (lessonIndex >= 0 && lessonIndex < 10) {
+  if (lessonIndex >= 0 && lessonIndex < 20) {
     const specialWords = [
       'BOY',
       'GIRL',
@@ -397,6 +611,16 @@ String writingWordFor(Lesson lesson, int lessonIndex) {
       'BOY AND GIRL',
       'EATING',
       'SUN',
+      'BOY',
+      'GIRL',
+      'FATHER',
+      'MOTHER',
+      'BABY',
+      'GRANDFATHER',
+      'GRANDMOTHER',
+      'FAMILY',
+      'MAN',
+      'WOMAN',
     ];
     return specialWords[lessonIndex];
   }
@@ -474,7 +698,7 @@ class _LessonFlowScreenState extends State<LessonFlowScreen> {
   void initState() {
     super.initState();
     _lessonId = widget.startLessonId.clamp(1, widget.totalLessons);
-    _showIntro = _lessonIndex < 10;
+    _showIntro = _lessonIndex < 20;
   }
 
   String get _title {
@@ -534,7 +758,7 @@ class _LessonFlowScreenState extends State<LessonFlowScreen> {
       _score = 0;
       _speakingScore = 0;
       _coloringPage = 0;
-      _showIntro = _lessonIndex < 10;
+      _showIntro = _lessonIndex < 20;
     });
   }
 
@@ -560,7 +784,7 @@ class _LessonFlowScreenState extends State<LessonFlowScreen> {
       _score = 0;
       _speakingScore = 0;
       _coloringPage = 0;
-      _showIntro = _lessonIndex < 10;
+      _showIntro = _lessonIndex < 20;
     });
   }
 
