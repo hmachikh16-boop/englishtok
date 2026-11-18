@@ -330,7 +330,7 @@ class _ListeningStepState extends State<ListeningStep> {
   bool _speaking = false;
 
   String get _sentence =>
-      widget.lesson.sentence.replaceAll('___', widget.lesson.word);
+      widget.lesson.spokenText.replaceAll('___', widget.lesson.word);
 
   @override
   void initState() {

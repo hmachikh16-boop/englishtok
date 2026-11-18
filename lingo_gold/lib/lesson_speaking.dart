@@ -37,6 +37,7 @@ class _SpeakingStepState extends State<SpeakingStep> {
   Timer? _timer;
 
   String get _sentence => widget.lesson.sentence.replaceAll('___', widget.lesson.word);
+  String get _spokenSentence => widget.lesson.spokenText.replaceAll('___', widget.lesson.word);
 
   @override
   void initState() {
@@ -69,7 +70,7 @@ class _SpeakingStepState extends State<SpeakingStep> {
 
 
 
-  Future<void> _speak() => TtsService.instance.speak(_sentence);
+  Future<void> _speak() => TtsService.instance.speak(_spokenSentence);
 
   Future<void> _startListening() async {
     if (_listening) {

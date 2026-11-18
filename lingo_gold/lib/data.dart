@@ -19,6 +19,7 @@ const Color kMint = Color(0xFFB5EAD7);
 class Lesson {
   final String word;
   final String sentence;
+  final String? spoken; // pronunciation-friendly form for TTS (null = use sentence)
   final List<String> options;
   final String imageFile; // مثال: 'q0' أو 'pack1'
   final int indexInPack; // للـ Pack فقط: 0..9 ، للـ Single: 0
@@ -29,6 +30,7 @@ class Lesson {
   const Lesson({
     required this.word,
     required this.sentence,
+    this.spoken,
     required this.options,
     required this.imageFile,
     required this.indexInPack,
@@ -36,6 +38,8 @@ class Lesson {
     required this.category,
     required this.translation,
   });
+
+  String get spokenText => spoken ?? sentence;
 }
 
 // ================= GROUPS =================
@@ -66,16 +70,16 @@ const List<LessonGroup> groups = [
 // ================= 90 LESSONS =================
 const List<Lesson> lessons = [
   // ===== 1. الدروس 10 - rebuilt: 5 windows + results (Rosetta Stone) =====
-  Lesson(word: 'A boy', sentence: 'A boy.', options: ['Boy', 'Girl', 'Cat'], imageFile: 'q0', indexInPack: 0, isPack: false, translation: '', category: 'Verb To Be'),
-  Lesson(word: 'A girl', sentence: 'A girl.', options: ['Girl', 'Boy', 'Dog'], imageFile: 'n02', indexInPack: 0, isPack: true, translation: '', category: 'Verb To Be'),
-  Lesson(word: 'A cat', sentence: 'A cat.', options: ['Cat', 'Dog', 'Boy'], imageFile: 'n42', indexInPack: 0, isPack: true, translation: '', category: 'Verb To Be'),
-  Lesson(word: 'The boy is eating', sentence: 'The boy is eating.', options: ['Eating', 'Drinking', 'Running'], imageFile: 'n18', indexInPack: 0, isPack: true, translation: '', category: 'Verb To Be'),
-  Lesson(word: 'The boy is drinking', sentence: 'The boy is drinking.', options: ['Drinking', 'Eating', 'Running'], imageFile: 'n19', indexInPack: 0, isPack: true, translation: '', category: 'Verb To Be'),
-  Lesson(word: 'A big dog', sentence: 'A big dog.', options: ['Big', 'Small', 'Tall'], imageFile: 'q2', indexInPack: 0, isPack: false, translation: '', category: 'Adjectives'),
-  Lesson(word: 'A red apple', sentence: 'A red apple.', options: ['Red', 'Green', 'Yellow'], imageFile: 'q4', indexInPack: 0, isPack: false, translation: '', category: 'Colors'),
-  Lesson(word: 'The boy and the girl', sentence: 'The boy and the girl.', options: ['Boy', 'Girl', 'Boy and girl'], imageFile: 'n76', indexInPack: 0, isPack: true, translation: '', category: 'Verb To Be'),
-  Lesson(word: 'I am eating', sentence: 'I am eating.', options: ['Eating', 'Drinking', 'Running'], imageFile: 'n18', indexInPack: 0, isPack: true, translation: '', category: 'Verb To Be'),
-  Lesson(word: 'The sun', sentence: 'The sun.', options: ['SUN', 'MOON', 'STAR'], imageFile: 'n56', indexInPack: 0, isPack: true, translation: '', category: 'Nature'),
+  Lesson(word: 'A boy', sentence: 'A boy.', spoken: 'a boy.', options: ['Boy', 'Girl', 'Cat'], imageFile: 'q0', indexInPack: 0, isPack: false, translation: '', category: 'Verb To Be'),
+  Lesson(word: 'A girl', sentence: 'A girl.', spoken: 'a girl.', options: ['Girl', 'Boy', 'Dog'], imageFile: 'n02', indexInPack: 0, isPack: true, translation: '', category: 'Verb To Be'),
+  Lesson(word: 'A cat', sentence: 'A cat.', spoken: 'a cat.', options: ['Cat', 'Dog', 'Boy'], imageFile: 'n42', indexInPack: 0, isPack: true, translation: '', category: 'Verb To Be'),
+  Lesson(word: 'The boy is eating', sentence: 'The boy is eating.', spoken: 'the boy is eating.', options: ['Eating', 'Drinking', 'Running'], imageFile: 'n18', indexInPack: 0, isPack: true, translation: '', category: 'Verb To Be'),
+  Lesson(word: 'The boy is drinking', sentence: 'The boy is drinking.', spoken: 'the boy is drinking.', options: ['Drinking', 'Eating', 'Running'], imageFile: 'n19', indexInPack: 0, isPack: true, translation: '', category: 'Verb To Be'),
+  Lesson(word: 'A big dog', sentence: 'A big dog.', spoken: 'a big dog.', options: ['Big', 'Small', 'Tall'], imageFile: 'q2', indexInPack: 0, isPack: false, translation: '', category: 'Adjectives'),
+  Lesson(word: 'A red apple', sentence: 'A red apple.', spoken: 'a red apple.', options: ['Red', 'Green', 'Yellow'], imageFile: 'q4', indexInPack: 0, isPack: false, translation: '', category: 'Colors'),
+  Lesson(word: 'The boy and the girl', sentence: 'The boy and the girl.', spoken: 'the boy and the girl.', options: ['Boy', 'Girl', 'Boy and girl'], imageFile: 'n76', indexInPack: 0, isPack: true, translation: '', category: 'Verb To Be'),
+  Lesson(word: 'I am eating', sentence: 'I am eating.', spoken: 'I am eating.', options: ['Eating', 'Drinking', 'Running'], imageFile: 'n18', indexInPack: 0, isPack: true, translation: '', category: 'Verb To Be'),
+  Lesson(word: 'The sun', sentence: 'The sun.', spoken: 'the sun.', options: ['SUN', 'MOON', 'STAR'], imageFile: 'n56', indexInPack: 0, isPack: true, translation: '', category: 'Nature'),
 
   // ===== 2. الدروس الجديدة - 70 درساً بصور عالية الجودة =====
   // GROUP 1 - Family - 11 to 20

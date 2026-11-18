@@ -14,12 +14,54 @@ class TtsService {
       await tts.setLanguage('en-US');
       await tts.setSpeechRate(0.45);
       await tts.setPitch(1.0);
+      await tts.setVolume(1.0);
+
+      // Pick an English voice explicitly so the device never falls back to an
+      // Arabic (or other) voice. Prefer en-US, then en-GB, then any en-*.
+      try {
+        final voices = await tts.getVoices;
+        if (voices is List && voices.isNotEmpty) {
+          Map<String, String>? chosen;
+          for (final candidate in voices) {
+            if (candidate is! Map) continue;
+            final rawLocale = (candidate['locale'] ?? '').toString();
+            final norm = rawLocale.toLowerCase().replaceAll(RegExp(r'[^a-z]'), '');
+            if (!norm.startsWith('en')) continue;
+            if (chosen == null) chosen = _voiceMap(candidate);
+            if (norm == 'enus') {
+              chosen = _voiceMap(candidate);
+              break;
+            }
+            if (norm == 'engb' && chosen != null) {
+              // Prefer en-GB over other en-* only if en-US is unavailable.
+              final chosenNorm = (chosen['locale'] ?? '')
+                  .toLowerCase()
+                  .replaceAll(RegExp(r'[^a-z]'), '');
+              if (!chosenNorm.startsWith('enus')) {
+                chosen = _voiceMap(candidate);
+              }
+            }
+          }
+          if (chosen != null) {
+            await tts.setVoice(chosen);
+          }
+        }
+      } catch (_) {
+        // Voice enumeration is not supported on every platform; fall back to
+        // the language setting above.
+      }
+
       _tts = tts;
       _ready = true;
     } catch (_) {
       _ready = false;
     }
   }
+
+  Map<String, String> _voiceMap(Map candidate) => {
+        'name': (candidate['name'] ?? '').toString(),
+        'locale': (candidate['locale'] ?? '').toString(),
+      };
 
   Future<void> speak(String text) async {
     if (!_ready) await _init();

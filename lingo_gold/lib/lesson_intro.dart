@@ -33,6 +33,11 @@ class _LessonIntroStepState extends State<LessonIntroStep> {
     return sentence.isNotEmpty ? sentence : _item.word;
   }
 
+  String get _spokenLabel {
+    final sentence = _item.spokenText.trim();
+    return sentence.isNotEmpty ? sentence : _item.word;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -41,7 +46,7 @@ class _LessonIntroStepState extends State<LessonIntroStep> {
 
   Future<void> _speak() async {
     if (!mounted) return;
-    await TtsService.instance.speak(_label);
+    await TtsService.instance.speak(_spokenLabel);
   }
 
   void _next() {
