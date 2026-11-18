@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'coloring_game.dart';
 import 'data.dart' as legacy;
 
 const Color kHomeBlue = Color(0xFF111111);
@@ -231,51 +230,6 @@ class HomeScreen extends StatelessWidget {
                             ),
                           ],
                         ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 18),
-                  const Text(
-                    '6 نوافذ • تلوين',
-                    style: TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                      color: kHomeMuted,
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-                  SizedBox(
-                    width: double.infinity,
-                    height: 56,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: kHomeBlue,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(28),
-                        ),
-                        elevation: 4,
-                      ),
-                      onPressed: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (_) => const ColoringPageListScreen(),
-                          ),
-                        );
-                      },
-                      child: const Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text('🎨', style: TextStyle(fontSize: 24)),
-                          SizedBox(width: 8),
-                          Text(
-                            'لعبة التلوين',
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.w900,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ],
                       ),
                     ),
                   ),
